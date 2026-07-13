@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FanRank — fan ideas, ranked by AI + votes</title>
-<meta name="description" content="Fan ideas for games, creators and companies. Scored by AI, voted by fans, and the owner can pick favorites. Every idea credits its original author.">
+<meta name="description" content="Fan ideas for games, creators and companies. Scored by AI, voted by fans, picked by the team. Every idea credits its original author.">
 <style>
   :root{
     --bg:#0b0d14; --bg2:#12151f; --card:#161a27; --card2:#1c2133;
@@ -27,6 +27,11 @@
   }
   .wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:28px 16px 90px}
 
+  .langbtn{position:fixed;top:12px;right:12px;z-index:20;background:var(--card);border:1px solid var(--line);
+    color:var(--txt);border-radius:999px;padding:8px 14px;font-weight:800;font-size:.85rem;cursor:pointer;
+    transition:border-color .15s ease}
+  .langbtn:hover{border-color:var(--yellow)}
+
   header{text-align:center;padding:26px 0 8px}
   .logo{font-size:clamp(2.2rem,7vw,3.4rem);font-weight:900;letter-spacing:-1px;
     background:linear-gradient(92deg,var(--yellow) 10%,var(--blue) 55%,var(--purple) 95%);
@@ -45,7 +50,6 @@
   .stat .l{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
   .stat.green .n{color:var(--green)}
 
-  /* HOME */
   .how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:26px 0 8px}
   .how .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
   .how .ic{font-size:1.5rem}
@@ -66,12 +70,17 @@
   .chip{font-size:.75rem;color:var(--muted);background:var(--bg2);border:1px solid var(--line);
     border-radius:999px;padding:3px 9px;white-space:nowrap}
   .chip.hot{color:var(--yellow)}
+  .chip.reddit{color:#ff8a5c}
+  .chip a{color:inherit;text-decoration:none}
+  .chip a:hover{text-decoration:underline}
   .request{border:1px dashed #3a4160;background:linear-gradient(135deg,rgba(255,196,0,.05),rgba(176,107,255,.05));
     border-radius:18px;padding:18px;text-align:center;margin-top:12px}
   .request .t{font-weight:800}
   .request .d{color:var(--muted);font-size:.86rem;margin-top:4px;margin-bottom:12px}
+  .request input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--txt);
+    padding:11px 12px;font-size:.95rem;margin-bottom:10px;font-family:inherit}
+  .request input:focus{outline:none;border-color:var(--purple)}
 
-  /* SECTION (ranking) */
   .tabs{display:flex;gap:8px;margin:22px 0 14px;background:var(--bg2);border:1px solid var(--line);
     border-radius:14px;padding:6px;position:sticky;top:8px;z-index:5;backdrop-filter:blur(8px)}
   .tab{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:.92rem;
@@ -99,9 +108,6 @@
     letter-spacing:.5px;margin-bottom:7px}
   .title{font-weight:700;font-size:1.0rem;line-height:1.35}
   .meta{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
-  .chip a{color:inherit;text-decoration:none}
-  .chip a:hover{text-decoration:underline}
-  .chip.reddit{color:#ff8a5c}
   .aibar{margin-top:9px;display:flex;align-items:center;gap:8px}
   .aibar .bar{flex:1;height:6px;background:var(--bg2);border-radius:99px;overflow:hidden}
   .aibar .fill{height:100%;border-radius:99px;width:0;
@@ -166,57 +172,50 @@
 </head>
 <body>
 <div class="bgfx"></div>
+<button class="langbtn" id="langbtn">🌐 ES</button>
 <div class="wrap">
 
   <header>
     <a class="logo" id="logo">FANRANK</a>
-    <div class="tag" id="hero-tag">Fan ideas for <b>games, creators and companies</b>.<br>Scored by <b>AI</b>. Voted by <b>fans</b>. Picked by the <b>owner</b>.</div>
-    <div class="crumb" id="crumb"><span class="dot"></span> <span id="crumb-txt">All sections</span></div>
+    <div class="tag" id="hero-tag"></div>
+    <div class="crumb" id="crumb"><span class="dot"></span> <span id="crumb-txt"></span></div>
   </header>
 
   <div class="stats" id="stats"></div>
 
   <!-- HOME VIEW -->
   <div id="view-home">
-    <div class="how">
-      <div class="step"><div class="ic">💡</div><div class="t">Fans drop ideas</div><div class="d">Anyone can submit. Every idea keeps its author's credit.</div></div>
-      <div class="step"><div class="ic">🤖</div><div class="t">AI scores them</div><div class="d">Impact × feasibility × clarity. New ideas get reviewed and re-ranked.</div></div>
-      <div class="step"><div class="ic">👑</div><div class="t">The owner picks</div><div class="d">When the game or creator marks a favorite, it scores 100 and the AI learns their taste.</div></div>
-    </div>
-    <div class="sections" id="sections"><div class="loading"><div class="spin"></div><div>Loading sections…</div></div></div>
+    <div class="how" id="how"></div>
+    <div class="sections" id="sections"><div class="loading"><div class="spin"></div><div id="loadtxt"></div></div></div>
     <div class="request">
-      <div class="t">🎯 Want a section for your game, creator or company?</div>
-      <div class="d">Tell us which one and we'll build its ranking.</div>
-      <input id="r-title" maxlength="120" placeholder="Which game / creator / company? *" style="width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--txt);padding:11px 12px;font-size:.95rem;margin-bottom:10px;font-family:inherit">
-      <button class="sendbtn" id="r-send">Request it ⚡</button>
-      <div class="oktxt" id="r-ok">✅ Got it! It joins the build queue.</div>
+      <div class="t" id="r-t"></div>
+      <div class="d" id="r-d"></div>
+      <input id="r-title" maxlength="120">
+      <button class="sendbtn" id="r-send"></button>
+      <div class="oktxt" id="r-ok"></div>
     </div>
   </div>
 
   <!-- SECTION VIEW -->
   <div id="view-section" class="hidden">
     <div class="tabs" role="tablist">
-      <button class="tab active" data-sort="ai" role="tab">🤖 AI Rank</button>
+      <button class="tab active" data-sort="ai" role="tab" id="tab-ai"></button>
       <button class="tab" data-sort="reddit" role="tab">🔥 Reddit</button>
-      <button class="tab" data-sort="fans" role="tab">🗳️ Fan votes</button>
+      <button class="tab" data-sort="fans" role="tab" id="tab-fans"></button>
     </div>
     <div id="list" class="list"></div>
     <div class="submit-zone" id="submit">
-      <h2>💡 Got a better idea?</h2>
-      <p>Drop it here. The AI reviews every submission and the good ones join the ranking.</p>
-      <input id="s-title" maxlength="140" placeholder="Your idea in one sentence *">
-      <textarea id="s-details" maxlength="600" placeholder="Details (optional)"></textarea>
-      <input id="s-author" maxlength="40" placeholder="Your name or handle (optional)">
-      <button class="sendbtn" id="s-send">Send it to the AI queue ⚡</button>
-      <div class="oktxt" id="s-ok">✅ Received! Your idea is in the AI review queue.</div>
+      <h2 id="s-h"></h2>
+      <p id="s-p"></p>
+      <input id="s-title" maxlength="140">
+      <textarea id="s-details" maxlength="600"></textarea>
+      <input id="s-author" maxlength="40">
+      <button class="sendbtn" id="s-send"></button>
+      <div class="oktxt" id="s-ok"></div>
     </div>
   </div>
 
-  <footer>
-    Every idea belongs to its original author — cards link to the source.<br>
-    AI score = impact × feasibility × clarity. <b style="color:var(--gold)">👑 Owner's pick</b> = the owner marked it, it scores 100 and the AI adapts to their taste.<br>
-    <span id="yr"></span> FanRank · built by a fan.
-  </footer>
+  <footer id="foot"></footer>
 </div>
 
 <script>
@@ -227,7 +226,79 @@ const HDRS = { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-T
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const params = new URLSearchParams(location.search);
 const SECTION = params.get("s");
+const LANG = (params.get("lang") || localStorage.getItem("fr_lang") || "en") === "es" ? "es" : "en";
 let ideas = [], sections = [], sortMode = "ai", secMeta = null;
+
+/* ---------- i18n ---------- */
+const T = {
+en: {
+  title_home: "FanRank — fan ideas, ranked by AI + votes",
+  hero_home: "Fan ideas for <b>games, creators and companies</b>.<br>Scored by <b>AI</b>. Voted by <b>fans</b>. Picked by the <b>team</b>.",
+  hero_sec: n => `The ideas <b>${n}</b> fans actually want.<br>Ranked by <b>AI</b>. Voted by <b>you</b>.`,
+  all_sections: "All sections",
+  st_sections: "sections", st_ideas: "ideas", st_votes: "fan votes",
+  st_reddit: "reddit upvotes", st_votes_here: "fan votes here",
+  steps: [
+    ["💡","Fans drop ideas","Anyone can submit. Every idea keeps its author's credit."],
+    ["🤖","AI scores them","Impact × feasibility × clarity. New ideas get reviewed and re-ranked."],
+    ["👑","The team picks","When the owner or their team marks a favorite, it scores 100 and the AI learns their taste."]
+  ],
+  loading: "Loading…",
+  req_t: "🎯 Want a section for your game, creator or company?",
+  req_d: "Tell us which one and we'll build its ranking.",
+  req_ph: "Which game / creator / company? *",
+  req_btn: "Request it ⚡",
+  req_ok: "✅ Got it! It joins the build queue.",
+  tab_ai: "🤖 AI Rank", tab_fans: "🗳️ Fan votes",
+  on_reddit: "on Reddit", source: "source ↗",
+  vote: "VOTE", voted: "VOTED ✓",
+  team_pick: "👑 TEAM PICK · 100",
+  sub_h: "💡 Got a better idea?",
+  sub_p: "Drop it here. The AI reviews every submission and the good ones join the ranking.",
+  sub_ph_t: "Your idea in one sentence *", sub_ph_d: "Details (optional)", sub_ph_a: "Your name or handle (optional)",
+  sub_btn: "Send it to the AI queue ⚡",
+  sub_ok: "✅ Received! Your idea is in the AI review queue.",
+  foot: `Every idea belongs to its original author — cards link to the source.<br>
+    AI score = impact × feasibility × clarity. <b style="color:var(--gold)">👑 Team pick</b> = the owner or their team marked it: it scores 100 and the AI adapts to their taste.<br>
+    <span id="yr"></span> FanRank · built by a fan.`,
+  err: "Could not load. Try refreshing.",
+  langbtn: "🌐 ES"
+},
+es: {
+  title_home: "FanRank — ideas de fans, ordenadas por IA + votos",
+  hero_home: "Ideas de fans para <b>juegos, creadores y empresas</b>.<br>Puntuadas por <b>IA</b>. Votadas por <b>fans</b>. Elegidas por el <b>equipo</b>.",
+  hero_sec: n => `Las ideas que los fans de <b>${n}</b> quieren de verdad.<br>Ordenadas por <b>IA</b>. Votadas por <b>ti</b>.`,
+  all_sections: "Todas las secciones",
+  st_sections: "secciones", st_ideas: "ideas", st_votes: "votos de fans",
+  st_reddit: "votos en Reddit", st_votes_here: "votos de fans aquí",
+  steps: [
+    ["💡","Los fans sueltan ideas","Cualquiera puede proponer. Cada idea mantiene el crédito de su autor."],
+    ["🤖","La IA las puntúa","Impacto × viabilidad × claridad. Las nuevas se revisan y se reordenan."],
+    ["👑","El equipo elige","Cuando el dueño o su equipo marca una favorita, puntúa 100 y la IA aprende su gusto."]
+  ],
+  loading: "Cargando…",
+  req_t: "🎯 ¿Quieres una sección para tu juego, creador o empresa?",
+  req_d: "Dinos cuál y montamos su ranking.",
+  req_ph: "¿Qué juego / creador / empresa? *",
+  req_btn: "Pídela ⚡",
+  req_ok: "✅ ¡Recibido! Entra en la cola de construcción.",
+  tab_ai: "🤖 Ranking IA", tab_fans: "🗳️ Votos de fans",
+  on_reddit: "en Reddit", source: "fuente ↗",
+  vote: "VOTAR", voted: "VOTADO ✓",
+  team_pick: "👑 ELEGIDA POR EL EQUIPO · 100",
+  sub_h: "💡 ¿Tienes una idea mejor?",
+  sub_p: "Déjala aquí. La IA revisa cada propuesta y las buenas entran al ranking.",
+  sub_ph_t: "Tu idea en una frase *", sub_ph_d: "Detalles (opcional)", sub_ph_a: "Tu nombre o alias (opcional)",
+  sub_btn: "Enviar a la cola de la IA ⚡",
+  sub_ok: "✅ ¡Recibida! Tu idea está en la cola de revisión de la IA.",
+  foot: `Cada idea es de su autor original — cada tarjeta enlaza a la fuente.<br>
+    Puntuación IA = impacto × viabilidad × claridad. <b style="color:var(--gold)">👑 Elegida por el equipo</b> = el dueño o su equipo la marcó: puntúa 100 y la IA se adapta a su gusto.<br>
+    <span id="yr"></span> FanRank · hecha por un fan.`,
+  err: "No se pudo cargar. Prueba a recargar.",
+  langbtn: "🌐 EN"
+}};
+const t = k => T[LANG][k];
+const withLang = q => q + (LANG === "es" ? (q.includes("?") ? "&" : "?") + "lang=es" : "");
 
 function voterId(){
   let v = localStorage.getItem("fr_voter");
@@ -239,45 +310,69 @@ function markVoted(id){ const m = myVotes(); if(!m.includes(id)){ m.push(id); lo
 function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 function fmt(n){ return n >= 1000 ? (n/1000).toFixed(1).replace(".0","") + "k" : n; }
 function statHtml(n,l,green){ return `<div class="stat ${green?"green":""}"><div class="n">${n}</div><div class="l">${l}</div></div>`; }
+function ideaTitle(i){ return (LANG==="es" && i.title_es) ? i.title_es : i.title; }
+function ideaReason(i){ return (LANG==="es" && i.ai_reason_es) ? i.ai_reason_es : (i.ai_reason||""); }
+function secTagline(s){ return (LANG==="es" && s.tagline_es) ? s.tagline_es : (s.tagline||""); }
+
+/* ---------- static texts ---------- */
+document.documentElement.lang = LANG;
+document.getElementById("langbtn").textContent = t("langbtn");
+document.getElementById("langbtn").addEventListener("click", ()=>{
+  const nl = LANG === "es" ? "en" : "es";
+  localStorage.setItem("fr_lang", nl);
+  const p = new URLSearchParams(location.search);
+  if(nl === "es") p.set("lang","es"); else p.delete("lang");
+  location.search = p.toString();
+});
 
 /* ---------- HOME ---------- */
 async function loadHome(){
-  document.title = "FanRank — fan ideas, ranked by AI + votes";
+  document.title = t("title_home");
+  document.getElementById("hero-tag").innerHTML = t("hero_home");
+  document.getElementById("crumb-txt").textContent = t("all_sections");
+  document.getElementById("how").innerHTML = t("steps").map(s=>
+    `<div class="step"><div class="ic">${s[0]}</div><div class="t">${s[1]}</div><div class="d">${s[2]}</div></div>`).join("");
+  document.getElementById("loadtxt").textContent = t("loading");
+  document.getElementById("r-t").textContent = t("req_t");
+  document.getElementById("r-d").textContent = t("req_d");
+  document.getElementById("r-title").placeholder = t("req_ph");
+  document.getElementById("r-send").textContent = t("req_btn");
+  document.getElementById("r-ok").textContent = t("req_ok");
   try{
     const r = await fetch(SB_URL + "/rest/v1/fr_sections_stats?select=*", { headers: HDRS });
     sections = await r.json();
     sections.sort((a,b)=> (b.fan_votes*5 + b.ideas) - (a.fan_votes*5 + a.ideas));
     document.getElementById("stats").innerHTML =
-      statHtml(sections.length, "sections") +
-      statHtml(sections.reduce((s,x)=>s+x.ideas,0), "ideas") +
-      statHtml(sections.reduce((s,x)=>s+x.fan_votes,0), "fan votes", true);
+      statHtml(sections.length, t("st_sections")) +
+      statHtml(sections.reduce((s,x)=>s+x.ideas,0), t("st_ideas")) +
+      statHtml(sections.reduce((s,x)=>s+x.fan_votes,0), t("st_votes"), true);
     document.getElementById("sections").innerHTML = sections.map(s=>`
-      <a class="sec-card" href="?s=${esc(s.slug)}">
+      <a class="sec-card" href="${withLang("?s="+encodeURIComponent(s.slug))}">
         <div class="em">${esc(s.emoji||"🎮")}</div>
         <div class="info">
           <div class="nm">${esc(s.name)}</div>
-          <div class="tg">${esc(s.tagline||"")}</div>
+          <div class="tg">${esc(secTagline(s))}</div>
           <div class="nums">
-            <span class="chip hot">${s.ideas} ideas</span>
+            <span class="chip hot">${s.ideas} ${t("st_ideas")}</span>
             <span class="chip reddit">▲ ${fmt(s.reddit_upvotes)} reddit</span>
-            <span class="chip">🗳️ ${s.fan_votes} fan votes</span>
+            <span class="chip">🗳️ ${s.fan_votes} ${t("st_votes")}</span>
           </div>
         </div>
         <div class="go">→</div>
       </a>`).join("");
   }catch(e){
-    document.getElementById("sections").innerHTML = '<div class="loading">Could not load. Try refreshing.</div>';
+    document.getElementById("sections").innerHTML = `<div class="loading">${t("err")}</div>`;
   }
 }
 
-document.getElementById("r-send")?.addEventListener("click", async ()=>{
-  const t = document.getElementById("r-title").value.trim();
-  if(!t){ document.getElementById("r-title").focus(); return; }
+document.getElementById("r-send").addEventListener("click", async ()=>{
+  const v = document.getElementById("r-title").value.trim();
+  if(!v){ document.getElementById("r-title").focus(); return; }
   const btn = document.getElementById("r-send"); btn.disabled = true;
   try{
     const r = await fetch(SB_URL + "/rest/v1/fr_submissions", {
       method:"POST", headers: HDRS,
-      body: JSON.stringify({ section: "section-request", title: t })
+      body: JSON.stringify({ section: "section-request", title: v })
     });
     if(r.ok){ document.getElementById("r-ok").style.display="block"; document.getElementById("r-title").value=""; }
     else btn.disabled = false;
@@ -286,6 +381,16 @@ document.getElementById("r-send")?.addEventListener("click", async ()=>{
 
 /* ---------- SECTION ---------- */
 async function loadSection(){
+  document.getElementById("tab-ai").textContent = t("tab_ai");
+  document.getElementById("tab-fans").textContent = t("tab_fans");
+  document.getElementById("s-h").textContent = t("sub_h");
+  document.getElementById("s-p").textContent = t("sub_p");
+  document.getElementById("s-title").placeholder = t("sub_ph_t");
+  document.getElementById("s-details").placeholder = t("sub_ph_d");
+  document.getElementById("s-author").placeholder = t("sub_ph_a");
+  document.getElementById("s-send").textContent = t("sub_btn");
+  document.getElementById("s-ok").textContent = t("sub_ok");
+  document.getElementById("list").innerHTML = `<div class="loading"><div class="spin"></div><div>${t("loading")}</div></div>`;
   try{
     const [rs, ri] = await Promise.all([
       fetch(SB_URL + "/rest/v1/fr_sections?select=*&slug=eq." + encodeURIComponent(SECTION), { headers: HDRS }),
@@ -293,16 +398,15 @@ async function loadSection(){
     ]);
     const metas = await rs.json(); secMeta = metas[0] || null;
     ideas = await ri.json();
-    if(!secMeta){ location.href = location.pathname; return; }
+    if(!secMeta){ location.href = location.pathname + (LANG==="es"?"?lang=es":""); return; }
     document.title = `FanRank — ${secMeta.name}`;
-    document.getElementById("hero-tag").innerHTML =
-      `The ideas <b>${esc(secMeta.name)}</b> fans actually want.<br>Ranked by <b>AI</b>. Voted by <b>you</b>.`;
+    document.getElementById("hero-tag").innerHTML = t("hero_sec")(esc(secMeta.name));
     document.getElementById("crumb-txt").innerHTML =
-      `<a id="backhome">All sections</a> &nbsp;›&nbsp; ${esc(secMeta.emoji||"")} ${esc(secMeta.name)}`;
-    document.getElementById("backhome").addEventListener("click", ()=> location.href = location.pathname);
+      `<a id="backhome">${t("all_sections")}</a> &nbsp;›&nbsp; ${esc(secMeta.emoji||"")} ${esc(secMeta.name)}`;
+    document.getElementById("backhome").addEventListener("click", ()=> location.href = location.pathname + (LANG==="es"?"?lang=es":""));
     render();
   }catch(e){
-    document.getElementById("list").innerHTML = '<div class="loading">Could not load the ranking. Try refreshing.</div>';
+    document.getElementById("list").innerHTML = `<div class="loading">${t("err")}</div>`;
   }
 }
 
@@ -318,9 +422,9 @@ function render(){
   const mine = myVotes();
   const arr = sorted();
   document.getElementById("stats").innerHTML =
-    statHtml(arr.length, "ideas") +
-    statHtml(fmt(arr.reduce((s,i)=>s+(i.origin_upvotes||0),0)), "reddit upvotes") +
-    statHtml(arr.reduce((s,i)=>s+(i.web_votes||0),0), "fan votes here", true);
+    statHtml(arr.length, t("st_ideas")) +
+    statHtml(fmt(arr.reduce((s,i)=>s+(i.origin_upvotes||0),0)), t("st_reddit")) +
+    statHtml(arr.reduce((s,i)=>s+(i.web_votes||0),0), t("st_votes_here"), true);
 
   document.getElementById("list").innerHTML = arr.map((i,idx)=>{
     const score = i.owner_pick ? 100 : i.ai_score;
@@ -328,21 +432,21 @@ function render(){
     <div class="card ${i.owner_pick?"ownerpick":idx===0?"top1":idx===1?"top2":idx===2?"top3":""}">
       <div class="rank">${idx+1}</div>
       <div class="mid">
-        ${i.owner_pick ? '<div class="ownerbadge">👑 OWNER\'S PICK · 100</div>' : ''}
-        <div class="title">${esc(i.title)}</div>
+        ${i.owner_pick ? `<div class="ownerbadge">${t("team_pick")}</div>` : ''}
+        <div class="title">${esc(ideaTitle(i))}</div>
         <div class="aibar">
           <div class="bar"><div class="fill ${i.owner_pick?"goldfill":""}" data-w="${score}"></div></div>
           <div class="sc ${i.owner_pick?"goldsc":""}">${i.owner_pick?"👑":"AI"} ${score}</div>
         </div>
-        <div class="reason">${esc(i.ai_reason||"")}</div>
+        <div class="reason">${esc(ideaReason(i))}</div>
         <div class="meta">
-          <span class="chip reddit">▲ ${fmt(i.origin_upvotes)} on Reddit</span>
-          ${i.source_url ? `<span class="chip"><a href="${esc(i.source_url)}" target="_blank" rel="noopener">source ↗</a></span>` : ""}
+          <span class="chip reddit">▲ ${fmt(i.origin_upvotes)} ${t("on_reddit")}</span>
+          ${i.source_url ? `<span class="chip"><a href="${esc(i.source_url)}" target="_blank" rel="noopener">${t("source")}</a></span>` : ""}
         </div>
       </div>
       <div class="voteside">
         <button class="votebtn ${mine.includes(i.id)?"voted":""}" data-id="${i.id}" ${mine.includes(i.id)?"disabled":""}>
-          <span class="vn">${i.web_votes||0}</span><span class="vl">${mine.includes(i.id)?"VOTED ✓":"VOTE"}</span>
+          <span class="vn">${i.web_votes||0}</span><span class="vl">${mine.includes(i.id)?t("voted"):t("vote")}</span>
         </button>
       </div>
     </div>`;}).join("");
@@ -377,16 +481,16 @@ async function vote(id, btn){
   }catch(e){ btn.disabled = false; }
 }
 
-document.querySelectorAll(".tab").forEach(t=>{
-  t.addEventListener("click", ()=>{
+document.querySelectorAll(".tab").forEach(tb=>{
+  tb.addEventListener("click", ()=>{
     document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-    t.classList.add("active");
-    sortMode = t.dataset.sort;
+    tb.classList.add("active");
+    sortMode = tb.dataset.sort;
     render();
   });
 });
 
-document.getElementById("s-send")?.addEventListener("click", async ()=>{
+document.getElementById("s-send").addEventListener("click", async ()=>{
   const title = document.getElementById("s-title").value.trim();
   if(!title){ document.getElementById("s-title").focus(); return; }
   const btn = document.getElementById("s-send"); btn.disabled = true;
@@ -407,7 +511,8 @@ document.getElementById("s-send")?.addEventListener("click", async ()=>{
 });
 
 /* ---------- BOOT ---------- */
-document.getElementById("logo").setAttribute("href", location.pathname);
+document.getElementById("foot").innerHTML = t("foot");
+document.getElementById("logo").setAttribute("href", location.pathname + (LANG==="es"?"?lang=es":""));
 document.getElementById("yr").textContent = new Date().getFullYear();
 if(SECTION){
   document.getElementById("view-home").classList.add("hidden");
