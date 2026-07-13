@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FanRank — the ideas Brawl Stars fans actually want</title>
-<meta name="description" content="The most upvoted community ideas for Brawl Stars, ranked by AI and voted by fans. Every idea credits its original author.">
+<title>FanRank — fan ideas, ranked by AI + votes</title>
+<meta name="description" content="Fan ideas for games, creators and companies. Scored by AI, voted by fans, and the owner can pick favorites. Every idea credits its original author.">
 <style>
   :root{
     --bg:#0b0d14; --bg2:#12151f; --card:#161a27; --card2:#1c2133;
@@ -30,19 +30,48 @@
   header{text-align:center;padding:26px 0 8px}
   .logo{font-size:clamp(2.2rem,7vw,3.4rem);font-weight:900;letter-spacing:-1px;
     background:linear-gradient(92deg,var(--yellow) 10%,var(--blue) 55%,var(--purple) 95%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.05}
+    -webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.05;
+    display:inline-block;cursor:pointer;text-decoration:none}
   .tag{color:var(--muted);margin-top:10px;font-size:1.02rem}
   .tag b{color:var(--txt)}
-  .section-chip{display:inline-flex;align-items:center;gap:8px;margin-top:14px;
-    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.9rem}
-  .section-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+  .crumb{display:inline-flex;align-items:center;gap:8px;margin-top:14px;
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.9rem;color:var(--muted)}
+  .crumb a{color:var(--blue);text-decoration:none;cursor:pointer}
+  .crumb .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
 
   .stats{display:flex;gap:10px;justify-content:center;margin:22px 0 6px;flex-wrap:wrap}
   .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 16px;text-align:center;min-width:105px}
   .stat .n{font-size:1.25rem;font-weight:800;color:var(--yellow)}
   .stat .l{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
-  #stat-votes .n{color:var(--green)}
+  .stat.green .n{color:var(--green)}
 
+  /* HOME */
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:26px 0 8px}
+  .how .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+  .how .ic{font-size:1.5rem}
+  .how .t{font-weight:800;font-size:.88rem;margin-top:6px}
+  .how .d{color:var(--muted);font-size:.76rem;margin-top:4px;line-height:1.45}
+  .sections{display:flex;flex-direction:column;gap:12px;margin-top:22px}
+  .sec-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;
+    display:flex;align-items:center;gap:16px;cursor:pointer;text-decoration:none;color:var(--txt);
+    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease}
+  .sec-card:hover{transform:translateY(-2px);border-color:var(--yellow);box-shadow:0 8px 26px rgba(0,0,0,.35)}
+  .sec-card .em{font-size:2.2rem}
+  .sec-card .info{flex:1;min-width:0}
+  .sec-card .nm{font-weight:900;font-size:1.15rem}
+  .sec-card .tg{color:var(--muted);font-size:.85rem;margin-top:3px}
+  .sec-card .nums{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
+  .sec-card .go{font-size:1.4rem;color:var(--muted)}
+  .sec-card:hover .go{color:var(--yellow)}
+  .chip{font-size:.75rem;color:var(--muted);background:var(--bg2);border:1px solid var(--line);
+    border-radius:999px;padding:3px 9px;white-space:nowrap}
+  .chip.hot{color:var(--yellow)}
+  .request{border:1px dashed #3a4160;background:linear-gradient(135deg,rgba(255,196,0,.05),rgba(176,107,255,.05));
+    border-radius:18px;padding:18px;text-align:center;margin-top:12px}
+  .request .t{font-weight:800}
+  .request .d{color:var(--muted);font-size:.86rem;margin-top:4px;margin-bottom:12px}
+
+  /* SECTION (ranking) */
   .tabs{display:flex;gap:8px;margin:22px 0 14px;background:var(--bg2);border:1px solid var(--line);
     border-radius:14px;padding:6px;position:sticky;top:8px;z-index:5;backdrop-filter:blur(8px)}
   .tab{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:.92rem;
@@ -60,22 +89,26 @@
   .card.top1{border-color:rgba(255,215,0,.55);box-shadow:0 0 22px rgba(255,215,0,.12)}
   .card.top2{border-color:rgba(192,200,216,.45)}
   .card.top3{border-color:rgba(217,148,90,.45)}
+  .card.ownerpick{border-color:rgba(255,215,0,.8);background:linear-gradient(135deg,rgba(255,215,0,.06),var(--card))}
   .rank{font-size:1.35rem;font-weight:900;text-align:center;color:var(--muted)}
   .top1 .rank{color:var(--gold)} .top2 .rank{color:var(--silver)} .top3 .rank{color:var(--bronze)}
 
   .mid{min-width:0}
+  .ownerbadge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,215,0,.14);color:var(--gold);
+    border:1px solid rgba(255,215,0,.4);border-radius:999px;padding:2px 10px;font-size:.72rem;font-weight:900;
+    letter-spacing:.5px;margin-bottom:7px}
   .title{font-weight:700;font-size:1.0rem;line-height:1.35}
   .meta{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
-  .chip{font-size:.75rem;color:var(--muted);background:var(--bg2);border:1px solid var(--line);
-    border-radius:999px;padding:3px 9px;white-space:nowrap}
-  .chip.reddit{color:#ff8a5c}
   .chip a{color:inherit;text-decoration:none}
   .chip a:hover{text-decoration:underline}
+  .chip.reddit{color:#ff8a5c}
   .aibar{margin-top:9px;display:flex;align-items:center;gap:8px}
   .aibar .bar{flex:1;height:6px;background:var(--bg2);border-radius:99px;overflow:hidden}
   .aibar .fill{height:100%;border-radius:99px;width:0;
     background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .8s cubic-bezier(.2,.7,.2,1)}
-  .aibar .sc{font-size:.8rem;font-weight:800;color:var(--blue);min-width:52px;text-align:right}
+  .aibar .fill.goldfill{background:linear-gradient(90deg,var(--gold),#ffb300)}
+  .aibar .sc{font-size:.8rem;font-weight:800;color:var(--blue);min-width:54px;text-align:right}
+  .aibar .sc.goldsc{color:var(--gold)}
   .reason{font-size:.8rem;color:var(--muted);margin-top:6px;font-style:italic}
 
   .voteside{display:flex;flex-direction:column;align-items:center;gap:4px}
@@ -90,7 +123,6 @@
   .votebtn .vl{font-size:.62rem;letter-spacing:.5px;color:var(--muted)}
   .votebtn.voted .vl{color:var(--green)}
   .votebtn:active{transform:scale(.95)}
-
   .burst{position:absolute;left:50%;top:50%;pointer-events:none;font-size:1rem;opacity:0;transform:translate(-50%,-50%)}
   @keyframes pop{
     0%{opacity:1;transform:translate(-50%,-50%) scale(.6)}
@@ -118,11 +150,13 @@
   .spin{display:inline-block;width:22px;height:22px;border:3px solid var(--line);border-top-color:var(--yellow);
     border-radius:50%;animation:rot 1s linear infinite;margin-bottom:10px}
   @keyframes rot{to{transform:rotate(360deg)}}
+  .hidden{display:none}
 
   @media (max-width:520px){
     .card{grid-template-columns:34px 1fr auto;padding:12px}
     .rank{font-size:1.1rem}
     .title{font-size:.93rem}
+    .how{grid-template-columns:1fr;gap:8px}
   }
   @media (prefers-reduced-motion: reduce){
     *{animation:none!important;transition:none!important}
@@ -135,41 +169,53 @@
 <div class="wrap">
 
   <header>
-    <div class="logo">FANRANK</div>
-    <div class="tag">The ideas <b>Brawl Stars</b> fans actually want.<br>Ranked by <b>AI</b>. Voted by <b>you</b>.</div>
-    <div class="section-chip"><span class="dot"></span> Section: Brawl Stars · more games and creators coming</div>
+    <a class="logo" id="logo">FANRANK</a>
+    <div class="tag" id="hero-tag">Fan ideas for <b>games, creators and companies</b>.<br>Scored by <b>AI</b>. Voted by <b>fans</b>. Picked by the <b>owner</b>.</div>
+    <div class="crumb" id="crumb"><span class="dot"></span> <span id="crumb-txt">All sections</span></div>
   </header>
 
-  <div class="stats">
-    <div class="stat"><div class="n" id="stat-ideas">–</div><div class="l">ideas</div></div>
-    <div class="stat"><div class="n" id="stat-reddit">–</div><div class="l">reddit upvotes</div></div>
-    <div class="stat" id="stat-votes"><div class="n" id="stat-web">–</div><div class="l">fan votes here</div></div>
+  <div class="stats" id="stats"></div>
+
+  <!-- HOME VIEW -->
+  <div id="view-home">
+    <div class="how">
+      <div class="step"><div class="ic">💡</div><div class="t">Fans drop ideas</div><div class="d">Anyone can submit. Every idea keeps its author's credit.</div></div>
+      <div class="step"><div class="ic">🤖</div><div class="t">AI scores them</div><div class="d">Impact × feasibility × clarity. New ideas get reviewed and re-ranked.</div></div>
+      <div class="step"><div class="ic">👑</div><div class="t">The owner picks</div><div class="d">When the game or creator marks a favorite, it scores 100 and the AI learns their taste.</div></div>
+    </div>
+    <div class="sections" id="sections"><div class="loading"><div class="spin"></div><div>Loading sections…</div></div></div>
+    <div class="request">
+      <div class="t">🎯 Want a section for your game, creator or company?</div>
+      <div class="d">Tell us which one and we'll build its ranking.</div>
+      <input id="r-title" maxlength="120" placeholder="Which game / creator / company? *" style="width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--txt);padding:11px 12px;font-size:.95rem;margin-bottom:10px;font-family:inherit">
+      <button class="sendbtn" id="r-send">Request it ⚡</button>
+      <div class="oktxt" id="r-ok">✅ Got it! It joins the build queue.</div>
+    </div>
   </div>
 
-  <div class="tabs" role="tablist">
-    <button class="tab active" data-sort="ai" role="tab">🤖 AI Rank</button>
-    <button class="tab" data-sort="reddit" role="tab">🔥 Reddit</button>
-    <button class="tab" data-sort="fans" role="tab">🗳️ Fan votes</button>
-  </div>
-
-  <div id="list" class="list">
-    <div class="loading"><div class="spin"></div><div>Loading the ranking…</div></div>
-  </div>
-
-  <div class="submit-zone" id="submit">
-    <h2>💡 Got a better idea?</h2>
-    <p>Drop it here. The AI reviews every submission and the good ones join the ranking.</p>
-    <input id="s-title" maxlength="140" placeholder="Your idea in one sentence *">
-    <textarea id="s-details" maxlength="600" placeholder="Details (optional)"></textarea>
-    <input id="s-author" maxlength="40" placeholder="Your name or handle (optional)">
-    <button class="sendbtn" id="s-send">Send it to the AI queue ⚡</button>
-    <div class="oktxt" id="s-ok">✅ Received! Your idea is in the AI review queue.</div>
+  <!-- SECTION VIEW -->
+  <div id="view-section" class="hidden">
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-sort="ai" role="tab">🤖 AI Rank</button>
+      <button class="tab" data-sort="reddit" role="tab">🔥 Reddit</button>
+      <button class="tab" data-sort="fans" role="tab">🗳️ Fan votes</button>
+    </div>
+    <div id="list" class="list"></div>
+    <div class="submit-zone" id="submit">
+      <h2>💡 Got a better idea?</h2>
+      <p>Drop it here. The AI reviews every submission and the good ones join the ranking.</p>
+      <input id="s-title" maxlength="140" placeholder="Your idea in one sentence *">
+      <textarea id="s-details" maxlength="600" placeholder="Details (optional)"></textarea>
+      <input id="s-author" maxlength="40" placeholder="Your name or handle (optional)">
+      <button class="sendbtn" id="s-send">Send it to the AI queue ⚡</button>
+      <div class="oktxt" id="s-ok">✅ Received! Your idea is in the AI review queue.</div>
+    </div>
   </div>
 
   <footer>
-    Every idea belongs to its original author — each card links to the source post on Reddit.<br>
-    AI score = impact × feasibility × clarity, judged by AI. Fan votes are live.<br>
-    <span id="yr"></span> FanRank · built by a fan, not affiliated with Supercell.
+    Every idea belongs to its original author — cards link to the source.<br>
+    AI score = impact × feasibility × clarity. <b style="color:var(--gold)">👑 Owner's pick</b> = the owner marked it, it scores 100 and the AI adapts to their taste.<br>
+    <span id="yr"></span> FanRank · built by a fan.
   </footer>
 </div>
 
@@ -177,13 +223,12 @@
 const SB_URL = "https://kopegamcjozrvmxruwdn.supabase.co";
 const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvcGVnYW1jam96cnZteHJ1d2RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwMjgzNDIsImV4cCI6MjA5NzYwNDM0Mn0.BOPhoQNg2FVKSevoTC7rVWvBxgNMxuZuyQdarUHB3QQ";
 const HDRS = { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json" };
-const SECTION = "brawl-stars";
 
-let ideas = [];
-let sortMode = "ai";
 const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const params = new URLSearchParams(location.search);
+const SECTION = params.get("s");
+let ideas = [], sections = [], sortMode = "ai", secMeta = null;
 
-// one anonymous voter id per device (no accounts, no tracking beyond this)
 function voterId(){
   let v = localStorage.getItem("fr_voter");
   if(!v){ v = "v_" + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem("fr_voter", v); }
@@ -191,11 +236,70 @@ function voterId(){
 }
 function myVotes(){ try{ return JSON.parse(localStorage.getItem("fr_myvotes")||"[]"); }catch(e){ return []; } }
 function markVoted(id){ const m = myVotes(); if(!m.includes(id)){ m.push(id); localStorage.setItem("fr_myvotes", JSON.stringify(m)); } }
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function fmt(n){ return n >= 1000 ? (n/1000).toFixed(1).replace(".0","") + "k" : n; }
+function statHtml(n,l,green){ return `<div class="stat ${green?"green":""}"><div class="n">${n}</div><div class="l">${l}</div></div>`; }
 
-async function load(){
+/* ---------- HOME ---------- */
+async function loadHome(){
+  document.title = "FanRank — fan ideas, ranked by AI + votes";
   try{
-    const r = await fetch(SB_URL + "/rest/v1/fr_ranking?select=*&section=eq." + SECTION, { headers: HDRS });
-    ideas = await r.json();
+    const r = await fetch(SB_URL + "/rest/v1/fr_sections_stats?select=*", { headers: HDRS });
+    sections = await r.json();
+    sections.sort((a,b)=> (b.fan_votes*5 + b.ideas) - (a.fan_votes*5 + a.ideas));
+    document.getElementById("stats").innerHTML =
+      statHtml(sections.length, "sections") +
+      statHtml(sections.reduce((s,x)=>s+x.ideas,0), "ideas") +
+      statHtml(sections.reduce((s,x)=>s+x.fan_votes,0), "fan votes", true);
+    document.getElementById("sections").innerHTML = sections.map(s=>`
+      <a class="sec-card" href="?s=${esc(s.slug)}">
+        <div class="em">${esc(s.emoji||"🎮")}</div>
+        <div class="info">
+          <div class="nm">${esc(s.name)}</div>
+          <div class="tg">${esc(s.tagline||"")}</div>
+          <div class="nums">
+            <span class="chip hot">${s.ideas} ideas</span>
+            <span class="chip reddit">▲ ${fmt(s.reddit_upvotes)} reddit</span>
+            <span class="chip">🗳️ ${s.fan_votes} fan votes</span>
+          </div>
+        </div>
+        <div class="go">→</div>
+      </a>`).join("");
+  }catch(e){
+    document.getElementById("sections").innerHTML = '<div class="loading">Could not load. Try refreshing.</div>';
+  }
+}
+
+document.getElementById("r-send")?.addEventListener("click", async ()=>{
+  const t = document.getElementById("r-title").value.trim();
+  if(!t){ document.getElementById("r-title").focus(); return; }
+  const btn = document.getElementById("r-send"); btn.disabled = true;
+  try{
+    const r = await fetch(SB_URL + "/rest/v1/fr_submissions", {
+      method:"POST", headers: HDRS,
+      body: JSON.stringify({ section: "section-request", title: t })
+    });
+    if(r.ok){ document.getElementById("r-ok").style.display="block"; document.getElementById("r-title").value=""; }
+    else btn.disabled = false;
+  }catch(e){ btn.disabled = false; }
+});
+
+/* ---------- SECTION ---------- */
+async function loadSection(){
+  try{
+    const [rs, ri] = await Promise.all([
+      fetch(SB_URL + "/rest/v1/fr_sections?select=*&slug=eq." + encodeURIComponent(SECTION), { headers: HDRS }),
+      fetch(SB_URL + "/rest/v1/fr_ranking?select=*&section=eq." + encodeURIComponent(SECTION), { headers: HDRS })
+    ]);
+    const metas = await rs.json(); secMeta = metas[0] || null;
+    ideas = await ri.json();
+    if(!secMeta){ location.href = location.pathname; return; }
+    document.title = `FanRank — ${secMeta.name}`;
+    document.getElementById("hero-tag").innerHTML =
+      `The ideas <b>${esc(secMeta.name)}</b> fans actually want.<br>Ranked by <b>AI</b>. Voted by <b>you</b>.`;
+    document.getElementById("crumb-txt").innerHTML =
+      `<a id="backhome">All sections</a> &nbsp;›&nbsp; ${esc(secMeta.emoji||"")} ${esc(secMeta.name)}`;
+    document.getElementById("backhome").addEventListener("click", ()=> location.href = location.pathname);
     render();
   }catch(e){
     document.getElementById("list").innerHTML = '<div class="loading">Could not load the ranking. Try refreshing.</div>';
@@ -204,29 +308,31 @@ async function load(){
 
 function sorted(){
   const a = [...ideas];
-  if(sortMode === "ai")     a.sort((x,y)=> y.ai_score - x.ai_score || y.origin_upvotes - x.origin_upvotes);
+  if(sortMode === "ai")     a.sort((x,y)=> (y.owner_pick-x.owner_pick) || y.ai_score - x.ai_score || y.origin_upvotes - x.origin_upvotes);
   if(sortMode === "reddit") a.sort((x,y)=> y.origin_upvotes - x.origin_upvotes);
   if(sortMode === "fans")   a.sort((x,y)=> y.web_votes - x.web_votes || y.ai_score - x.ai_score);
   return a;
 }
 
-function fmt(n){ return n >= 1000 ? (n/1000).toFixed(1).replace(".0","") + "k" : n; }
-
 function render(){
   const mine = myVotes();
   const arr = sorted();
-  document.getElementById("stat-ideas").textContent = arr.length;
-  document.getElementById("stat-reddit").textContent = fmt(arr.reduce((s,i)=>s+(i.origin_upvotes||0),0));
-  document.getElementById("stat-web").textContent = arr.reduce((s,i)=>s+(i.web_votes||0),0);
+  document.getElementById("stats").innerHTML =
+    statHtml(arr.length, "ideas") +
+    statHtml(fmt(arr.reduce((s,i)=>s+(i.origin_upvotes||0),0)), "reddit upvotes") +
+    statHtml(arr.reduce((s,i)=>s+(i.web_votes||0),0), "fan votes here", true);
 
-  document.getElementById("list").innerHTML = arr.map((i,idx)=>`
-    <div class="card ${idx===0?"top1":idx===1?"top2":idx===2?"top3":""}">
+  document.getElementById("list").innerHTML = arr.map((i,idx)=>{
+    const score = i.owner_pick ? 100 : i.ai_score;
+    return `
+    <div class="card ${i.owner_pick?"ownerpick":idx===0?"top1":idx===1?"top2":idx===2?"top3":""}">
       <div class="rank">${idx+1}</div>
       <div class="mid">
+        ${i.owner_pick ? '<div class="ownerbadge">👑 OWNER\'S PICK · 100</div>' : ''}
         <div class="title">${esc(i.title)}</div>
         <div class="aibar">
-          <div class="bar"><div class="fill" data-w="${i.ai_score}"></div></div>
-          <div class="sc">AI ${i.ai_score}</div>
+          <div class="bar"><div class="fill ${i.owner_pick?"goldfill":""}" data-w="${score}"></div></div>
+          <div class="sc ${i.owner_pick?"goldsc":""}">${i.owner_pick?"👑":"AI"} ${score}</div>
         </div>
         <div class="reason">${esc(i.ai_reason||"")}</div>
         <div class="meta">
@@ -239,18 +345,15 @@ function render(){
           <span class="vn">${i.web_votes||0}</span><span class="vl">${mine.includes(i.id)?"VOTED ✓":"VOTE"}</span>
         </button>
       </div>
-    </div>`).join("");
+    </div>`;}).join("");
 
   requestAnimationFrame(()=>{
     document.querySelectorAll(".fill").forEach(f=>{ f.style.width = f.dataset.w + "%"; });
   });
-
   document.querySelectorAll(".votebtn:not(.voted)").forEach(b=>{
     b.addEventListener("click", ()=> vote(parseInt(b.dataset.id), b));
   });
 }
-
-function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 async function vote(id, btn){
   btn.disabled = true;
@@ -283,7 +386,7 @@ document.querySelectorAll(".tab").forEach(t=>{
   });
 });
 
-document.getElementById("s-send").addEventListener("click", async ()=>{
+document.getElementById("s-send")?.addEventListener("click", async ()=>{
   const title = document.getElementById("s-title").value.trim();
   if(!title){ document.getElementById("s-title").focus(); return; }
   const btn = document.getElementById("s-send"); btn.disabled = true;
@@ -303,8 +406,16 @@ document.getElementById("s-send").addEventListener("click", async ()=>{
   }catch(e){ btn.disabled = false; }
 });
 
+/* ---------- BOOT ---------- */
+document.getElementById("logo").setAttribute("href", location.pathname);
 document.getElementById("yr").textContent = new Date().getFullYear();
-load();
+if(SECTION){
+  document.getElementById("view-home").classList.add("hidden");
+  document.getElementById("view-section").classList.remove("hidden");
+  loadSection();
+}else{
+  loadHome();
+}
 </script>
 </body>
 </html>
