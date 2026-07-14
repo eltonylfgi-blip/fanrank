@@ -3,524 +3,1324 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FanRank — fan ideas, ranked by AI + votes</title>
-<meta name="description" content="Fan ideas for games, creators and companies. Scored by AI, voted by fans, picked by the team. Every idea credits its original author.">
+<meta name="theme-color" content="#0a0b12">
+<title>FanRank — the best ideas, ranked</title>
+<meta name="description" content="Starting with Brawl Stars: vote on the ideas fans want most, or request the next game, creator or company profile.">
 <style>
   :root{
-    --bg:#0b0d14; --bg2:#12151f; --card:#161a27; --card2:#1c2133;
-    --txt:#eef1f8; --muted:#8b93a7; --line:#262c3f;
-    --yellow:#ffc400; --blue:#4da3ff; --purple:#b06bff; --green:#3ddc84; --red:#ff5c7a;
-    --gold:#ffd700; --silver:#c0c8d8; --bronze:#d9945a;
+    color-scheme:dark;
+    --bg:#0a0b12;--bg-soft:#10131d;--surface:#151926;--surface-2:#1b2030;
+    --text:#f5f7fb;--muted:#aab2c6;--line:#30384d;--line-soft:#242b3d;
+    --yellow:#ffd129;--yellow-ink:#211900;--blue:#63b3ff;--purple:#b986ff;
+    --green:#55e59a;--red:#ff718c;--gold:#ffd700;--silver:#cbd3e3;--bronze:#df9f69;
+    --shadow:0 18px 60px rgba(0,0,0,.34);--focus:0 0 0 3px rgba(99,179,255,.35);
+    --radius:18px;--ease:cubic-bezier(.2,.7,.2,1);
   }
-  *{box-sizing:border-box;margin:0;padding:0}
+  *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{
-    background:var(--bg); color:var(--txt);
-    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-    min-height:100vh; overflow-x:hidden;
+    margin:0;min-height:100dvh;background:var(--bg);color:var(--text);
+    font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    line-height:1.5;overflow-x:hidden;
   }
-  .bgfx{position:fixed;inset:0;z-index:0;pointer-events:none;
-    background:
-      radial-gradient(600px 400px at 15% -5%, rgba(255,196,0,.10), transparent 60%),
-      radial-gradient(700px 500px at 90% 10%, rgba(176,107,255,.10), transparent 60%),
-      radial-gradient(800px 600px at 50% 110%, rgba(77,163,255,.08), transparent 60%);
-  }
-  .wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:28px 16px 90px}
-
-  .langbtn{position:fixed;top:12px;right:12px;z-index:20;background:var(--card);border:1px solid var(--line);
-    color:var(--txt);border-radius:999px;padding:8px 14px;font-weight:800;font-size:.85rem;cursor:pointer;
-    transition:border-color .15s ease}
+  button,input,textarea{font:inherit}
+  button,a{touch-action:manipulation}
+  button{cursor:pointer}
+  a{color:inherit}
+  .bgfx{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+    radial-gradient(800px 520px at 8% -8%,rgba(255,209,41,.12),transparent 62%),
+    radial-gradient(760px 540px at 94% 3%,rgba(185,134,255,.13),transparent 64%),
+    radial-gradient(900px 620px at 50% 112%,rgba(99,179,255,.09),transparent 66%)}
+  .gridfx{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.17;background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:32px 32px;mask-image:linear-gradient(to bottom,black,transparent 75%)}
+  .wrap{width:min(920px,100%);margin:0 auto;padding:24px 18px 88px}
+  .skip-link{position:fixed;left:12px;top:-80px;z-index:100;background:var(--text);color:var(--bg);
+    padding:10px 14px;border-radius:10px;font-weight:800}
+  .skip-link:focus{top:12px}
+  .langbtn{position:fixed;top:12px;right:12px;z-index:30;min-height:44px;padding:9px 15px;
+    border-radius:999px;border:1px solid var(--line);background:rgba(21,25,38,.92);color:var(--text);
+    font-weight:850;box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
   .langbtn:hover{border-color:var(--yellow)}
+  :focus-visible{outline:0;box-shadow:var(--focus)!important}
+  .hidden{display:none!important}
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-  header{text-align:center;padding:26px 0 8px}
-  .logo{font-size:clamp(2.2rem,7vw,3.4rem);font-weight:900;letter-spacing:-1px;
-    background:linear-gradient(92deg,var(--yellow) 10%,var(--blue) 55%,var(--purple) 95%);
-    -webkit-background-clip:text;background-clip:text;color:transparent;line-height:1.05;
-    display:inline-block;cursor:pointer;text-decoration:none}
-  .tag{color:var(--muted);margin-top:10px;font-size:1.02rem}
-  .tag b{color:var(--txt)}
-  .crumb{display:inline-flex;align-items:center;gap:8px;margin-top:14px;
-    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:.9rem;color:var(--muted)}
-  .crumb a{color:var(--blue);text-decoration:none;cursor:pointer}
-  .crumb .dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+  header{text-align:center;padding:34px 0 12px}
+  .logo{display:inline-block;text-decoration:none;font-size:clamp(2.35rem,8vw,4.1rem);font-weight:950;
+    letter-spacing:-.07em;line-height:1;background:linear-gradient(100deg,var(--yellow) 8%,var(--blue) 55%,var(--purple));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .tag{max-width:720px;margin:14px auto 0;color:var(--muted);font-size:clamp(1rem,2.4vw,1.18rem)}
+  .tag b{color:var(--text)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;color:var(--yellow);
+    text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:900}
+  .eyebrow:before{content:"";width:22px;height:1px;background:currentColor}
 
-  .stats{display:flex;gap:10px;justify-content:center;margin:22px 0 6px;flex-wrap:wrap}
-  .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 16px;text-align:center;min-width:105px}
-  .stat .n{font-size:1.25rem;font-weight:800;color:var(--yellow)}
-  .stat .l{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:2px}
+  .search-area{position:relative;max-width:760px;margin:25px auto 0;text-align:left}
+  .field-label{display:block;margin:0 0 7px;font-size:.82rem;font-weight:800;color:var(--muted)}
+  .search-shell{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:10px;
+    padding:7px 8px 7px 16px;border:1px solid #3d4660;border-radius:17px;background:rgba(21,25,38,.96);
+    box-shadow:var(--shadow);transition:border-color .2s ease,transform .2s var(--ease)}
+  .search-shell:focus-within{border-color:var(--blue);transform:translateY(-1px)}
+  .search-shell svg{width:23px;height:23px;color:var(--blue)}
+  .search-shell input{min-width:0;height:48px;border:0;outline:0;background:transparent;color:var(--text);
+    font-size:clamp(1rem,2.4vw,1.08rem)}
+  .search-shell input::placeholder{color:#7f899f}
+  .search-btn,.primary-btn{min-height:44px;border:0;border-radius:12px;padding:10px 18px;
+    background:linear-gradient(100deg,var(--yellow),#ffb91f);color:var(--yellow-ink);font-weight:950;
+    transition:filter .18s ease,transform .18s var(--ease)}
+  .search-btn:hover,.primary-btn:hover{filter:brightness(1.07)}
+  .search-btn:active,.primary-btn:active{transform:scale(.98)}
+  .search-panel{position:absolute;left:0;right:0;top:calc(100% + 8px);z-index:25;padding:8px;
+    border:1px solid var(--line);border-radius:15px;background:#141824;box-shadow:var(--shadow)}
+  .search-result{display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:11px;width:100%;
+    min-height:56px;padding:8px;border:0;border-radius:11px;background:transparent;color:var(--text);
+    text-align:left;text-decoration:none}
+  .search-result:hover,.search-result:focus-visible{background:var(--surface-2)}
+  .result-avatar{display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--line);
+    border-radius:12px;background:var(--bg-soft);font-size:1.35rem}
+  .result-title{display:block;font-weight:850}
+  .result-meta{display:block;color:var(--muted);font-size:.78rem}
+  .result-arrow{color:var(--muted);font-size:1.15rem}
+  .search-empty{padding:14px;color:var(--muted)}
+  .search-empty b{display:block;color:var(--text);margin-bottom:3px}
+  .search-empty button{margin-top:10px}
+
+  .crumb{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;
+    color:var(--muted);font-size:.9rem}
+  .crumb a{color:var(--blue);text-decoration:none}
+  .crumb .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(85,229,154,.1)}
+
+  .stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:24px 0 0}
+  .stat{min-width:118px;padding:10px 15px;border:1px solid var(--line-soft);border-radius:14px;
+    background:rgba(21,25,38,.78);text-align:center}
+  .stat .n{font-size:1.28rem;font-weight:950;color:var(--yellow);font-variant-numeric:tabular-nums}
   .stat.green .n{color:var(--green)}
+  .stat .l{margin-top:1px;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em}
 
-  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:26px 0 8px}
-  .how .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
-  .how .ic{font-size:1.5rem}
-  .how .t{font-weight:800;font-size:.88rem;margin-top:6px}
-  .how .d{color:var(--muted);font-size:.76rem;margin-top:4px;line-height:1.45}
-  .sections{display:flex;flex-direction:column;gap:12px;margin-top:22px}
-  .sec-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;
-    display:flex;align-items:center;gap:16px;cursor:pointer;text-decoration:none;color:var(--txt);
-    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease}
-  .sec-card:hover{transform:translateY(-2px);border-color:var(--yellow);box-shadow:0 8px 26px rgba(0,0,0,.35)}
-  .sec-card .em{font-size:2.2rem}
-  .sec-card .info{flex:1;min-width:0}
-  .sec-card .nm{font-weight:900;font-size:1.15rem}
-  .sec-card .tg{color:var(--muted);font-size:.85rem;margin-top:3px}
-  .sec-card .nums{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap}
-  .sec-card .go{font-size:1.4rem;color:var(--muted)}
-  .sec-card:hover .go{color:var(--yellow)}
-  .chip{font-size:.75rem;color:var(--muted);background:var(--bg2);border:1px solid var(--line);
-    border-radius:999px;padding:3px 9px;white-space:nowrap}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:34px 0 13px}
+  .section-head h2{margin:0;font-size:clamp(1.18rem,3vw,1.48rem)}
+  .section-head p{margin:3px 0 0;color:var(--muted);font-size:.88rem}
+  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:30px 0 0}
+  .step{padding:17px;border:1px solid var(--line-soft);border-radius:var(--radius);background:rgba(21,25,38,.72)}
+  .step-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:var(--surface-2);
+    color:var(--blue)}
+  .step-icon svg{width:21px;height:21px}
+  .step-title{margin-top:11px;font-weight:900}
+  .step-desc{margin-top:4px;color:var(--muted);font-size:.8rem}
+
+  .sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .sec-card{display:flex;align-items:center;gap:14px;min-height:112px;padding:18px;border:1px solid var(--line);
+    border-radius:var(--radius);background:var(--surface);color:var(--text);text-decoration:none;
+    transition:transform .18s var(--ease),border-color .18s ease,box-shadow .18s ease}
+  .sec-card:hover{transform:translateY(-2px);border-color:var(--yellow);box-shadow:0 12px 38px rgba(0,0,0,.28)}
+  .sec-em{display:grid;place-items:center;flex:0 0 54px;height:54px;border-radius:15px;background:var(--surface-2);font-size:1.75rem}
+  .sec-info{min-width:0;flex:1}
+  .sec-name{font-size:1.08rem;font-weight:950}
+  .sec-tag{margin-top:2px;color:var(--muted);font-size:.8rem}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid var(--line-soft);
+    border-radius:999px;background:var(--bg-soft);color:var(--muted);font-size:.7rem}
   .chip.hot{color:var(--yellow)}
-  .chip.reddit{color:#ff8a5c}
-  .chip a{color:inherit;text-decoration:none}
-  .chip a:hover{text-decoration:underline}
-  .request{border:1px dashed #3a4160;background:linear-gradient(135deg,rgba(255,196,0,.05),rgba(176,107,255,.05));
-    border-radius:18px;padding:18px;text-align:center;margin-top:12px}
-  .request .t{font-weight:800}
-  .request .d{color:var(--muted);font-size:.86rem;margin-top:4px;margin-bottom:12px}
-  .request input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--txt);
-    padding:11px 12px;font-size:.95rem;margin-bottom:10px;font-family:inherit}
-  .request input:focus{outline:none;border-color:var(--purple)}
 
-  .tabs{display:flex;gap:8px;margin:22px 0 14px;background:var(--bg2);border:1px solid var(--line);
-    border-radius:14px;padding:6px;position:sticky;top:8px;z-index:5;backdrop-filter:blur(8px)}
-  .tab{flex:1;border:0;background:transparent;color:var(--muted);font-weight:700;font-size:.92rem;
-    padding:10px 6px;border-radius:10px;cursor:pointer;transition:all .18s ease}
-  .tab.active{background:var(--card2);color:var(--txt);box-shadow:0 2px 12px rgba(0,0,0,.35)}
-  .tab:hover{color:var(--txt)}
+  .trending{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .trend-card{display:flex;flex-direction:column;min-height:166px;padding:15px;border:1px solid var(--line);
+    border-radius:16px;background:linear-gradient(145deg,rgba(27,32,48,.96),rgba(17,20,31,.96));
+    text-decoration:none;transition:transform .18s var(--ease),border-color .18s ease}
+  .trend-card:hover{transform:translateY(-2px);border-color:var(--blue)}
+  .trend-rank{color:var(--yellow);font-size:.73rem;font-weight:950;letter-spacing:.08em}
+  .trend-title{margin-top:10px;font-weight:850;line-height:1.35}
+  .trend-meta{margin-top:auto;padding-top:12px;color:var(--muted);font-size:.75rem}
 
-  .list{display:flex;flex-direction:column;gap:12px}
-  .card{
-    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;
-    display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;
-    transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  .panel{margin-top:30px;padding:21px;border:1px solid var(--line);border-radius:var(--radius);
+    background:linear-gradient(135deg,rgba(255,209,41,.055),rgba(185,134,255,.055))}
+  .panel h2{margin:0;font-size:1.18rem}
+  .panel-intro{margin:5px 0 17px;color:var(--muted);font-size:.88rem}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .field{min-width:0}
+  .field.full{grid-column:1/-1}
+  .field label{display:block;margin:0 0 6px;color:var(--text);font-size:.8rem;font-weight:850}
+  .field .optional{color:var(--muted);font-weight:600}
+  .field input,.field textarea,.filter-input{
+    width:100%;min-height:46px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;
+    background:var(--bg-soft);color:var(--text);outline:0}
+  .field textarea{min-height:92px;resize:vertical}
+  .field input:focus,.field textarea:focus,.filter-input:focus{border-color:var(--blue);box-shadow:var(--focus)}
+  .helper{display:block;margin-top:5px;color:var(--muted);font-size:.73rem}
+  .form-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .secondary-btn{min-height:44px;padding:9px 15px;border:1px solid var(--line);border-radius:11px;
+    background:var(--surface-2);color:var(--text);font-weight:850}
+  .secondary-btn:hover{border-color:var(--blue)}
+  .button-icon{display:inline-flex;align-items:center;gap:7px}
+  .button-icon svg{width:18px;height:18px}
+  button:disabled{opacity:.52;cursor:not-allowed}
+  .form-status{min-height:23px;margin-top:10px;font-size:.82rem;font-weight:750}
+  .form-status.ok{color:var(--green)}
+  .form-status.err{color:var(--red)}
+  .hp{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+
+  .claim-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:23px 0 0;padding:14px 16px;
+    border:1px solid rgba(255,209,41,.28);border-radius:15px;background:rgba(255,209,41,.05)}
+  .claim-copy b{display:block}
+  .claim-copy span{display:block;color:var(--muted);font-size:.8rem}
+
+  .profile-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;margin:24px 0 12px}
+  .filter-wrap{position:relative}
+  .filter-wrap svg{position:absolute;left:12px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted)}
+  .filter-input{padding-left:39px}
+  .tabs{display:flex;gap:6px;padding:5px;border:1px solid var(--line);border-radius:13px;background:var(--bg-soft)}
+  .tab{min-height:42px;padding:8px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);
+    font-size:.82rem;font-weight:850;white-space:nowrap}
+  .tab:hover{color:var(--text)}
+  .tab.active{background:var(--surface-2);color:var(--text);box-shadow:0 5px 18px rgba(0,0,0,.22)}
+
+  .podium{display:grid;grid-template-columns:1fr 1.12fr 1fr;align-items:end;gap:9px;margin:18px 0 16px}
+  .podium-card{position:relative;min-width:0;padding:15px 12px;border:1px solid var(--line);border-radius:15px 15px 10px 10px;
+    background:linear-gradient(160deg,var(--surface-2),var(--surface));text-align:center;cursor:pointer;
+    transition:transform .2s var(--ease),border-color .2s ease}
+  .podium-card:hover{transform:translateY(-3px)}
+  .podium-card.first{min-height:142px;border-color:rgba(255,215,0,.6);box-shadow:0 0 34px rgba(255,215,0,.1)}
+  .podium-card.second{min-height:122px;border-color:rgba(203,211,227,.42)}
+  .podium-card.third{min-height:110px;border-color:rgba(223,159,105,.42)}
+  .podium-medal{font-size:1.4rem;font-weight:950}
+  .first .podium-medal{color:var(--gold)}.second .podium-medal{color:var(--silver)}.third .podium-medal{color:var(--bronze)}
+  .podium-title{margin-top:7px;font-size:.78rem;font-weight:800;line-height:1.3;display:-webkit-box;
+    -webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .podium-score{margin-top:7px;color:var(--muted);font-size:.7rem}
+
+  .list{display:flex;flex-direction:column;gap:11px}
+  .idea-card{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:13px;align-items:center;
+    padding:15px;border:1px solid var(--line);border-radius:16px;background:var(--surface);
+    transition:transform .18s var(--ease),border-color .18s ease,box-shadow .18s ease}
+  .idea-card:hover{transform:translateY(-1px);border-color:#44506d;box-shadow:0 9px 30px rgba(0,0,0,.22)}
+  .idea-card.top1{border-color:rgba(255,215,0,.48)}.idea-card.top2{border-color:rgba(203,211,227,.37)}
+  .idea-card.top3{border-color:rgba(223,159,105,.37)}
+  .idea-card.team-pick{border-color:rgba(255,215,0,.75);background:linear-gradient(135deg,rgba(255,215,0,.055),var(--surface))}
+  .idea-card.deep-focus{animation:deepPulse 1.1s var(--ease) 2}
+  @keyframes deepPulse{50%{box-shadow:0 0 0 4px rgba(99,179,255,.28),0 12px 40px rgba(0,0,0,.3);border-color:var(--blue)}}
+  .rank{font-size:1.25rem;font-weight:950;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+  .top1 .rank{color:var(--gold)}.top2 .rank{color:var(--silver)}.top3 .rank{color:var(--bronze)}
+  .idea-main{min-width:0}
+  .team-badge{display:inline-flex;align-items:center;gap:5px;margin-bottom:7px;padding:3px 9px;
+    border:1px solid rgba(255,215,0,.42);border-radius:999px;background:rgba(255,215,0,.12);
+    color:var(--gold);font-size:.68rem;font-weight:950;letter-spacing:.04em}
+  .team-badge svg{width:14px;height:14px}
+  .idea-title{font-weight:850;line-height:1.36}
+  .score-row{display:flex;align-items:center;gap:8px;margin-top:9px}
+  .score-track{flex:1;height:6px;border-radius:99px;background:var(--bg-soft);overflow:hidden}
+  .score-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--purple));
+    transition:width .65s var(--ease)}
+  .team-pick .score-fill{background:linear-gradient(90deg,var(--gold),#ffad22)}
+  .score-label{min-width:54px;text-align:right;color:var(--blue);font-size:.76rem;font-weight:900}
+  .team-pick .score-label{color:var(--gold)}
+  .reason{margin-top:6px;color:var(--muted);font-size:.79rem;font-style:italic}
+  .idea-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:9px}
+  .source-link{color:var(--blue);text-decoration:none}
+  .source-link:hover{text-decoration:underline}
+  .idea-actions{display:flex;align-items:center;gap:8px}
+  .vote-btn,.icon-btn{min-width:48px;min-height:48px;border:1px solid var(--line);border-radius:12px;
+    background:var(--bg-soft);color:var(--text);font-weight:900}
+  .vote-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 10px}
+  .vote-btn:hover{border-color:var(--green);color:var(--green)}
+  .vote-btn.voted{border-color:var(--green);background:rgba(85,229,154,.1);color:var(--green)}
+  .vote-count{font-size:.98rem;font-variant-numeric:tabular-nums}
+  .vote-label{color:var(--muted);font-size:.57rem;letter-spacing:.07em}
+  .icon-btn{display:grid;place-items:center;padding:0;color:var(--muted)}
+  .icon-btn:hover{border-color:var(--blue);color:var(--blue)}
+  .icon-btn svg{width:19px;height:19px}
+  .empty-state{padding:36px 18px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}
+  .loading{padding:42px 10px;color:var(--muted);text-align:center}
+  .spinner{display:inline-block;width:22px;height:22px;margin-bottom:9px;border:3px solid var(--line);
+    border-top-color:var(--yellow);border-radius:50%;animation:spin .85s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .toast{position:fixed;left:50%;bottom:22px;z-index:50;width:min(440px,calc(100% - 28px));padding:13px 16px;
+    border:1px solid var(--line);border-radius:13px;background:#171c29;color:var(--text);
+    box-shadow:var(--shadow);transform:translate(-50%,120px);opacity:0;pointer-events:none;
+    transition:transform .25s var(--ease),opacity .2s ease}
+  .toast.show{transform:translate(-50%,0);opacity:1}
+  .toast.ok{border-color:rgba(85,229,154,.55)}.toast.err{border-color:rgba(255,113,140,.6)}
+  footer{margin-top:38px;padding-top:20px;border-top:1px solid var(--line-soft);color:var(--muted);
+    text-align:center;font-size:.78rem;line-height:1.7}
+  footer b{color:var(--text)}
+  .privacy-note{margin-top:9px;color:var(--muted);font-size:.72rem}
+  .retry-btn{margin-top:12px}
+
+  @media (max-width:760px){
+    .wrap{padding-top:18px}
+    .how{grid-template-columns:1fr}
+    .sections{grid-template-columns:1fr}
+    .trending{grid-template-columns:1fr}
+    .trend-card{min-height:120px}
+    .profile-tools{grid-template-columns:1fr}
+    .tabs{overflow-x:auto}
+    .tab{flex:1}
   }
-  .card:hover{transform:translateY(-2px);border-color:#37405c;box-shadow:0 8px 26px rgba(0,0,0,.35)}
-  .card.top1{border-color:rgba(255,215,0,.55);box-shadow:0 0 22px rgba(255,215,0,.12)}
-  .card.top2{border-color:rgba(192,200,216,.45)}
-  .card.top3{border-color:rgba(217,148,90,.45)}
-  .card.ownerpick{border-color:rgba(255,215,0,.8);background:linear-gradient(135deg,rgba(255,215,0,.06),var(--card))}
-  .rank{font-size:1.35rem;font-weight:900;text-align:center;color:var(--muted)}
-  .top1 .rank{color:var(--gold)} .top2 .rank{color:var(--silver)} .top3 .rank{color:var(--bronze)}
-
-  .mid{min-width:0}
-  .ownerbadge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,215,0,.14);color:var(--gold);
-    border:1px solid rgba(255,215,0,.4);border-radius:999px;padding:2px 10px;font-size:.72rem;font-weight:900;
-    letter-spacing:.5px;margin-bottom:7px}
-  .title{font-weight:700;font-size:1.0rem;line-height:1.35}
-  .meta{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
-  .aibar{margin-top:9px;display:flex;align-items:center;gap:8px}
-  .aibar .bar{flex:1;height:6px;background:var(--bg2);border-radius:99px;overflow:hidden}
-  .aibar .fill{height:100%;border-radius:99px;width:0;
-    background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .8s cubic-bezier(.2,.7,.2,1)}
-  .aibar .fill.goldfill{background:linear-gradient(90deg,var(--gold),#ffb300)}
-  .aibar .sc{font-size:.8rem;font-weight:800;color:var(--blue);min-width:54px;text-align:right}
-  .aibar .sc.goldsc{color:var(--gold)}
-  .reason{font-size:.8rem;color:var(--muted);margin-top:6px;font-style:italic}
-
-  .voteside{display:flex;flex-direction:column;align-items:center;gap:4px}
-  .votebtn{
-    border:1px solid var(--line);background:var(--bg2);color:var(--txt);border-radius:12px;
-    padding:9px 13px;font-weight:800;font-size:.92rem;cursor:pointer;display:flex;flex-direction:column;
-    align-items:center;gap:2px;min-width:64px;transition:all .15s ease;position:relative;overflow:visible;
+  @media (max-width:560px){
+    .wrap{padding-inline:13px}
+    header{padding-top:42px}
+    .search-shell{grid-template-columns:21px 1fr;padding-right:9px}
+    .search-btn{grid-column:1/-1;width:100%}
+    .form-grid{grid-template-columns:1fr}
+    .field.full{grid-column:auto}
+    .claim-bar{align-items:flex-start;flex-direction:column}
+    .podium{gap:6px}
+    .podium-card{padding:11px 7px}
+    .podium-card.first{min-height:135px}.podium-card.second{min-height:116px}.podium-card.third{min-height:105px}
+    .idea-card{grid-template-columns:30px minmax(0,1fr);gap:10px;padding:13px}
+    .idea-actions{grid-column:2;justify-content:flex-end}
+    .rank{font-size:1.05rem}
+    .reason{font-size:.76rem}
+    .stats{gap:7px}.stat{min-width:102px;padding-inline:10px}
   }
-  .votebtn:hover{border-color:var(--green);color:var(--green)}
-  .votebtn.voted{background:rgba(61,220,132,.12);border-color:var(--green);color:var(--green)}
-  .votebtn .vn{font-size:1.05rem}
-  .votebtn .vl{font-size:.62rem;letter-spacing:.5px;color:var(--muted)}
-  .votebtn.voted .vl{color:var(--green)}
-  .votebtn:active{transform:scale(.95)}
-  .burst{position:absolute;left:50%;top:50%;pointer-events:none;font-size:1rem;opacity:0;transform:translate(-50%,-50%)}
-  @keyframes pop{
-    0%{opacity:1;transform:translate(-50%,-50%) scale(.6)}
-    100%{opacity:0;transform:translate(-50%,-140%) scale(1.5)}
-  }
-
-  .submit-zone{margin-top:34px;background:linear-gradient(135deg,rgba(255,196,0,.07),rgba(176,107,255,.07));
-    border:1px dashed #3a4160;border-radius:18px;padding:20px}
-  .submit-zone h2{font-size:1.15rem;margin-bottom:4px}
-  .submit-zone p{color:var(--muted);font-size:.9rem;margin-bottom:14px}
-  .submit-zone input,.submit-zone textarea{
-    width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--txt);
-    padding:11px 12px;font-size:.95rem;margin-bottom:10px;font-family:inherit}
-  .submit-zone textarea{min-height:70px;resize:vertical}
-  .submit-zone input:focus,.submit-zone textarea:focus{outline:none;border-color:var(--purple)}
-  .sendbtn{background:linear-gradient(92deg,var(--yellow),#ffb300);color:#1a1400;font-weight:900;border:0;
-    border-radius:12px;padding:12px 22px;font-size:1rem;cursor:pointer;transition:transform .15s ease}
-  .sendbtn:hover{transform:translateY(-1px)}
-  .sendbtn:disabled{opacity:.55;cursor:default;transform:none}
-  .oktxt{color:var(--green);font-weight:700;margin-top:8px;display:none}
-
-  footer{margin-top:36px;text-align:center;color:var(--muted);font-size:.82rem;line-height:1.7}
-  footer a{color:var(--blue);text-decoration:none}
-  .loading{text-align:center;color:var(--muted);padding:40px 0}
-  .spin{display:inline-block;width:22px;height:22px;border:3px solid var(--line);border-top-color:var(--yellow);
-    border-radius:50%;animation:rot 1s linear infinite;margin-bottom:10px}
-  @keyframes rot{to{transform:rotate(360deg)}}
-  .hidden{display:none}
-
-  @media (max-width:520px){
-    .card{grid-template-columns:34px 1fr auto;padding:12px}
-    .rank{font-size:1.1rem}
-    .title{font-size:.93rem}
-    .how{grid-template-columns:1fr;gap:8px}
-  }
-  @media (prefers-reduced-motion: reduce){
-    *{animation:none!important;transition:none!important}
-    .aibar .fill{transition:none}
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *,*:before,*:after{animation:none!important;transition:none!important}
   }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="bgfx"></div>
-<button class="langbtn" id="langbtn">🌐 ES</button>
-<div class="wrap">
+<div class="gridfx"></div>
+<button class="langbtn" id="lang-btn" type="button">ES</button>
 
+<main class="wrap" id="main">
   <header>
-    <a class="logo" id="logo">FANRANK</a>
+    <div class="eyebrow" id="eyebrow"></div>
+    <a class="logo" id="logo" href="./">FANRANK</a>
     <div class="tag" id="hero-tag"></div>
-    <div class="crumb" id="crumb"><span class="dot"></span> <span id="crumb-txt"></span></div>
+
+    <form class="search-area" id="search-form" role="search" novalidate>
+      <label class="field-label" id="search-label" for="global-search"></label>
+      <div class="search-shell">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path>
+        </svg>
+        <input id="global-search" maxlength="120" autocomplete="off" enterkeyhint="search">
+        <button class="search-btn" id="search-btn" type="submit"></button>
+      </div>
+      <div class="search-panel hidden" id="search-panel" aria-live="polite"></div>
+    </form>
+
+    <div class="crumb" id="crumb"><span class="dot"></span><span id="crumb-text"></span></div>
   </header>
 
   <div class="stats" id="stats"></div>
 
-  <!-- HOME VIEW -->
-  <div id="view-home">
+  <section id="home-view">
     <div class="how" id="how"></div>
-    <div class="sections" id="sections"><div class="loading"><div class="spin"></div><div id="loadtxt"></div></div></div>
-    <div class="request">
-      <div class="t" id="r-t"></div>
-      <div class="d" id="r-d"></div>
-      <input id="r-title" maxlength="120">
-      <button class="sendbtn" id="r-send"></button>
-      <div class="oktxt" id="r-ok"></div>
+
+    <div class="section-head">
+      <div><h2 id="profiles-title"></h2><p id="profiles-subtitle"></p></div>
     </div>
-  </div>
-
-  <!-- SECTION VIEW -->
-  <div id="view-section" class="hidden">
-    <div class="tabs" role="tablist">
-      <button class="tab active" data-sort="ai" role="tab" id="tab-ai"></button>
-      <button class="tab" data-sort="reddit" role="tab">🔥 Reddit</button>
-      <button class="tab" data-sort="fans" role="tab" id="tab-fans"></button>
+    <div class="sections" id="sections">
+      <div class="loading"><span class="spinner"></span><div id="loading-text"></div></div>
     </div>
-    <div id="list" class="list"></div>
-    <div class="submit-zone" id="submit">
-      <h2 id="s-h"></h2>
-      <p id="s-p"></p>
-      <input id="s-title" maxlength="140">
-      <textarea id="s-details" maxlength="600"></textarea>
-      <input id="s-author" maxlength="40">
-      <button class="sendbtn" id="s-send"></button>
-      <div class="oktxt" id="s-ok"></div>
+
+    <div class="section-head">
+      <div><h2 id="trending-title"></h2><p id="trending-subtitle"></p></div>
     </div>
-  </div>
+    <div class="trending" id="trending"></div>
 
-  <footer id="foot"></footer>
-</div>
-
-<script>
-const SB_URL = "https://kopegamcjozrvmxruwdn.supabase.co";
-const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvcGVnYW1jam96cnZteHJ1d2RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwMjgzNDIsImV4cCI6MjA5NzYwNDM0Mn0.BOPhoQNg2FVKSevoTC7rVWvBxgNMxuZuyQdarUHB3QQ";
-const HDRS = { "apikey": SB_KEY, "Authorization": "Bearer " + SB_KEY, "Content-Type": "application/json" };
-
-const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const params = new URLSearchParams(location.search);
-const SECTION = params.get("s");
-const LANG = (params.get("lang") || localStorage.getItem("fr_lang") || "en") === "es" ? "es" : "en";
-let ideas = [], sections = [], sortMode = "ai", secMeta = null;
-
-/* ---------- i18n ---------- */
-const T = {
-en: {
-  title_home: "FanRank — fan ideas, ranked by AI + votes",
-  hero_home: "Fan ideas for <b>games, creators and companies</b>.<br>Scored by <b>AI</b>. Voted by <b>fans</b>. Picked by the <b>team</b>.",
-  hero_sec: n => `The ideas <b>${n}</b> fans actually want.<br>Ranked by <b>AI</b>. Voted by <b>you</b>.`,
-  all_sections: "All sections",
-  st_sections: "sections", st_ideas: "ideas", st_votes: "fan votes",
-  st_reddit: "reddit upvotes", st_votes_here: "fan votes here",
-  steps: [
-    ["💡","Fans drop ideas","Anyone can submit. Every idea keeps its author's credit."],
-    ["🤖","AI scores them","Impact × feasibility × clarity. New ideas get reviewed and re-ranked."],
-    ["👑","The team picks","When the owner or their team marks a favorite, it scores 100 and the AI learns their taste."]
-  ],
-  loading: "Loading…",
-  req_t: "🎯 Want a section for your game, creator or company?",
-  req_d: "Tell us which one and we'll build its ranking.",
-  req_ph: "Which game / creator / company? *",
-  req_btn: "Request it ⚡",
-  req_ok: "✅ Got it! It joins the build queue.",
-  tab_ai: "🤖 AI Rank", tab_fans: "🗳️ Fan votes",
-  on_reddit: "on Reddit", source: "source ↗",
-  vote: "VOTE", voted: "VOTED ✓",
-  team_pick: "👑 TEAM PICK · 100",
-  sub_h: "💡 Got a better idea?",
-  sub_p: "Drop it here. The AI reviews every submission and the good ones join the ranking.",
-  sub_ph_t: "Your idea in one sentence *", sub_ph_d: "Details (optional)", sub_ph_a: "Your name or handle (optional)",
-  sub_btn: "Send it to the AI queue ⚡",
-  sub_ok: "✅ Received! Your idea is in the AI review queue.",
-  foot: `Every idea belongs to its original author — cards link to the source.<br>
-    AI score = impact × feasibility × clarity. <b style="color:var(--gold)">👑 Team pick</b> = the owner or their team marked it: it scores 100 and the AI adapts to their taste.<br>
-    <span id="yr"></span> FanRank · built by a fan.`,
-  err: "Could not load. Try refreshing.",
-  langbtn: "🌐 ES"
-},
-es: {
-  title_home: "FanRank — ideas de fans, ordenadas por IA + votos",
-  hero_home: "Ideas de fans para <b>juegos, creadores y empresas</b>.<br>Puntuadas por <b>IA</b>. Votadas por <b>fans</b>. Elegidas por el <b>equipo</b>.",
-  hero_sec: n => `Las ideas que los fans de <b>${n}</b> quieren de verdad.<br>Ordenadas por <b>IA</b>. Votadas por <b>ti</b>.`,
-  all_sections: "Todas las secciones",
-  st_sections: "secciones", st_ideas: "ideas", st_votes: "votos de fans",
-  st_reddit: "votos en Reddit", st_votes_here: "votos de fans aquí",
-  steps: [
-    ["💡","Los fans sueltan ideas","Cualquiera puede proponer. Cada idea mantiene el crédito de su autor."],
-    ["🤖","La IA las puntúa","Impacto × viabilidad × claridad. Las nuevas se revisan y se reordenan."],
-    ["👑","El equipo elige","Cuando el dueño o su equipo marca una favorita, puntúa 100 y la IA aprende su gusto."]
-  ],
-  loading: "Cargando…",
-  req_t: "🎯 ¿Quieres una sección para tu juego, creador o empresa?",
-  req_d: "Dinos cuál y montamos su ranking.",
-  req_ph: "¿Qué juego / creador / empresa? *",
-  req_btn: "Pídela ⚡",
-  req_ok: "✅ ¡Recibido! Entra en la cola de construcción.",
-  tab_ai: "🤖 Ranking IA", tab_fans: "🗳️ Votos de fans",
-  on_reddit: "en Reddit", source: "fuente ↗",
-  vote: "VOTAR", voted: "VOTADO ✓",
-  team_pick: "👑 ELEGIDA POR EL EQUIPO · 100",
-  sub_h: "💡 ¿Tienes una idea mejor?",
-  sub_p: "Déjala aquí. La IA revisa cada propuesta y las buenas entran al ranking.",
-  sub_ph_t: "Tu idea en una frase *", sub_ph_d: "Detalles (opcional)", sub_ph_a: "Tu nombre o alias (opcional)",
-  sub_btn: "Enviar a la cola de la IA ⚡",
-  sub_ok: "✅ ¡Recibida! Tu idea está en la cola de revisión de la IA.",
-  foot: `Cada idea es de su autor original — cada tarjeta enlaza a la fuente.<br>
-    Puntuación IA = impacto × viabilidad × claridad. <b style="color:var(--gold)">👑 Elegida por el equipo</b> = el dueño o su equipo la marcó: puntúa 100 y la IA se adapta a su gusto.<br>
-    <span id="yr"></span> FanRank · hecha por un fan.`,
-  err: "No se pudo cargar. Prueba a recargar.",
-  langbtn: "🌐 EN"
-}};
-const t = k => T[LANG][k];
-const withLang = q => q + (LANG === "es" ? (q.includes("?") ? "&" : "?") + "lang=es" : "");
-
-function voterId(){
-  let v = localStorage.getItem("fr_voter");
-  if(!v){ v = "v_" + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem("fr_voter", v); }
-  return v;
-}
-function myVotes(){ try{ return JSON.parse(localStorage.getItem("fr_myvotes")||"[]"); }catch(e){ return []; } }
-function markVoted(id){ const m = myVotes(); if(!m.includes(id)){ m.push(id); localStorage.setItem("fr_myvotes", JSON.stringify(m)); } }
-function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-function fmt(n){ return n >= 1000 ? (n/1000).toFixed(1).replace(".0","") + "k" : n; }
-function statHtml(n,l,green){ return `<div class="stat ${green?"green":""}"><div class="n">${n}</div><div class="l">${l}</div></div>`; }
-function ideaTitle(i){ return (LANG==="es" && i.title_es) ? i.title_es : i.title; }
-function ideaReason(i){ return (LANG==="es" && i.ai_reason_es) ? i.ai_reason_es : (i.ai_reason||""); }
-function secTagline(s){ return (LANG==="es" && s.tagline_es) ? s.tagline_es : (s.tagline||""); }
-
-/* ---------- static texts ---------- */
-document.documentElement.lang = LANG;
-document.getElementById("langbtn").textContent = t("langbtn");
-document.getElementById("langbtn").addEventListener("click", ()=>{
-  const nl = LANG === "es" ? "en" : "es";
-  localStorage.setItem("fr_lang", nl);
-  const p = new URLSearchParams(location.search);
-  if(nl === "es") p.set("lang","es"); else p.delete("lang");
-  location.search = p.toString();
-});
-
-/* ---------- HOME ---------- */
-async function loadHome(){
-  document.title = t("title_home");
-  document.getElementById("hero-tag").innerHTML = t("hero_home");
-  document.getElementById("crumb-txt").textContent = t("all_sections");
-  document.getElementById("how").innerHTML = t("steps").map(s=>
-    `<div class="step"><div class="ic">${s[0]}</div><div class="t">${s[1]}</div><div class="d">${s[2]}</div></div>`).join("");
-  document.getElementById("loadtxt").textContent = t("loading");
-  document.getElementById("r-t").textContent = t("req_t");
-  document.getElementById("r-d").textContent = t("req_d");
-  document.getElementById("r-title").placeholder = t("req_ph");
-  document.getElementById("r-send").textContent = t("req_btn");
-  document.getElementById("r-ok").textContent = t("req_ok");
-  try{
-    const r = await fetch(SB_URL + "/rest/v1/fr_sections_stats?select=*", { headers: HDRS });
-    sections = await r.json();
-    sections.sort((a,b)=> (b.fan_votes*5 + b.ideas) - (a.fan_votes*5 + a.ideas));
-    document.getElementById("stats").innerHTML =
-      statHtml(sections.length, t("st_sections")) +
-      statHtml(sections.reduce((s,x)=>s+x.ideas,0), t("st_ideas")) +
-      statHtml(sections.reduce((s,x)=>s+x.fan_votes,0), t("st_votes"), true);
-    document.getElementById("sections").innerHTML = sections.map(s=>`
-      <a class="sec-card" href="${withLang("?s="+encodeURIComponent(s.slug))}">
-        <div class="em">${esc(s.emoji||"🎮")}</div>
-        <div class="info">
-          <div class="nm">${esc(s.name)}</div>
-          <div class="tg">${esc(secTagline(s))}</div>
-          <div class="nums">
-            <span class="chip hot">${s.ideas} ${t("st_ideas")}</span>
-            <span class="chip reddit">▲ ${fmt(s.reddit_upvotes)} reddit</span>
-            <span class="chip">🗳️ ${s.fan_votes} ${t("st_votes")}</span>
+    <section class="panel" id="request-panel">
+      <h2 id="request-title"></h2>
+      <p class="panel-intro" id="request-intro"></p>
+      <form id="request-form" novalidate>
+        <div class="form-grid">
+          <div class="field full">
+            <label id="request-target-label" for="request-target"></label>
+            <input id="request-target" maxlength="120" autocomplete="off" required>
+          </div>
+          <div class="field">
+            <label id="request-name-label" for="request-name"></label>
+            <input id="request-name" maxlength="80" autocomplete="name">
+          </div>
+          <div class="field">
+            <label id="request-contact-label" for="request-contact"></label>
+            <input id="request-contact" maxlength="180" autocomplete="email">
+            <span class="helper" id="request-contact-help"></span>
           </div>
         </div>
-        <div class="go">→</div>
-      </a>`).join("");
-  }catch(e){
-    document.getElementById("sections").innerHTML = `<div class="loading">${t("err")}</div>`;
-  }
-}
-
-document.getElementById("r-send").addEventListener("click", async ()=>{
-  const v = document.getElementById("r-title").value.trim();
-  if(!v){ document.getElementById("r-title").focus(); return; }
-  const btn = document.getElementById("r-send"); btn.disabled = true;
-  try{
-    const r = await fetch(SB_URL + "/rest/v1/fr_submissions", {
-      method:"POST", headers: HDRS,
-      body: JSON.stringify({ section: "section-request", title: v })
-    });
-    if(r.ok){ document.getElementById("r-ok").style.display="block"; document.getElementById("r-title").value=""; }
-    else btn.disabled = false;
-  }catch(e){ btn.disabled = false; }
-});
-
-/* ---------- SECTION ---------- */
-async function loadSection(){
-  document.getElementById("tab-ai").textContent = t("tab_ai");
-  document.getElementById("tab-fans").textContent = t("tab_fans");
-  document.getElementById("s-h").textContent = t("sub_h");
-  document.getElementById("s-p").textContent = t("sub_p");
-  document.getElementById("s-title").placeholder = t("sub_ph_t");
-  document.getElementById("s-details").placeholder = t("sub_ph_d");
-  document.getElementById("s-author").placeholder = t("sub_ph_a");
-  document.getElementById("s-send").textContent = t("sub_btn");
-  document.getElementById("s-ok").textContent = t("sub_ok");
-  document.getElementById("list").innerHTML = `<div class="loading"><div class="spin"></div><div>${t("loading")}</div></div>`;
-  try{
-    const [rs, ri] = await Promise.all([
-      fetch(SB_URL + "/rest/v1/fr_sections?select=*&slug=eq." + encodeURIComponent(SECTION), { headers: HDRS }),
-      fetch(SB_URL + "/rest/v1/fr_ranking?select=*&section=eq." + encodeURIComponent(SECTION), { headers: HDRS })
-    ]);
-    const metas = await rs.json(); secMeta = metas[0] || null;
-    ideas = await ri.json();
-    if(!secMeta){ location.href = location.pathname + (LANG==="es"?"?lang=es":""); return; }
-    document.title = `FanRank — ${secMeta.name}`;
-    document.getElementById("hero-tag").innerHTML = t("hero_sec")(esc(secMeta.name));
-    document.getElementById("crumb-txt").innerHTML =
-      `<a id="backhome">${t("all_sections")}</a> &nbsp;›&nbsp; ${esc(secMeta.emoji||"")} ${esc(secMeta.name)}`;
-    document.getElementById("backhome").addEventListener("click", ()=> location.href = location.pathname + (LANG==="es"?"?lang=es":""));
-    render();
-  }catch(e){
-    document.getElementById("list").innerHTML = `<div class="loading">${t("err")}</div>`;
-  }
-}
-
-function sorted(){
-  const a = [...ideas];
-  if(sortMode === "ai")     a.sort((x,y)=> (y.owner_pick-x.owner_pick) || y.ai_score - x.ai_score || y.origin_upvotes - x.origin_upvotes);
-  if(sortMode === "reddit") a.sort((x,y)=> y.origin_upvotes - x.origin_upvotes);
-  if(sortMode === "fans")   a.sort((x,y)=> y.web_votes - x.web_votes || y.ai_score - x.ai_score);
-  return a;
-}
-
-function render(){
-  const mine = myVotes();
-  const arr = sorted();
-  document.getElementById("stats").innerHTML =
-    statHtml(arr.length, t("st_ideas")) +
-    statHtml(fmt(arr.reduce((s,i)=>s+(i.origin_upvotes||0),0)), t("st_reddit")) +
-    statHtml(arr.reduce((s,i)=>s+(i.web_votes||0),0), t("st_votes_here"), true);
-
-  document.getElementById("list").innerHTML = arr.map((i,idx)=>{
-    const score = i.owner_pick ? 100 : i.ai_score;
-    return `
-    <div class="card ${i.owner_pick?"ownerpick":idx===0?"top1":idx===1?"top2":idx===2?"top3":""}">
-      <div class="rank">${idx+1}</div>
-      <div class="mid">
-        ${i.owner_pick ? `<div class="ownerbadge">${t("team_pick")}</div>` : ''}
-        <div class="title">${esc(ideaTitle(i))}</div>
-        <div class="aibar">
-          <div class="bar"><div class="fill ${i.owner_pick?"goldfill":""}" data-w="${score}"></div></div>
-          <div class="sc ${i.owner_pick?"goldsc":""}">${i.owner_pick?"👑":"AI"} ${score}</div>
+        <input class="hp" id="request-website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="form-actions">
+          <button class="primary-btn" id="request-send" type="submit"></button>
         </div>
-        <div class="reason">${esc(ideaReason(i))}</div>
-        <div class="meta">
-          <span class="chip reddit">▲ ${fmt(i.origin_upvotes)} ${t("on_reddit")}</span>
-          ${i.source_url ? `<span class="chip"><a href="${esc(i.source_url)}" target="_blank" rel="noopener">${t("source")}</a></span>` : ""}
+        <div class="form-status" id="request-status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </section>
+
+  <section class="hidden" id="section-view">
+    <div class="claim-bar">
+      <div class="claim-copy"><b id="claim-bar-title"></b><span id="claim-bar-copy"></span></div>
+      <button class="secondary-btn button-icon" id="claim-open" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 3 4.5 6v5.4c0 4.7 3.2 8.4 7.5 9.6 4.3-1.2 7.5-4.9 7.5-9.6V6L12 3Z"></path>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+        <span id="claim-open-text"></span>
+      </button>
+    </div>
+
+    <div class="profile-tools">
+      <div>
+        <label class="field-label" id="filter-label" for="idea-filter"></label>
+        <div class="filter-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.2-3.2"></path>
+          </svg>
+          <input class="filter-input" id="idea-filter" maxlength="120" autocomplete="off">
         </div>
       </div>
-      <div class="voteside">
-        <button class="votebtn ${mine.includes(i.id)?"voted":""}" data-id="${i.id}" ${mine.includes(i.id)?"disabled":""}>
-          <span class="vn">${i.web_votes||0}</span><span class="vl">${mine.includes(i.id)?t("voted"):t("vote")}</span>
-        </button>
+      <div class="tabs" role="tablist" aria-label="Ranking">
+        <button class="tab active" data-sort="ai" id="tab-ai" type="button" role="tab" aria-selected="true"></button>
+        <button class="tab" data-sort="source" id="tab-source" type="button" role="tab" aria-selected="false"></button>
+        <button class="tab" data-sort="fans" id="tab-fans" type="button" role="tab" aria-selected="false"></button>
       </div>
-    </div>`;}).join("");
+    </div>
 
-  requestAnimationFrame(()=>{
-    document.querySelectorAll(".fill").forEach(f=>{ f.style.width = f.dataset.w + "%"; });
-  });
-  document.querySelectorAll(".votebtn:not(.voted)").forEach(b=>{
-    b.addEventListener("click", ()=> vote(parseInt(b.dataset.id), b));
+    <div class="podium" id="podium" aria-label="Top three ideas"></div>
+    <div class="list" id="ideas-list"></div>
+
+    <section class="panel" id="submit-panel">
+      <h2 id="submit-title"></h2>
+      <p class="panel-intro" id="submit-intro"></p>
+      <form id="submit-form" novalidate>
+        <div class="form-grid">
+          <div class="field full">
+            <label id="submit-idea-label" for="submit-idea"></label>
+            <input id="submit-idea" maxlength="140" required>
+          </div>
+          <div class="field full">
+            <label id="submit-details-label" for="submit-details"></label>
+            <textarea id="submit-details" maxlength="1000"></textarea>
+          </div>
+          <div class="field">
+            <label id="submit-name-label" for="submit-name"></label>
+            <input id="submit-name" maxlength="80" autocomplete="name">
+          </div>
+          <div class="field">
+            <label id="submit-contact-label" for="submit-contact"></label>
+            <input id="submit-contact" maxlength="180" autocomplete="email">
+            <span class="helper" id="submit-contact-help"></span>
+          </div>
+        </div>
+        <input class="hp" id="submit-website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="form-actions">
+          <button class="primary-btn" id="submit-send" type="submit"></button>
+        </div>
+        <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <section class="panel hidden" id="claim-panel">
+      <h2 id="claim-title"></h2>
+      <p class="panel-intro" id="claim-intro"></p>
+      <form id="claim-form" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label id="claim-name-label" for="claim-name"></label>
+            <input id="claim-name" maxlength="100" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label id="claim-role-label" for="claim-role"></label>
+            <input id="claim-role" maxlength="120" required>
+          </div>
+          <div class="field">
+            <label id="claim-contact-label" for="claim-contact"></label>
+            <input id="claim-contact" maxlength="180" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label id="claim-proof-label" for="claim-proof"></label>
+            <input id="claim-proof" type="url" maxlength="500" inputmode="url">
+          </div>
+          <div class="field full">
+            <label id="claim-message-label" for="claim-message"></label>
+            <textarea id="claim-message" maxlength="1000"></textarea>
+          </div>
+        </div>
+        <input class="hp" id="claim-website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="form-actions">
+          <button class="primary-btn" id="claim-send" type="submit"></button>
+          <button class="secondary-btn" id="claim-cancel" type="button"></button>
+        </div>
+        <div class="form-status" id="claim-status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </section>
+
+  <footer id="footer"></footer>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<noscript>FanRank needs JavaScript to load live rankings and votes.</noscript>
+
+<script>
+"use strict";
+
+var SB_URL = "https://kopegamcjozrvmxruwdn.supabase.co";
+var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvcGVnYW1jam96cnZteHJ1d2RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwMjgzNDIsImV4cCI6MjA5NzYwNDM0Mn0.BOPhoQNg2FVKSevoTC7rVWvBxgNMxuZuyQdarUHB3QQ";
+var API_HEADERS = {
+  "apikey": SB_KEY,
+  "Authorization": "Bearer " + SB_KEY,
+  "Content-Type": "application/json"
+};
+var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var params = new URLSearchParams(location.search);
+var SECTION = params.get("s");
+var DEEP_IDEA = parseInt(params.get("idea") || "0", 10) || null;
+var LANG = (params.get("lang") || localStorage.getItem("fr_lang") || "en") === "es" ? "es" : "en";
+var sections = [];
+var allIdeas = [];
+var ideas = [];
+var secMeta = null;
+var sortMode = "ai";
+var profileQuery = "";
+var toastTimer = null;
+var formStartedAt = Date.now();
+var ephemeralVisitor = "v_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+var T = {
+  en:{
+    eyebrow:"The public suggestion layer",
+    hero_home:"Starting with <b>Brawl Stars</b>: vote on what should improve next.<br>Search its ideas — or request the next profile.",
+    hero_section:function(name){return "Fan ideas for <b>" + name + "</b>, ranked.<br><b>Vote</b> on what should improve next.";},
+    search_label:"Who do you want to improve?",
+    search_placeholder:"Search Brawl Stars, a creator, a company…",
+    search_button:"Search",
+    search_profile:"Profile",
+    search_idea:"Idea",
+    search_no_title:"No profile yet",
+    search_no_copy:"Request it and become its first signal.",
+    search_request:"Request this profile",
+    all_profiles:"All profiles",
+    live_profile:"Live profile",
+    stats_profiles:"profiles",
+    stats_ideas:"ranked ideas",
+    stats_votes:"fan votes",
+    loading:"Loading live rankings…",
+    profiles_title:"Top profiles",
+    profiles_subtitle:"The most active entities rise first.",
+    trending_title:"Ideas rising now",
+    trending_subtitle:"The strongest current signals across FanRank.",
+    top_label:"TOP IDEA",
+    source_votes:"source votes",
+    fan_votes:"fan votes",
+    how:[
+      ["light","Fans submit","Ideas enter one private review queue instead of disappearing across comments."],
+      ["spark","AI helps rank","Approved ideas are scored for impact, feasibility and clarity — with a reason."],
+      ["shield","Teams shape it","Verified team picks score 100 and become signals for the next rerank."]
+    ],
+    request_title:"Missing someone?",
+    request_intro:"Request a profile for any game, creator or company. We will start with the ones people actually ask for.",
+    target_label:"Game, creator or company *",
+    name_label:"Your name or handle <span class='optional'>(optional)</span>",
+    contact_label:"Your contact <span class='optional'>(optional)</span>",
+    contact_help:"Private. Only used if we need to clarify or tell you the profile is live.",
+    request_send:"Request profile",
+    request_ok:"Request received. It is now measurable, not lost.",
+    required_error:"Please complete the required field.",
+    too_fast:"Please wait a moment and try again.",
+    generic_error:"Something failed. Your text is still here — try again.",
+    claim_bar_title:"UNVERIFIED FAN PROFILE",
+    claim_bar_copy:"Fan-made, not official. Are you on the team? Claim it to add verified picks.",
+    claim_open:"Claim profile",
+    filter_label:"Search ideas in this profile",
+    filter_placeholder:"Search a feature, problem or keyword…",
+    tab_ai:"AI rank",
+    tab_source:"Community",
+    tab_fans:"Fan votes",
+    no_ideas:"No ideas match that search.",
+    team_pick:"VERIFIED TEAM PICK · 100",
+    ai_score:"AI",
+    source:"source",
+    vote:"VOTE",
+    voted:"VOTED",
+    share:"Share idea",
+    vote_rank:function(n){return "Vote counted — this idea is now #" + n + " among fans.";},
+    already_voted:"Your vote was already counted.",
+    shared:"Share link ready.",
+    submit_title:"Add a better idea",
+    submit_intro:"It enters a private review queue. If approved, it receives an AI-assisted score and joins the public ranking.",
+    idea_label:"Your suggestion in one sentence *",
+    details_label:"Why would this help? <span class='optional'>(optional)</span>",
+    submit_send:"Send suggestion",
+    submit_ok:"Suggestion received. Your contact stays private.",
+    claim_title:"Claim this profile",
+    claim_intro:"We verify claims before anyone can influence a team's ranking. A claim does not create public access automatically.",
+    claim_name_label:"Your name *",
+    claim_role_label:"Your role or relationship *",
+    claim_contact_label:"Work email or public contact *",
+    claim_proof_label:"Public proof link <span class='optional'>(optional)</span>",
+    claim_message_label:"Anything that helps us verify you <span class='optional'>(optional)</span>",
+    claim_send:"Send verification request",
+    claim_cancel:"Cancel",
+    claim_ok:"Claim received. Nothing changes publicly until it is verified.",
+    footer:"<b>How ranking works:</b> AI-assisted score = impact × feasibility × clarity. Fan votes show demand. A verified team pick scores 100 and becomes a preference signal for the next rerank.<br>Names and contacts from forms are private and never returned by the public API. FanRank · built with fans, for better decisions."
+  },
+  es:{
+    eyebrow:"La capa pública de sugerencias",
+    hero_home:"Empezamos con <b>Brawl Stars</b>: vota qué debería mejorar.<br>Busca entre sus ideas o pide el siguiente perfil.",
+    hero_section:function(name){return "Ideas de fans para <b>" + name + "</b>, ordenadas.<br><b>Vota</b> qué debería mejorar.";},
+    search_label:"¿A quién quieres mejorar?",
+    search_placeholder:"Busca Brawl Stars, un creador, una empresa…",
+    search_button:"Buscar",
+    search_profile:"Perfil",
+    search_idea:"Idea",
+    search_no_title:"Todavía no tiene perfil",
+    search_no_copy:"Pídelo y conviértete en su primera señal.",
+    search_request:"Pedir este perfil",
+    all_profiles:"Todos los perfiles",
+    live_profile:"Perfil vivo",
+    stats_profiles:"perfiles",
+    stats_ideas:"ideas ordenadas",
+    stats_votes:"votos de fans",
+    loading:"Cargando rankings vivos…",
+    profiles_title:"Perfiles destacados",
+    profiles_subtitle:"Las entidades con más actividad suben primero.",
+    trending_title:"Ideas que están subiendo",
+    trending_subtitle:"Las señales más fuertes que hay ahora en FanRank.",
+    top_label:"IDEA TOP",
+    source_votes:"votos de origen",
+    fan_votes:"votos de fans",
+    how:[
+      ["light","Los fans proponen","Las ideas entran en una cola privada en vez de perderse entre comentarios."],
+      ["spark","La IA ayuda a ordenar","Las aprobadas reciben nota por impacto, viabilidad y claridad — con un motivo."],
+      ["shield","El equipo afina","Las elegidas por un equipo verificado puntúan 100 y alimentan el siguiente ranking."]
+    ],
+    request_title:"¿Falta alguien?",
+    request_intro:"Pide un perfil para cualquier juego, creador o empresa. Empezaremos por los que la gente pida de verdad.",
+    target_label:"Juego, creador o empresa *",
+    name_label:"Tu nombre o alias <span class='optional'>(opcional)</span>",
+    contact_label:"Tu contacto <span class='optional'>(opcional)</span>",
+    contact_help:"Privado. Solo se usa si hace falta aclarar algo o avisarte de que el perfil ya existe.",
+    request_send:"Pedir perfil",
+    request_ok:"Petición recibida. Ya se puede medir y no se pierde.",
+    required_error:"Completa el campo obligatorio.",
+    too_fast:"Espera un momento y vuelve a intentarlo.",
+    generic_error:"Algo ha fallado. Tu texto sigue ahí — inténtalo otra vez.",
+    claim_bar_title:"PERFIL DE FANS NO VERIFICADO",
+    claim_bar_copy:"Hecho por fans, no es oficial. Si formas parte del equipo, reclámalo para añadir elecciones verificadas.",
+    claim_open:"Reclamar perfil",
+    filter_label:"Buscar ideas dentro de este perfil",
+    filter_placeholder:"Busca una función, problema o palabra…",
+    tab_ai:"Ranking IA",
+    tab_source:"Comunidad",
+    tab_fans:"Votos",
+    no_ideas:"Ninguna idea coincide con esa búsqueda.",
+    team_pick:"ELEGIDA POR EL EQUIPO · 100",
+    ai_score:"IA",
+    source:"fuente",
+    vote:"VOTAR",
+    voted:"VOTADO",
+    share:"Compartir idea",
+    vote_rank:function(n){return "Voto contado — esta idea ya es #" + n + " entre los fans.";},
+    already_voted:"Tu voto ya estaba contado.",
+    shared:"Enlace listo para compartir.",
+    submit_title:"Añade una idea mejor",
+    submit_intro:"Entra en una cola privada. Si se aprueba, recibe una nota asistida por IA y entra en el ranking público.",
+    idea_label:"Tu sugerencia en una frase *",
+    details_label:"¿Por qué ayudaría? <span class='optional'>(opcional)</span>",
+    submit_send:"Enviar sugerencia",
+    submit_ok:"Sugerencia recibida. Tu contacto sigue siendo privado.",
+    claim_title:"Reclama este perfil",
+    claim_intro:"Verificamos cada solicitud antes de que alguien pueda influir en el ranking de un equipo. Reclamarlo no da acceso público automático.",
+    claim_name_label:"Tu nombre *",
+    claim_role_label:"Tu cargo o relación *",
+    claim_contact_label:"Correo de trabajo o contacto público *",
+    claim_proof_label:"Enlace de prueba pública <span class='optional'>(opcional)</span>",
+    claim_message_label:"Algo que nos ayude a verificarte <span class='optional'>(opcional)</span>",
+    claim_send:"Enviar solicitud de verificación",
+    claim_cancel:"Cancelar",
+    claim_ok:"Solicitud recibida. Nada cambia públicamente hasta verificarla.",
+    footer:"<b>Cómo se ordena:</b> nota asistida por IA = impacto × viabilidad × claridad. Los votos muestran demanda. Una elección de equipo verificado puntúa 100 y se convierte en señal para el siguiente ranking.<br>Los nombres y contactos de formularios son privados y nunca vuelven por la API pública. FanRank · hecho con fans para tomar mejores decisiones."
+  }
+};
+
+function tx(key){
+  var value = T[LANG][key];
+  if(typeof value === "function"){
+    return value.apply(null, Array.prototype.slice.call(arguments,1));
+  }
+  return value;
+}
+function byId(id){return document.getElementById(id);}
+function esc(value){
+  return String(value == null ? "" : value).replace(/[&<>"']/g,function(char){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char];
   });
 }
-
-async function vote(id, btn){
-  btn.disabled = true;
+function safeUrl(value){
   try{
-    const r = await fetch(SB_URL + "/rest/v1/fr_votes", {
-      method:"POST", headers: HDRS,
-      body: JSON.stringify({ idea_id: id, voter: voterId() })
+    var url = new URL(String(value));
+    return (url.protocol === "https:" || url.protocol === "http:") ? url.href : "";
+  }catch(error){return "";}
+}
+function fmt(value){
+  var n = Number(value || 0);
+  if(n >= 1000){return (n/1000).toFixed(1).replace(".0","") + "k";}
+  return String(n);
+}
+function ideaTitle(item){
+  return LANG === "es" && item.title_es ? item.title_es : item.title;
+}
+function ideaReason(item){
+  return LANG === "es" && item.ai_reason_es ? item.ai_reason_es : (item.ai_reason || "");
+}
+function sectionTagline(item){
+  return LANG === "es" && item.tagline_es ? item.tagline_es : (item.tagline || "");
+}
+function visitorId(){
+  try{
+    var value = localStorage.getItem("fr_voter");
+    if(!value){
+      value = ephemeralVisitor;
+      localStorage.setItem("fr_voter",value);
+    }
+    return value;
+  }catch(error){return ephemeralVisitor;}
+}
+function myVotes(){
+  try{return JSON.parse(localStorage.getItem("fr_myvotes") || "[]");}
+  catch(error){return [];}
+}
+function markVoted(id){
+  var votes = myVotes();
+  if(votes.indexOf(id) === -1){
+    votes.push(id);
+    localStorage.setItem("fr_myvotes",JSON.stringify(votes));
+  }
+}
+function icon(name){
+  var paths = {
+    light:'<path d="M9 18h6M10 22h4M8.3 14.5A6 6 0 1 1 15.7 14.5c-.8.7-1.2 1.5-1.2 2.5h-5c0-1-.4-1.8-1.2-2.5Z"></path>',
+    spark:'<path d="m12 3 1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3Z"></path><path d="m18 15 .9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9L18 15Z"></path>',
+    shield:'<path d="M12 3 4.5 6v5.4c0 4.7 3.2 8.4 7.5 9.6 4.3-1.2 7.5-4.9 7.5-9.6V6L12 3Z"></path><path d="m9 12 2 2 4-4"></path>',
+    share:'<circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path>',
+    crown:'<path d="m4 8 4 3 4-6 4 6 4-3-2 10H6L4 8Z"></path><path d="M6 21h12"></path>'
+  };
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths[name] + '</svg>';
+}
+function statHtml(number,label,green){
+  return '<div class="stat ' + (green ? "green" : "") + '"><div class="n">' + esc(number) + '</div><div class="l">' + esc(label) + '</div></div>';
+}
+
+async function api(path,options){
+  var opts = options || {};
+  opts.headers = Object.assign({},API_HEADERS,opts.headers || {});
+  var response = await fetch(SB_URL + "/rest/v1/" + path,opts);
+  if(!response.ok){
+    var error = new Error("HTTP " + response.status);
+    error.status = response.status;
+    throw error;
+  }
+  if(response.status === 204 || response.headers.get("content-length") === "0"){return null;}
+  return response.json();
+}
+function postRow(table,body){
+  return api(table,{
+    method:"POST",
+    headers:{"Prefer":"return=minimal"},
+    body:JSON.stringify(body)
+  });
+}
+function sendEvent(event,data){
+  if(location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:"){return;}
+  var payload = data || {};
+  var body = {
+    event:event,
+    section:payload.section || null,
+    idea_id:payload.idea_id || null,
+    value:payload.value ? String(payload.value).slice(0,180) : null,
+    visitor:visitorId().slice(0,100)
+  };
+  fetch(SB_URL + "/rest/v1/fr_events",{
+    method:"POST",headers:Object.assign({},API_HEADERS,{"Prefer":"return=minimal"}),
+    body:JSON.stringify(body),keepalive:true
+  }).catch(function(){});
+}
+
+function showToast(message,type){
+  var toast = byId("toast");
+  toast.textContent = message;
+  toast.className = "toast show " + (type || "ok");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){toast.className = "toast";},3600);
+}
+function setStatus(id,message,type){
+  var node = byId(id);
+  node.textContent = message || "";
+  node.className = "form-status " + (type || "");
+}
+function setBusy(button,busy){
+  if(!button.dataset.label){button.dataset.label = button.textContent;}
+  button.disabled = busy;
+  button.textContent = busy ? "…" : button.dataset.label;
+}
+function validTiming(honeypotId,cooldownKey,cooldownMs){
+  if(byId(honeypotId).value || Date.now() - formStartedAt <= 600){return false;}
+  try{
+    var lastWrite = Number(localStorage.getItem(cooldownKey) || 0) || 0;
+    return Date.now() - lastWrite >= cooldownMs;
+  }catch(error){return true;}
+}
+function markWrite(cooldownKey){
+  try{localStorage.setItem(cooldownKey,String(Date.now()));}
+  catch(error){}
+}
+function withLanguage(url){
+  if(LANG !== "es"){return url;}
+  return url + (url.indexOf("?") >= 0 ? "&" : "?") + "lang=es";
+}
+function sectionUrl(slug){
+  return location.pathname + "?s=" + encodeURIComponent(slug) + (LANG === "es" ? "&lang=es" : "");
+}
+function ideaUrl(item){
+  return location.origin + location.pathname + "?s=" + encodeURIComponent(item.section) +
+    "&idea=" + encodeURIComponent(item.id) + (LANG === "es" ? "&lang=es" : "");
+}
+
+function applyStaticText(){
+  document.documentElement.lang = LANG;
+  byId("lang-btn").textContent = LANG === "es" ? "EN" : "ES";
+  byId("lang-btn").setAttribute("aria-label",LANG === "es" ? "Cambiar a inglés" : "Switch to Spanish");
+  byId("eyebrow").textContent = tx("eyebrow");
+  byId("search-label").textContent = tx("search_label");
+  byId("global-search").placeholder = tx("search_placeholder");
+  byId("search-btn").textContent = tx("search_button");
+  byId("loading-text").textContent = tx("loading");
+  byId("profiles-title").textContent = tx("profiles_title");
+  byId("profiles-subtitle").textContent = tx("profiles_subtitle");
+  byId("trending-title").textContent = tx("trending_title");
+  byId("trending-subtitle").textContent = tx("trending_subtitle");
+  byId("request-title").textContent = tx("request_title");
+  byId("request-intro").textContent = tx("request_intro");
+  byId("request-target-label").textContent = tx("target_label");
+  byId("request-target").placeholder = tx("search_placeholder");
+  byId("request-name-label").innerHTML = tx("name_label");
+  byId("request-contact-label").innerHTML = tx("contact_label");
+  byId("request-contact-help").textContent = tx("contact_help");
+  byId("request-send").textContent = tx("request_send");
+  byId("claim-bar-title").textContent = tx("claim_bar_title");
+  byId("claim-bar-copy").textContent = tx("claim_bar_copy");
+  byId("claim-open-text").textContent = tx("claim_open");
+  byId("filter-label").textContent = tx("filter_label");
+  byId("idea-filter").placeholder = tx("filter_placeholder");
+  byId("tab-ai").textContent = tx("tab_ai");
+  byId("tab-source").textContent = tx("tab_source");
+  byId("tab-fans").textContent = tx("tab_fans");
+  byId("submit-title").textContent = tx("submit_title");
+  byId("submit-intro").textContent = tx("submit_intro");
+  byId("submit-idea-label").textContent = tx("idea_label");
+  byId("submit-details-label").innerHTML = tx("details_label");
+  byId("submit-name-label").innerHTML = tx("name_label");
+  byId("submit-contact-label").innerHTML = tx("contact_label");
+  byId("submit-contact-help").textContent = tx("contact_help");
+  byId("submit-send").textContent = tx("submit_send");
+  byId("claim-title").textContent = tx("claim_title");
+  byId("claim-intro").textContent = tx("claim_intro");
+  byId("claim-name-label").textContent = tx("claim_name_label");
+  byId("claim-role-label").textContent = tx("claim_role_label");
+  byId("claim-contact-label").textContent = tx("claim_contact_label");
+  byId("claim-proof-label").innerHTML = tx("claim_proof_label");
+  byId("claim-message-label").innerHTML = tx("claim_message_label");
+  byId("claim-send").textContent = tx("claim_send");
+  byId("claim-cancel").textContent = tx("claim_cancel");
+  byId("footer").innerHTML = tx("footer");
+  byId("logo").href = location.pathname + (LANG === "es" ? "?lang=es" : "");
+}
+
+async function loadDirectory(){
+  var result = await Promise.all([
+    api("fr_sections_stats?select=*"),
+    api("fr_ranking?select=*&limit=500")
+  ]);
+  sections = Array.isArray(result[0]) ? result[0] : [];
+  allIdeas = Array.isArray(result[1]) ? result[1] : [];
+  sections.sort(function(a,b){return (b.fan_votes*5+b.ideas)-(a.fan_votes*5+a.ideas);});
+}
+
+function renderHow(){
+  byId("how").innerHTML = tx("how").map(function(step){
+    return '<article class="step"><div class="step-icon">' + icon(step[0]) + '</div><div class="step-title">' +
+      esc(step[1]) + '</div><div class="step-desc">' + esc(step[2]) + '</div></article>';
+  }).join("");
+}
+function renderHomeStats(){
+  byId("stats").innerHTML =
+    statHtml(sections.length,tx("stats_profiles")) +
+    statHtml(sections.reduce(function(sum,item){return sum+Number(item.ideas||0);},0),tx("stats_ideas")) +
+    statHtml(sections.reduce(function(sum,item){return sum+Number(item.fan_votes||0);},0),tx("stats_votes"),true);
+}
+function renderSections(){
+  if(!sections.length){
+    byId("sections").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) + '</div>';
+    return;
+  }
+  byId("sections").innerHTML = sections.map(function(item){
+    return '<a class="sec-card" href="' + esc(sectionUrl(item.slug)) + '" data-profile="' + esc(item.slug) + '">' +
+      '<span class="sec-em" aria-hidden="true">' + esc(item.emoji || "•") + '</span>' +
+      '<span class="sec-info"><span class="sec-name">' + esc(item.name) + '</span>' +
+      '<span class="sec-tag">' + esc(sectionTagline(item)) + '</span>' +
+      '<span class="chips"><span class="chip hot">' + fmt(item.ideas) + ' ' + esc(tx("stats_ideas")) + '</span>' +
+      '<span class="chip">' + fmt(item.fan_votes) + ' ' + esc(tx("fan_votes")) + '</span></span></span>' +
+      '<span class="result-arrow" aria-hidden="true">→</span></a>';
+  }).join("");
+  document.querySelectorAll("[data-profile]").forEach(function(link){
+    link.addEventListener("click",function(){
+      sendEvent("profile_open",{section:link.dataset.profile,value:"home_card"});
     });
-    if(r.ok || r.status === 409){
+  });
+}
+function trendingIdeas(){
+  return allIdeas.slice().sort(function(a,b){
+    var av = (a.owner_pick ? 1000 : 0) + Number(a.ai_score||0) + Math.min(Number(a.web_votes||0)*5,30);
+    var bv = (b.owner_pick ? 1000 : 0) + Number(b.ai_score||0) + Math.min(Number(b.web_votes||0)*5,30);
+    return bv-av || Number(b.origin_upvotes||0)-Number(a.origin_upvotes||0);
+  }).slice(0,3);
+}
+function renderTrending(){
+  var top = trendingIdeas();
+  byId("trending").innerHTML = top.map(function(item,index){
+    var meta = sections.find(function(s){return s.slug === item.section;});
+    return '<a class="trend-card" href="' + esc(ideaUrl(item)) + '" data-idea-open="' + item.id + '">' +
+      '<span class="trend-rank">' + esc(tx("top_label")) + ' · #' + (index+1) + '</span>' +
+      '<span class="trend-title">' + esc(ideaTitle(item)) + '</span>' +
+      '<span class="trend-meta">' + esc(meta ? meta.name : item.section) + ' · ' +
+      fmt(item.web_votes) + ' ' + esc(tx("fan_votes")) + '</span></a>';
+  }).join("");
+}
+function loadHome(){
+  document.title = LANG === "es" ? "FanRank — las mejores ideas, ordenadas" : "FanRank — the best ideas, ranked";
+  byId("hero-tag").innerHTML = tx("hero_home");
+  byId("crumb-text").textContent = tx("all_profiles");
+  renderHow();
+  renderHomeStats();
+  renderSections();
+  renderTrending();
+}
+
+function normalize(value){
+  return String(value || "").toLocaleLowerCase(LANG === "es" ? "es" : "en")
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+}
+function searchMatches(query){
+  var needle = normalize(query);
+  var sectionMatches = sections.filter(function(item){
+    return normalize(item.name + " " + sectionTagline(item) + " " + item.kind).indexOf(needle) >= 0;
+  }).slice(0,4);
+  var ideaMatches = allIdeas.filter(function(item){
+    return normalize(ideaTitle(item) + " " + ideaReason(item)).indexOf(needle) >= 0;
+  }).slice(0,5);
+  return {sections:sectionMatches,ideas:ideaMatches};
+}
+function renderSearchPanel(query){
+  var panel = byId("search-panel");
+  if(!query.trim()){
+    panel.classList.add("hidden");
+    panel.innerHTML = "";
+    return;
+  }
+  var matches = searchMatches(query);
+  var html = "";
+  matches.sections.forEach(function(item){
+    html += '<a class="search-result" href="' + esc(sectionUrl(item.slug)) + '" data-search-profile="' + esc(item.slug) + '">' +
+      '<span class="result-avatar" aria-hidden="true">' + esc(item.emoji || "•") + '</span>' +
+      '<span><span class="result-title">' + esc(item.name) + '</span><span class="result-meta">' + esc(tx("search_profile")) +
+      ' · ' + fmt(item.ideas) + ' ' + esc(tx("stats_ideas")) + '</span></span><span class="result-arrow">→</span></a>';
+  });
+  matches.ideas.forEach(function(item){
+    html += '<a class="search-result" href="' + esc(ideaUrl(item)) + '" data-search-idea="' + item.id + '">' +
+      '<span class="result-avatar" aria-hidden="true">#</span><span><span class="result-title">' + esc(ideaTitle(item)) +
+      '</span><span class="result-meta">' + esc(tx("search_idea")) + ' · ' + esc(item.section) +
+      '</span></span><span class="result-arrow">→</span></a>';
+  });
+  if(!html){
+    html = '<div class="search-empty"><b>' + esc(tx("search_no_title")) + '</b>' + esc(tx("search_no_copy")) +
+      '<br><button class="secondary-btn" id="search-request" type="button">' + esc(tx("search_request")) + '</button></div>';
+  }
+  panel.innerHTML = html;
+  panel.classList.remove("hidden");
+  document.querySelectorAll("[data-search-profile]").forEach(function(link){
+    link.addEventListener("click",function(){
+      sendEvent("search",{section:link.dataset.searchProfile,value:query});
+      sendEvent("profile_open",{section:link.dataset.searchProfile,value:"search"});
+    });
+  });
+  document.querySelectorAll("[data-search-idea]").forEach(function(link){
+    link.addEventListener("click",function(){
+      sendEvent("search",{idea_id:Number(link.dataset.searchIdea),value:query});
+      sendEvent("idea_open",{idea_id:Number(link.dataset.searchIdea),value:"search"});
+    });
+  });
+  if(byId("search-request")){
+    byId("search-request").addEventListener("click",function(){requestFromSearch(query);});
+  }
+}
+function requestFromSearch(query){
+  sendEvent("search",{value:query});
+  byId("search-panel").classList.add("hidden");
+  if(SECTION){
+    location.href = location.pathname + (LANG === "es" ? "?lang=es" : "") + "#request-panel";
+    return;
+  }
+  byId("request-target").value = query.trim();
+  byId("request-panel").scrollIntoView({behavior:REDUCED ? "auto" : "smooth",block:"center"});
+  setTimeout(function(){byId("request-target").focus();},REDUCED ? 0 : 350);
+}
+
+function sortedIdeas(source){
+  var list = (source || ideas).slice();
+  if(sortMode === "ai"){
+    list.sort(function(a,b){
+      return Number(b.owner_pick)-Number(a.owner_pick) || Number(b.ai_score)-Number(a.ai_score) ||
+        Number(b.web_votes)-Number(a.web_votes) || Number(b.origin_upvotes)-Number(a.origin_upvotes);
+    });
+  }else if(sortMode === "source"){
+    list.sort(function(a,b){return Number(b.origin_upvotes)-Number(a.origin_upvotes) || Number(b.ai_score)-Number(a.ai_score);});
+  }else{
+    list.sort(function(a,b){return Number(b.web_votes)-Number(a.web_votes) || Number(b.ai_score)-Number(a.ai_score);});
+  }
+  return list;
+}
+function fanPosition(id){
+  var fanList = ideas.slice().sort(function(a,b){
+    return Number(b.web_votes)-Number(a.web_votes) || Number(b.ai_score)-Number(a.ai_score);
+  });
+  return fanList.findIndex(function(item){return item.id === id;}) + 1;
+}
+function renderProfileStats(){
+  byId("stats").innerHTML =
+    statHtml(ideas.length,tx("stats_ideas")) +
+    statHtml(fmt(ideas.reduce(function(sum,item){return sum+Number(item.origin_upvotes||0);},0)),tx("source_votes")) +
+    statHtml(ideas.reduce(function(sum,item){return sum+Number(item.web_votes||0);},0),tx("fan_votes"),true);
+}
+function renderPodium(){
+  var top = sortedIdeas(ideas).slice(0,3);
+  var positions = [
+    {item:top[1],rank:2,cls:"second"},
+    {item:top[0],rank:1,cls:"first"},
+    {item:top[2],rank:3,cls:"third"}
+  ];
+  byId("podium").innerHTML = positions.map(function(entry){
+    if(!entry.item){return '<div></div>';}
+    var score = sortMode === "fans" ? entry.item.web_votes : sortMode === "source" ? entry.item.origin_upvotes :
+      (entry.item.owner_pick ? 100 : entry.item.ai_score);
+    return '<button class="podium-card ' + entry.cls + '" type="button" data-podium="' + entry.item.id + '">' +
+      '<div class="podium-medal">#' + entry.rank + '</div><div class="podium-title">' + esc(ideaTitle(entry.item)) +
+      '</div><div class="podium-score">' + fmt(score) + '</div></button>';
+  }).join("");
+  document.querySelectorAll("[data-podium]").forEach(function(button){
+    button.addEventListener("click",function(){
+      var target = byId("idea-" + button.dataset.podium);
+      if(target){target.scrollIntoView({behavior:REDUCED ? "auto" : "smooth",block:"center"});}
+    });
+  });
+}
+function filteredIdeas(){
+  var needle = normalize(profileQuery);
+  var source = needle ? ideas.filter(function(item){
+    return normalize(ideaTitle(item) + " " + ideaReason(item)).indexOf(needle) >= 0;
+  }) : ideas;
+  return sortedIdeas(source);
+}
+function renderIdeas(){
+  var list = filteredIdeas();
+  var mine = myVotes();
+  if(!list.length){
+    byId("ideas-list").innerHTML = '<div class="empty-state">' + esc(tx("no_ideas")) + '</div>';
+    return;
+  }
+  byId("ideas-list").innerHTML = list.map(function(item,index){
+    var score = item.owner_pick ? 100 : Number(item.ai_score||0);
+    var source = safeUrl(item.source_url);
+    var rankClass = index === 0 ? "top1" : index === 1 ? "top2" : index === 2 ? "top3" : "";
+    var voted = mine.indexOf(item.id) >= 0;
+    return '<article class="idea-card ' + rankClass + ' ' + (item.owner_pick ? "team-pick" : "") +
+      '" id="idea-' + item.id + '">' +
+      '<div class="rank">' + (index+1) + '</div><div class="idea-main">' +
+      (item.owner_pick ? '<div class="team-badge">' + icon("crown") + esc(tx("team_pick")) + '</div>' : "") +
+      '<div class="idea-title">' + esc(ideaTitle(item)) + '</div><div class="score-row"><div class="score-track">' +
+      '<div class="score-fill" data-score="' + score + '"></div></div><div class="score-label">' +
+      (item.owner_pick ? "100" : esc(tx("ai_score")) + " " + score) + '</div></div>' +
+      '<div class="reason">' + esc(ideaReason(item)) + '</div><div class="idea-meta">' +
+      '<span class="chip">' + fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' +
+      (source ? '<a class="chip source-link" href="' + esc(source) + '" target="_blank" rel="noopener noreferrer">' +
+      esc(tx("source")) + ' ↗</a>' : "") + '</div></div><div class="idea-actions">' +
+      '<button class="icon-btn" type="button" data-share="' + item.id + '" aria-label="' + esc(tx("share")) +
+      '" title="' + esc(tx("share")) + '">' + icon("share") + '</button>' +
+      '<button class="vote-btn ' + (voted ? "voted" : "") + '" type="button" data-vote="' + item.id + '" ' +
+      (voted ? "disabled" : "") + '><span class="vote-count">' + Number(item.web_votes||0) +
+      '</span><span class="vote-label">' + esc(voted ? tx("voted") : tx("vote")) + '</span></button></div></article>';
+  }).join("");
+  requestAnimationFrame(function(){
+    document.querySelectorAll(".score-fill").forEach(function(fill){fill.style.width = fill.dataset.score + "%";});
+  });
+  document.querySelectorAll("[data-vote]").forEach(function(button){
+    if(!button.disabled){button.addEventListener("click",function(){vote(Number(button.dataset.vote),button);});}
+  });
+  document.querySelectorAll("[data-share]").forEach(function(button){
+    button.addEventListener("click",function(){shareIdea(Number(button.dataset.share));});
+  });
+}
+function renderProfile(){
+  renderProfileStats();
+  renderPodium();
+  renderIdeas();
+}
+function focusDeepIdea(){
+  if(!DEEP_IDEA){return;}
+  setTimeout(function(){
+    var node = byId("idea-" + DEEP_IDEA);
+    if(node){
+      node.classList.add("deep-focus");
+      node.scrollIntoView({behavior:REDUCED ? "auto" : "smooth",block:"center"});
+      sendEvent("idea_open",{section:SECTION,idea_id:DEEP_IDEA,value:"deep_link"});
+    }
+  },REDUCED ? 0 : 250);
+}
+function loadSection(){
+  secMeta = sections.find(function(item){return item.slug === SECTION;}) || null;
+  ideas = allIdeas.filter(function(item){return item.section === SECTION;});
+  if(!secMeta){
+    location.replace(location.pathname + (LANG === "es" ? "?lang=es" : ""));
+    return;
+  }
+  document.title = "FanRank — " + secMeta.name;
+  byId("hero-tag").innerHTML = tx("hero_section",esc(secMeta.name));
+  byId("crumb-text").innerHTML = '<a href="' + esc(location.pathname + (LANG === "es" ? "?lang=es" : "")) + '">' +
+    esc(tx("all_profiles")) + '</a> <span aria-hidden="true">›</span> ' + esc(secMeta.name);
+  byId("home-view").classList.add("hidden");
+  byId("section-view").classList.remove("hidden");
+  renderProfile();
+  focusDeepIdea();
+  sendEvent("profile_open",{section:SECTION,value:"page_load"});
+}
+
+async function vote(id,button){
+  setBusy(button,true);
+  try{
+    await postRow("fr_votes",{idea_id:id,voter:visitorId()});
+    markVoted(id);
+    var item = ideas.find(function(row){return row.id === id;});
+    if(item){item.web_votes = Number(item.web_votes||0)+1;}
+    var globalItem = allIdeas.find(function(row){return row.id === id;});
+    if(globalItem && globalItem !== item){globalItem.web_votes = Number(globalItem.web_votes||0)+1;}
+    renderProfile();
+    sendEvent("vote",{section:SECTION,idea_id:id});
+    showToast(tx("vote_rank",fanPosition(id)),"ok");
+  }catch(error){
+    if(error.status === 409){
       markVoted(id);
-      const it = ideas.find(x=>x.id===id);
-      if(it && r.ok) it.web_votes = (it.web_votes||0) + 1;
-      if(!REDUCED && r.ok){
-        const s = document.createElement("span");
-        s.className = "burst"; s.textContent = "🗳️✨";
-        s.style.animation = "pop .7s ease-out forwards";
-        btn.appendChild(s); setTimeout(()=>s.remove(), 750);
-        setTimeout(render, 720);
-      } else { render(); }
-    } else { btn.disabled = false; }
-  }catch(e){ btn.disabled = false; }
+      renderProfile();
+      showToast(tx("already_voted"),"ok");
+    }else{
+      setBusy(button,false);
+      showToast(tx("generic_error"),"err");
+    }
+  }
+}
+async function shareIdea(id){
+  var item = ideas.find(function(row){return row.id === id;});
+  if(!item){return;}
+  var shareData = {title:"FanRank — " + secMeta.name,text:ideaTitle(item),url:ideaUrl(item)};
+  try{
+    if(navigator.share){
+      await navigator.share(shareData);
+    }else if(navigator.clipboard){
+      await navigator.clipboard.writeText(shareData.url);
+    }else{
+      window.prompt(tx("share"),shareData.url);
+    }
+    sendEvent("idea_share",{section:SECTION,idea_id:id});
+    showToast(tx("shared"),"ok");
+  }catch(error){
+    if(error && error.name !== "AbortError"){showToast(tx("generic_error"),"err");}
+  }
 }
 
-document.querySelectorAll(".tab").forEach(tb=>{
-  tb.addEventListener("click", ()=>{
-    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-    tb.classList.add("active");
-    sortMode = tb.dataset.sort;
-    render();
+byId("lang-btn").addEventListener("click",function(){
+  var next = LANG === "es" ? "en" : "es";
+  localStorage.setItem("fr_lang",next);
+  var nextParams = new URLSearchParams(location.search);
+  if(next === "es"){nextParams.set("lang","es");}else{nextParams.delete("lang");}
+  location.search = nextParams.toString();
+});
+byId("global-search").addEventListener("input",function(event){renderSearchPanel(event.target.value);});
+byId("global-search").addEventListener("focus",function(event){renderSearchPanel(event.target.value);});
+byId("search-form").addEventListener("submit",function(event){
+  event.preventDefault();
+  var query = byId("global-search").value.trim();
+  if(!query){byId("global-search").focus();return;}
+  var matches = searchMatches(query);
+  sendEvent("search",{value:query});
+  if(matches.sections.length){
+    sendEvent("profile_open",{section:matches.sections[0].slug,value:"search_submit"});
+    location.href = sectionUrl(matches.sections[0].slug);
+  }else if(matches.ideas.length){
+    sendEvent("idea_open",{section:matches.ideas[0].section,idea_id:matches.ideas[0].id,value:"search_submit"});
+    location.href = ideaUrl(matches.ideas[0]);
+  }else{
+    requestFromSearch(query);
+  }
+});
+document.addEventListener("click",function(event){
+  if(!byId("search-form").contains(event.target)){byId("search-panel").classList.add("hidden");}
+});
+
+document.querySelectorAll(".tab").forEach(function(tab){
+  tab.addEventListener("click",function(){
+    document.querySelectorAll(".tab").forEach(function(other){
+      other.classList.remove("active");
+      other.setAttribute("aria-selected","false");
+    });
+    tab.classList.add("active");
+    tab.setAttribute("aria-selected","true");
+    sortMode = tab.dataset.sort;
+    renderProfile();
   });
 });
-
-document.getElementById("s-send").addEventListener("click", async ()=>{
-  const title = document.getElementById("s-title").value.trim();
-  if(!title){ document.getElementById("s-title").focus(); return; }
-  const btn = document.getElementById("s-send"); btn.disabled = true;
-  try{
-    const r = await fetch(SB_URL + "/rest/v1/fr_submissions", {
-      method:"POST", headers: HDRS,
-      body: JSON.stringify({
-        section: SECTION, title,
-        details: document.getElementById("s-details").value.trim() || null,
-        author: document.getElementById("s-author").value.trim() || null
-      })
-    });
-    if(r.ok){
-      document.getElementById("s-ok").style.display = "block";
-      document.getElementById("s-title").value = ""; document.getElementById("s-details").value = "";
-    } else { btn.disabled = false; }
-  }catch(e){ btn.disabled = false; }
+byId("idea-filter").addEventListener("input",function(event){
+  profileQuery = event.target.value;
+  renderIdeas();
 });
 
-/* ---------- BOOT ---------- */
-document.getElementById("foot").innerHTML = t("foot");
-document.getElementById("logo").setAttribute("href", location.pathname + (LANG==="es"?"?lang=es":""));
-document.getElementById("yr").textContent = new Date().getFullYear();
-if(SECTION){
-  document.getElementById("view-home").classList.add("hidden");
-  document.getElementById("view-section").classList.remove("hidden");
-  loadSection();
-}else{
-  loadHome();
+byId("claim-open").addEventListener("click",function(){
+  byId("claim-panel").classList.remove("hidden");
+  byId("claim-panel").scrollIntoView({behavior:REDUCED ? "auto" : "smooth",block:"start"});
+  setTimeout(function(){byId("claim-name").focus();},REDUCED ? 0 : 300);
+});
+byId("claim-cancel").addEventListener("click",function(){
+  byId("claim-panel").classList.add("hidden");
+  byId("claim-open").focus();
+});
+
+byId("request-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  var target = byId("request-target").value.trim();
+  if(target.length < 3){
+    setStatus("request-status",tx("required_error"),"err");
+    byId("request-target").focus();
+    return;
+  }
+  if(!validTiming("request-website","fr_last_request",30000)){
+    setStatus("request-status",tx("too_fast"),"err");
+    return;
+  }
+  var button = byId("request-send");
+  setBusy(button,true);
+  setStatus("request-status","","");
+  try{
+    await postRow("fr_submissions",{
+      section:"section-request",title:target,
+      author:byId("request-name").value.trim() || null,
+      contact:byId("request-contact").value.trim() || null,
+      language:LANG,approved:false
+    });
+    markWrite("fr_last_request");
+    sendEvent("section_request",{value:target});
+    setStatus("request-status",tx("request_ok"),"ok");
+    byId("request-form").reset();
+    formStartedAt = Date.now();
+  }catch(error){
+    setStatus("request-status",tx("generic_error"),"err");
+  }finally{setBusy(button,false);}
+});
+
+byId("submit-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  var title = byId("submit-idea").value.trim();
+  if(title.length < 3){
+    setStatus("submit-status",tx("required_error"),"err");
+    byId("submit-idea").focus();
+    return;
+  }
+  if(!validTiming("submit-website","fr_last_submission",30000)){
+    setStatus("submit-status",tx("too_fast"),"err");
+    return;
+  }
+  var button = byId("submit-send");
+  setBusy(button,true);
+  setStatus("submit-status","","");
+  try{
+    await postRow("fr_submissions",{
+      section:SECTION,title:title,
+      details:byId("submit-details").value.trim() || null,
+      author:byId("submit-name").value.trim() || null,
+      contact:byId("submit-contact").value.trim() || null,
+      language:LANG,approved:false
+    });
+    markWrite("fr_last_submission");
+    sendEvent("submission",{section:SECTION,value:title.slice(0,180)});
+    setStatus("submit-status",tx("submit_ok"),"ok");
+    byId("submit-form").reset();
+    formStartedAt = Date.now();
+  }catch(error){
+    setStatus("submit-status",tx("generic_error"),"err");
+  }finally{setBusy(button,false);}
+});
+
+byId("claim-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  var name = byId("claim-name").value.trim();
+  var role = byId("claim-role").value.trim();
+  var contact = byId("claim-contact").value.trim();
+  if(name.length < 2 || role.length < 2 || contact.length < 3){
+    setStatus("claim-status",tx("required_error"),"err");
+    if(name.length < 2){byId("claim-name").focus();}
+    else if(role.length < 2){byId("claim-role").focus();}
+    else{byId("claim-contact").focus();}
+    return;
+  }
+  if(!validTiming("claim-website","fr_last_claim",60000)){
+    setStatus("claim-status",tx("too_fast"),"err");
+    return;
+  }
+  var proof = byId("claim-proof").value.trim();
+  if(proof && !safeUrl(proof)){
+    setStatus("claim-status",tx("required_error"),"err");
+    byId("claim-proof").focus();
+    return;
+  }
+  var button = byId("claim-send");
+  setBusy(button,true);
+  setStatus("claim-status","","");
+  try{
+    await postRow("fr_claims",{
+      section:SECTION,name:name,role:role,contact:contact,
+      proof_url:proof || null,
+      message:byId("claim-message").value.trim() || null,
+      status:"pending"
+    });
+    markWrite("fr_last_claim");
+    sendEvent("claim_request",{section:SECTION});
+    setStatus("claim-status",tx("claim_ok"),"ok");
+    byId("claim-form").reset();
+    formStartedAt = Date.now();
+  }catch(error){
+    setStatus("claim-status",tx("generic_error"),"err");
+  }finally{setBusy(button,false);}
+});
+
+async function boot(){
+  applyStaticText();
+  byId("hero-tag").innerHTML = SECTION ? tx("loading") : tx("hero_home");
+  byId("crumb-text").textContent = SECTION ? tx("loading") : tx("all_profiles");
+  sendEvent("page_view",{section:SECTION || null});
+  try{
+    await loadDirectory();
+    if(SECTION){loadSection();}else{loadHome();}
+  }catch(error){
+    byId("sections").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) +
+      '<br><button class="secondary-btn retry-btn" type="button" onclick="location.reload()">' +
+      esc(LANG === "es" ? "Reintentar" : "Retry") + '</button></div>';
+    byId("hero-tag").textContent = tx("generic_error");
+  }
 }
+boot();
 </script>
 </body>
 </html>
