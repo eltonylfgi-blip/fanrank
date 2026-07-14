@@ -38,6 +38,8 @@ def extract(pattern: str) -> str:
 
 SB_URL = extract(r'var SB_URL = "([^"]+)";')
 SB_KEY = extract(r'var SB_KEY = "([^"]+)";')
+EXPECTED_PROJECT_REF = "kopegamcjozrvmxruwdn"
+EXPECTED_PUBLISHABLE_KEY = "sb_publishable_2NDyczKDwFCzNIWEMycRtw_yTnkUQAi"
 
 
 class StructureParser(HTMLParser):
@@ -65,10 +67,17 @@ class StaticAppTests(unittest.TestCase):
         markers = {
             "universal search": 'id="global-search"',
             "profile request": 'id="request-form"',
+            "easy suggestion": 'id="suggest-open"',
             "idea submission": 'id="submit-form"',
+            "similar ideas": 'id="similar-ideas"',
             "private contact": 'id="submit-contact"',
+            "passwordless account": 'id="auth-form"',
+            "private activity": 'id="activity-dialog"',
             "profile claim": 'id="claim-form"',
+            "verified team management": 'id="team-dialog"',
+            "secure invitation acceptance": 'id="invite-dialog"',
             "fan vote": 'data-vote="',
+            "team heart": 'data-interest="',
             "shareable idea": "navigator.share",
             "product telemetry": 'postRow("fr_claims"',
             "event sink": 'fr_events',
@@ -107,12 +116,19 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr or result.stdout)
 
     def test_public_key_is_scoped_to_expected_anon_project(self) -> None:
+        self.assertEqual(f"https://{EXPECTED_PROJECT_REF}.supabase.co", SB_URL)
+        if SB_KEY.startswith("sb_publishable_"):
+            # New Supabase publishable keys are intentionally opaque, not JWTs. Pin the
+            # known public key so an accidental project/key swap still fails statically.
+            self.assertEqual(EXPECTED_PUBLISHABLE_KEY, SB_KEY)
+            self.assertNotIn("sb_secret_", SB_KEY)
+            return
         pieces = SB_KEY.split(".")
         self.assertEqual(3, len(pieces))
         padded = pieces[1] + "=" * (-len(pieces[1]) % 4)
         payload = json.loads(base64.urlsafe_b64decode(padded))
         self.assertEqual("supabase", payload["iss"])
-        self.assertEqual("kopegamcjozrvmxruwdn", payload["ref"])
+        self.assertEqual(EXPECTED_PROJECT_REF, payload["ref"])
         self.assertEqual("anon", payload["role"])
 
     def test_accessibility_and_resilience_guards_exist(self) -> None:
@@ -125,6 +141,9 @@ class StaticAppTests(unittest.TestCase):
             'rel="noopener noreferrer"',
             "function esc(value)",
             "function safeUrl(value)",
+            "prefers-reduced-motion:reduce",
+            'aria-pressed="',
+            'aria-live="polite"',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
 
@@ -136,19 +155,51 @@ class StaticAppTests(unittest.TestCase):
             'validTiming("submit-website","fr_last_submission",30000)',
             'validTiming("claim-website","fr_last_claim",60000)',
             'location.hostname === "127.0.0.1"',
+            "receipt_hash:await hashReceipt",
+            "allow_contact",
+            'url.hash = "invite="',
+            "function armCelestialAudio",
+            "function playCelestialChime",
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
         self.assertNotIn("Search any <b>game, creator or company</b>", HTML)
+        self.assertNotIn("Verified team picks score 100", HTML)
+        self.assertNotIn("puntúan 100", HTML)
+
+    def test_team_signal_is_limited_and_not_a_public_identity_leak(self) -> None:
+        self.assertIn("Math.min(Number(item.team_interest_count || 0) * 5,15)", HTML)
+        self.assertIn("var av = rankScore(a);", HTML)
+        self.assertIn("myTeamInterestIds.has(item.id)", HTML)
+        self.assertIn("team_interest_count", HTML)
+        self.assertIn("fr_set_team_interest", HTML)
+        self.assertNotIn("owner_pick", HTML)
+        self.assertNotIn("* 1000", HTML)
+
+    def test_anonymous_submission_contract_matches_the_private_queue(self) -> None:
+        self.assertIn('postRow("fr_submissions",{', HTML)
+        self.assertIn("section:SECTION,title:title,", HTML)
+        self.assertIn('headers:{"Prefer":"return=minimal"}', HTML)
+        self.assertNotIn("section_slug:SECTION", HTML)
+
+    def test_celestial_logo_respects_user_control(self) -> None:
+        markers = [
+            "logoShine",
+            "starBloom",
+            "document.addEventListener(\"pointerdown\",armCelestialAudio",
+            "byId(\"logo\").addEventListener(\"pointerenter\"",
+            "if(REDUCED || !audioArmed",
+            "chimePlayed",
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
 
 
 def api_request(path: str, method: str = "GET", body: dict | None = None) -> tuple[int, str]:
     data = json.dumps(body).encode("utf-8") if body is not None else None
     headers = {
         "apikey": SB_KEY,
-        "Authorization": f"Bearer {SB_KEY}",
         "Content-Type": "application/json",
     }
-    if method == "POST":
+    if method == "POST" and not path.startswith("rpc/"):
         headers["Prefer"] = "return=minimal"
     request = urllib.request.Request(
         f"{SB_URL}/rest/v1/{path}", data=data, headers=headers, method=method
@@ -162,21 +213,37 @@ def api_request(path: str, method: str = "GET", body: dict | None = None) -> tup
 
 class LiveBoundaryTests(unittest.TestCase):
     def test_public_directory_and_rankings_are_readable(self) -> None:
-        status, raw = api_request("fr_sections_stats?select=slug,name,ideas,fan_votes")
+        status, raw = api_request(
+            "fr_sections_stats?select=slug,name,ideas,fan_votes,verification_status"
+        )
         self.assertEqual(200, status, raw)
         sections = json.loads(raw)
-        self.assertTrue(any(row["slug"] == "brawl-stars" for row in sections))
+        brawl = next(row for row in sections if row["slug"] == "brawl-stars")
+        self.assertEqual("unverified", brawl["verification_status"])
 
         query = urllib.parse.urlencode(
-            {"select": "id,section,title,ai_score,web_votes", "section": "eq.brawl-stars"}
+            {
+                "select": "id,section,title,ai_score,web_votes,team_interest_count,owner_pick",
+                "section": "eq.brawl-stars",
+            }
         )
         status, raw = api_request(f"fr_ranking?{query}")
         self.assertEqual(200, status, raw)
         ideas = json.loads(raw)
         self.assertGreaterEqual(len(ideas), 30)
+        self.assertTrue(all(row["team_interest_count"] == 0 for row in ideas))
+        self.assertTrue(all(row["owner_pick"] is False for row in ideas))
 
     def test_private_queues_cannot_be_read_anonymously(self) -> None:
-        for table in ("fr_submissions", "fr_claims", "fr_events"):
+        for table in (
+            "fr_submissions",
+            "fr_claims",
+            "fr_events",
+            "fr_votes",
+            "fr_profile_members",
+            "fr_team_interests",
+            "fr_profile_invites",
+        ):
             with self.subTest(table=table):
                 status, raw = api_request(f"{table}?select=*")
                 self.assertIn(status, (401, 403), raw)
@@ -185,13 +252,37 @@ class LiveBoundaryTests(unittest.TestCase):
         probes = [
             ("fr_submissions", {"section": "brawl-stars", "title": "x"}),
             ("fr_claims", {"section": "brawl-stars", "name": "x", "role": "x", "contact": "x"}),
-            ("fr_events", {"event": "not_an_allowed_event"}),
+            ("fr_votes", {"idea_id": 1, "voter": "short"}),
         ]
         for table, body in probes:
             with self.subTest(table=table):
                 status, raw = api_request(table, method="POST", body=body)
-                self.assertEqual(401, status, raw)
+                self.assertIn(status, (401, 403), raw)
                 self.assertEqual("42501", json.loads(raw)["code"])
+
+        status, raw = api_request("fr_events", method="POST", body={"event": "not_an_allowed_event"})
+        self.assertEqual(400, status, raw)
+        self.assertEqual("23514", json.loads(raw)["code"])
+
+    def test_anon_cannot_use_team_rpcs_but_receipt_lookup_is_non_enumerable(self) -> None:
+        for rpc, body in (
+            ("fr_set_team_interest", {"p_idea_id": 1, "p_active": True}),
+            ("fr_my_team_interests", {"p_section": "brawl-stars"}),
+            (
+                "fr_create_profile_invite",
+                {"p_section": "brawl-stars", "p_email": "nobody@example.com", "p_role": "contributor"},
+            ),
+            ("fr_profile_team", {"p_section": "brawl-stars"}),
+        ):
+            with self.subTest(rpc=rpc):
+                status, raw = api_request(f"rpc/{rpc}", method="POST", body=body)
+                self.assertIn(status, (401, 403), raw)
+
+        status, raw = api_request(
+            "rpc/fr_submission_status", method="POST", body={"p_receipt": "0" * 64}
+        )
+        self.assertEqual(200, status, raw)
+        self.assertEqual([], json.loads(raw))
 
 
 def main() -> int:

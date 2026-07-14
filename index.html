@@ -39,19 +39,36 @@
   .skip-link{position:fixed;left:12px;top:-80px;z-index:100;background:var(--text);color:var(--bg);
     padding:10px 14px;border-radius:10px;font-weight:800}
   .skip-link:focus{top:12px}
-  .langbtn{position:fixed;top:12px;right:12px;z-index:30;min-height:44px;padding:9px 15px;
+  .top-actions{position:fixed;top:12px;right:12px;z-index:30;display:flex;gap:8px}
+  .top-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 14px;
     border-radius:999px;border:1px solid var(--line);background:rgba(21,25,38,.92);color:var(--text);
     font-weight:850;box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
-  .langbtn:hover{border-color:var(--yellow)}
+  .top-btn:hover{border-color:var(--yellow)}
+  .top-btn svg{width:18px;height:18px}
   :focus-visible{outline:0;box-shadow:var(--focus)!important}
   .hidden{display:none!important}
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
   header{text-align:center;padding:34px 0 12px}
-  .logo{display:inline-block;text-decoration:none;font-size:clamp(2.35rem,8vw,4.1rem);font-weight:950;
+  .logo{position:relative;display:inline-block;text-decoration:none;font-size:clamp(2.35rem,8vw,4.1rem);font-weight:950;
     letter-spacing:-.07em;line-height:1;background:linear-gradient(100deg,var(--yellow) 8%,var(--blue) 55%,var(--purple));
-    -webkit-background-clip:text;background-clip:text;color:transparent}
+    -webkit-background-clip:text;background-clip:text;color:transparent;isolation:isolate;
+    transition:transform .35s var(--ease),filter .35s ease}
+  .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
+    background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
+      radial-gradient(circle at 20% 80%,rgba(255,209,41,.55) 0 2%,transparent 3%),
+      radial-gradient(circle at 82% 18%,rgba(99,179,255,.62) 0 2%,transparent 3%);
+    background-size:46px 46px,58px 58px,64px 64px;pointer-events:none}
+  .logo:after{content:"";position:absolute;top:-35%;bottom:-35%;left:-38%;width:22%;z-index:2;opacity:0;
+    transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);
+    mix-blend-mode:screen;pointer-events:none}
+  .logo:hover,.logo:focus-visible,.logo.celestial{transform:translateY(-2px) scale(1.02);
+    filter:drop-shadow(0 0 12px rgba(255,255,255,.48)) drop-shadow(0 0 26px rgba(99,179,255,.42))}
+  .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
+  .logo:hover:after,.logo:focus-visible:after,.logo.celestial:after{animation:logoShine .8s var(--ease) both}
+  @keyframes logoShine{0%{left:-38%;opacity:0}22%{opacity:1}100%{left:118%;opacity:0}}
+  @keyframes starBloom{0%{opacity:0;transform:scale(.75) rotate(-4deg)}45%{opacity:.95}100%{opacity:0;transform:scale(1.22) rotate(6deg)}}
   .tag{max-width:720px;margin:14px auto 0;color:var(--muted);font-size:clamp(1rem,2.4vw,1.18rem)}
   .tag b{color:var(--text)}
   .eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;color:var(--yellow);
@@ -166,6 +183,13 @@
   .claim-copy b{display:block}
   .claim-copy span{display:block;color:var(--muted);font-size:.8rem}
 
+  .suggest-cta{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;margin:14px 0 0;
+    padding:18px 19px;border:1px solid rgba(99,179,255,.4);border-radius:18px;
+    background:linear-gradient(120deg,rgba(99,179,255,.1),rgba(185,134,255,.08));box-shadow:0 12px 38px rgba(0,0,0,.18)}
+  .suggest-cta h2{margin:0;font-size:1.12rem}
+  .suggest-cta p{margin:3px 0 0;color:var(--muted);font-size:.82rem}
+  .suggest-open{min-width:190px}
+
   .profile-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;margin:24px 0 12px}
   .filter-wrap{position:relative}
   .filter-wrap svg{position:absolute;left:12px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted)}
@@ -248,6 +272,69 @@
   .privacy-note{margin-top:9px;color:var(--muted);font-size:.72rem}
   .retry-btn{margin-top:12px}
 
+  dialog{padding:0;border:0;background:transparent;color:var(--text)}
+  dialog::backdrop{background:rgba(3,5,10,.78);backdrop-filter:blur(5px)}
+  .dialog-card{position:relative;width:min(640px,calc(100vw - 24px));max-height:min(88dvh,850px);overflow:auto;
+    padding:24px;border:1px solid var(--line);border-radius:22px;background:#151925;box-shadow:0 28px 90px rgba(0,0,0,.62)}
+  .dialog-card.wide{width:min(720px,calc(100vw - 24px))}
+  .dialog-card h2{margin:0;padding-right:46px;font-size:1.35rem}
+  .dialog-close{position:absolute;top:14px;right:14px;display:grid;place-items:center;width:44px;height:44px;
+    border:1px solid var(--line);border-radius:12px;background:var(--bg-soft);color:var(--muted);font-size:1.25rem}
+  .dialog-close:hover{border-color:var(--blue);color:var(--text)}
+  .dialog-intro{margin:5px 42px 18px 0;color:var(--muted);font-size:.86rem}
+  .privacy-box{margin-top:12px;padding:13px;border:1px solid var(--line-soft);border-radius:13px;background:var(--bg-soft)}
+  .privacy-title{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.82rem;font-weight:900}
+  .privacy-title .private-badge{padding:3px 8px;border-radius:999px;background:rgba(85,229,154,.1);color:var(--green);font-size:.68rem}
+  .choice-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+  .choice{display:flex;align-items:flex-start;gap:9px;padding:11px;border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:.78rem}
+  .choice:has(input:checked){border-color:var(--blue);background:rgba(99,179,255,.08);color:var(--text)}
+  .choice input{margin:3px 0 0;accent-color:var(--blue)}
+  .choice b{display:block;color:var(--text)}
+  .check-row{display:flex;align-items:flex-start;gap:9px;margin-top:8px;color:var(--muted);font-size:.76rem}
+  .check-row input{width:18px;height:18px;flex:0 0 auto;margin:1px 0 0;accent-color:var(--green)}
+  .similar-wrap{margin:12px 0;padding:13px;border:1px solid rgba(85,229,154,.32);border-radius:13px;background:rgba(85,229,154,.045)}
+  .similar-head{font-size:.78rem;font-weight:900;color:var(--green)}
+  .similar-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}
+  .similar-item{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px;
+    border:1px solid var(--line-soft);border-radius:11px;background:var(--surface)}
+  .similar-item b{display:block;font-size:.8rem;line-height:1.35}
+  .similar-item span{color:var(--muted);font-size:.69rem}
+  .similar-vote{min-width:84px;min-height:44px;padding:7px 10px;border:1px solid var(--green);border-radius:10px;
+    background:rgba(85,229,154,.08);color:var(--green);font-size:.72rem;font-weight:900}
+  .auth-nudge{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:11px 12px;
+    border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:.76rem}
+  .auth-nudge button{flex:0 0 auto}
+  .receipt{margin-top:12px;padding:12px;border:1px solid rgba(85,229,154,.35);border-radius:12px;
+    background:rgba(85,229,154,.06);color:var(--green);font-size:.8rem}
+  .activity-user{margin:8px 0 15px;color:var(--muted);font-size:.8rem;word-break:break-word}
+  .activity-list{display:flex;flex-direction:column;gap:8px}
+  .activity-item{padding:12px;border:1px solid var(--line-soft);border-radius:12px;background:var(--bg-soft)}
+  .activity-item b{display:block;font-size:.85rem}
+  .activity-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;color:var(--muted);font-size:.7rem}
+  .status-pill{padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--blue);font-weight:850}
+  .status-pill.pending,.status-pill.received{color:var(--yellow)}
+  .status-pill.verified,.status-pill.published{color:var(--green)}
+  .team-interest-btn{color:var(--muted)}
+  .team-interest-btn[aria-pressed="true"]{border-color:var(--gold);background:rgba(255,215,0,.1);color:var(--gold)}
+  .signal-strip{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:11px 0 0;color:var(--muted);font-size:.7rem}
+  .signal-strip span{padding:5px 9px;border:1px solid var(--line-soft);border-radius:999px;background:rgba(21,25,38,.72)}
+  .signal-strip b{color:var(--text)}
+  .team-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:12px;
+    border:1px solid rgba(255,215,0,.25);border-radius:13px;background:rgba(255,215,0,.045)}
+  .team-tools b{display:block}.team-tools span{display:block;color:var(--muted);font-size:.74rem}
+  .team-list{display:flex;flex-direction:column;gap:8px;margin-top:15px}
+  .team-member{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:11px;
+    border:1px solid var(--line-soft);border-radius:12px;background:var(--bg-soft)}
+  .team-member b{display:block;font-size:.82rem;word-break:break-word}
+  .team-member span{color:var(--muted);font-size:.7rem}
+  .invite-result{margin-top:12px;padding:12px;border:1px solid rgba(85,229,154,.35);border-radius:12px;background:rgba(85,229,154,.055)}
+  .invite-link-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:8px}
+  .invite-link-row input{min-width:0;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--muted)}
+  .inline-select{width:100%;min-height:46px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--bg-soft);color:var(--text)}
+  .inline-link{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 14px;border:1px solid var(--line);
+    border-radius:11px;background:var(--surface-2);color:var(--text);font-weight:850;text-decoration:none}
+  .mobile-suggest{display:none}
+
   @media (max-width:760px){
     .wrap{padding-top:18px}
     .how{grid-template-columns:1fr}
@@ -257,10 +344,14 @@
     .profile-tools{grid-template-columns:1fr}
     .tabs{overflow-x:auto}
     .tab{flex:1}
+    .suggest-cta{grid-template-columns:1fr}
+    .suggest-open{width:100%}
   }
   @media (max-width:560px){
-    .wrap{padding-inline:13px}
-    header{padding-top:42px}
+    .wrap{padding:18px 13px 132px}
+    .top-actions{left:10px;right:10px;justify-content:flex-end}
+    .top-btn{padding-inline:12px}
+    header{padding-top:48px}
     .search-shell{grid-template-columns:21px 1fr;padding-right:9px}
     .search-btn{grid-column:1/-1;width:100%}
     .form-grid{grid-template-columns:1fr}
@@ -274,10 +365,18 @@
     .rank{font-size:1.05rem}
     .reason{font-size:.76rem}
     .stats{gap:7px}.stat{min-width:102px;padding-inline:10px}
+    .choice-row{grid-template-columns:1fr}
+    .dialog-card{width:100vw;max-height:92dvh;border-radius:20px 20px 0 0;padding:20px 15px 24px}
+    dialog{margin:auto 0 0;width:100%;max-width:none}
+    .mobile-suggest{position:fixed;display:none;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:28;
+      min-height:54px;border:0;border-radius:15px;background:linear-gradient(100deg,var(--yellow),#ffb91f);
+      color:var(--yellow-ink);font-weight:950;box-shadow:0 14px 42px rgba(0,0,0,.5)}
+    body.profile-live .mobile-suggest{display:block}
   }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     *,*:before,*:after{animation:none!important;transition:none!important}
+    .logo:hover,.logo:focus-visible{transform:none;filter:drop-shadow(0 0 12px rgba(99,179,255,.4))}
   }
 </style>
 </head>
@@ -285,7 +384,15 @@
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="bgfx"></div>
 <div class="gridfx"></div>
-<button class="langbtn" id="lang-btn" type="button">ES</button>
+<div class="top-actions">
+  <button class="top-btn" id="account-btn" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <circle cx="12" cy="8" r="4"></circle><path d="M4.8 21a7.2 7.2 0 0 1 14.4 0"></path>
+    </svg>
+    <span id="account-btn-text">Sign in</span>
+  </button>
+  <button class="top-btn" id="lang-btn" type="button">ES</button>
+</div>
 
 <main class="wrap" id="main">
   <header>
@@ -344,6 +451,10 @@
             <span class="helper" id="request-contact-help"></span>
           </div>
         </div>
+        <label class="check-row">
+          <input id="request-allow-contact" type="checkbox">
+          <span id="request-consent-copy"></span>
+        </label>
         <input class="hp" id="request-website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="form-actions">
           <button class="primary-btn" id="request-send" type="submit"></button>
@@ -365,6 +476,17 @@
       </button>
     </div>
 
+    <section class="suggest-cta" aria-labelledby="suggest-cta-title">
+      <div>
+        <h2 id="suggest-cta-title"></h2>
+        <p id="suggest-cta-copy"></p>
+      </div>
+      <button class="primary-btn suggest-open" id="suggest-open" type="button"></button>
+    </section>
+    <div class="signal-strip" id="signal-strip" aria-label="Ranking signals">
+      <span id="signal-ai"></span><span id="signal-fans"></span><span id="signal-team"></span>
+    </div>
+
     <div class="profile-tools">
       <div>
         <label class="field-label" id="filter-label" for="idea-filter"></label>
@@ -384,37 +506,6 @@
 
     <div class="podium" id="podium" aria-label="Top three ideas"></div>
     <div class="list" id="ideas-list"></div>
-
-    <section class="panel" id="submit-panel">
-      <h2 id="submit-title"></h2>
-      <p class="panel-intro" id="submit-intro"></p>
-      <form id="submit-form" novalidate>
-        <div class="form-grid">
-          <div class="field full">
-            <label id="submit-idea-label" for="submit-idea"></label>
-            <input id="submit-idea" maxlength="140" required>
-          </div>
-          <div class="field full">
-            <label id="submit-details-label" for="submit-details"></label>
-            <textarea id="submit-details" maxlength="1000"></textarea>
-          </div>
-          <div class="field">
-            <label id="submit-name-label" for="submit-name"></label>
-            <input id="submit-name" maxlength="80" autocomplete="name">
-          </div>
-          <div class="field">
-            <label id="submit-contact-label" for="submit-contact"></label>
-            <input id="submit-contact" maxlength="180" autocomplete="email">
-            <span class="helper" id="submit-contact-help"></span>
-          </div>
-        </div>
-        <input class="hp" id="submit-website" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="form-actions">
-          <button class="primary-btn" id="submit-send" type="submit"></button>
-        </div>
-        <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
-      </form>
-    </section>
 
     <section class="panel hidden" id="claim-panel">
       <h2 id="claim-title"></h2>
@@ -455,23 +546,183 @@
   <footer id="footer"></footer>
 </main>
 
+<button class="mobile-suggest" id="mobile-suggest" type="button"></button>
+
+<dialog id="suggest-dialog" aria-labelledby="submit-title">
+  <div class="dialog-card wide">
+    <button class="dialog-close" id="suggest-close" type="button" aria-label="Close">×</button>
+    <h2 id="submit-title"></h2>
+    <p class="dialog-intro" id="submit-intro"></p>
+    <form id="submit-form" novalidate>
+      <div class="form-grid">
+        <div class="field full">
+          <label id="submit-idea-label" for="submit-idea"></label>
+          <input id="submit-idea" maxlength="140" autocomplete="off" required>
+        </div>
+      </div>
+      <section class="similar-wrap hidden" id="similar-wrap" aria-live="polite">
+        <div class="similar-head" id="similar-head"></div>
+        <div class="similar-list" id="similar-ideas"></div>
+        <span class="helper" id="similar-help"></span>
+      </section>
+      <div class="form-grid">
+        <div class="field full">
+          <label id="submit-details-label" for="submit-details"></label>
+          <textarea id="submit-details" maxlength="1000"></textarea>
+        </div>
+      </div>
+      <section class="privacy-box" aria-labelledby="privacy-title">
+        <div class="privacy-title"><span id="privacy-title"></span><span class="private-badge" id="privacy-badge"></span></div>
+        <div class="choice-row">
+          <label class="choice">
+            <input id="attribution-anonymous" name="attribution" type="radio" value="anonymous" checked>
+            <span><b id="anonymous-title"></b><span id="anonymous-copy"></span></span>
+          </label>
+          <label class="choice hidden" id="account-choice">
+            <input id="attribution-account" name="attribution" type="radio" value="account">
+            <span><b id="account-title"></b><span id="account-copy"></span></span>
+          </label>
+        </div>
+        <div class="form-grid" style="margin-top:12px">
+          <div class="field">
+            <label id="submit-name-label" for="submit-name"></label>
+            <input id="submit-name" maxlength="80" autocomplete="name">
+          </div>
+          <div class="field">
+            <label id="submit-contact-label" for="submit-contact"></label>
+            <input id="submit-contact" maxlength="180" autocomplete="email" inputmode="email">
+            <span class="helper" id="submit-contact-help"></span>
+          </div>
+        </div>
+        <label class="check-row">
+          <input id="submit-allow-contact" type="checkbox">
+          <span id="submit-consent-copy"></span>
+        </label>
+      </section>
+      <div class="auth-nudge" id="auth-nudge">
+        <span id="auth-nudge-copy"></span>
+        <button class="secondary-btn" id="suggest-sign-in" type="button"></button>
+      </div>
+      <input class="hp" id="submit-website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="form-actions">
+        <button class="primary-btn" id="submit-send" type="submit"></button>
+        <button class="secondary-btn" id="submit-cancel" type="button"></button>
+      </div>
+      <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
+      <div class="receipt hidden" id="submit-receipt"></div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="auth-dialog" aria-labelledby="auth-title">
+  <div class="dialog-card">
+    <button class="dialog-close" id="auth-close" type="button" aria-label="Close">×</button>
+    <h2 id="auth-title"></h2>
+    <p class="dialog-intro" id="auth-intro"></p>
+    <form id="auth-form" novalidate>
+      <div class="field">
+        <label id="auth-email-label" for="auth-email"></label>
+        <input id="auth-email" type="email" maxlength="180" autocomplete="email" inputmode="email" required>
+        <span class="helper" id="auth-email-help"></span>
+      </div>
+      <div class="form-actions">
+        <button class="primary-btn" id="auth-send" type="submit"></button>
+      </div>
+      <div class="form-status" id="auth-status" role="status" aria-live="polite"></div>
+    </form>
+  </div>
+</dialog>
+
+<dialog id="activity-dialog" aria-labelledby="activity-title">
+  <div class="dialog-card">
+    <button class="dialog-close" id="activity-close" type="button" aria-label="Close">×</button>
+    <h2 id="activity-title"></h2>
+    <div class="activity-user" id="activity-user"></div>
+    <div class="team-tools hidden" id="team-tools">
+      <div><b id="team-tools-title"></b><span id="team-tools-copy"></span></div>
+      <button class="secondary-btn" id="team-open" type="button"></button>
+    </div>
+    <div class="activity-list" id="activity-list"></div>
+    <div class="form-actions">
+      <button class="secondary-btn" id="logout-btn" type="button"></button>
+    </div>
+    <div class="form-status" id="activity-status" role="status" aria-live="polite"></div>
+  </div>
+</dialog>
+
+<dialog id="team-dialog" aria-labelledby="team-title">
+  <div class="dialog-card wide">
+    <button class="dialog-close" id="team-close" type="button" aria-label="Close">×</button>
+    <h2 id="team-title"></h2>
+    <p class="dialog-intro" id="team-intro"></p>
+    <form id="team-invite-form" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label id="team-email-label" for="team-email"></label>
+          <input id="team-email" type="email" maxlength="180" autocomplete="email" inputmode="email" required>
+        </div>
+        <div class="field">
+          <label id="team-role-label" for="team-role"></label>
+          <select class="inline-select" id="team-role">
+            <option value="contributor" id="team-role-contributor"></option>
+            <option value="admin" id="team-role-admin"></option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="primary-btn" id="team-invite-send" type="submit"></button>
+      </div>
+      <div class="form-status" id="team-status" role="status" aria-live="polite"></div>
+      <div class="invite-result hidden" id="invite-result">
+        <b id="invite-result-title"></b>
+        <span class="helper" id="invite-result-copy"></span>
+        <div class="invite-link-row">
+          <input id="invite-link" readonly aria-label="Secure invite link">
+          <button class="secondary-btn" id="invite-copy" type="button"></button>
+        </div>
+        <div class="form-actions">
+          <a class="inline-link" id="invite-email-link" href="#"></a>
+        </div>
+      </div>
+    </form>
+    <div class="section-head"><div><h2 id="team-members-title"></h2><p id="team-members-copy"></p></div></div>
+    <div class="team-list" id="team-list"></div>
+  </div>
+</dialog>
+
+<dialog id="invite-dialog" aria-labelledby="invite-title">
+  <div class="dialog-card">
+    <button class="dialog-close" id="invite-close" type="button" aria-label="Close">×</button>
+    <h2 id="invite-title"></h2>
+    <p class="dialog-intro" id="invite-intro"></p>
+    <div class="team-tools"><div><b id="invite-profile"></b><span id="invite-role"></span></div></div>
+    <div class="form-actions">
+      <button class="primary-btn" id="invite-accept" type="button"></button>
+      <button class="secondary-btn" id="invite-decline" type="button"></button>
+    </div>
+    <div class="form-status" id="invite-status" role="status" aria-live="polite"></div>
+  </div>
+</dialog>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <noscript>FanRank needs JavaScript to load live rankings and votes.</noscript>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.5/dist/umd/supabase.min.js" integrity="sha384-Fntl9b+IRzm2GKZK0c129fQFknWsn8pyxDejLO4wwds1LF9DSob2K2QXlfw8EIXn" crossorigin="anonymous"></script>
 <script>
 "use strict";
 
 var SB_URL = "https://kopegamcjozrvmxruwdn.supabase.co";
-var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtvcGVnYW1jam96cnZteHJ1d2RuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIwMjgzNDIsImV4cCI6MjA5NzYwNDM0Mn0.BOPhoQNg2FVKSevoTC7rVWvBxgNMxuZuyQdarUHB3QQ";
+var SB_KEY = "sb_publishable_2NDyczKDwFCzNIWEMycRtw_yTnkUQAi";
 var API_HEADERS = {
   "apikey": SB_KEY,
-  "Authorization": "Bearer " + SB_KEY,
   "Content-Type": "application/json"
 };
 var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var params = new URLSearchParams(location.search);
 var SECTION = params.get("s");
 var DEEP_IDEA = parseInt(params.get("idea") || "0", 10) || null;
+var hashParams = new URLSearchParams(location.hash.replace(/^#/,""));
+var INVITE_TOKEN = hashParams.get("invite") || "";
 var LANG = (params.get("lang") || localStorage.getItem("fr_lang") || "en") === "es" ? "es" : "en";
 var sections = [];
 var allIdeas = [];
@@ -482,6 +733,19 @@ var profileQuery = "";
 var toastTimer = null;
 var formStartedAt = Date.now();
 var ephemeralVisitor = "v_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+var authClient = null;
+var session = null;
+var membership = null;
+var authSubscription = null;
+var myTeamInterestIds = new Set();
+var invitePreview = null;
+var audioContext = null;
+var audioArmed = false;
+var chimePlayed = false;
+try{
+  if(INVITE_TOKEN){sessionStorage.setItem("fr_pending_invite",INVITE_TOKEN);}
+  else{INVITE_TOKEN = sessionStorage.getItem("fr_pending_invite") || "";}
+}catch(error){}
 
 var T = {
   en:{
@@ -512,12 +776,12 @@ var T = {
     how:[
       ["light","Fans submit","Ideas enter one private review queue instead of disappearing across comments."],
       ["spark","AI helps rank","Approved ideas are scored for impact, feasibility and clarity — with a reason."],
-      ["shield","Teams shape it","Verified team picks score 100 and become signals for the next rerank."]
+      ["shield","Teams add context","A verified team can mark interest. It is visible and useful, but never overrides fan demand."]
     ],
     request_title:"Missing someone?",
     request_intro:"Request a profile for any game, creator or company. We will start with the ones people actually ask for.",
     target_label:"Game, creator or company *",
-    name_label:"Your name or handle <span class='optional'>(optional)</span>",
+    name_label:"Private name <span class='optional'>(optional)</span>",
     contact_label:"Your contact <span class='optional'>(optional)</span>",
     contact_help:"Private. Only used if we need to clarify or tell you the profile is live.",
     request_send:"Request profile",
@@ -526,7 +790,7 @@ var T = {
     too_fast:"Please wait a moment and try again.",
     generic_error:"Something failed. Your text is still here — try again.",
     claim_bar_title:"UNVERIFIED FAN PROFILE",
-    claim_bar_copy:"Fan-made, not official. Are you on the team? Claim it to add verified picks.",
+    claim_bar_copy:"Fan-made, not official. Are you on the team? Claim it to add verified team interest.",
     claim_open:"Claim profile",
     filter_label:"Search ideas in this profile",
     filter_placeholder:"Search a feature, problem or keyword…",
@@ -534,7 +798,12 @@ var T = {
     tab_source:"Community",
     tab_fans:"Fan votes",
     no_ideas:"No ideas match that search.",
-    team_pick:"VERIFIED TEAM PICK · 100",
+    team_pick:function(n){return "VERIFIED TEAM INTEREST · " + n;},
+    team_interest_add:"Mark team interest",
+    team_interest_remove:"Remove team interest",
+    signal_ai:"<b>AI</b> usefulness base",
+    signal_fans:"<b>Fans</b> demand",
+    signal_team:"<b>Verified team</b> capped interest",
     ai_score:"AI",
     source:"source",
     vote:"VOTE",
@@ -543,12 +812,76 @@ var T = {
     vote_rank:function(n){return "Vote counted — this idea is now #" + n + " among fans.";},
     already_voted:"Your vote was already counted.",
     shared:"Share link ready.",
-    submit_title:"Add a better idea",
-    submit_intro:"It enters a private review queue. If approved, it receives an AI-assisted score and joins the public ranking.",
-    idea_label:"Your suggestion in one sentence *",
+    suggest_cta_title:"What should improve next?",
+    suggest_cta_copy:"Write one sentence. FanRank checks similar ideas before you send it.",
+    suggest_open:"Suggest an improvement",
+    submit_title:"Suggest an improvement",
+    submit_intro:"Anonymous by default. Your idea enters a private review queue and is never published automatically.",
+    idea_label:"Describe your suggestion in one sentence *",
     details_label:"Why would this help? <span class='optional'>(optional)</span>",
     submit_send:"Send suggestion",
+    submit_cancel:"Keep for later",
     submit_ok:"Suggestion received. Your contact stays private.",
+    similar_head:"We found similar published ideas",
+    similar_help:"Vote for one if it already says what you mean, or keep writing and send yours.",
+    similar_votes:"votes",
+    privacy_title:"How should this suggestion be linked to you?",
+    privacy_badge:"PRIVATE BY DEFAULT",
+    anonymous_title:"Anonymous publicly",
+    anonymous_copy:"No public name. A private receipt confirms delivery on this device.",
+    account_title:"Save to my account",
+    account_copy:"Still anonymous publicly unless you choose account attribution.",
+    consent_copy:"FanRank may contact me privately about this suggestion. My contact is never public.",
+    contact_consent_error:"Tick the private-contact permission or remove your contact.",
+    auth_nudge:"Want this suggestion on every device? Sign in first. Your draft stays here.",
+    sign_in:"Sign in",
+    account:"My activity",
+    auth_title:"Sign in without a password",
+    auth_intro:"We will email you a secure magic link. Signing in is optional for suggesting and voting.",
+    auth_email_label:"Your email *",
+    auth_email_help:"Used only for sign-in and account recovery. It is not shared publicly.",
+    auth_send:"Email me a sign-in link",
+    auth_sent:"Link sent. Open it on this device; your draft is saved.",
+    auth_unavailable:"Sign-in is temporarily unavailable. Anonymous suggestions still work.",
+    activity_title:"My activity",
+    activity_empty:"No saved suggestions or verification requests yet.",
+    activity_loading:"Loading your private activity…",
+    claims_label:"Profile claims",
+    submissions_label:"Suggestions",
+    sign_out:"Sign out",
+    signed_out:"Signed out.",
+    receipt_copy:"Saved privately on this device. Status: received.",
+    team_tools_title:"Verified team access",
+    team_tools_copy:"Invite partners and manage who can mark team interest.",
+    team_open:"Manage team",
+    team_title:"My profile team",
+    team_intro:"Invite only people you trust. Every member gets their own accountable heart; no one shares your login.",
+    team_email_label:"Teammate email *",
+    team_role_label:"Permission",
+    team_role_contributor:"Contributor · can mark hearts",
+    team_role_admin:"Admin · can invite and mark hearts",
+    team_invite_send:"Create secure invitation",
+    team_invite_ready:"Secure invitation ready",
+    team_invite_copy:"The link expires in 48 hours, works once and only for this email.",
+    team_copy:"Copy link",
+    team_copied:"Invite link copied.",
+    team_email:"Open email",
+    team_members_title:"Current members",
+    team_members_copy:"Member identities stay private from the public.",
+    team_members_empty:"No team members found.",
+    team_revoke:"Revoke access",
+    team_revoke_confirm:"Revoke this person's team access? Their past hearts will be removed from the active signal.",
+    team_revoked:"Access revoked.",
+    invite_title:"Join a verified profile team",
+    invite_intro:"Review the profile and permission before accepting. The link is bound to your signed-in email.",
+    invite_accept:"Accept invitation",
+    invite_decline:"Not now",
+    invite_accepted:"Invitation accepted. You can now mark team interest.",
+    invite_invalid:"This invitation is invalid, expired or belongs to another email.",
+    role_owner:"Owner",
+    role_admin:"Admin",
+    role_contributor:"Contributor",
+    close:"Close",
     claim_title:"Claim this profile",
     claim_intro:"We verify claims before anyone can influence a team's ranking. A claim does not create public access automatically.",
     claim_name_label:"Your name *",
@@ -559,7 +892,7 @@ var T = {
     claim_send:"Send verification request",
     claim_cancel:"Cancel",
     claim_ok:"Claim received. Nothing changes publicly until it is verified.",
-    footer:"<b>How ranking works:</b> AI-assisted score = impact × feasibility × clarity. Fan votes show demand. A verified team pick scores 100 and becomes a preference signal for the next rerank.<br>Names and contacts from forms are private and never returned by the public API. FanRank · built with fans, for better decisions."
+    footer:"<b>How ranking works:</b> an AI-assisted base score weighs impact, feasibility and clarity; fan demand adds a capped signal; verified team interest adds limited context, never an automatic #1.<br>Suggestions are reviewed before publication. Names, contacts, receipts and individual voters are private. FanRank · built with fans, for better decisions."
   },
   es:{
     eyebrow:"La capa pública de sugerencias",
@@ -589,12 +922,12 @@ var T = {
     how:[
       ["light","Los fans proponen","Las ideas entran en una cola privada en vez de perderse entre comentarios."],
       ["spark","La IA ayuda a ordenar","Las aprobadas reciben nota por impacto, viabilidad y claridad — con un motivo."],
-      ["shield","El equipo afina","Las elegidas por un equipo verificado puntúan 100 y alimentan el siguiente ranking."]
+      ["shield","El equipo aporta contexto","Un equipo verificado puede marcar interés. Se ve y ayuda, pero nunca pisa la demanda de los fans."]
     ],
     request_title:"¿Falta alguien?",
     request_intro:"Pide un perfil para cualquier juego, creador o empresa. Empezaremos por los que la gente pida de verdad.",
     target_label:"Juego, creador o empresa *",
-    name_label:"Tu nombre o alias <span class='optional'>(opcional)</span>",
+    name_label:"Nombre privado <span class='optional'>(opcional)</span>",
     contact_label:"Tu contacto <span class='optional'>(opcional)</span>",
     contact_help:"Privado. Solo se usa si hace falta aclarar algo o avisarte de que el perfil ya existe.",
     request_send:"Pedir perfil",
@@ -603,7 +936,7 @@ var T = {
     too_fast:"Espera un momento y vuelve a intentarlo.",
     generic_error:"Algo ha fallado. Tu texto sigue ahí — inténtalo otra vez.",
     claim_bar_title:"PERFIL DE FANS NO VERIFICADO",
-    claim_bar_copy:"Hecho por fans, no es oficial. Si formas parte del equipo, reclámalo para añadir elecciones verificadas.",
+    claim_bar_copy:"Hecho por fans, no es oficial. Si formas parte del equipo, reclámalo para añadir interés verificado.",
     claim_open:"Reclamar perfil",
     filter_label:"Buscar ideas dentro de este perfil",
     filter_placeholder:"Busca una función, problema o palabra…",
@@ -611,7 +944,12 @@ var T = {
     tab_source:"Comunidad",
     tab_fans:"Votos",
     no_ideas:"Ninguna idea coincide con esa búsqueda.",
-    team_pick:"ELEGIDA POR EL EQUIPO · 100",
+    team_pick:function(n){return "INTERÉS DE EQUIPO VERIFICADO · " + n;},
+    team_interest_add:"Marcar interés del equipo",
+    team_interest_remove:"Quitar interés del equipo",
+    signal_ai:"<b>IA</b> utilidad base",
+    signal_fans:"<b>Fans</b> demanda",
+    signal_team:"<b>Equipo verificado</b> interés limitado",
     ai_score:"IA",
     source:"fuente",
     vote:"VOTAR",
@@ -620,12 +958,76 @@ var T = {
     vote_rank:function(n){return "Voto contado — esta idea ya es #" + n + " entre los fans.";},
     already_voted:"Tu voto ya estaba contado.",
     shared:"Enlace listo para compartir.",
-    submit_title:"Añade una idea mejor",
-    submit_intro:"Entra en una cola privada. Si se aprueba, recibe una nota asistida por IA y entra en el ranking público.",
-    idea_label:"Tu sugerencia en una frase *",
+    suggest_cta_title:"¿Qué debería mejorar ahora?",
+    suggest_cta_copy:"Escribe una frase. FanRank busca ideas parecidas antes de enviarla.",
+    suggest_open:"Proponer una mejora",
+    submit_title:"Propón una mejora",
+    submit_intro:"Anónima por defecto. Entra en revisión privada y nunca se publica automáticamente.",
+    idea_label:"Describe tu sugerencia en una frase *",
     details_label:"¿Por qué ayudaría? <span class='optional'>(opcional)</span>",
     submit_send:"Enviar sugerencia",
+    submit_cancel:"Guardar para luego",
     submit_ok:"Sugerencia recibida. Tu contacto sigue siendo privado.",
+    similar_head:"Hemos encontrado ideas publicadas parecidas",
+    similar_help:"Vota una si ya expresa lo mismo o sigue escribiendo y envía la tuya.",
+    similar_votes:"votos",
+    privacy_title:"¿Cómo quieres vincular esta sugerencia contigo?",
+    privacy_badge:"PRIVADO POR DEFECTO",
+    anonymous_title:"Anónima públicamente",
+    anonymous_copy:"No aparece ningún nombre. Un recibo privado confirma la entrega en este dispositivo.",
+    account_title:"Guardar en mi cuenta",
+    account_copy:"Puede seguir anónima públicamente aunque quede guardada para ti.",
+    consent_copy:"FanRank puede contactarme en privado sobre esta sugerencia. Mi contacto nunca será público.",
+    contact_consent_error:"Marca el permiso de contacto privado o borra el contacto.",
+    auth_nudge:"¿Quieres verla desde cualquier dispositivo? Inicia sesión antes. Tu borrador se conserva.",
+    sign_in:"Iniciar sesión",
+    account:"Mi actividad",
+    auth_title:"Entra sin contraseña",
+    auth_intro:"Te enviaremos un enlace seguro por correo. Iniciar sesión es opcional para proponer y votar.",
+    auth_email_label:"Tu correo *",
+    auth_email_help:"Solo se usa para entrar y recuperar tu cuenta. No se muestra públicamente.",
+    auth_send:"Enviarme enlace de acceso",
+    auth_sent:"Enlace enviado. Ábrelo en este dispositivo; tu borrador está guardado.",
+    auth_unavailable:"El acceso no está disponible ahora. Las sugerencias anónimas siguen funcionando.",
+    activity_title:"Mi actividad",
+    activity_empty:"Aún no tienes sugerencias ni solicitudes de verificación guardadas.",
+    activity_loading:"Cargando tu actividad privada…",
+    claims_label:"Reclamaciones de perfiles",
+    submissions_label:"Sugerencias",
+    sign_out:"Cerrar sesión",
+    signed_out:"Sesión cerrada.",
+    receipt_copy:"Guardado en privado en este dispositivo. Estado: recibido.",
+    team_tools_title:"Acceso de equipo verificado",
+    team_tools_copy:"Invita socios y gestiona quién puede marcar interés del equipo.",
+    team_open:"Gestionar equipo",
+    team_title:"El equipo de mi perfil",
+    team_intro:"Invita solo a gente de confianza. Cada miembro tiene su propio corazón auditable; nadie comparte tu sesión.",
+    team_email_label:"Correo del miembro *",
+    team_role_label:"Permiso",
+    team_role_contributor:"Colaborador · puede marcar corazones",
+    team_role_admin:"Administrador · puede invitar y marcar corazones",
+    team_invite_send:"Crear invitación segura",
+    team_invite_ready:"Invitación segura preparada",
+    team_invite_copy:"El enlace caduca en 48 horas, funciona una vez y solo para este correo.",
+    team_copy:"Copiar enlace",
+    team_copied:"Enlace de invitación copiado.",
+    team_email:"Abrir correo",
+    team_members_title:"Miembros actuales",
+    team_members_copy:"Las identidades del equipo no son públicas.",
+    team_members_empty:"No se han encontrado miembros.",
+    team_revoke:"Quitar acceso",
+    team_revoke_confirm:"¿Quitar el acceso de equipo a esta persona? Sus corazones dejarán de contar como señal activa.",
+    team_revoked:"Acceso retirado.",
+    invite_title:"Únete al equipo de un perfil verificado",
+    invite_intro:"Revisa el perfil y el permiso antes de aceptar. El enlace está ligado al correo de tu sesión.",
+    invite_accept:"Aceptar invitación",
+    invite_decline:"Ahora no",
+    invite_accepted:"Invitación aceptada. Ya puedes marcar interés del equipo.",
+    invite_invalid:"La invitación no es válida, ha caducado o pertenece a otro correo.",
+    role_owner:"Propietario",
+    role_admin:"Administrador",
+    role_contributor:"Colaborador",
+    close:"Cerrar",
     claim_title:"Reclama este perfil",
     claim_intro:"Verificamos cada solicitud antes de que alguien pueda influir en el ranking de un equipo. Reclamarlo no da acceso público automático.",
     claim_name_label:"Tu nombre *",
@@ -636,7 +1038,7 @@ var T = {
     claim_send:"Enviar solicitud de verificación",
     claim_cancel:"Cancelar",
     claim_ok:"Solicitud recibida. Nada cambia públicamente hasta verificarla.",
-    footer:"<b>Cómo se ordena:</b> nota asistida por IA = impacto × viabilidad × claridad. Los votos muestran demanda. Una elección de equipo verificado puntúa 100 y se convierte en señal para el siguiente ranking.<br>Los nombres y contactos de formularios son privados y nunca vuelven por la API pública. FanRank · hecho con fans para tomar mejores decisiones."
+    footer:"<b>Cómo se ordena:</b> una nota base asistida por IA pondera impacto, viabilidad y claridad; la demanda de fans añade una señal limitada; el interés de un equipo verificado aporta contexto, nunca un #1 automático.<br>Las sugerencias se revisan antes de publicarse. Nombres, contactos, recibos y votantes individuales son privados. FanRank · hecho con fans para tomar mejores decisiones."
   }
 };
 
@@ -700,7 +1102,8 @@ function icon(name){
     spark:'<path d="m12 3 1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3Z"></path><path d="m18 15 .9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9L18 15Z"></path>',
     shield:'<path d="M12 3 4.5 6v5.4c0 4.7 3.2 8.4 7.5 9.6 4.3-1.2 7.5-4.9 7.5-9.6V6L12 3Z"></path><path d="m9 12 2 2 4-4"></path>',
     share:'<circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path>',
-    crown:'<path d="m4 8 4 3 4-6 4 6 4-3-2 10H6L4 8Z"></path><path d="M6 21h12"></path>'
+    crown:'<path d="m4 8 4 3 4-6 4 6 4-3-2 10H6L4 8Z"></path><path d="M6 21h12"></path>',
+    heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"></path>'
   };
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths[name] + '</svg>';
 }
@@ -710,7 +1113,8 @@ function statHtml(number,label,green){
 
 async function api(path,options){
   var opts = options || {};
-  opts.headers = Object.assign({},API_HEADERS,opts.headers || {});
+  var authHeaders = session && session.access_token ? {"Authorization":"Bearer " + session.access_token} : {};
+  opts.headers = Object.assign({},API_HEADERS,authHeaders,opts.headers || {});
   var response = await fetch(SB_URL + "/rest/v1/" + path,opts);
   if(!response.ok){
     var error = new Error("HTTP " + response.status);
@@ -727,6 +1131,13 @@ function postRow(table,body){
     body:JSON.stringify(body)
   });
 }
+function callRpc(name,body){
+  return api("rpc/" + name,{
+    method:"POST",
+    headers:{"Prefer":"return=representation"},
+    body:JSON.stringify(body || {})
+  });
+}
 function sendEvent(event,data){
   if(location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:"){return;}
   var payload = data || {};
@@ -737,8 +1148,9 @@ function sendEvent(event,data){
     value:payload.value ? String(payload.value).slice(0,180) : null,
     visitor:visitorId().slice(0,100)
   };
+  var authHeaders = session && session.access_token ? {"Authorization":"Bearer " + session.access_token} : {};
   fetch(SB_URL + "/rest/v1/fr_events",{
-    method:"POST",headers:Object.assign({},API_HEADERS,{"Prefer":"return=minimal"}),
+    method:"POST",headers:Object.assign({},API_HEADERS,authHeaders,{"Prefer":"return=minimal"}),
     body:JSON.stringify(body),keepalive:true
   }).catch(function(){});
 }
@@ -770,6 +1182,328 @@ function validTiming(honeypotId,cooldownKey,cooldownMs){
 function markWrite(cooldownKey){
   try{localStorage.setItem(cooldownKey,String(Date.now()));}
   catch(error){}
+}
+function openDialog(id){
+  var dialog = byId(id);
+  if(!dialog.open){dialog.showModal();}
+}
+function closeDialog(id){
+  var dialog = byId(id);
+  if(dialog.open){dialog.close();}
+}
+function authRedirectUrl(){
+  var url = new URL(location.origin + location.pathname);
+  if(SECTION){url.searchParams.set("s",SECTION);}
+  if(LANG === "es"){url.searchParams.set("lang","es");}
+  if(INVITE_TOKEN){url.hash = "invite=" + encodeURIComponent(INVITE_TOKEN);}
+  return url.href;
+}
+function canManageTeam(){
+  return !!(membership && (membership.role === "owner" || membership.role === "admin"));
+}
+function updateTeamRoleControl(){
+  var select = byId("team-role");
+  var adminOption = byId("team-role-admin");
+  if(!select || !adminOption){return;}
+  var canInviteAdmin = !!(membership && membership.role === "owner");
+  adminOption.disabled = !canInviteAdmin;
+  if(!canInviteAdmin && select.value === "admin"){select.value = "contributor";}
+}
+function updateAccountUI(){
+  var text = byId("account-btn-text");
+  if(!text){return;}
+  text.textContent = session ? tx("account") : tx("sign_in");
+  byId("account-btn").setAttribute("aria-label",text.textContent);
+  byId("account-choice").classList.toggle("hidden",!session);
+  byId("auth-nudge").classList.toggle("hidden",!!session);
+  byId("team-tools").classList.toggle("hidden",!canManageTeam());
+  if(!session){
+    byId("attribution-anonymous").checked = true;
+    byId("attribution-account").checked = false;
+  }
+  updateTeamRoleControl();
+}
+function saveDraft(){
+  if(!SECTION){return;}
+  var draft = {
+    section:SECTION,
+    title:byId("submit-idea").value,
+    details:byId("submit-details").value,
+    name:byId("submit-name").value,
+    contact:byId("submit-contact").value,
+    allowContact:byId("submit-allow-contact").checked,
+    attribution:byId("attribution-account").checked ? "account" : "anonymous"
+  };
+  try{
+    if(draft.title || draft.details || draft.name || draft.contact){
+      localStorage.setItem("fr_suggestion_draft",JSON.stringify(draft));
+    }else{
+      localStorage.removeItem("fr_suggestion_draft");
+    }
+  }catch(error){}
+}
+function restoreDraft(){
+  try{
+    var draft = JSON.parse(localStorage.getItem("fr_suggestion_draft") || "null");
+    if(!draft || draft.section !== SECTION){return;}
+    byId("submit-idea").value = draft.title || "";
+    byId("submit-details").value = draft.details || "";
+    byId("submit-name").value = draft.name || "";
+    byId("submit-contact").value = draft.contact || "";
+    byId("submit-allow-contact").checked = !!draft.allowContact;
+    if(session && draft.attribution === "account"){byId("attribution-account").checked = true;}
+  }catch(error){}
+}
+function clearDraft(){
+  try{localStorage.removeItem("fr_suggestion_draft");}catch(error){}
+}
+function randomReceipt(){
+  var bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  var binary = "";
+  bytes.forEach(function(value){binary += String.fromCharCode(value);});
+  return btoa(binary).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+}
+async function hashReceipt(value){
+  var bytes = new TextEncoder().encode(value);
+  var digest = await crypto.subtle.digest("SHA-256",bytes);
+  return Array.from(new Uint8Array(digest)).map(function(item){return item.toString(16).padStart(2,"0");}).join("");
+}
+function storeReceipt(token,title){
+  try{
+    var receipts = JSON.parse(localStorage.getItem("fr_receipts") || "[]");
+    receipts.unshift({section:SECTION,token:token,title:title,created_at:new Date().toISOString()});
+    localStorage.setItem("fr_receipts",JSON.stringify(receipts.slice(0,20)));
+  }catch(error){}
+}
+function armCelestialAudio(){
+  if(REDUCED || audioArmed){return;}
+  var Context = window.AudioContext || window.webkitAudioContext;
+  if(!Context){return;}
+  try{
+    audioContext = audioContext || new Context();
+    audioContext.resume().then(function(){audioArmed = audioContext.state === "running";}).catch(function(){});
+  }catch(error){}
+}
+function playCelestialChime(){
+  if(REDUCED || !audioArmed || !audioContext || chimePlayed){return;}
+  chimePlayed = true;
+  [523.25,659.25,783.99].forEach(function(frequency,index){
+    var oscillator = audioContext.createOscillator();
+    var gain = audioContext.createGain();
+    oscillator.type = index === 1 ? "triangle" : "sine";
+    oscillator.frequency.setValueAtTime(frequency,audioContext.currentTime);
+    gain.gain.setValueAtTime(.0001,audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.028,audioContext.currentTime + .035 + index*.015);
+    gain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime + .52 + index*.04);
+    oscillator.connect(gain).connect(audioContext.destination);
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + .62);
+  });
+}
+function triggerCelestialLogo(withSound){
+  var logo = byId("logo");
+  logo.classList.remove("celestial");
+  void logo.offsetWidth;
+  logo.classList.add("celestial");
+  setTimeout(function(){logo.classList.remove("celestial");},950);
+  if(withSound){playCelestialChime();}
+}
+function openSuggestion(){
+  formStartedAt = Date.now();
+  restoreDraft();
+  renderSimilarIdeas();
+  setStatus("submit-status","","");
+  byId("submit-receipt").classList.add("hidden");
+  openDialog("suggest-dialog");
+  sendEvent("suggest_open",{section:SECTION});
+  setTimeout(function(){byId("submit-idea").focus();},0);
+}
+function closeSuggestion(){
+  saveDraft();
+  closeDialog("suggest-dialog");
+}
+function openAuth(action){
+  saveDraft();
+  if(action){
+    try{localStorage.setItem("fr_after_auth",action);}catch(error){}
+  }
+  closeDialog("suggest-dialog");
+  setStatus("auth-status","","");
+  openDialog("auth-dialog");
+  sendEvent("auth_open",{section:SECTION || null,value:action || "account"});
+  setTimeout(function(){byId("auth-email").focus();},0);
+}
+async function loadMembership(){
+  membership = null;
+  myTeamInterestIds = new Set();
+  if(!session){return;}
+  try{
+    var rows = await api("fr_profile_members?select=section,role,status&user_id=eq." + encodeURIComponent(session.user.id));
+    membership = SECTION ? rows.find(function(row){return row.section === SECTION && row.status === "active";}) || null : null;
+    if(membership){
+      var interests = await callRpc("fr_my_team_interests",{p_section:SECTION});
+      myTeamInterestIds = new Set((interests || []).map(function(row){return Number(row.idea_id);}));
+    }
+  }catch(error){membership = null;myTeamInterestIds = new Set();}
+}
+async function initAuth(){
+  if(!window.supabase || !window.supabase.createClient){
+    updateAccountUI();
+    return;
+  }
+  authClient = window.supabase.createClient(SB_URL,SB_KEY,{
+    auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,flowType:"pkce"}
+  });
+  try{
+    var current = await authClient.auth.getSession();
+    session = current.data.session;
+    await loadMembership();
+  }catch(error){session = null;membership = null;}
+  updateAccountUI();
+  var listener = authClient.auth.onAuthStateChange(function(event,nextSession){
+    session = nextSession;
+    setTimeout(async function(){
+      await loadMembership();
+      updateAccountUI();
+      if(SECTION && secMeta){renderIdeas();}
+      if(event === "SIGNED_IN"){sendEvent("auth_signed_in",{section:SECTION || null});}
+    },0);
+  });
+  authSubscription = listener.data.subscription;
+}
+function resumeAfterAuth(){
+  if(!session){return;}
+  var action = "";
+  try{
+    action = localStorage.getItem("fr_after_auth") || "";
+    localStorage.removeItem("fr_after_auth");
+  }catch(error){}
+  if(action === "claim"){openClaimPanel();}
+  if(action === "suggest"){openSuggestion();}
+}
+function statusText(status){
+  var map = LANG === "es" ? {
+    received:"recibida",published:"publicada",merged:"fusionada",rejected:"rechazada",hidden:"oculta",
+    pending:"pendiente",verified:"verificada"
+  } : {};
+  return map[status] || String(status || "").replace(/_/g," ");
+}
+function activityItem(title,status,meta){
+  return '<article class="activity-item"><b>' + esc(title) + '</b><div class="activity-meta"><span class="status-pill ' +
+    esc(status) + '">' + esc(statusText(status)) + '</span><span>' + esc(meta) + '</span></div></article>';
+}
+async function openActivity(){
+  if(!session){openAuth();return;}
+  await loadMembership();
+  updateAccountUI();
+  openDialog("activity-dialog");
+  byId("activity-user").textContent = session.user.email || "";
+  byId("activity-list").innerHTML = '<div class="loading"><span class="spinner"></span><div>' + esc(tx("activity_loading")) + '</div></div>';
+  setStatus("activity-status","","");
+  sendEvent("activity_open",{section:SECTION || null});
+  try{
+    var uid = encodeURIComponent(session.user.id);
+    var result = await Promise.all([
+      api("fr_submissions?select=id,section,title,status,created_at,attribution_mode&user_id=eq." + uid + "&order=created_at.desc&limit=50"),
+      api("fr_claims?select=id,section,role,status,created_at&user_id=eq." + uid + "&order=created_at.desc&limit=20")
+    ]);
+    var html = "";
+    if(result[0].length){
+      html += '<div class="field-label">' + esc(tx("submissions_label")) + '</div>';
+      html += result[0].map(function(row){return activityItem(row.title,row.status,row.section);}).join("");
+    }
+    if(result[1].length){
+      html += '<div class="field-label" style="margin-top:12px">' + esc(tx("claims_label")) + '</div>';
+      html += result[1].map(function(row){return activityItem(row.section,row.status,row.role);}).join("");
+    }
+    byId("activity-list").innerHTML = html || '<div class="empty-state">' + esc(tx("activity_empty")) + '</div>';
+  }catch(error){
+    byId("activity-list").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) + '</div>';
+  }
+}
+function roleText(role){
+  return tx("role_" + role) || role;
+}
+function teamInviteUrl(token){
+  var url = new URL(location.origin + location.pathname);
+  if(SECTION){url.searchParams.set("s",SECTION);}
+  if(LANG === "es"){url.searchParams.set("lang","es");}
+  url.hash = "invite=" + encodeURIComponent(token);
+  return url.href;
+}
+function canRevokeMember(row){
+  if(!membership || row.user_id === session.user.id || row.role === "owner"){return false;}
+  return membership.role === "owner" || (membership.role === "admin" && row.role === "contributor");
+}
+function renderTeam(rows){
+  if(!rows || !rows.length){
+    byId("team-list").innerHTML = '<div class="empty-state">' + esc(tx("team_members_empty")) + '</div>';
+    return;
+  }
+  byId("team-list").innerHTML = rows.map(function(row){
+    var email = row.member_email || row.email || "";
+    return '<article class="team-member"><div><b>' + esc(email) + '</b><span>' + esc(roleText(row.role)) +
+      '</span></div>' + (canRevokeMember(row) ? '<button class="secondary-btn" data-team-revoke="' +
+      esc(row.user_id) + '" type="button">' + esc(tx("team_revoke")) + '</button>' : "") + '</article>';
+  }).join("");
+  document.querySelectorAll("[data-team-revoke]").forEach(function(button){
+    button.addEventListener("click",function(){revokeTeamMember(button.dataset.teamRevoke,button);});
+  });
+}
+async function loadTeam(){
+  if(!canManageTeam()){return;}
+  byId("team-list").innerHTML = '<div class="loading"><span class="spinner"></span><div>' + esc(tx("loading")) + '</div></div>';
+  try{
+    var rows = await callRpc("fr_profile_team",{p_section:SECTION});
+    renderTeam(rows || []);
+  }catch(error){
+    byId("team-list").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) + '</div>';
+  }
+}
+async function openTeam(){
+  if(!canManageTeam()){return;}
+  byId("invite-result").classList.add("hidden");
+  setStatus("team-status","","");
+  updateTeamRoleControl();
+  openDialog("team-dialog");
+  await loadTeam();
+}
+async function revokeTeamMember(userId,button){
+  if(!canManageTeam() || !window.confirm(tx("team_revoke_confirm"))){return;}
+  setBusy(button,true);
+  try{
+    await callRpc("fr_revoke_profile_member",{p_section:SECTION,p_user_id:userId});
+    await loadTeam();
+    showToast(tx("team_revoked"),"ok");
+  }catch(error){
+    setBusy(button,false);
+    showToast(tx("generic_error"),"err");
+  }
+}
+function clearPendingInvite(){
+  INVITE_TOKEN = "";
+  invitePreview = null;
+  try{sessionStorage.removeItem("fr_pending_invite");}catch(error){}
+  if(hashParams.get("invite")){
+    history.replaceState(null,"",location.pathname + location.search);
+  }
+}
+async function handlePendingInvite(){
+  if(!INVITE_TOKEN){return;}
+  if(!session){openAuth("invite");return;}
+  try{
+    var preview = await callRpc("fr_preview_profile_invite",{p_token:INVITE_TOKEN});
+    invitePreview = Array.isArray(preview) ? preview[0] : preview;
+    if(!invitePreview){throw new Error("No invitation");}
+    byId("invite-profile").textContent = invitePreview.profile_name || invitePreview.section;
+    byId("invite-role").textContent = roleText(invitePreview.role);
+    setStatus("invite-status","","");
+    openDialog("invite-dialog");
+  }catch(error){
+    setStatus("auth-status",tx("invite_invalid"),"err");
+    openDialog("auth-dialog");
+  }
 }
 function withLanguage(url){
   if(LANG !== "es"){return url;}
@@ -803,6 +1537,7 @@ function applyStaticText(){
   byId("request-name-label").innerHTML = tx("name_label");
   byId("request-contact-label").innerHTML = tx("contact_label");
   byId("request-contact-help").textContent = tx("contact_help");
+  byId("request-consent-copy").textContent = tx("consent_copy");
   byId("request-send").textContent = tx("request_send");
   byId("claim-bar-title").textContent = tx("claim_bar_title");
   byId("claim-bar-copy").textContent = tx("claim_bar_copy");
@@ -812,6 +1547,13 @@ function applyStaticText(){
   byId("tab-ai").textContent = tx("tab_ai");
   byId("tab-source").textContent = tx("tab_source");
   byId("tab-fans").textContent = tx("tab_fans");
+  byId("suggest-cta-title").textContent = tx("suggest_cta_title");
+  byId("suggest-cta-copy").textContent = tx("suggest_cta_copy");
+  byId("suggest-open").textContent = tx("suggest_open");
+  byId("mobile-suggest").textContent = tx("suggest_open");
+  byId("signal-ai").innerHTML = tx("signal_ai");
+  byId("signal-fans").innerHTML = tx("signal_fans");
+  byId("signal-team").innerHTML = tx("signal_team");
   byId("submit-title").textContent = tx("submit_title");
   byId("submit-intro").textContent = tx("submit_intro");
   byId("submit-idea-label").textContent = tx("idea_label");
@@ -820,6 +1562,48 @@ function applyStaticText(){
   byId("submit-contact-label").innerHTML = tx("contact_label");
   byId("submit-contact-help").textContent = tx("contact_help");
   byId("submit-send").textContent = tx("submit_send");
+  byId("submit-cancel").textContent = tx("submit_cancel");
+  byId("similar-head").textContent = tx("similar_head");
+  byId("similar-help").textContent = tx("similar_help");
+  byId("privacy-title").textContent = tx("privacy_title");
+  byId("privacy-badge").textContent = tx("privacy_badge");
+  byId("anonymous-title").textContent = tx("anonymous_title");
+  byId("anonymous-copy").textContent = tx("anonymous_copy");
+  byId("account-title").textContent = tx("account_title");
+  byId("account-copy").textContent = tx("account_copy");
+  byId("submit-consent-copy").textContent = tx("consent_copy");
+  byId("auth-nudge-copy").textContent = tx("auth_nudge");
+  byId("suggest-sign-in").textContent = tx("sign_in");
+  byId("auth-title").textContent = tx("auth_title");
+  byId("auth-intro").textContent = tx("auth_intro");
+  byId("auth-email-label").textContent = tx("auth_email_label");
+  byId("auth-email-help").textContent = tx("auth_email_help");
+  byId("auth-send").textContent = tx("auth_send");
+  byId("activity-title").textContent = tx("activity_title");
+  byId("logout-btn").textContent = tx("sign_out");
+  byId("team-tools-title").textContent = tx("team_tools_title");
+  byId("team-tools-copy").textContent = tx("team_tools_copy");
+  byId("team-open").textContent = tx("team_open");
+  byId("team-title").textContent = tx("team_title");
+  byId("team-intro").textContent = tx("team_intro");
+  byId("team-email-label").textContent = tx("team_email_label");
+  byId("team-role-label").textContent = tx("team_role_label");
+  byId("team-role-contributor").textContent = tx("team_role_contributor");
+  byId("team-role-admin").textContent = tx("team_role_admin");
+  byId("team-invite-send").textContent = tx("team_invite_send");
+  byId("invite-result-title").textContent = tx("team_invite_ready");
+  byId("invite-result-copy").textContent = tx("team_invite_copy");
+  byId("invite-copy").textContent = tx("team_copy");
+  byId("invite-email-link").textContent = tx("team_email");
+  byId("team-members-title").textContent = tx("team_members_title");
+  byId("team-members-copy").textContent = tx("team_members_copy");
+  byId("invite-title").textContent = tx("invite_title");
+  byId("invite-intro").textContent = tx("invite_intro");
+  byId("invite-accept").textContent = tx("invite_accept");
+  byId("invite-decline").textContent = tx("invite_decline");
+  ["suggest-close","auth-close","activity-close","team-close","invite-close"].forEach(function(id){
+    byId(id).setAttribute("aria-label",tx("close"));
+  });
   byId("claim-title").textContent = tx("claim_title");
   byId("claim-intro").textContent = tx("claim_intro");
   byId("claim-name-label").textContent = tx("claim_name_label");
@@ -831,6 +1615,7 @@ function applyStaticText(){
   byId("claim-cancel").textContent = tx("claim_cancel");
   byId("footer").innerHTML = tx("footer");
   byId("logo").href = location.pathname + (LANG === "es" ? "?lang=es" : "");
+  updateAccountUI();
 }
 
 async function loadDirectory(){
@@ -877,8 +1662,8 @@ function renderSections(){
 }
 function trendingIdeas(){
   return allIdeas.slice().sort(function(a,b){
-    var av = (a.owner_pick ? 1000 : 0) + Number(a.ai_score||0) + Math.min(Number(a.web_votes||0)*5,30);
-    var bv = (b.owner_pick ? 1000 : 0) + Number(b.ai_score||0) + Math.min(Number(b.web_votes||0)*5,30);
+    var av = rankScore(a);
+    var bv = rankScore(b);
     return bv-av || Number(b.origin_upvotes||0)-Number(a.origin_upvotes||0);
   }).slice(0,3);
 }
@@ -906,6 +1691,48 @@ function loadHome(){
 function normalize(value){
   return String(value || "").toLocaleLowerCase(LANG === "es" ? "es" : "en")
     .normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+}
+function keywordTokens(value){
+  var stop = {the:1,and:1,for:1,with:1,from:1,that:1,this:1,una:1,uno:1,los:1,las:1,para:1,con:1,que:1,del:1,por:1};
+  return normalize(value).split(/[^a-z0-9]+/).filter(function(token){return token.length >= 3 && !stop[token];});
+}
+function similarIdeas(query){
+  var clean = normalize(query);
+  if(clean.length < 8){return [];}
+  var queryTokens = keywordTokens(clean);
+  return ideas.map(function(item){
+    var haystack = normalize((item.title || "") + " " + (item.title_es || ""));
+    var tokens = keywordTokens(haystack);
+    var overlap = queryTokens.filter(function(token){return tokens.indexOf(token) >= 0;}).length;
+    var score = queryTokens.length ? overlap / queryTokens.length : 0;
+    if(clean.length >= 12 && (haystack.indexOf(clean) >= 0 || clean.indexOf(haystack) >= 0)){score += .75;}
+    return {item:item,score:score};
+  }).filter(function(entry){return entry.score >= .34;})
+    .sort(function(a,b){return b.score-a.score || Number(b.item.web_votes)-Number(a.item.web_votes);})
+    .slice(0,3).map(function(entry){return entry.item;});
+}
+function renderSimilarIdeas(){
+  var matches = similarIdeas(byId("submit-idea").value);
+  var wrap = byId("similar-wrap");
+  if(!matches.length){
+    wrap.classList.add("hidden");
+    byId("similar-ideas").innerHTML = "";
+    return;
+  }
+  var mine = myVotes();
+  byId("similar-ideas").innerHTML = matches.map(function(item){
+    var voted = mine.indexOf(item.id) >= 0;
+    return '<article class="similar-item"><div><b>' + esc(ideaTitle(item)) + '</b><span>' +
+      Number(item.web_votes || 0) + ' ' + esc(tx("similar_votes")) + '</span></div><button class="similar-vote" type="button" data-sim-vote="' +
+      item.id + '" ' + (voted ? 'disabled' : '') + '>' + esc(voted ? tx("voted") : tx("vote")) + '</button></article>';
+  }).join("");
+  wrap.classList.remove("hidden");
+  document.querySelectorAll("[data-sim-vote]").forEach(function(button){
+    if(!button.disabled){button.addEventListener("click",function(){
+      sendEvent("similar_vote",{section:SECTION,idea_id:Number(button.dataset.simVote)});
+      vote(Number(button.dataset.simVote),button);
+    });}
+  });
 }
 function searchMatches(query){
   var needle = normalize(query);
@@ -972,11 +1799,15 @@ function requestFromSearch(query){
   setTimeout(function(){byId("request-target").focus();},REDUCED ? 0 : 350);
 }
 
+function rankScore(item){
+  return Number(item.ai_score || 0) + Math.min(Number(item.web_votes || 0) * 2,20) +
+    Math.min(Number(item.team_interest_count || 0) * 5,15);
+}
 function sortedIdeas(source){
   var list = (source || ideas).slice();
   if(sortMode === "ai"){
     list.sort(function(a,b){
-      return Number(b.owner_pick)-Number(a.owner_pick) || Number(b.ai_score)-Number(a.ai_score) ||
+      return rankScore(b)-rankScore(a) || Number(b.ai_score)-Number(a.ai_score) ||
         Number(b.web_votes)-Number(a.web_votes) || Number(b.origin_upvotes)-Number(a.origin_upvotes);
     });
   }else if(sortMode === "source"){
@@ -1007,8 +1838,7 @@ function renderPodium(){
   ];
   byId("podium").innerHTML = positions.map(function(entry){
     if(!entry.item){return '<div></div>';}
-    var score = sortMode === "fans" ? entry.item.web_votes : sortMode === "source" ? entry.item.origin_upvotes :
-      (entry.item.owner_pick ? 100 : entry.item.ai_score);
+    var score = sortMode === "fans" ? entry.item.web_votes : sortMode === "source" ? entry.item.origin_upvotes : rankScore(entry.item);
     return '<button class="podium-card ' + entry.cls + '" type="button" data-podium="' + entry.item.id + '">' +
       '<div class="podium-medal">#' + entry.rank + '</div><div class="podium-title">' + esc(ideaTitle(entry.item)) +
       '</div><div class="podium-score">' + fmt(score) + '</div></button>';
@@ -1035,17 +1865,18 @@ function renderIdeas(){
     return;
   }
   byId("ideas-list").innerHTML = list.map(function(item,index){
-    var score = item.owner_pick ? 100 : Number(item.ai_score||0);
+    var score = Number(item.ai_score||0);
     var source = safeUrl(item.source_url);
     var rankClass = index === 0 ? "top1" : index === 1 ? "top2" : index === 2 ? "top3" : "";
     var voted = mine.indexOf(item.id) >= 0;
-    return '<article class="idea-card ' + rankClass + ' ' + (item.owner_pick ? "team-pick" : "") +
+    var hasTeamInterest = Number(item.team_interest_count || 0) > 0;
+    return '<article class="idea-card ' + rankClass + ' ' + (hasTeamInterest ? "team-pick" : "") +
       '" id="idea-' + item.id + '">' +
       '<div class="rank">' + (index+1) + '</div><div class="idea-main">' +
-      (item.owner_pick ? '<div class="team-badge">' + icon("crown") + esc(tx("team_pick")) + '</div>' : "") +
+      (hasTeamInterest ? '<div class="team-badge">' + icon("heart") + esc(tx("team_pick",Number(item.team_interest_count || 0))) + '</div>' : "") +
       '<div class="idea-title">' + esc(ideaTitle(item)) + '</div><div class="score-row"><div class="score-track">' +
       '<div class="score-fill" data-score="' + score + '"></div></div><div class="score-label">' +
-      (item.owner_pick ? "100" : esc(tx("ai_score")) + " " + score) + '</div></div>' +
+      esc(tx("ai_score")) + " " + score + '</div></div>' +
       '<div class="reason">' + esc(ideaReason(item)) + '</div><div class="idea-meta">' +
       '<span class="chip">' + fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' +
       (source ? '<a class="chip source-link" href="' + esc(source) + '" target="_blank" rel="noopener noreferrer">' +
@@ -1054,7 +1885,12 @@ function renderIdeas(){
       '" title="' + esc(tx("share")) + '">' + icon("share") + '</button>' +
       '<button class="vote-btn ' + (voted ? "voted" : "") + '" type="button" data-vote="' + item.id + '" ' +
       (voted ? "disabled" : "") + '><span class="vote-count">' + Number(item.web_votes||0) +
-      '</span><span class="vote-label">' + esc(voted ? tx("voted") : tx("vote")) + '</span></button></div></article>';
+      '</span><span class="vote-label">' + esc(voted ? tx("voted") : tx("vote")) + '</span></button>' +
+      (session && membership && secMeta && secMeta.verification_status === "verified" ?
+        '<button class="icon-btn team-interest-btn" type="button" data-interest="' + item.id + '" aria-pressed="' +
+        (myTeamInterestIds.has(item.id) ? "true" : "false") + '" aria-label="' + esc(myTeamInterestIds.has(item.id) ? tx("team_interest_remove") : tx("team_interest_add")) +
+        '" title="' + esc(myTeamInterestIds.has(item.id) ? tx("team_interest_remove") : tx("team_interest_add")) + '">' + icon("heart") + '</button>' : "") +
+      '</div></article>';
   }).join("");
   requestAnimationFrame(function(){
     document.querySelectorAll(".score-fill").forEach(function(fill){fill.style.width = fill.dataset.score + "%";});
@@ -1064,6 +1900,9 @@ function renderIdeas(){
   });
   document.querySelectorAll("[data-share]").forEach(function(button){
     button.addEventListener("click",function(){shareIdea(Number(button.dataset.share));});
+  });
+  document.querySelectorAll("[data-interest]").forEach(function(button){
+    button.addEventListener("click",function(){setTeamInterest(Number(button.dataset.interest),button);});
   });
 }
 function renderProfile(){
@@ -1095,6 +1934,7 @@ function loadSection(){
     esc(tx("all_profiles")) + '</a> <span aria-hidden="true">›</span> ' + esc(secMeta.name);
   byId("home-view").classList.add("hidden");
   byId("section-view").classList.remove("hidden");
+  document.body.classList.add("profile-live");
   renderProfile();
   focusDeepIdea();
   sendEvent("profile_open",{section:SECTION,value:"page_load"});
@@ -1103,24 +1943,52 @@ function loadSection(){
 async function vote(id,button){
   setBusy(button,true);
   try{
-    await postRow("fr_votes",{idea_id:id,voter:visitorId()});
+    var voteBody = session ? {idea_id:id,voter:"user:" + session.user.id,user_id:session.user.id} :
+      {idea_id:id,voter:visitorId(),user_id:null};
+    await postRow("fr_votes",voteBody);
     markVoted(id);
     var item = ideas.find(function(row){return row.id === id;});
     if(item){item.web_votes = Number(item.web_votes||0)+1;}
     var globalItem = allIdeas.find(function(row){return row.id === id;});
     if(globalItem && globalItem !== item){globalItem.web_votes = Number(globalItem.web_votes||0)+1;}
     renderProfile();
+    renderSimilarIdeas();
     sendEvent("vote",{section:SECTION,idea_id:id});
     showToast(tx("vote_rank",fanPosition(id)),"ok");
   }catch(error){
     if(error.status === 409){
       markVoted(id);
       renderProfile();
+      renderSimilarIdeas();
       showToast(tx("already_voted"),"ok");
     }else{
       setBusy(button,false);
       showToast(tx("generic_error"),"err");
     }
+  }
+}
+async function setTeamInterest(id,button){
+  if(!session || !membership){return;}
+  var active = button.getAttribute("aria-pressed") !== "true";
+  setBusy(button,true);
+  try{
+    var result = await callRpc("fr_set_team_interest",{p_idea_id:id,p_active:active});
+    var returned = Array.isArray(result) ? result[0] : result;
+    if(active){myTeamInterestIds.add(id);}else{myTeamInterestIds.delete(id);}
+    var item = ideas.find(function(row){return row.id === id;});
+    if(item){
+      item.team_interest_count = returned ? Number(returned.team_interest_count || 0) : Math.max(0,Number(item.team_interest_count || 0) + (active ? 1 : -1));
+    }
+    var globalItem = allIdeas.find(function(row){return row.id === id;});
+    if(globalItem){
+      globalItem.team_interest_count = item ? item.team_interest_count : Number(globalItem.team_interest_count || 0);
+    }
+    renderProfile();
+    sendEvent("team_interest",{section:SECTION,idea_id:id,value:active ? "on" : "off"});
+    showToast(active ? tx("team_interest_add") : tx("team_interest_remove"),"ok");
+  }catch(error){
+    setBusy(button,false);
+    showToast(tx("generic_error"),"err");
   }
 }
 async function shareIdea(id){
@@ -1149,6 +2017,10 @@ byId("lang-btn").addEventListener("click",function(){
   if(next === "es"){nextParams.set("lang","es");}else{nextParams.delete("lang");}
   location.search = nextParams.toString();
 });
+document.addEventListener("pointerdown",armCelestialAudio,{once:true,passive:true});
+document.addEventListener("keydown",armCelestialAudio,{once:true});
+byId("logo").addEventListener("pointerenter",function(){triggerCelestialLogo(true);});
+byId("logo").addEventListener("focus",function(){triggerCelestialLogo(false);});
 byId("global-search").addEventListener("input",function(event){renderSearchPanel(event.target.value);});
 byId("global-search").addEventListener("focus",function(event){renderSearchPanel(event.target.value);});
 byId("search-form").addEventListener("submit",function(event){
@@ -1188,14 +2060,130 @@ byId("idea-filter").addEventListener("input",function(event){
   renderIdeas();
 });
 
-byId("claim-open").addEventListener("click",function(){
+function openClaimPanel(){
+  if(!session){openAuth("claim");return;}
   byId("claim-panel").classList.remove("hidden");
   byId("claim-panel").scrollIntoView({behavior:REDUCED ? "auto" : "smooth",block:"start"});
   setTimeout(function(){byId("claim-name").focus();},REDUCED ? 0 : 300);
-});
+}
+byId("claim-open").addEventListener("click",openClaimPanel);
 byId("claim-cancel").addEventListener("click",function(){
   byId("claim-panel").classList.add("hidden");
   byId("claim-open").focus();
+});
+byId("suggest-open").addEventListener("click",openSuggestion);
+byId("mobile-suggest").addEventListener("click",openSuggestion);
+byId("suggest-close").addEventListener("click",closeSuggestion);
+byId("submit-cancel").addEventListener("click",closeSuggestion);
+byId("suggest-sign-in").addEventListener("click",function(){openAuth("suggest");});
+byId("account-btn").addEventListener("click",function(){session ? openActivity() : openAuth();});
+byId("auth-close").addEventListener("click",function(){closeDialog("auth-dialog");});
+byId("activity-close").addEventListener("click",function(){closeDialog("activity-dialog");});
+byId("team-open").addEventListener("click",openTeam);
+byId("team-close").addEventListener("click",function(){closeDialog("team-dialog");});
+byId("invite-close").addEventListener("click",function(){closeDialog("invite-dialog");});
+byId("submit-idea").addEventListener("input",function(){saveDraft();renderSimilarIdeas();});
+["submit-details","submit-name","submit-contact","submit-allow-contact","attribution-anonymous","attribution-account"].forEach(function(id){
+  byId(id).addEventListener("input",saveDraft);
+  byId(id).addEventListener("change",saveDraft);
+});
+["suggest-dialog","auth-dialog","activity-dialog","team-dialog","invite-dialog"].forEach(function(id){
+  byId(id).addEventListener("click",function(event){
+    if(event.target === byId(id)){
+      if(id === "suggest-dialog"){closeSuggestion();}else{closeDialog(id);}
+    }
+  });
+});
+
+byId("team-invite-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  if(!canManageTeam()){return;}
+  var email = byId("team-email").value.trim().toLowerCase();
+  if(!email || !byId("team-email").checkValidity()){
+    setStatus("team-status",tx("required_error"),"err");
+    byId("team-email").focus();
+    return;
+  }
+  var button = byId("team-invite-send");
+  setBusy(button,true);
+  setStatus("team-status","","");
+  try{
+    var result = await callRpc("fr_create_profile_invite",{
+      p_section:SECTION,p_email:email,p_role:byId("team-role").value
+    });
+    var invite = Array.isArray(result) ? result[0] : result;
+    if(!invite || !invite.invite_token){throw new Error("No token returned");}
+    var link = teamInviteUrl(invite.invite_token);
+    byId("invite-link").value = link;
+    byId("invite-email-link").href = "mailto:" + encodeURIComponent(email) + "?subject=" +
+      encodeURIComponent("FanRank team invitation") + "&body=" + encodeURIComponent(link);
+    byId("invite-result").classList.remove("hidden");
+    byId("team-email").value = "";
+    sendEvent("team_invite_created",{section:SECTION});
+  }catch(error){setStatus("team-status",tx("generic_error"),"err");}
+  finally{setBusy(button,false);}
+});
+byId("invite-copy").addEventListener("click",async function(){
+  var value = byId("invite-link").value;
+  try{
+    if(navigator.clipboard){await navigator.clipboard.writeText(value);}else{byId("invite-link").select();document.execCommand("copy");}
+    showToast(tx("team_copied"),"ok");
+  }catch(error){window.prompt(tx("team_copy"),value);}
+});
+byId("invite-accept").addEventListener("click",async function(){
+  if(!session || !INVITE_TOKEN){return;}
+  var button = byId("invite-accept");
+  setBusy(button,true);
+  setStatus("invite-status","","");
+  try{
+    await callRpc("fr_accept_profile_invite",{p_token:INVITE_TOKEN});
+    clearPendingInvite();
+    await loadMembership();
+    updateAccountUI();
+    if(SECTION){renderIdeas();}
+    closeDialog("invite-dialog");
+    showToast(tx("invite_accepted"),"ok");
+  }catch(error){setStatus("invite-status",tx("invite_invalid"),"err");}
+  finally{setBusy(button,false);}
+});
+byId("invite-decline").addEventListener("click",function(){
+  clearPendingInvite();
+  closeDialog("invite-dialog");
+});
+
+byId("auth-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  var email = byId("auth-email").value.trim();
+  if(!email || !byId("auth-email").checkValidity()){
+    setStatus("auth-status",tx("required_error"),"err");
+    byId("auth-email").focus();
+    return;
+  }
+  if(!authClient){setStatus("auth-status",tx("auth_unavailable"),"err");return;}
+  var button = byId("auth-send");
+  setBusy(button,true);
+  setStatus("auth-status","","");
+  try{
+    var result = await authClient.auth.signInWithOtp({
+      email:email,
+      options:{emailRedirectTo:authRedirectUrl(),shouldCreateUser:true}
+    });
+    if(result.error){throw result.error;}
+    sendEvent("auth_link_requested",{section:SECTION || null});
+    setStatus("auth-status",tx("auth_sent"),"ok");
+  }catch(error){setStatus("auth-status",tx("generic_error"),"err");}
+  finally{setBusy(button,false);}
+});
+
+byId("logout-btn").addEventListener("click",async function(){
+  if(authClient){await authClient.auth.signOut({scope:"local"});}
+  session = null;
+  membership = null;
+  updateAccountUI();
+  closeDialog("activity-dialog");
+  sendEvent("auth_signed_out",{section:SECTION || null});
+  showToast(tx("signed_out"),"ok");
+  if(SECTION){renderIdeas();}
 });
 
 byId("request-form").addEventListener("submit",async function(event){
@@ -1210,16 +2198,29 @@ byId("request-form").addEventListener("submit",async function(event){
     setStatus("request-status",tx("too_fast"),"err");
     return;
   }
+  var requestContact = byId("request-contact").value.trim();
+  var requestConsent = byId("request-allow-contact").checked;
+  if(requestContact && !requestConsent){
+    setStatus("request-status",tx("contact_consent_error"),"err");
+    byId("request-allow-contact").focus();
+    return;
+  }
   var button = byId("request-send");
   setBusy(button,true);
   setStatus("request-status","","");
   try{
+    var requestReceipt = randomReceipt();
     await postRow("fr_submissions",{
       section:"section-request",title:target,
       author:byId("request-name").value.trim() || null,
-      contact:byId("request-contact").value.trim() || null,
-      language:LANG,approved:false
+      contact:requestContact || null,
+      language:LANG,
+      user_id:session ? session.user.id : null,
+      attribution_mode:session ? "account" : "anonymous",
+      allow_contact:!!requestContact && requestConsent,
+      receipt_hash:await hashReceipt(requestReceipt)
     });
+    storeReceipt(requestReceipt,target);
     markWrite("fr_last_request");
     sendEvent("section_request",{value:target});
     setStatus("request-status",tx("request_ok"),"ok");
@@ -1238,6 +2239,13 @@ byId("submit-form").addEventListener("submit",async function(event){
     byId("submit-idea").focus();
     return;
   }
+  var contact = byId("submit-contact").value.trim();
+  var allowContact = byId("submit-allow-contact").checked;
+  if(contact && !allowContact){
+    setStatus("submit-status",tx("contact_consent_error"),"err");
+    byId("submit-allow-contact").focus();
+    return;
+  }
   if(!validTiming("submit-website","fr_last_submission",30000)){
     setStatus("submit-status",tx("too_fast"),"err");
     return;
@@ -1246,17 +2254,28 @@ byId("submit-form").addEventListener("submit",async function(event){
   setBusy(button,true);
   setStatus("submit-status","","");
   try{
+    var receipt = randomReceipt();
+    var attribution = session && byId("attribution-account").checked ? "account" : "anonymous";
     await postRow("fr_submissions",{
       section:SECTION,title:title,
       details:byId("submit-details").value.trim() || null,
       author:byId("submit-name").value.trim() || null,
-      contact:byId("submit-contact").value.trim() || null,
-      language:LANG,approved:false
+      contact:contact || null,
+      language:LANG,
+      user_id:session ? session.user.id : null,
+      attribution_mode:attribution,
+      allow_contact:!!contact && allowContact,
+      receipt_hash:await hashReceipt(receipt)
     });
+    storeReceipt(receipt,title);
     markWrite("fr_last_submission");
     sendEvent("submission",{section:SECTION,value:title.slice(0,180)});
     setStatus("submit-status",tx("submit_ok"),"ok");
+    byId("submit-receipt").textContent = tx("receipt_copy");
+    byId("submit-receipt").classList.remove("hidden");
     byId("submit-form").reset();
+    clearDraft();
+    renderSimilarIdeas();
     formStartedAt = Date.now();
   }catch(error){
     setStatus("submit-status",tx("generic_error"),"err");
@@ -1265,6 +2284,7 @@ byId("submit-form").addEventListener("submit",async function(event){
 
 byId("claim-form").addEventListener("submit",async function(event){
   event.preventDefault();
+  if(!session){openAuth("claim");return;}
   var name = byId("claim-name").value.trim();
   var role = byId("claim-role").value.trim();
   var contact = byId("claim-contact").value.trim();
@@ -1293,7 +2313,7 @@ byId("claim-form").addEventListener("submit",async function(event){
       section:SECTION,name:name,role:role,contact:contact,
       proof_url:proof || null,
       message:byId("claim-message").value.trim() || null,
-      status:"pending"
+      user_id:session.user.id
     });
     markWrite("fr_last_claim");
     sendEvent("claim_request",{section:SECTION});
@@ -1311,8 +2331,11 @@ async function boot(){
   byId("crumb-text").textContent = SECTION ? tx("loading") : tx("all_profiles");
   sendEvent("page_view",{section:SECTION || null});
   try{
+    await initAuth();
     await loadDirectory();
     if(SECTION){loadSection();}else{loadHome();}
+    resumeAfterAuth();
+    await handlePendingInvite();
   }catch(error){
     byId("sections").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) +
       '<br><button class="secondary-btn retry-btn" type="button" onclick="location.reload()">' +
