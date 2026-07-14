@@ -192,6 +192,23 @@ class StaticAppTests(unittest.TestCase):
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
 
+    def test_profile_sharing_has_a_clean_measurable_referral_loop(self) -> None:
+        markers = [
+            '<meta property="og:title"',
+            '<meta name="twitter:card" content="summary">',
+            'id="profile-share"',
+            'id="profile-share-text"',
+            "function referralSource()",
+            "var REFERRAL_SOURCES = {fan_share:true,idea_share:true,reddit:true,discord:true,x:true,whatsapp:true};",
+            "function withReferral(url,source)",
+            "function profileShareUrl()",
+            'withReferral(ideaUrl(item),"idea_share")',
+            'sendEvent("idea_share",{section:SECTION,value:"profile"})',
+            'sendEvent("page_view",{section:SECTION || null,value:referralSource()})',
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
+        self.assertIn("return REFERRAL_SOURCES[source] ? source : null;", HTML)
+
 
 def api_request(path: str, method: str = "GET", body: dict | None = None) -> tuple[int, str]:
     data = json.dumps(body).encode("utf-8") if body is not None else None

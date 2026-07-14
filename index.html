@@ -6,6 +6,14 @@
 <meta name="theme-color" content="#0a0b12">
 <title>FanRank — the best ideas, ranked</title>
 <meta name="description" content="Starting with Brawl Stars: vote on the ideas fans want most, or request the next game, creator or company profile.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="FanRank">
+<meta property="og:title" content="FanRank - the best ideas, ranked">
+<meta property="og:description" content="Vote on the improvements fans want most, or send one private suggestion in seconds.">
+<meta property="og:url" content="https://eltonylfgi-blip.github.io/fanrank/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="FanRank - the best ideas, ranked">
+<meta name="twitter:description" content="Vote on the improvements fans want most, or send one private suggestion in seconds.">
 <style>
   :root{
     color-scheme:dark;
@@ -189,6 +197,10 @@
   .suggest-cta h2{margin:0;font-size:1.12rem}
   .suggest-cta p{margin:3px 0 0;color:var(--muted);font-size:.82rem}
   .suggest-open{min-width:190px}
+  .profile-share{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;padding:8px 2px;border:0;
+    background:transparent;color:var(--blue);font-size:.82rem;font-weight:850;text-align:left}
+  .profile-share:hover{text-decoration:underline}
+  .profile-share svg{width:17px;height:17px}
 
   .profile-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;margin:24px 0 12px}
   .filter-wrap{position:relative}
@@ -480,6 +492,12 @@
       <div>
         <h2 id="suggest-cta-title"></h2>
         <p id="suggest-cta-copy"></p>
+        <button class="profile-share button-icon" id="profile-share" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 3v12"></path><path d="m7 8 5-5 5 5"></path><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path>
+          </svg>
+          <span id="profile-share-text"></span>
+        </button>
       </div>
       <button class="primary-btn suggest-open" id="suggest-open" type="button"></button>
     </section>
@@ -812,6 +830,9 @@ var T = {
     vote_rank:function(n){return "Vote counted — this idea is now #" + n + " among fans.";},
     already_voted:"Your vote was already counted.",
     shared:"Share link ready.",
+    share_profile:"Share this ranking",
+    share_profile_message:function(name){return "What should " + name + " improve next? Vote or add your idea on FanRank.";},
+    profile_shared:"FanRank link ready to share.",
     suggest_cta_title:"What should improve next?",
     suggest_cta_copy:"Write one sentence. FanRank checks similar ideas before you send it.",
     suggest_open:"Suggest an improvement",
@@ -958,6 +979,9 @@ var T = {
     vote_rank:function(n){return "Voto contado — esta idea ya es #" + n + " entre los fans.";},
     already_voted:"Tu voto ya estaba contado.",
     shared:"Enlace listo para compartir.",
+    share_profile:"Compartir este ranking",
+    share_profile_message:function(name){return "¿Qué debería mejorar en " + name + "? Vota o añade tu idea en FanRank.";},
+    profile_shared:"Enlace de FanRank listo para compartir.",
     suggest_cta_title:"¿Qué debería mejorar ahora?",
     suggest_cta_copy:"Escribe una frase. FanRank busca ideas parecidas antes de enviarla.",
     suggest_open:"Proponer una mejora",
@@ -1516,6 +1540,19 @@ function ideaUrl(item){
   return location.origin + location.pathname + "?s=" + encodeURIComponent(item.section) +
     "&idea=" + encodeURIComponent(item.id) + (LANG === "es" ? "&lang=es" : "");
 }
+var REFERRAL_SOURCES = {fan_share:true,idea_share:true,reddit:true,discord:true,x:true,whatsapp:true};
+function referralSource(){
+  var source = (new URLSearchParams(location.search).get("ref") || "").trim().toLowerCase();
+  return REFERRAL_SOURCES[source] ? source : null;
+}
+function withReferral(url,source){
+  var target = new URL(url,location.origin);
+  target.searchParams.set("ref",source);
+  return target.toString();
+}
+function profileShareUrl(){
+  return withReferral(location.origin + sectionUrl(SECTION),"fan_share");
+}
 
 function applyStaticText(){
   document.documentElement.lang = LANG;
@@ -1549,6 +1586,7 @@ function applyStaticText(){
   byId("tab-fans").textContent = tx("tab_fans");
   byId("suggest-cta-title").textContent = tx("suggest_cta_title");
   byId("suggest-cta-copy").textContent = tx("suggest_cta_copy");
+  byId("profile-share-text").textContent = tx("share_profile");
   byId("suggest-open").textContent = tx("suggest_open");
   byId("mobile-suggest").textContent = tx("suggest_open");
   byId("signal-ai").innerHTML = tx("signal_ai");
@@ -1994,7 +2032,7 @@ async function setTeamInterest(id,button){
 async function shareIdea(id){
   var item = ideas.find(function(row){return row.id === id;});
   if(!item){return;}
-  var shareData = {title:"FanRank — " + secMeta.name,text:ideaTitle(item),url:ideaUrl(item)};
+  var shareData = {title:"FanRank — " + secMeta.name,text:ideaTitle(item),url:withReferral(ideaUrl(item),"idea_share")};
   try{
     if(navigator.share){
       await navigator.share(shareData);
@@ -2005,6 +2043,28 @@ async function shareIdea(id){
     }
     sendEvent("idea_share",{section:SECTION,idea_id:id});
     showToast(tx("shared"),"ok");
+  }catch(error){
+    if(error && error.name !== "AbortError"){showToast(tx("generic_error"),"err");}
+  }
+}
+async function shareProfile(){
+  if(!SECTION || !secMeta){return;}
+  var shareData = {
+    title:"FanRank — " + secMeta.name,
+    text:tx("share_profile_message",secMeta.name),
+    url:profileShareUrl()
+  };
+  try{
+    if(navigator.share){
+      await navigator.share(shareData);
+    }else if(navigator.clipboard){
+      await navigator.clipboard.writeText(shareData.url);
+    }else{
+      window.prompt(tx("share_profile"),shareData.url);
+    }
+    // The existing allowed share event distinguishes whole-profile shares by a null idea_id + this value.
+    sendEvent("idea_share",{section:SECTION,value:"profile"});
+    showToast(tx("profile_shared"),"ok");
   }catch(error){
     if(error && error.name !== "AbortError"){showToast(tx("generic_error"),"err");}
   }
@@ -2071,6 +2131,7 @@ byId("claim-cancel").addEventListener("click",function(){
   byId("claim-panel").classList.add("hidden");
   byId("claim-open").focus();
 });
+byId("profile-share").addEventListener("click",shareProfile);
 byId("suggest-open").addEventListener("click",openSuggestion);
 byId("mobile-suggest").addEventListener("click",openSuggestion);
 byId("suggest-close").addEventListener("click",closeSuggestion);
@@ -2329,7 +2390,7 @@ async function boot(){
   applyStaticText();
   byId("hero-tag").innerHTML = SECTION ? tx("loading") : tx("hero_home");
   byId("crumb-text").textContent = SECTION ? tx("loading") : tx("all_profiles");
-  sendEvent("page_view",{section:SECTION || null});
+  sendEvent("page_view",{section:SECTION || null,value:referralSource()});
   try{
     await initAuth();
     await loadDirectory();
