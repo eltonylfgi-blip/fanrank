@@ -27,6 +27,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 HTML = INDEX.read_text(encoding="utf-8")
+DISCOVERY_MIGRATION = ROOT / "supabase" / "migrations" / "20260715152000_fanrank_v6_discovery_directory.sql"
+DISCOVERY_SQL = DISCOVERY_MIGRATION.read_text(encoding="utf-8")
 
 
 def extract(pattern: str) -> str:
@@ -66,6 +68,9 @@ class StaticAppTests(unittest.TestCase):
     def test_critical_product_flows_are_wired(self) -> None:
         markers = {
             "universal search": 'id="global-search"',
+            "profile discovery filters": 'id="directory-filters"',
+            "multi-tag profile metadata": 'id="profile-tags"',
+            "one-tap suggestion": 'data-quick-suggest=',
             "profile request": 'id="request-form"',
             "easy suggestion": 'id="suggest-open"',
             "idea submission": 'id="submit-form"',
@@ -149,7 +154,9 @@ class StaticAppTests(unittest.TestCase):
 
     def test_launch_copy_and_spam_guards_match_product_reality(self) -> None:
         markers = [
-            "Starting with <b>Brawl Stars</b>",
+            "¡PARA TODOS!",
+            'var APP_URL = "https://eltonylfgi-blip.github.io/fanrank/";',
+            'var url = new URL(local ? APP_URL : location.origin + location.pathname);',
             "UNVERIFIED FAN PROFILE",
             "PERFIL DE FANS NO VERIFICADO",
             'validTiming("submit-website","fr_last_submission",30000)',
@@ -160,11 +167,38 @@ class StaticAppTests(unittest.TestCase):
             'url.hash = "invite="',
             "function armCelestialAudio",
             "function playCelestialChime",
+            "logoShakeSmooth",
+            "tagPop",
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
         self.assertNotIn("Search any <b>game, creator or company</b>", HTML)
         self.assertNotIn("Verified team picks score 100", HTML)
         self.assertNotIn("puntúan 100", HTML)
+
+    def test_discovery_directory_is_practical_and_data_driven(self) -> None:
+        html_markers = [
+            '["featured","✦","Destacados"]',
+            '["creators-es","🎙️","Creadores · España"]',
+            '["games","🎮","Videojuegos"]',
+            '["social","💬","Redes sociales"]',
+            '["ai","✨","IA"]',
+            'sectionTags(item).slice(0,3)',
+            'sectionUrl(item.slug,true)',
+            'id="empty-suggest"',
+            'cleanUrl.searchParams.delete("suggest")',
+        ]
+        self.assertEqual([], [marker for marker in html_markers if marker not in HTML])
+
+        for slug in ("rubius", "orslok", "ibai", "roblox", "discord", "x-twitter", "chatgpt", "claude"):
+            self.assertIn(f"('{slug}'", DISCOVERY_SQL)
+        self.assertIn("array['spain','streamer','youtuber','tiktoker']", DISCOVERY_SQL)
+        self.assertIn("with (security_invoker = true)", DISCOVERY_SQL)
+
+    def test_auth_redirect_and_logo_effect_have_safe_guards(self) -> None:
+        self.assertIn('options:{emailRedirectTo:authRedirectUrl(),shouldCreateUser:true}', HTML)
+        self.assertIn('location.hostname === "localhost"', HTML)
+        self.assertIn("if(REDUCED || !audioArmed || !audioContext || chimePlayed)", HTML)
+        self.assertIn("setTimeout(function(){chimePlayed = false;},9000)", HTML)
 
     def test_team_signal_is_limited_and_not_a_public_identity_leak(self) -> None:
         self.assertIn("Math.min(Number(item.team_interest_count || 0) * 5,15)", HTML)
@@ -231,12 +265,21 @@ def api_request(path: str, method: str = "GET", body: dict | None = None) -> tup
 class LiveBoundaryTests(unittest.TestCase):
     def test_public_directory_and_rankings_are_readable(self) -> None:
         status, raw = api_request(
-            "fr_sections_stats?select=slug,name,ideas,fan_votes,verification_status"
+            "fr_sections_stats?select=slug,name,kind,tags,featured_rank,ideas,recent_ideas,fan_votes,verification_status"
         )
         self.assertEqual(200, status, raw)
         sections = json.loads(raw)
         brawl = next(row for row in sections if row["slug"] == "brawl-stars")
         self.assertEqual("unverified", brawl["verification_status"])
+        self.assertEqual(["mobile", "supercell"], brawl["tags"])
+
+        by_slug = {row["slug"]: row for row in sections}
+        self.assertTrue({"rubius", "orslok", "ibai", "roblox", "discord", "x-twitter", "chatgpt", "claude"}.issubset(by_slug))
+        self.assertEqual("creator", by_slug["rubius"]["kind"])
+        self.assertTrue({"spain", "streamer", "youtuber", "tiktoker"}.issubset(by_slug["rubius"]["tags"]))
+        self.assertEqual("game", by_slug["roblox"]["kind"])
+        self.assertEqual("social", by_slug["discord"]["kind"])
+        self.assertEqual("ai", by_slug["chatgpt"]["kind"])
 
         query = urllib.parse.urlencode(
             {

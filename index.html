@@ -19,7 +19,7 @@
     color-scheme:dark;
     --bg:#0a0b12;--bg-soft:#10131d;--surface:#151926;--surface-2:#1b2030;
     --text:#f5f7fb;--muted:#aab2c6;--line:#30384d;--line-soft:#242b3d;
-    --yellow:#ffd129;--yellow-ink:#211900;--blue:#63b3ff;--purple:#b986ff;
+    --yellow:#ffd129;--yellow-ink:#211900;--blue:#63b3ff;--purple:#b986ff;--pink:#ff72c6;
     --green:#55e59a;--red:#ff718c;--gold:#ffd700;--silver:#cbd3e3;--bronze:#df9f69;
     --shadow:0 18px 60px rgba(0,0,0,.34);--focus:0 0 0 3px rgba(99,179,255,.35);
     --radius:18px;--ease:cubic-bezier(.2,.7,.2,1);
@@ -43,7 +43,7 @@
     linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
     linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
     background-size:32px 32px;mask-image:linear-gradient(to bottom,black,transparent 75%)}
-  .wrap{width:min(920px,100%);margin:0 auto;padding:24px 18px 88px}
+  .wrap{width:min(1060px,100%);margin:0 auto;padding:18px 18px 88px}
   .skip-link{position:fixed;left:12px;top:-80px;z-index:100;background:var(--text);color:var(--bg);
     padding:10px 14px;border-radius:10px;font-weight:800}
   .skip-link:focus{top:12px}
@@ -58,11 +58,16 @@
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-  header{text-align:center;padding:34px 0 12px}
-  .logo{position:relative;display:inline-block;text-decoration:none;font-size:clamp(2.35rem,8vw,4.1rem);font-weight:950;
-    letter-spacing:-.07em;line-height:1;background:linear-gradient(100deg,var(--yellow) 8%,var(--blue) 55%,var(--purple));
-    -webkit-background-clip:text;background-clip:text;color:transparent;isolation:isolate;
-    transition:transform .35s var(--ease),filter .35s ease}
+  header{text-align:center;padding:14px 0 8px}
+  .brand-lockup{position:relative;display:inline-flex;align-items:flex-start;justify-content:center;padding:10px 42px 2px 8px}
+  .logo{position:relative;display:inline-flex;align-items:baseline;text-decoration:none;font-size:clamp(2.55rem,7vw,4.35rem);font-weight:950;
+    letter-spacing:-.075em;line-height:.92;background:linear-gradient(100deg,var(--yellow) 4%,#fff4a8 25%,var(--blue) 57%,var(--purple) 82%,var(--pink));
+    background-size:180% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;isolation:isolate;
+    filter:drop-shadow(0 9px 30px rgba(0,0,0,.34));transform-origin:50% 72%;
+    transition:filter .35s ease}
+  .logo-rank{font-style:italic}
+  .logo-star{position:absolute;right:-.35em;top:-.28em;color:#fff;font-size:.3em;font-style:normal;letter-spacing:0;
+    -webkit-text-fill-color:#fff;text-shadow:0 0 12px #fff,0 0 22px var(--blue);transform:rotate(10deg)}
   .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
     background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
       radial-gradient(circle at 20% 80%,rgba(255,209,41,.55) 0 2%,transparent 3%),
@@ -71,19 +76,30 @@
   .logo:after{content:"";position:absolute;top:-35%;bottom:-35%;left:-38%;width:22%;z-index:2;opacity:0;
     transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);
     mix-blend-mode:screen;pointer-events:none}
-  .logo:hover,.logo:focus-visible,.logo.celestial{transform:translateY(-2px) scale(1.02);
-    filter:drop-shadow(0 0 12px rgba(255,255,255,.48)) drop-shadow(0 0 26px rgba(99,179,255,.42))}
+  .logo:hover,.logo:focus-visible,.logo.celestial{animation:logoShakeSmooth .82s var(--ease) both;
+    filter:drop-shadow(0 0 12px rgba(255,255,255,.5)) drop-shadow(0 0 28px rgba(99,179,255,.46))}
   .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
   .logo:hover:after,.logo:focus-visible:after,.logo.celestial:after{animation:logoShine .8s var(--ease) both}
+  .logo:hover + .eyebrow,.logo:focus-visible + .eyebrow,.logo.celestial + .eyebrow{animation:tagPop .82s var(--ease) both}
+  @keyframes logoShakeSmooth{
+    0%{transform:translate3d(0,0,0) rotate(0) scale(1)}
+    20%{transform:translate3d(-2px,-3px,0) rotate(-1.1deg) scale(1.025)}
+    40%{transform:translate3d(2px,-2px,0) rotate(.8deg) scale(1.035)}
+    58%{transform:translate3d(-1px,-2px,0) rotate(-.45deg) scale(1.03)}
+    76%{transform:translate3d(1px,-1px,0) rotate(.2deg) scale(1.02)}
+    100%{transform:translate3d(0,-1px,0) rotate(0) scale(1.018)}
+  }
   @keyframes logoShine{0%{left:-38%;opacity:0}22%{opacity:1}100%{left:118%;opacity:0}}
   @keyframes starBloom{0%{opacity:0;transform:scale(.75) rotate(-4deg)}45%{opacity:.95}100%{opacity:0;transform:scale(1.22) rotate(6deg)}}
-  .tag{max-width:720px;margin:14px auto 0;color:var(--muted);font-size:clamp(1rem,2.4vw,1.18rem)}
+  @keyframes tagPop{35%{transform:rotate(-4deg) translateY(-4px) scale(1.08)}100%{transform:rotate(-7deg) translateY(0) scale(1)}}
+  .tag{max-width:760px;margin:9px auto 0;color:var(--muted);font-size:clamp(.92rem,2vw,1.08rem);line-height:1.4}
   .tag b{color:var(--text)}
-  .eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;color:var(--yellow);
-    text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;font-weight:900}
-  .eyebrow:before{content:"";width:22px;height:1px;background:currentColor}
+  .eyebrow{position:absolute;right:0;top:0;display:inline-flex;align-items:center;padding:5px 10px;border:1px solid rgba(255,209,41,.72);
+    border-radius:8px 11px 8px 10px;background:linear-gradient(105deg,var(--yellow),#ffab24);color:var(--yellow-ink);
+    box-shadow:0 7px 24px rgba(255,209,41,.2);text-transform:uppercase;letter-spacing:.06em;
+    font-size:clamp(.61rem,1.4vw,.72rem);font-style:italic;font-weight:950;transform:rotate(-7deg)}
 
-  .search-area{position:relative;max-width:760px;margin:25px auto 0;text-align:left}
+  .search-area{position:relative;max-width:790px;margin:16px auto 0;text-align:left}
   .field-label{display:block;margin:0 0 7px;font-size:.82rem;font-weight:800;color:var(--muted)}
   .search-shell{display:grid;grid-template-columns:24px 1fr auto;align-items:center;gap:10px;
     padding:7px 8px 7px 16px;border:1px solid #3d4660;border-radius:17px;background:rgba(21,25,38,.96);
@@ -115,17 +131,18 @@
 
   .crumb{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;
     color:var(--muted);font-size:.9rem}
+  body.home-live .crumb{display:none}
   .crumb a{color:var(--blue);text-decoration:none}
   .crumb .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(85,229,154,.1)}
 
-  .stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:24px 0 0}
-  .stat{min-width:118px;padding:10px 15px;border:1px solid var(--line-soft);border-radius:14px;
+  .stats{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0 0}
+  .stat{min-width:104px;padding:7px 13px;border:1px solid var(--line-soft);border-radius:12px;
     background:rgba(21,25,38,.78);text-align:center}
-  .stat .n{font-size:1.28rem;font-weight:950;color:var(--yellow);font-variant-numeric:tabular-nums}
+  .stat .n{font-size:1.1rem;font-weight:950;color:var(--yellow);font-variant-numeric:tabular-nums}
   .stat.green .n{color:var(--green)}
   .stat .l{margin-top:1px;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em}
 
-  .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:34px 0 13px}
+  .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:24px 0 11px}
   .section-head h2{margin:0;font-size:clamp(1.18rem,3vw,1.48rem)}
   .section-head p{margin:3px 0 0;color:var(--muted);font-size:.88rem}
   .how{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:30px 0 0}
@@ -136,19 +153,41 @@
   .step-title{margin-top:11px;font-weight:900}
   .step-desc{margin-top:4px;color:var(--muted);font-size:.8rem}
 
-  .sections{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .sec-card{display:flex;align-items:center;gap:14px;min-height:112px;padding:18px;border:1px solid var(--line);
-    border-radius:var(--radius);background:var(--surface);color:var(--text);text-decoration:none;
-    transition:transform .18s var(--ease),border-color .18s ease,box-shadow .18s ease}
-  .sec-card:hover{transform:translateY(-2px);border-color:var(--yellow);box-shadow:0 12px 38px rgba(0,0,0,.28)}
-  .sec-em{display:grid;place-items:center;flex:0 0 54px;height:54px;border-radius:15px;background:var(--surface-2);font-size:1.75rem}
-  .sec-info{min-width:0;flex:1}
-  .sec-name{font-size:1.08rem;font-weight:950}
-  .sec-tag{margin-top:2px;color:var(--muted);font-size:.8rem}
+  .directory-block{position:relative;margin-top:15px;padding:17px;border:1px solid var(--line-soft);border-radius:22px;
+    background:linear-gradient(145deg,rgba(21,25,38,.9),rgba(13,16,25,.78));box-shadow:0 20px 70px rgba(0,0,0,.18)}
+  .directory-block .section-head{margin:0 0 12px}
+  .directory-count{flex:0 0 auto;color:var(--muted);font-size:.78rem;font-weight:800}
+  .filter-rail{display:flex;gap:7px;margin:0 -3px 13px;padding:3px;overflow-x:auto;scrollbar-width:thin;scroll-snap-type:x proximity}
+  .directory-filter{display:inline-flex;align-items:center;gap:7px;min-height:42px;padding:8px 12px;border:1px solid var(--line);
+    border-radius:999px;background:var(--bg-soft);color:var(--muted);font-size:.78rem;font-weight:900;white-space:nowrap;
+    scroll-snap-align:start;transition:transform .18s var(--ease),border-color .18s ease,color .18s ease,background .18s ease}
+  .directory-filter:hover{transform:translateY(-1px);border-color:var(--blue);color:var(--text)}
+  .directory-filter[aria-pressed="true"]{border-color:rgba(255,209,41,.75);background:rgba(255,209,41,.11);color:var(--yellow);
+    box-shadow:0 0 0 3px rgba(255,209,41,.06)}
+  .sections{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .sec-card{position:relative;display:flex;flex-direction:column;min-width:0;min-height:180px;padding:14px;border:1px solid var(--line);
+    border-radius:17px;background:linear-gradient(150deg,rgba(27,32,48,.98),rgba(17,20,31,.96));color:var(--text);
+    transition:transform .2s var(--ease),border-color .2s ease,box-shadow .2s ease;overflow:hidden}
+  .sec-card:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(280px 120px at 10% 0%,rgba(99,179,255,.13),transparent 68%);transition:opacity .2s ease}
+  .sec-card:hover{transform:translateY(-3px);border-color:var(--yellow);box-shadow:0 14px 38px rgba(0,0,0,.3)}
+  .sec-card:hover:before{opacity:1}
+  .sec-card-main{position:relative;display:grid;grid-template-columns:46px minmax(0,1fr) auto;align-items:center;gap:10px;color:inherit;text-decoration:none}
+  .sec-em{display:grid;place-items:center;width:46px;height:46px;border:1px solid var(--line-soft);border-radius:14px;background:var(--bg-soft);font-size:1.48rem}
+  .sec-info{min-width:0}
+  .sec-kind{display:block;margin-bottom:1px;color:var(--blue);font-size:.62rem;font-weight:950;text-transform:uppercase;letter-spacing:.08em}
+  .sec-name{display:block;font-size:1.02rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sec-tag{display:-webkit-box;margin-top:8px;min-height:34px;color:var(--muted);font-size:.75rem;line-height:1.4;
+    -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .sec-card-foot{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:auto;padding-top:11px}
+  .sec-quick{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 10px;border:1px solid rgba(255,209,41,.48);
+    border-radius:10px;background:rgba(255,209,41,.08);color:var(--yellow);font-size:.72rem;font-weight:950;text-decoration:none;white-space:nowrap}
+  .sec-quick:hover{background:var(--yellow);color:var(--yellow-ink)}
+  .profile-tags{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
   .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
   .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid var(--line-soft);
     border-radius:999px;background:var(--bg-soft);color:var(--muted);font-size:.7rem}
   .chip.hot{color:var(--yellow)}
+  .chip.category{border-color:rgba(99,179,255,.26);color:var(--blue)}
 
   .trending{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .trend-card{display:flex;flex-direction:column;min-height:166px;padding:15px;border:1px solid var(--line);
@@ -298,6 +337,7 @@
   .privacy-title{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:.82rem;font-weight:900}
   .privacy-title .private-badge{padding:3px 8px;border-radius:999px;background:rgba(85,229,154,.1);color:var(--green);font-size:.68rem}
   .choice-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+  .choice-row:has(.choice.hidden){grid-template-columns:1fr}
   .choice{display:flex;align-items:flex-start;gap:9px;padding:11px;border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:.78rem}
   .choice:has(input:checked){border-color:var(--blue);background:rgba(99,179,255,.08);color:var(--text)}
   .choice input{margin:3px 0 0;accent-color:var(--blue)}
@@ -350,7 +390,7 @@
   @media (max-width:760px){
     .wrap{padding-top:18px}
     .how{grid-template-columns:1fr}
-    .sections{grid-template-columns:1fr}
+    .sections{grid-template-columns:repeat(2,minmax(0,1fr))}
     .trending{grid-template-columns:1fr}
     .trend-card{min-height:120px}
     .profile-tools{grid-template-columns:1fr}
@@ -363,9 +403,16 @@
     .wrap{padding:18px 13px 132px}
     .top-actions{left:10px;right:10px;justify-content:flex-end}
     .top-btn{padding-inline:12px}
-    header{padding-top:48px}
-    .search-shell{grid-template-columns:21px 1fr;padding-right:9px}
-    .search-btn{grid-column:1/-1;width:100%}
+    header{padding-top:45px}
+    .brand-lockup{padding-right:34px}
+    .logo{font-size:clamp(2.45rem,14vw,3.25rem)}
+    .eyebrow{right:-2px;top:1px;padding:4px 8px}
+    .search-shell{grid-template-columns:21px minmax(0,1fr) auto;gap:7px;padding:6px 7px 6px 13px}
+    .search-btn{padding-inline:12px}
+    .directory-block{margin-inline:-2px;padding:13px;border-radius:19px}
+    .directory-block .section-head{align-items:flex-start}
+    .sections{grid-template-columns:1fr}
+    .sec-card{min-height:158px}
     .form-grid{grid-template-columns:1fr}
     .field.full{grid-column:auto}
     .claim-bar{align-items:flex-start;flex-direction:column}
@@ -376,7 +423,7 @@
     .idea-actions{grid-column:2;justify-content:flex-end}
     .rank{font-size:1.05rem}
     .reason{font-size:.76rem}
-    .stats{gap:7px}.stat{min-width:102px;padding-inline:10px}
+    .stats{gap:6px;flex-wrap:nowrap}.stat{min-width:0;flex:1 1 0;padding-inline:5px}.stat .l{font-size:.58rem}
     .choice-row{grid-template-columns:1fr}
     .dialog-card{width:100vw;max-height:92dvh;border-radius:20px 20px 0 0;padding:20px 15px 24px}
     dialog{margin:auto 0 0;width:100%;max-width:none}
@@ -388,7 +435,7 @@
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
     *,*:before,*:after{animation:none!important;transition:none!important}
-    .logo:hover,.logo:focus-visible{transform:none;filter:drop-shadow(0 0 12px rgba(99,179,255,.4))}
+    .logo:hover,.logo:focus-visible{filter:drop-shadow(0 0 12px rgba(99,179,255,.4))}
   }
 </style>
 </head>
@@ -408,8 +455,12 @@
 
 <main class="wrap" id="main">
   <header>
-    <div class="eyebrow" id="eyebrow"></div>
-    <a class="logo" id="logo" href="./">FANRANK</a>
+    <div class="brand-lockup">
+      <a class="logo" id="logo" href="./" aria-label="FanRank">
+        <span>FAN</span><span class="logo-rank">RANK</span><span class="logo-star" aria-hidden="true">✦</span>
+      </a>
+      <span class="eyebrow" id="eyebrow"></span>
+    </div>
     <div class="tag" id="hero-tag"></div>
 
     <form class="search-area" id="search-form" role="search" novalidate>
@@ -430,19 +481,23 @@
   <div class="stats" id="stats"></div>
 
   <section id="home-view">
-    <div class="how" id="how"></div>
-
-    <div class="section-head">
-      <div><h2 id="profiles-title"></h2><p id="profiles-subtitle"></p></div>
-    </div>
-    <div class="sections" id="sections">
-      <div class="loading"><span class="spinner"></span><div id="loading-text"></div></div>
-    </div>
+    <section class="directory-block" aria-labelledby="profiles-title">
+      <div class="section-head">
+        <div><h2 id="profiles-title"></h2><p id="profiles-subtitle"></p></div>
+        <span class="directory-count" id="directory-count" aria-live="polite"></span>
+      </div>
+      <div class="filter-rail" id="directory-filters" role="toolbar" aria-label="Profile filters"></div>
+      <div class="sections" id="sections">
+        <div class="loading"><span class="spinner"></span><div id="loading-text"></div></div>
+      </div>
+    </section>
 
     <div class="section-head">
       <div><h2 id="trending-title"></h2><p id="trending-subtitle"></p></div>
     </div>
     <div class="trending" id="trending"></div>
+
+    <div class="how" id="how"></div>
 
     <section class="panel" id="request-panel">
       <h2 id="request-title"></h2>
@@ -477,16 +532,7 @@
   </section>
 
   <section class="hidden" id="section-view">
-    <div class="claim-bar">
-      <div class="claim-copy"><b id="claim-bar-title"></b><span id="claim-bar-copy"></span></div>
-      <button class="secondary-btn button-icon" id="claim-open" type="button">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M12 3 4.5 6v5.4c0 4.7 3.2 8.4 7.5 9.6 4.3-1.2 7.5-4.9 7.5-9.6V6L12 3Z"></path>
-          <path d="m9 12 2 2 4-4"></path>
-        </svg>
-        <span id="claim-open-text"></span>
-      </button>
-    </div>
+    <div class="profile-tags" id="profile-tags"></div>
 
     <section class="suggest-cta" aria-labelledby="suggest-cta-title">
       <div>
@@ -501,6 +547,17 @@
       </div>
       <button class="primary-btn suggest-open" id="suggest-open" type="button"></button>
     </section>
+
+    <div class="claim-bar">
+      <div class="claim-copy"><b id="claim-bar-title"></b><span id="claim-bar-copy"></span></div>
+      <button class="secondary-btn button-icon" id="claim-open" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 3 4.5 6v5.4c0 4.7 3.2 8.4 7.5 9.6 4.3-1.2 7.5-4.9 7.5-9.6V6L12 3Z"></path>
+          <path d="m9 12 2 2 4-4"></path>
+        </svg>
+        <span id="claim-open-text"></span>
+      </button>
+    </div>
     <div class="signal-strip" id="signal-strip" aria-label="Ranking signals">
       <span id="signal-ai"></span><span id="signal-fans"></span><span id="signal-team"></span>
     </div>
@@ -731,6 +788,7 @@
 
 var SB_URL = "https://kopegamcjozrvmxruwdn.supabase.co";
 var SB_KEY = "sb_publishable_2NDyczKDwFCzNIWEMycRtw_yTnkUQAi";
+var APP_URL = "https://eltonylfgi-blip.github.io/fanrank/";
 var API_HEADERS = {
   "apikey": SB_KEY,
   "Content-Type": "application/json"
@@ -738,6 +796,7 @@ var API_HEADERS = {
 var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var params = new URLSearchParams(location.search);
 var SECTION = params.get("s");
+var QUICK_SUGGEST = params.get("suggest") === "1";
 var DEEP_IDEA = parseInt(params.get("idea") || "0", 10) || null;
 var hashParams = new URLSearchParams(location.hash.replace(/^#/,""));
 var INVITE_TOKEN = hashParams.get("invite") || "";
@@ -747,6 +806,7 @@ var allIdeas = [];
 var ideas = [];
 var secMeta = null;
 var sortMode = "ai";
+var directoryMode = "featured";
 var profileQuery = "";
 var toastTimer = null;
 var formStartedAt = Date.now();
@@ -767,11 +827,11 @@ try{
 
 var T = {
   en:{
-    eyebrow:"The public suggestion layer",
-    hero_home:"Starting with <b>Brawl Stars</b>: vote on what should improve next.<br>Search its ideas — or request the next profile.",
+    eyebrow:"FOR EVERYONE!",
+    hero_home:"Pick a <b>creator, game, platform or AI</b>.<br>Leave an anonymous idea in seconds; fans and AI help the most useful ones rise.",
     hero_section:function(name){return "Fan ideas for <b>" + name + "</b>, ranked.<br><b>Vote</b> on what should improve next.";},
-    search_label:"Who do you want to improve?",
-    search_placeholder:"Search Brawl Stars, a creator, a company…",
+    search_label:"Find anyone or anything to improve",
+    search_placeholder:"Search Rubius, Brawl Stars, Discord, ChatGPT…",
     search_button:"Search",
     search_profile:"Profile",
     search_idea:"Idea",
@@ -784,10 +844,25 @@ var T = {
     stats_ideas:"ranked ideas",
     stats_votes:"fan votes",
     loading:"Loading live rankings…",
-    profiles_title:"Top profiles",
-    profiles_subtitle:"The most active entities rise first.",
+    profiles_title:"Choose who to improve",
+    profiles_subtitle:"Open a profile or send a suggestion in one tap.",
+    directory_count:function(n){return n + (n === 1 ? " profile" : " profiles");},
+    directory_filters:[
+      ["featured","✦","Featured"],["trending","↗","Trending"],["popular","★","Popular"],["active","⚡","Most active"],
+      ["creators-es","🎙️","Creators · Spain"],["games","🎮","Video games"],["social","💬","Social platforms"],["ai","✨","AI"]
+    ],
+    kind_labels:{creator:"Creator",game:"Video game",social:"Social platform",ai:"AI",project:"Project"},
+    tag_labels:{spain:"Spain",streamer:"Streamer",youtuber:"YouTuber",tiktoker:"TikToker",podcaster:"Podcaster",
+      mobile:"Mobile",supercell:"Supercell",platform:"Platform",ugc:"Creator tools",multiplayer:"Multiplayer",
+      communities:"Communities",chat:"Chat","social-network":"Social network",microblogging:"Microblogging",
+      assistant:"Assistant",openai:"OpenAI",anthropic:"Anthropic",productivity:"Productivity","living-project":"Living project"},
+    quick_suggest:"Suggest",
+    first_signal:"Be the first",
+    empty_profile:"No ranked ideas yet. Be the first person to give this profile a useful signal.",
+    empty_profile_button:"Send the first suggestion",
+    no_profiles_filter:"No profiles match this view yet.",
     trending_title:"Ideas rising now",
-    trending_subtitle:"The strongest current signals across FanRank.",
+    trending_subtitle:"Useful ideas with the strongest signals across FanRank.",
     top_label:"TOP IDEA",
     source_votes:"source votes",
     fan_votes:"fan votes",
@@ -916,11 +991,11 @@ var T = {
     footer:"<b>How ranking works:</b> an AI-assisted base score weighs impact, feasibility and clarity; fan demand adds a capped signal; verified team interest adds limited context, never an automatic #1.<br>Suggestions are reviewed before publication. Names, contacts, receipts and individual voters are private. FanRank · built with fans, for better decisions."
   },
   es:{
-    eyebrow:"La capa pública de sugerencias",
-    hero_home:"Empezamos con <b>Brawl Stars</b>: vota qué debería mejorar.<br>Busca entre sus ideas o pide el siguiente perfil.",
+    eyebrow:"¡PARA TODOS!",
+    hero_home:"Elige un <b>creador, videojuego, plataforma o IA</b>.<br>Deja una idea anónima en segundos; los fans y la IA hacen subir las más útiles.",
     hero_section:function(name){return "Ideas de fans para <b>" + name + "</b>, ordenadas.<br><b>Vota</b> qué debería mejorar.";},
-    search_label:"¿A quién quieres mejorar?",
-    search_placeholder:"Busca Brawl Stars, un creador, una empresa…",
+    search_label:"Busca a quién o qué quieres mejorar",
+    search_placeholder:"Busca Rubius, Brawl Stars, Discord, ChatGPT…",
     search_button:"Buscar",
     search_profile:"Perfil",
     search_idea:"Idea",
@@ -933,10 +1008,25 @@ var T = {
     stats_ideas:"ideas ordenadas",
     stats_votes:"votos de fans",
     loading:"Cargando rankings vivos…",
-    profiles_title:"Perfiles destacados",
-    profiles_subtitle:"Las entidades con más actividad suben primero.",
+    profiles_title:"Elige a quién mejorar",
+    profiles_subtitle:"Abre un perfil o manda una sugerencia con un toque.",
+    directory_count:function(n){return n + (n === 1 ? " perfil" : " perfiles");},
+    directory_filters:[
+      ["featured","✦","Destacados"],["trending","↗","Tendencias"],["popular","★","Populares"],["active","⚡","Más activas"],
+      ["creators-es","🎙️","Creadores · España"],["games","🎮","Videojuegos"],["social","💬","Redes sociales"],["ai","✨","IA"]
+    ],
+    kind_labels:{creator:"Creador",game:"Videojuego",social:"Red social",ai:"IA",project:"Proyecto"},
+    tag_labels:{spain:"España",streamer:"Streamer",youtuber:"YouTuber",tiktoker:"TikToker",podcaster:"Podcaster",
+      mobile:"Móvil",supercell:"Supercell",platform:"Plataforma",ugc:"Creación",multiplayer:"Multijugador",
+      communities:"Comunidades",chat:"Chat","social-network":"Red social",microblogging:"Microblogging",
+      assistant:"Asistente",openai:"OpenAI",anthropic:"Anthropic",productivity:"Productividad","living-project":"Proyecto vivo"},
+    quick_suggest:"Sugerir",
+    first_signal:"Sé el primero",
+    empty_profile:"Aún no hay ideas ordenadas. Sé la primera persona en dejar una señal útil para este perfil.",
+    empty_profile_button:"Enviar la primera sugerencia",
+    no_profiles_filter:"Todavía no hay perfiles en esta vista.",
     trending_title:"Ideas que están subiendo",
-    trending_subtitle:"Las señales más fuertes que hay ahora en FanRank.",
+    trending_subtitle:"Las ideas útiles con señales más fuertes en FanRank.",
     top_label:"IDEA TOP",
     source_votes:"votos de origen",
     fan_votes:"votos de fans",
@@ -1099,6 +1189,17 @@ function ideaReason(item){
 function sectionTagline(item){
   return LANG === "es" && item.tagline_es ? item.tagline_es : (item.tagline || "");
 }
+function sectionTags(item){
+  return Array.isArray(item && item.tags) ? item.tags : [];
+}
+function kindLabel(kind){
+  var labels = tx("kind_labels") || {};
+  return labels[kind] || String(kind || tx("search_profile"));
+}
+function tagLabel(tag){
+  var labels = tx("tag_labels") || {};
+  return labels[tag] || String(tag || "").replace(/-/g," ");
+}
 function visitorId(){
   try{
     var value = localStorage.getItem("fr_voter");
@@ -1216,7 +1317,8 @@ function closeDialog(id){
   if(dialog.open){dialog.close();}
 }
 function authRedirectUrl(){
-  var url = new URL(location.origin + location.pathname);
+  var local = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:";
+  var url = new URL(local ? APP_URL : location.origin + location.pathname);
   if(SECTION){url.searchParams.set("s",SECTION);}
   if(LANG === "es"){url.searchParams.set("lang","es");}
   if(INVITE_TOKEN){url.hash = "invite=" + encodeURIComponent(INVITE_TOKEN);}
@@ -1312,13 +1414,14 @@ function armCelestialAudio(){
 function playCelestialChime(){
   if(REDUCED || !audioArmed || !audioContext || chimePlayed){return;}
   chimePlayed = true;
-  [523.25,659.25,783.99].forEach(function(frequency,index){
+  setTimeout(function(){chimePlayed = false;},9000);
+  [523.25,659.25,783.99,1046.5].forEach(function(frequency,index){
     var oscillator = audioContext.createOscillator();
     var gain = audioContext.createGain();
     oscillator.type = index === 1 ? "triangle" : "sine";
     oscillator.frequency.setValueAtTime(frequency,audioContext.currentTime);
     gain.gain.setValueAtTime(.0001,audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(.028,audioContext.currentTime + .035 + index*.015);
+    gain.gain.exponentialRampToValueAtTime(index === 3 ? .018 : .026,audioContext.currentTime + .035 + index*.015);
     gain.gain.exponentialRampToValueAtTime(.0001,audioContext.currentTime + .52 + index*.04);
     oscillator.connect(gain).connect(audioContext.destination);
     oscillator.start();
@@ -1330,7 +1433,7 @@ function triggerCelestialLogo(withSound){
   logo.classList.remove("celestial");
   void logo.offsetWidth;
   logo.classList.add("celestial");
-  setTimeout(function(){logo.classList.remove("celestial");},950);
+  setTimeout(function(){logo.classList.remove("celestial");},1050);
   if(withSound){playCelestialChime();}
 }
 function openSuggestion(){
@@ -1533,8 +1636,12 @@ function withLanguage(url){
   if(LANG !== "es"){return url;}
   return url + (url.indexOf("?") >= 0 ? "&" : "?") + "lang=es";
 }
-function sectionUrl(slug){
-  return location.pathname + "?s=" + encodeURIComponent(slug) + (LANG === "es" ? "&lang=es" : "");
+function sectionUrl(slug,quickSuggest){
+  var url = new URL(location.pathname,location.origin);
+  url.searchParams.set("s",slug);
+  if(LANG === "es"){url.searchParams.set("lang","es");}
+  if(quickSuggest){url.searchParams.set("suggest","1");}
+  return url.pathname + url.search;
 }
 function ideaUrl(item){
   return location.origin + location.pathname + "?s=" + encodeURIComponent(item.section) +
@@ -1565,6 +1672,7 @@ function applyStaticText(){
   byId("loading-text").textContent = tx("loading");
   byId("profiles-title").textContent = tx("profiles_title");
   byId("profiles-subtitle").textContent = tx("profiles_subtitle");
+  byId("directory-filters").setAttribute("aria-label",tx("profiles_title"));
   byId("trending-title").textContent = tx("trending_title");
   byId("trending-subtitle").textContent = tx("trending_subtitle");
   byId("request-title").textContent = tx("request_title");
@@ -1663,7 +1771,7 @@ async function loadDirectory(){
   ]);
   sections = Array.isArray(result[0]) ? result[0] : [];
   allIdeas = Array.isArray(result[1]) ? result[1] : [];
-  sections.sort(function(a,b){return (b.fan_votes*5+b.ideas)-(a.fan_votes*5+a.ideas);});
+  sections.sort(function(a,b){return Number(a.featured_rank||9999)-Number(b.featured_rank||9999);});
 }
 
 function renderHow(){
@@ -1678,28 +1786,88 @@ function renderHomeStats(){
     statHtml(sections.reduce(function(sum,item){return sum+Number(item.ideas||0);},0),tx("stats_ideas")) +
     statHtml(sections.reduce(function(sum,item){return sum+Number(item.fan_votes||0);},0),tx("stats_votes"),true);
 }
+function directoryScore(item,mode){
+  if(mode === "trending"){
+    return Number(item.recent_ideas||0)*20 + Number(item.fan_votes||0)*18 + Number(item.reddit_upvotes||0)*.02;
+  }
+  if(mode === "popular"){
+    return Number(item.reddit_upvotes||0) + Number(item.fan_votes||0)*25 + Number(item.ideas||0);
+  }
+  if(mode === "active"){
+    return Number(item.ideas||0)*10 + Number(item.fan_votes||0)*15 + Number(item.recent_ideas||0)*5;
+  }
+  return 10000-Number(item.featured_rank||9999);
+}
+function directoryItems(){
+  var list = sections.slice();
+  if(directoryMode === "creators-es"){
+    list = list.filter(function(item){return item.kind === "creator" && sectionTags(item).indexOf("spain") >= 0;});
+  }else if(directoryMode === "games"){
+    list = list.filter(function(item){return item.kind === "game";});
+  }else if(directoryMode === "social"){
+    list = list.filter(function(item){return item.kind === "social";});
+  }else if(directoryMode === "ai"){
+    list = list.filter(function(item){return item.kind === "ai";});
+  }
+  list.sort(function(a,b){
+    return directoryScore(b,directoryMode)-directoryScore(a,directoryMode) ||
+      Number(a.featured_rank||9999)-Number(b.featured_rank||9999);
+  });
+  return list;
+}
+function renderDirectoryFilters(){
+  byId("directory-filters").innerHTML = tx("directory_filters").map(function(filter){
+    return '<button class="directory-filter" type="button" data-directory-mode="' + esc(filter[0]) +
+      '" aria-pressed="' + (directoryMode === filter[0] ? "true" : "false") + '"><span aria-hidden="true">' +
+      esc(filter[1]) + '</span>' + esc(filter[2]) + '</button>';
+  }).join("");
+  document.querySelectorAll("[data-directory-mode]").forEach(function(button){
+    button.addEventListener("click",function(){
+      directoryMode = button.dataset.directoryMode;
+      renderDirectoryFilters();
+      renderSections();
+      sendEvent("search",{value:"filter:" + directoryMode});
+    });
+  });
+}
 function renderSections(){
-  if(!sections.length){
-    byId("sections").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) + '</div>';
+  var visible = directoryItems();
+  byId("directory-count").textContent = tx("directory_count",visible.length);
+  if(!visible.length){
+    byId("sections").innerHTML = '<div class="empty-state">' + esc(tx("no_profiles_filter")) + '</div>';
     return;
   }
-  byId("sections").innerHTML = sections.map(function(item){
-    return '<a class="sec-card" href="' + esc(sectionUrl(item.slug)) + '" data-profile="' + esc(item.slug) + '">' +
-      '<span class="sec-em" aria-hidden="true">' + esc(item.emoji || "•") + '</span>' +
-      '<span class="sec-info"><span class="sec-name">' + esc(item.name) + '</span>' +
-      '<span class="sec-tag">' + esc(sectionTagline(item)) + '</span>' +
-      '<span class="chips"><span class="chip hot">' + fmt(item.ideas) + ' ' + esc(tx("stats_ideas")) + '</span>' +
-      '<span class="chip">' + fmt(item.fan_votes) + ' ' + esc(tx("fan_votes")) + '</span></span></span>' +
-      '<span class="result-arrow" aria-hidden="true">→</span></a>';
+  byId("sections").innerHTML = visible.map(function(item){
+    var tags = sectionTags(item).slice(0,3).map(function(tag){
+      return '<span class="chip">' + esc(tagLabel(tag)) + '</span>';
+    }).join("");
+    var signal = Number(item.ideas||0) ? fmt(item.ideas) + " " + tx("stats_ideas") : tx("first_signal");
+    return '<article class="sec-card"><a class="sec-card-main" href="' + esc(sectionUrl(item.slug)) +
+      '" data-profile="' + esc(item.slug) + '"><span class="sec-em" aria-hidden="true">' + esc(item.emoji || "•") +
+      '</span><span class="sec-info"><span class="sec-kind">' + esc(kindLabel(item.kind)) + '</span><span class="sec-name">' +
+      esc(item.name) + '</span></span><span class="result-arrow" aria-hidden="true">→</span></a>' +
+      '<span class="sec-tag">' + esc(sectionTagline(item)) + '</span><div class="chips">' + tags + '</div>' +
+      '<div class="sec-card-foot"><span class="chip hot">' + esc(signal) + '</span><a class="sec-quick" href="' +
+      esc(sectionUrl(item.slug,true)) + '" data-quick-suggest="' + esc(item.slug) + '">+ ' + esc(tx("quick_suggest")) +
+      '</a></div></article>';
   }).join("");
   document.querySelectorAll("[data-profile]").forEach(function(link){
     link.addEventListener("click",function(){
       sendEvent("profile_open",{section:link.dataset.profile,value:"home_card"});
     });
   });
+  document.querySelectorAll("[data-quick-suggest]").forEach(function(link){
+    link.addEventListener("click",function(){
+      sendEvent("profile_open",{section:link.dataset.quickSuggest,value:"quick_suggest"});
+    });
+  });
 }
 function trendingIdeas(){
-  return allIdeas.slice().sort(function(a,b){
+  var publicIdeas = allIdeas.filter(function(item){
+    var meta = sections.find(function(section){return section.slug === item.section;});
+    return !meta || meta.kind !== "project";
+  });
+  return publicIdeas.sort(function(a,b){
     var av = rankScore(a);
     var bv = rankScore(b);
     return bv-av || Number(b.origin_upvotes||0)-Number(a.origin_upvotes||0);
@@ -1718,10 +1886,13 @@ function renderTrending(){
 }
 function loadHome(){
   document.title = LANG === "es" ? "FanRank — las mejores ideas, ordenadas" : "FanRank — the best ideas, ranked";
+  document.body.classList.add("home-live");
+  document.body.classList.remove("profile-live");
   byId("hero-tag").innerHTML = tx("hero_home");
   byId("crumb-text").textContent = tx("all_profiles");
   renderHow();
   renderHomeStats();
+  renderDirectoryFilters();
   renderSections();
   renderTrending();
 }
@@ -1775,7 +1946,8 @@ function renderSimilarIdeas(){
 function searchMatches(query){
   var needle = normalize(query);
   var sectionMatches = sections.filter(function(item){
-    return normalize(item.name + " " + sectionTagline(item) + " " + item.kind).indexOf(needle) >= 0;
+    var labels = sectionTags(item).map(tagLabel).join(" ");
+    return normalize(item.name + " " + sectionTagline(item) + " " + item.kind + " " + kindLabel(item.kind) + " " + labels).indexOf(needle) >= 0;
   }).slice(0,4);
   var ideaMatches = allIdeas.filter(function(item){
     return normalize(ideaTitle(item) + " " + ideaReason(item)).indexOf(needle) >= 0;
@@ -1792,10 +1964,11 @@ function renderSearchPanel(query){
   var matches = searchMatches(query);
   var html = "";
   matches.sections.forEach(function(item){
+    var searchTags = sectionTags(item).slice(0,2).map(tagLabel).join(" · ");
     html += '<a class="search-result" href="' + esc(sectionUrl(item.slug)) + '" data-search-profile="' + esc(item.slug) + '">' +
       '<span class="result-avatar" aria-hidden="true">' + esc(item.emoji || "•") + '</span>' +
-      '<span><span class="result-title">' + esc(item.name) + '</span><span class="result-meta">' + esc(tx("search_profile")) +
-      ' · ' + fmt(item.ideas) + ' ' + esc(tx("stats_ideas")) + '</span></span><span class="result-arrow">→</span></a>';
+      '<span><span class="result-title">' + esc(item.name) + '</span><span class="result-meta">' + esc(kindLabel(item.kind)) +
+      (searchTags ? ' · ' + esc(searchTags) : '') + '</span></span><span class="result-arrow">→</span></a>';
   });
   matches.ideas.forEach(function(item){
     html += '<a class="search-result" href="' + esc(ideaUrl(item)) + '" data-search-idea="' + item.id + '">' +
@@ -1867,8 +2040,15 @@ function renderProfileStats(){
     statHtml(fmt(ideas.reduce(function(sum,item){return sum+Number(item.origin_upvotes||0);},0)),tx("source_votes")) +
     statHtml(ideas.reduce(function(sum,item){return sum+Number(item.web_votes||0);},0),tx("fan_votes"),true);
 }
+function renderProfileTags(){
+  if(!secMeta){byId("profile-tags").innerHTML = "";return;}
+  var html = '<span class="chip category">' + esc(kindLabel(secMeta.kind)) + '</span>';
+  html += sectionTags(secMeta).map(function(tag){return '<span class="chip">' + esc(tagLabel(tag)) + '</span>';}).join("");
+  byId("profile-tags").innerHTML = html;
+}
 function renderPodium(){
   var top = sortedIdeas(ideas).slice(0,3);
+  byId("podium").classList.toggle("hidden",!top.length);
   var positions = [
     {item:top[1],rank:2,cls:"second"},
     {item:top[0],rank:1,cls:"first"},
@@ -1899,7 +2079,14 @@ function renderIdeas(){
   var list = filteredIdeas();
   var mine = myVotes();
   if(!list.length){
-    byId("ideas-list").innerHTML = '<div class="empty-state">' + esc(tx("no_ideas")) + '</div>';
+    if(!ideas.length){
+      byId("ideas-list").innerHTML = '<div class="empty-state">' + esc(tx("empty_profile")) +
+        '<div class="form-actions" style="justify-content:center"><button class="primary-btn" id="empty-suggest" type="button">' +
+        esc(tx("empty_profile_button")) + '</button></div></div>';
+      byId("empty-suggest").addEventListener("click",openSuggestion);
+    }else{
+      byId("ideas-list").innerHTML = '<div class="empty-state">' + esc(tx("no_ideas")) + '</div>';
+    }
     return;
   }
   byId("ideas-list").innerHTML = list.map(function(item,index){
@@ -1944,6 +2131,7 @@ function renderIdeas(){
   });
 }
 function renderProfile(){
+  renderProfileTags();
   renderProfileStats();
   renderPodium();
   renderIdeas();
@@ -1972,10 +2160,18 @@ function loadSection(){
     esc(tx("all_profiles")) + '</a> <span aria-hidden="true">›</span> ' + esc(secMeta.name);
   byId("home-view").classList.add("hidden");
   byId("section-view").classList.remove("hidden");
+  document.body.classList.remove("home-live");
   document.body.classList.add("profile-live");
   renderProfile();
   focusDeepIdea();
   sendEvent("profile_open",{section:SECTION,value:"page_load"});
+  if(QUICK_SUGGEST){
+    QUICK_SUGGEST = false;
+    var cleanUrl = new URL(location.href);
+    cleanUrl.searchParams.delete("suggest");
+    history.replaceState(null,"",cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+    setTimeout(openSuggestion,0);
+  }
 }
 
 async function vote(id,button){
