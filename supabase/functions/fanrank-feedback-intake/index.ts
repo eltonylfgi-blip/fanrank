@@ -64,6 +64,39 @@ function boolField(form: FormData, name: string): boolean {
   return String(form.get(name) || "false") === "true";
 }
 
+function normalizeEvidenceLink(value: string): string | null {
+  const raw = value.trim();
+  if (!raw || raw.length > 2048) return null;
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    return null;
+  }
+  if (parsed.protocol !== "https:" || parsed.username || parsed.password) return null;
+  parsed.hash = "";
+  const host = parsed.hostname.toLowerCase().replace(/\.$/, "");
+  let videoId = "";
+  if (host === "youtu.be") {
+    videoId = parsed.pathname.split("/").filter(Boolean)[0] || "";
+  } else if ([
+    "youtube.com", "www.youtube.com", "m.youtube.com",
+    "youtube-nocookie.com", "www.youtube-nocookie.com",
+  ].includes(host)) {
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    if (parsed.pathname === "/watch") videoId = parsed.searchParams.get("v") || "";
+    else if (["shorts", "live", "embed"].includes(segments[0])) videoId = segments[1] || "";
+    else return null;
+  } else if (host.includes("youtube") || host.includes("youtu.be")) {
+    return null;
+  }
+  if (videoId) {
+    if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) return null;
+    return `https://www.youtube.com/watch?v=${videoId}`;
+  }
+  return host ? parsed.href : null;
+}
+
 function bytesEqual(bytes: Uint8Array, offset: number, expected: number[]): boolean {
   if (bytes.length < offset + expected.length) return false;
   return expected.every((value, index) => bytes[offset + index] === value);
@@ -172,11 +205,31 @@ Deno.serve(async (request) => {
     const categoryRaw = textField(form, "category_requested", 30) || "auto";
     const categoryRequested = allowedCategories.has(categoryRaw) ? categoryRaw : "auto";
 
+    if (section !== "section-request") {
+      const { data: sectionRow, error: sectionError } = await admin
+        .from("fr_sections")
+        .select("slug")
+        .eq("slug", section)
+        .maybeSingle();
+      if (sectionError) throw sectionError;
+      if (!sectionRow) throw new IntakeError(400, "El perfil de destino no existe.");
+    }
+
+    const rawLinks = form.getAll("links").filter((entry): entry is string => typeof entry === "string");
+    if (rawLinks.length > MAX_FILES) throw new IntakeError(413, "Solo se permiten 3 pruebas en total.");
+    const evidenceLinks: string[] = [];
+    for (const rawLink of rawLinks) {
+      const normalized = normalizeEvidenceLink(rawLink);
+      if (!normalized) throw new IntakeError(400, "Uno de los enlaces HTTPS no es válido.");
+      if (evidenceLinks.includes(normalized)) throw new IntakeError(400, "Hay un enlace repetido.");
+      evidenceLinks.push(normalized);
+    }
+
     const files = form.getAll("files").filter(
       (entry): entry is File => entry instanceof File && entry.size > 0,
     );
-    if (!files.length) throw new IntakeError(400, "No se recibió ningún archivo.");
-    if (files.length > MAX_FILES) throw new IntakeError(413, "Solo se permiten 3 archivos.");
+    if (!files.length && !evidenceLinks.length) throw new IntakeError(400, "No se recibió ninguna prueba.");
+    if (files.length + evidenceLinks.length > MAX_FILES) throw new IntakeError(413, "Solo se permiten 3 pruebas en total.");
     const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
     if (totalBytes > MAX_TOTAL_BYTES) throw new IntakeError(413, "Las imágenes superan 15 MB en total.");
 
@@ -214,6 +267,7 @@ Deno.serve(async (request) => {
         category_requested: categoryRequested,
         ai_training_consent: aiTrainingConsent,
         attachment_count: prepared.length,
+        evidence_links: evidenceLinks,
       })
       .select("id,category_final,classification_method")
       .single();
@@ -264,6 +318,7 @@ Deno.serve(async (request) => {
       event: "fanrank_media_accepted",
       submission_id: submission.id,
       files: prepared.length,
+      links: evidenceLinks.length,
       bytes: totalBytes,
     }));
     return json(origin, 202, {
@@ -272,6 +327,7 @@ Deno.serve(async (request) => {
       category: submission.category_final,
       classification_method: submission.classification_method,
       attachments: prepared.length,
+      links: evidenceLinks.length,
       status: "quarantined",
       public: false,
     });

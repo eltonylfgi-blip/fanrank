@@ -2,7 +2,7 @@
 
 Este archivo es la única cola de ideas del repositorio. Una idea solo sube de prioridad si cambia una decisión real y tiene una señal externa que pueda confirmarla o refutarla.
 
-## Estado actual (hecho)
+## Estado actual publicado (hecho)
 
 - Acceso directo con correo y contraseña una vez establecida; la recuperación permite crearla si la cuenta nació con enlace mágico.
 - Sugerencias anónimas o vinculadas a una cuenta, con contacto siempre privado.
@@ -12,24 +12,41 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 - Fotos con metadatos de fuente, crédito y base de derechos. No se aceptan miniaturas de Google Imágenes como fuente.
 - Solicitudes de promoción limitadas a perfiles: una idea concreta no puede comprar impresiones, votos indirectos, nota IA ni posición orgánica.
 - Oferta FanRank Pro visible y cola privada de interés: precios por aportaciones válidas analizadas, no por riqueza, empleados ni asientos.
-- Marca única con estrella-destello; el corazón queda reservado al interés de un representante verificado.
+- Marca dual coherente: `FanRank ♥` para fans y público; `FanRank ★` únicamente dentro de un equipo verificado.
 
-## Siguiente ciclo (máximo 72 horas)
+## Preparado localmente, todavía no publicado
 
-### 1. Probar activación con personas reales
+- Enlaces HTTPS de apoyo y miniatura segura para vídeos concretos de YouTube, sin iframe ni subida de MP4.
+- Telemetría separada de QA mediante `?qa=1` y contrato SQL alineado con los eventos emitidos.
+- Evidencia actual: 22/22 pruebas estáticas pasan. Esto demuestra cableado local; no demuestra despliegue, uso ni beneficio.
+
+## Experimento activo (máximo 72 horas)
+
+No hay todavía un experimento de producto activo: primero deben publicarse y verificarse en producción la telemetría y los enlaces preparados localmente. Solo entonces empieza el reloj del siguiente experimento.
+
+### Gate previo — telemetría confiable
+
+- Estado: `ready_local`; validación live pendiente.
+- Decisión: si los eventos ya pueden seleccionar una mejora sin mezclar QA con uso real.
+- Selector: contrato live acepta todos los eventos emitidos y una sesión con `?qa=1` produce cero filas.
+- Deadline: 24 horas desde el despliegue; nunca más de 72 horas.
+
+### Siguiente experimento — probar activación con personas reales
 
 - Decisión: mantener la portada actual o simplificarla todavía más.
 - Experimento: enviar enlaces directos a 5 perfiles y pedir a 5 personas que dejen una idea sin instrucciones.
 - Selector: porcentaje que abre perfil, inicia sugerencia y la completa; tiempo hasta la primera sugerencia.
 - Umbral: si menos de 3 de 5 completan, arreglar el paso exacto donde abandonan antes de añadir funciones.
 
-### 2. Cerrar el bucle empresa → idea → decisión
+No se inicia otra mejora mientras este selector siga abierto. Los siguientes frentes quedan en la cola y se miden después:
+
+### Cerrar el bucle empresa → idea → decisión
 
 - Decisión: qué información necesita una empresa para convertir una idea en acción.
 - Experimento: usar FanRank como primera empresa y procesar 10 notas desde el Estudio.
 - Selector: notas que terminan como `planned` o `done`, y tiempo medio hasta decisión.
 
-### 3. Fotos iniciales con derechos
+### Fotos iniciales con derechos
 
 - Decisión: subir foto o mantener icono para cada perfil.
 - Fuente aceptable: press kit oficial, Wikimedia Commons con licencia comprobada, dominio público, subida del titular o imagen generada para FanRank.
@@ -77,7 +94,81 @@ Gate de lanzamiento: no cobrar hasta que existan al menos 3 solicitudes reales d
 - Selector: tasa de acuerdo, ideas que el equipo considera mal ordenadas y cambios posteriores que mejoran ese acuerdo.
 - Regla: una promoción nunca entra en el cálculo; un corazón del equipo aporta contexto limitado, no un número 1 automático.
 
-## Cola de ideas (hipótesis)
+## Cola IA ránkeada — 2026-07-15
+
+Fuentes: dirección explícita de Tony, auditoría Codex de código y datos, tres revisores independientes y crítica adversaria de ChatGPT. Tres IAs repitiendo lo mismo cuentan como una hipótesis, no como tres usuarios.
+
+Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) + alcance (15) + selector ≤72 h (15) + reversibilidad (10) + bajo esfuerzo (10). Una idea solo de IA no puede superar 49 ni autoimplementarse.
+
+### FR-2026-07-15-001 — reparar telemetría y excluir QA
+
+- Estado: `ready_local`; 22/22 pruebas estáticas, migración live y prueba QA pendientes. Beneficio no medido.
+- Fuentes: fallo reproducible en `fr_events`; auditoría de producción.
+- Decisión que cambia: si las métricas pueden seleccionar la siguiente mejora.
+- Score: 96.
+- Cambio mínimo: contrato SQL = eventos emitidos y `?qa=1` sin telemetría.
+- Selector: cero eventos rechazados y cero filas nuevas durante una sesión QA.
+- Deadline: 24 horas desde el despliegue; cierre obligatorio antes de 72 horas.
+
+### FR-2026-07-15-002 — enlaces YouTube con miniatura segura
+
+- Estado: `ready_local`; 22/22 pruebas estáticas. Migración, despliegue y envío E2E real pendientes; valor no medido.
+- Fuentes: petición explícita de Tony para Orslok + revisión de seguridad.
+- Decisión que cambia: si un enlace estructurado genera sugerencias más concretas para creadores.
+- Score: 88.
+- Cambio mínimo: HTTPS, hosts/ID exactos, miniatura derivada, sin iframe ni fetch arbitrario.
+- Selector: primera sugerencia real con enlace válido; cero URL rechazada erróneamente y cero incidente de privacidad.
+- Deadline: 72 horas desde el despliegue.
+
+### FR-2026-07-15-003 — reducir abandono del compositor
+
+- Estado: candidate.
+- Fuentes: embudo histórico todavía contaminado; requiere nueva línea base limpia.
+- Decisión que cambia: qué único paso del formulario simplificar.
+- Score: 84.
+- Cambio mínimo: solo el paso con mayor abandono, no un rediseño completo.
+- Selector: `submission / suggest_open` con denominador ≥5 o tres personas independientes.
+
+### FR-2026-07-15-004 — FanRank Lab para autosugerencias transparentes
+
+- Estado: candidate.
+- Fuentes: petición de Tony + revisión anticaos.
+- Decisión que cambia: si hacer visible el razonamiento de mejora aumenta confianza o solo añade ruido.
+- Score: 79.
+- Cambio mínimo: mostrar ideas IA etiquetadas y separadas del ranking orgánico; jamás fingir que vienen de usuarios.
+- Selector: aperturas/votos reales frente a espacio consumido; se descarta sin interacción.
+
+### FR-2026-07-15-005 — logo corazón + podio + trofeo
+
+- Estado: `ready_local`; 22/22 pruebas estáticas. Revisión visual real, despliegue y aceptación de Tony pendientes; beneficio no medido.
+- Fuentes: corrección explícita de Tony + referencia generada por ChatGPT.
+- Decisión que cambia: si la marca comunica fans + ranking + ganador sin explicación.
+- Score: 76.
+- Cambio mínimo: corazón carmesí detrás de `FAN`, `R-A-N` en 2-1-3, `K` legible y trofeo a la derecha.
+- Selector: reconocimiento inmediato por Tony y cero overflow a 320/375/768/1440 px.
+- Deadline: revisión visual y decisión dentro de 72 horas desde el despliegue.
+
+### FR-2026-07-15-006 — retorno correcto desde Auth
+
+- Estado: `planned_needs_identity`; prioridad P1. No se guarda aquí ningún correo, contraseña ni otro dato personal.
+- Fuentes: fallo real repetido al volver desde enlaces de acceso o recuperación.
+- Decisión que cambia: si una persona puede completar el acceso y regresar a FanRank con sesión válida.
+- Score: 90.
+- Cambio mínimo: verificar la URL pública y los redirects autorizados en Supabase; nunca incrustar credenciales ni automatizar la identidad de una persona.
+- Selector: un flujo real de acceso o recuperación vuelve a la URL pública de FanRank, reconoce la sesión y no termina en localhost.
+- Deadline: cerrar como validado, fallido o replanteado dentro de 72 horas desde que pueda realizarse el paso de identidad.
+
+## Rutina `fanrank-mejora`
+
+- Una única cola: este archivo. El estado privado solo guarda lock, hashes, IDs procesados y el experimento activo.
+- Entradas: feedback real, eventos agregados confiables, fallos/tests, hasta 3 autosugerencias y una crítica externa abstracta.
+- Dedupe por decisión + zona + causa y referencia canónica; una repetición suma evidencia, no crea otra tarjeta. Máximo 10 candidatas abiertas.
+- Gate: score ≥70, una señal no-IA, cambio reversible, prueba que falle/pase y selector en ≤72 h.
+- Límite: una implementación reversible por ciclo. Mientras se mide, la rutina solo observa o cierra el resultado.
+- Nunca automatiza pagos, Auth/RLS/permisos, borrado, moderación/publicación de usuarios, datos personales ni cambios del ranking orgánico.
+- Un test verde demuestra mecanismo; el beneficio solo se declara con uso, mercado o feedback posterior.
+
+## Backlog no ránkeado
 
 - Detección semántica de duplicados antes de enviar, con explicación y opción de votar la existente.
 - Resumen semanal para equipos: 5 cambios con mayor beneficio esperado y evidencia enlazada.
@@ -92,4 +183,4 @@ Gate de lanzamiento: no cobrar hasta que existan al menos 3 solicitudes reales d
 - Vender un mejor ranking de IA: destruye confianza y mezcla utilidad con dinero.
 - Promocionar una idea concreta: las impresiones compradas podrían generar votos y comprar ranking de forma indirecta.
 - Automatizar la creación de cuentas o usar contraseñas del titular: riesgo de identidad; el usuario siempre escribe sus credenciales.
-- Añadir más animaciones antes de medir activación: ya existe suficiente acabado visual para probar el flujo real.
+- Añadir más animaciones decorativas aparte de la corrección solicitada del logo: el siguiente juez es activación real, no más brillo.

@@ -41,6 +41,10 @@ FAN_MEDIA_MIGRATION = ROOT / "supabase" / "migrations" / "20260715021357_fanrank
 FAN_MEDIA_SQL = FAN_MEDIA_MIGRATION.read_text(encoding="utf-8")
 TEAM_STARS_MIGRATION = ROOT / "supabase" / "migrations" / "20260715183000_fanrank_v9_team_stars.sql"
 TEAM_STARS_SQL = TEAM_STARS_MIGRATION.read_text(encoding="utf-8")
+EVIDENCE_MIGRATION = ROOT / "supabase" / "migrations" / "20260715190000_fanrank_v10_evidence_links_telemetry.sql"
+EVIDENCE_SQL = EVIDENCE_MIGRATION.read_text(encoding="utf-8")
+TEAM_INBOX_MIGRATION = ROOT / "supabase" / "migrations" / "20260715193000_fanrank_v11_team_submission_inbox.sql"
+TEAM_INBOX_SQL = TEAM_INBOX_MIGRATION.read_text(encoding="utf-8")
 MEDIA_INTAKE_PATH = ROOT / "supabase" / "functions" / "fanrank-feedback-intake" / "index.ts"
 MEDIA_INTAKE = MEDIA_INTAKE_PATH.read_text(encoding="utf-8")
 
@@ -50,6 +54,38 @@ def extract(pattern: str) -> str:
     if not match:
         raise AssertionError(f"Pattern not found: {pattern}")
     return match.group(1)
+
+
+def extract_js_function(name: str) -> str:
+    """Return one complete top-level JS function using balanced braces."""
+    start = HTML.find(f"function {name}(")
+    if start < 0:
+        raise AssertionError(f"JavaScript function not found: {name}")
+    opening = HTML.find("{", start)
+    if opening < 0:
+        raise AssertionError(f"Opening brace not found for JavaScript function: {name}")
+    depth = 0
+    quote: str | None = None
+    escaped = False
+    for index in range(opening, len(HTML)):
+        char = HTML[index]
+        if quote:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = None
+            continue
+        if char in ('"', "'", "`"):
+            quote = char
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return HTML[start:index + 1]
+    raise AssertionError(f"Closing brace not found for JavaScript function: {name}")
 
 
 SB_URL = extract(r'var SB_URL = "([^"]+)";')
@@ -267,7 +303,7 @@ class StaticAppTests(unittest.TestCase):
             'accept="image/png,image/jpeg,image/webp"',
             'byId("suggest-dialog").addEventListener("paste"',
             'byId("media-box").addEventListener("drop"',
-            'pendingMedia.length + next.length > 3',
+            'evidenceCount() + next.length > 3',
             'file.size > 5 * 1024 * 1024',
             '"/functions/v1/fanrank-feedback-intake"',
             'category_requested:categoryRequested',
@@ -312,6 +348,215 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual([], [marker for marker in intake_markers if marker not in MEDIA_INTAKE])
         self.assertNotIn("video/", MEDIA_INTAKE)
 
+    def test_supporting_links_are_safe_private_and_anonymous_capable(self) -> None:
+        html_markers = [
+            'id="evidence-link-input"',
+            'function normalizeEvidenceLink(value)',
+            'parsed.protocol !== "https:"',
+            '"https://www.youtube.com/watch?v=" + videoId',
+            '"https://i.ytimg.com/vi/" + videoId + "/hqdefault.jpg"',
+            'target="_blank" rel="noopener noreferrer"',
+            'referrerpolicy="no-referrer"',
+            'evidence_links:pendingLinks.map',
+            'formData.append("links",item.canonicalUrl)',
+        ]
+        self.assertEqual([], [marker for marker in html_markers if marker not in HTML])
+        self.assertNotIn('accept="video/', HTML)
+        self.assertNotIn("<iframe", HTML.lower())
+
+        sql_markers = [
+            "evidence_links text[] not null default '{}'::text[]",
+            "cardinality(p_links) > 3",
+            "attachment_count + cardinality(evidence_links) <= 3",
+            "grant insert (evidence_links) on public.fr_submissions to anon, authenticated",
+            "the server never fetches them",
+        ]
+        self.assertEqual([], [marker for marker in sql_markers if marker.lower() not in EVIDENCE_SQL.lower()])
+
+        intake_markers = [
+            "function normalizeEvidenceLink(value: string)",
+            'form.getAll("links")',
+            "files.length + evidenceLinks.length > MAX_FILES",
+            "evidence_links: evidenceLinks",
+            "links: evidenceLinks.length",
+        ]
+        self.assertEqual([], [marker for marker in intake_markers if marker not in MEDIA_INTAKE])
+        self.assertNotIn("oembed", MEDIA_INTAKE.lower())
+        self.assertNotIn("fetch(", MEDIA_INTAKE)
+
+        parser_source = HTML[
+            HTML.index("function normalizeEvidenceLink(value)"):
+            HTML.index("function renderPendingLinks()")
+        ]
+        cases = [
+            "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "https://youtu.be/dQw4w9WgXcQ?t=10",
+            "https://www.youtube.com/shorts/dQw4w9WgXcQ",
+            "https://m.youtube.com/live/dQw4w9WgXcQ",
+            "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+            "https://example.com/proof?q=1#fragment",
+        ]
+        invalid = [
+            "http://youtu.be/dQw4w9WgXcQ",
+            "javascript:alert(1)",
+            "https://user:pass@example.com/x",
+            "https://youtube.com.evil.test/watch?v=dQw4w9WgXcQ",
+            "https://youtu.be/short",
+        ]
+        node_program = parser_source + "\n" + (
+            f"const good={json.dumps(cases)}.map(normalizeEvidenceLink);"
+            f"const bad={json.dumps(invalid)}.map(normalizeEvidenceLink);"
+            "console.log(JSON.stringify({good,bad}));"
+        )
+        result = subprocess.run(["node", "-e", node_program], cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+        parsed = json.loads(result.stdout)
+        self.assertTrue(all(parsed["good"]))
+        self.assertTrue(all(value is None for value in parsed["bad"]))
+        self.assertTrue(all(item["canonicalUrl"].startswith("https://") for item in parsed["good"]))
+        self.assertEqual("https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg", parsed["good"][0]["thumbnailUrl"])
+
+    def test_team_inbox_migration_has_exact_youtube_and_auth_boundaries(self) -> None:
+        normalized = re.sub(r"\s+", " ", TEAM_INBOX_SQL.lower()).strip()
+        youtube_markers = [
+            "create or replace function public.fr_valid_evidence_links(p_links text[])",
+            "position('youtube' in pg_catalog.lower(item)) > 0",
+            "position('youtu.be' in pg_catalog.lower(item)) > 0",
+            "item !~ '^https://www[.]youtube[.]com/watch[?]v=[A-Za-z0-9_-]{11}$'",
+        ]
+        self.assertEqual([], [marker for marker in youtube_markers if marker not in TEAM_INBOX_SQL])
+        self.assertIn(
+            "revoke all on function public.fr_valid_evidence_links(text[]) from public, anon, authenticated;",
+            normalized,
+        )
+        self.assertIn(
+            "grant execute on function public.fr_valid_evidence_links(text[]) to anon, authenticated, service_role;",
+            normalized,
+        )
+
+        inbox_markers = [
+            "create or replace function public.fr_team_submission_inbox(",
+            "security definer",
+            "set search_path = ''",
+            "v_actor uuid := auth.uid()",
+            "if v_actor is null then",
+            "a.status = 'active'",
+            "m.section = v_section",
+            "m.role in ('owner', 'admin')",
+            "m.status = 'active'",
+            "s.verification_status = 'verified'",
+            "case when submission.allow_contact then submission.author else null end as author",
+            "case when submission.allow_contact then submission.contact else null end as contact",
+            "where submission.section = v_section",
+            "least(greatest(coalesce(p_limit, 50), 1), 50)",
+        ]
+        self.assertEqual([], [marker for marker in inbox_markers if marker not in normalized])
+        self.assertIn(
+            "revoke all on function public.fr_team_submission_inbox(text, integer) from public, anon, authenticated;",
+            normalized,
+        )
+        self.assertIn(
+            "grant execute on function public.fr_team_submission_inbox(text, integer) to authenticated;",
+            normalized,
+        )
+        self.assertNotRegex(
+            normalized,
+            r"grant execute on function public[.]fr_team_submission_inbox\(text, integer\) to [^;]*anon",
+        )
+
+    def test_composer_target_media_and_accessibility_are_explicit(self) -> None:
+        markers = [
+            'id="submit-target-context"',
+            'tx("submit_for",secMeta.name)',
+            '<label class="field-label" id="evidence-link-label" for="evidence-link-input">',
+            'byId("evidence-link-label").textContent = tx("evidence_link_label")',
+            'byId("logo").setAttribute("aria-label",tx(teamMode ? "logo_team_label" : "logo_public_label"))',
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
+        self.assertRegex(HTML, r"[.]category-option span\{[^}]*min-height:44px")
+        self.assertRegex(HTML, r"[.]media-remove\{[^}]*width:44px;height:44px")
+
+        translated_keys = (
+            "skip_to_content",
+            "global_rank_label",
+            "profile_filters_label",
+            "ranking_label",
+            "top_three_label",
+            "logo_public_label",
+            "logo_team_label",
+        )
+        for key in translated_keys:
+            with self.subTest(key=key):
+                self.assertGreaterEqual(HTML.count(f'{key}:"'), 2)
+                self.assertIn(key, HTML[HTML.index("function applyStaticText()"):])
+
+        accessibility_consumers = (
+            'byId("skip-link").textContent = tx("skip_to_content")',
+            'byId("home-rank-tabs").setAttribute("aria-label",tx("global_rank_label"))',
+            'byId("directory-filters").setAttribute("aria-label",tx("profile_filters_label"))',
+            'byId("profile-rank-tabs").setAttribute("aria-label",tx("ranking_label"))',
+            'byId("podium").setAttribute("aria-label",tx("top_three_label"))',
+        )
+        self.assertEqual([], [marker for marker in accessibility_consumers if marker not in HTML])
+
+    def test_qa_mode_survives_every_internal_url_helper(self) -> None:
+        self.assertIn('byId("logo").href = homeUrl();', HTML)
+        self.assertIn('byId("fan-public-back").href = homeUrl();', HTML)
+        function_names = (
+            "persistentUrl",
+            "homeUrl",
+            "fanProfileUrl",
+            "fanSuggestionUrl",
+            "teamInviteUrl",
+            "sectionUrl",
+            "ideaUrl",
+        )
+        functions = "\n".join(extract_js_function(name) for name in function_names)
+        node_program = "\n".join(
+            [
+                'var TELEMETRY_DISABLED=true;',
+                'var LANG="es";',
+                'var SECTION="orslok";',
+                (
+                    'var location={origin:"https://eltonylfgi-blip.github.io",pathname:"/fanrank/",'
+                    'search:"?s=orslok&lang=es&qa=1",'
+                    'href:"https://eltonylfgi-blip.github.io/fanrank/?s=orslok&lang=es&qa=1"};'
+                ),
+                functions,
+                (
+                    'console.log(JSON.stringify({'
+                    'home:homeUrl(),section:sectionUrl("orslok",true),'
+                    'idea:ideaUrl({section:"orslok",id:17}),fan:fanProfileUrl("tony"),'
+                    'fanIdea:fanSuggestionUrl({section:"orslok",idea_id:17}),'
+                    'invite:teamInviteUrl("invite-token")'
+                    '}));'
+                ),
+            ]
+        )
+        result = subprocess.run(
+            ["node", "-e", node_program],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=10,
+        )
+        self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+        urls = json.loads(result.stdout)
+        parsed = {
+            name: urllib.parse.urlsplit(urllib.parse.urljoin("https://eltonylfgi-blip.github.io", value))
+            for name, value in urls.items()
+        }
+        for name, url in parsed.items():
+            with self.subTest(name=name):
+                self.assertEqual(["1"], urllib.parse.parse_qs(url.query).get("qa"))
+        self.assertEqual(["orslok"], urllib.parse.parse_qs(parsed["section"].query).get("s"))
+        self.assertEqual(["1"], urllib.parse.parse_qs(parsed["section"].query).get("suggest"))
+        self.assertEqual(["17"], urllib.parse.parse_qs(parsed["idea"].query).get("idea"))
+        self.assertEqual(["tony"], urllib.parse.parse_qs(parsed["fan"].query).get("fan"))
+        self.assertEqual(["17"], urllib.parse.parse_qs(parsed["fanIdea"].query).get("idea"))
+        self.assertEqual("invite=invite-token", parsed["invite"].fragment)
+
     def test_mobile_suggestion_cta_never_competes_with_inline_cta(self) -> None:
         markers = [
             "body.profile-live.mobile-cta-ready .mobile-suggest",
@@ -323,6 +568,19 @@ class StaticAppTests(unittest.TestCase):
             'document.body.classList.remove("suggest-dialog-open")',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
+
+    def test_every_emitted_event_is_allowed_and_qa_is_excluded(self) -> None:
+        emitted = set(re.findall(r'sendEvent\("([a-z0-9_]+)"', HTML + "\n" + OWNER_JS))
+        blocks = re.findall(
+            r"add constraint fr_events_event_check\s+check \(event in \((.*?)\)\);",
+            EVIDENCE_SQL,
+            re.DOTALL | re.IGNORECASE,
+        )
+        self.assertTrue(blocks)
+        allowed = set(re.findall(r"'([a-z0-9_]+)'", blocks[-1]))
+        self.assertEqual(set(), emitted - allowed)
+        self.assertIn('var TELEMETRY_DISABLED = params.get("qa") === "1";', HTML)
+        self.assertIn("if(TELEMETRY_DISABLED ||", HTML)
 
     def test_password_recovery_covers_magic_link_accounts(self) -> None:
         markers = [
@@ -639,6 +897,7 @@ class LiveBoundaryTests(unittest.TestCase):
             ("fr_set_team_star", {"p_idea_id": 1, "p_value": 1}),
             ("fr_my_team_stars", {"p_section": "brawl-stars"}),
             ("fr_set_team_star_cap", {"p_section": "fanrank", "p_cap": 3}),
+            ("fr_team_submission_inbox", {"p_section": "fanrank", "p_limit": 1}),
             (
                 "fr_create_profile_invite",
                 {"p_section": "brawl-stars", "p_email": "nobody@example.com", "p_role": "contributor"},
@@ -689,6 +948,25 @@ class LiveBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(200, status, raw)
         self.assertEqual([], json.loads(raw))
+
+    def test_live_evidence_validator_requires_canonical_youtube_links(self) -> None:
+        cases = [
+            (["https://www.youtube.com/watch?v=dQw4w9WgXcQ"], True),
+            (["https://example.com/supporting-proof"], True),
+            (["https://youtu.be/dQw4w9WgXcQ"], False),
+            (["https://youtube.com.evil.test/watch?v=dQw4w9WgXcQ"], False),
+            (["https://www.youtube.com/watch?v=dQw4w9WgXcQ#fragment"], False),
+            (["https://example.com/a", "https://example.com/a"], False),
+        ]
+        for links, expected in cases:
+            with self.subTest(links=links):
+                status, raw = api_request(
+                    "rpc/fr_valid_evidence_links",
+                    method="POST",
+                    body={"p_links": links},
+                )
+                self.assertEqual(200, status, raw)
+                self.assertIs(expected, json.loads(raw))
 
     def test_private_media_intake_requires_a_real_session(self) -> None:
         request = urllib.request.Request(

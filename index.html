@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0b12">
-<link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a0b12'/%3E%3Cpath d='M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z' fill='%23ff72c6'/%3E%3Cpath d='M28 26C34 21 40 22 44 27' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' opacity='.75'/%3E%3C/svg%3E">
+<link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a0b12'/%3E%3Cpath d='M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z' fill='%23ff174f'/%3E%3Cpath d='M28 26C34 21 40 22 44 27' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' opacity='.82'/%3E%3C/svg%3E">
 <title>FanRank — the best ideas, ranked</title>
 <meta name="description" content="Suggest and vote on useful ideas for creators, games, companies, platforms and AI. FanRank turns fan feedback into clear, ranked opportunities.">
 <meta property="og:type" content="website">
@@ -65,63 +65,72 @@
 
   header{text-align:center;padding:14px 0 8px}
   .brand-lockup{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px 8px 0}
-  .logo{position:relative;display:inline-flex;align-items:center;text-decoration:none;font-size:clamp(2.7rem,7.4vw,4.65rem);font-weight:950;
-    line-height:.88;isolation:isolate;filter:drop-shadow(0 10px 34px rgba(0,0,0,.38));transform-origin:50% 72%;
-    animation:logoFloatIdle 5.2s ease-in-out infinite;transition:filter .3s ease}
+  .logo{position:relative;display:inline-flex;align-items:center;text-decoration:none;isolation:isolate;
+    filter:drop-shadow(0 10px 34px rgba(0,0,0,.38));transition:filter .3s ease}
+  .logo-float{display:inline-flex;animation:logoFloatIdle 5.6s cubic-bezier(.45,0,.55,1) infinite}
+  .logo-art{position:relative;display:inline-flex;align-items:flex-end;padding:.18em .62em .32em .52em;
+    font-size:clamp(2.7rem,7.1vw,4.75rem);font-weight:950;line-height:.84;transform-origin:50% 72%;
+    transition:transform .24s var(--ease),filter .24s ease}
   .logo-word{position:relative;z-index:2;display:inline-flex;align-items:flex-end;letter-spacing:-.078em;white-space:nowrap}
-  .logo-fan,.rank-letter{display:inline-block;background:linear-gradient(105deg,var(--yellow) 2%,#fff4a8 27%,var(--blue) 59%,var(--purple) 82%,var(--pink));
+  .logo-fan,.rank-letter,.rank-k{display:inline-block;background:linear-gradient(105deg,#fff8b5 2%,var(--yellow) 23%,var(--blue) 58%,var(--purple) 82%,var(--pink));
     background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
     filter:drop-shadow(0 0 10px rgba(99,179,255,.14));transition:filter .28s ease,transform .28s var(--ease)}
-  .logo-fan{position:relative;z-index:2}
-  .brand-mark{position:relative;z-index:1;display:inline-flex;width:.94em;height:.94em;margin-right:-.21em;transform:rotate(-9deg) translateY(.02em);
-    filter:drop-shadow(0 0 8px rgba(255,114,198,.55)) drop-shadow(0 0 24px rgba(255,114,198,.28));
-    animation:emblemBeat 3.8s ease-in-out infinite;transition:transform .28s var(--ease),filter .28s ease}
-  .brand-mark:after{content:"";position:absolute;right:-.02em;top:.08em;width:.14em;height:.14em;border-radius:50%;background:#fff7c7;
-    box-shadow:0 0 12px 3px rgba(255,209,41,.86);opacity:.75}
+  .logo-fan{position:relative;z-index:2;background:linear-gradient(180deg,#fff8b5 0%,#ffd129 57%,#ffad12 100%);
+    -webkit-background-clip:text;background-clip:text}
+  .brand-mark{position:absolute;z-index:0;left:.01em;top:.02em;display:inline-flex;width:1.2em;height:1.16em;
+    transform:rotate(-10deg);filter:drop-shadow(0 0 8px rgba(255,23,79,.82)) drop-shadow(0 0 24px rgba(255,23,79,.42));
+    transition:filter .24s ease}
+  .brand-mark:after{content:"";position:absolute;right:.04em;top:.08em;width:.12em;height:.12em;border-radius:50%;background:#fff;
+    box-shadow:0 0 12px 3px rgba(255,112,136,.88);opacity:.78}
   .brand-mark svg{display:block;width:100%;height:100%;overflow:visible}
-  .brand-mark-heart{fill:url(#heartGradient);stroke:#ffd8ef;stroke-width:2}
-  .brand-mark-heart.emblem-shine{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;opacity:.72}
+  .brand-mark-heart{fill:url(#heartGradient);stroke:#ff9bac;stroke-width:2.2}
+  .brand-mark-heart:not(.emblem-shine){transform-box:fill-box;transform-origin:50% 62%;animation:heartBeat 3.4s ease-in-out infinite}
+  .brand-mark-heart.emblem-shine{fill:none;stroke:#fff6f7;stroke-width:4.5;stroke-linecap:round;opacity:.76}
   .brand-mark-team{display:none;fill:url(#starGradient);stroke:#fff7bd;stroke-width:2.5;stroke-linejoin:round}
   body.team-mode .brand-mark-heart{display:none}
   body.team-mode .brand-mark-team{display:block}
   body.team-mode .brand-mark{filter:drop-shadow(0 0 10px rgba(255,209,41,.72)) drop-shadow(0 0 26px rgba(255,209,41,.32))}
-  .logo-rank{position:relative;display:inline-flex;align-items:flex-end;margin-left:.015em;padding:0 .02em .17em 0;font-style:italic}
+  .logo-rank{position:relative;display:inline-flex;align-items:flex-end;margin-left:.015em;padding:0 .01em .17em 0;font-style:italic}
+  .rank-place{position:relative;z-index:2;display:inline-flex;align-items:flex-end}
   .rank-letter{position:relative;z-index:2}
-  .rank-r{transform:translateY(.105em)}
-  .rank-a{transform:translateY(-.035em)}
-  .rank-n{transform:translateY(.035em)}
-  .rank-k{transform:translateY(.13em)}
-  .podium-step{position:absolute;left:51%;bottom:-.205em;z-index:-1;display:grid;place-items:center;width:.78em;height:.22em;
-    transform:translateX(-50%);border:1px solid rgba(255,255,255,.25);border-radius:.055em .055em .025em .025em;
+  .rank-r{transform:translateY(.075em)}
+  .rank-a{transform:translateY(-.075em)}
+  .rank-n{transform:translateY(.105em)}
+  .rank-k{position:relative;z-index:2;transform:translateY(.105em)}
+  .podium-step{position:absolute;left:51%;bottom:-1.25em;z-index:1;display:grid;place-items:center;width:4em;height:1.12em;
+    transform:translateX(-50%);border:1px solid rgba(255,255,255,.25);border-radius:.28em .28em .12em .12em;
     color:#0b0d14;font-size:.18em;font-style:normal;font-weight:950;letter-spacing:0;line-height:1}
   .rank-r .podium-step{background:linear-gradient(180deg,#f4f7ff,#9ba8c2)}
-  .rank-a .podium-step{height:.31em;background:linear-gradient(180deg,#fff09a,var(--yellow));box-shadow:0 0 14px rgba(255,209,41,.42)}
-  .rank-k .podium-step{background:linear-gradient(180deg,#ffc28b,#c27649)}
-  .rank-trophy{position:absolute;left:51%;top:-.27em;width:.31em;height:.31em;transform:translateX(-50%) rotate(3deg);overflow:visible;
-    color:var(--yellow);filter:drop-shadow(0 0 8px rgba(255,209,41,.7));transition:transform .28s var(--ease)}
+  .rank-a .podium-step{height:1.58em;background:linear-gradient(180deg,#fff09a,var(--yellow));box-shadow:0 0 14px rgba(255,209,41,.42)}
+  .rank-n .podium-step{background:linear-gradient(180deg,#ffc28b,#c27649)}
+  .rank-trophy{position:relative;z-index:3;flex:0 0 auto;width:.52em;height:.52em;margin-left:.07em;transform:translateY(-.14em) rotate(7deg);overflow:visible;
+    color:var(--yellow);filter:drop-shadow(0 0 8px rgba(255,209,41,.72)) drop-shadow(0 0 18px rgba(255,174,32,.3));transition:transform .28s var(--ease),filter .28s ease}
   .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
     background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
       radial-gradient(circle at 20% 80%,rgba(255,209,41,.55) 0 2%,transparent 3%),
       radial-gradient(circle at 82% 18%,rgba(99,179,255,.62) 0 2%,transparent 3%);
     background-size:46px 46px,58px 58px,64px 64px;pointer-events:none}
-  .logo:after{content:"";position:absolute;top:-35%;bottom:-35%;left:-38%;width:22%;z-index:2;opacity:0;
-    transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);
+  .logo:after{content:"";position:absolute;top:-35%;bottom:-35%;left:-38%;width:22%;z-index:4;opacity:0;
+    transform:translateX(0) skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);
     mix-blend-mode:screen;pointer-events:none}
-  .logo:hover,.logo:focus-visible,.logo.celestial{animation:logoFloatActive 2.8s ease-in-out infinite;
-    filter:drop-shadow(0 0 14px rgba(255,255,255,.52)) drop-shadow(0 0 30px rgba(99,179,255,.48))}
-  .logo:hover .brand-mark,.logo:focus-visible .brand-mark,.logo.celestial .brand-mark{transform:rotate(-13deg) translateY(-.02em) scale(1.11);
-    filter:drop-shadow(0 0 12px rgba(255,114,198,.8)) drop-shadow(0 0 34px rgba(255,114,198,.45))}
+  .logo:hover,.logo:focus-visible,.logo.celestial{filter:drop-shadow(0 0 14px rgba(255,255,255,.52)) drop-shadow(0 0 30px rgba(99,179,255,.48))}
+  .logo:hover .logo-float,.logo:focus-visible .logo-float,.logo.celestial .logo-float{animation:logoFloatActive 2.8s ease-in-out infinite}
+  .logo:hover .logo-art,.logo:focus-visible .logo-art,.logo.celestial .logo-art{transform:translateY(-2px) scale(1.025)}
+  .logo:hover .brand-mark,.logo:focus-visible .brand-mark,.logo.celestial .brand-mark{
+    filter:drop-shadow(0 0 13px rgba(255,23,79,.96)) drop-shadow(0 0 36px rgba(255,23,79,.58))}
+  .logo:hover .brand-mark-heart:not(.emblem-shine),.logo:focus-visible .brand-mark-heart:not(.emblem-shine),.logo.celestial .brand-mark-heart:not(.emblem-shine){animation-duration:1.8s}
   .logo:hover .logo-fan,.logo:focus-visible .logo-fan,.logo.celestial .logo-fan,
-  .logo:hover .rank-letter,.logo:focus-visible .rank-letter,.logo.celestial .rank-letter{filter:drop-shadow(0 0 9px rgba(255,255,255,.44));animation:logoGradientFlow 1.9s linear infinite}
-  .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateX(-50%) translateY(-.07em) rotate(8deg) scale(1.09)}
+  .logo:hover .rank-letter,.logo:focus-visible .rank-letter,.logo.celestial .rank-letter,
+  .logo:hover .rank-k,.logo:focus-visible .rank-k,.logo.celestial .rank-k{filter:drop-shadow(0 0 9px rgba(255,255,255,.44));animation:logoGradientFlow 1.9s linear infinite}
+  .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateY(-.24em) rotate(13deg) scale(1.08);filter:drop-shadow(0 0 12px rgba(255,209,41,.95))}
   .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
   .logo:hover:after,.logo:focus-visible:after,.logo.celestial:after{animation:logoShine .8s var(--ease) both}
   .logo:hover + .eyebrow,.logo:focus-visible + .eyebrow,.logo.celestial + .eyebrow{animation:tagPop .82s var(--ease) both}
-  @keyframes logoFloatIdle{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(0,-4px,0) scale(1.004)}}
-  @keyframes logoFloatActive{0%,100%{transform:translate3d(0,-2px,0) scale(1.006)}50%{transform:translate3d(0,-7px,0) scale(1.01)}}
-  @keyframes emblemBeat{0%,100%{scale:1}48%{scale:1}55%{scale:1.045}62%{scale:1}}
+  @keyframes logoFloatIdle{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-5px,0)}}
+  @keyframes logoFloatActive{0%,100%{transform:translate3d(0,-2px,0)}50%{transform:translate3d(0,-8px,0)}}
+  @keyframes heartBeat{0%,38%,58%,100%{transform:scale(1)}42%{transform:scale(1.075)}47%{transform:scale(.99)}52%{transform:scale(1.04)}}
   @keyframes logoGradientFlow{to{background-position:-240% 0}}
-  @keyframes logoShine{0%{left:-38%;opacity:0}22%{opacity:1}100%{left:118%;opacity:0}}
+  @keyframes logoShine{0%{transform:translateX(0) skewX(-18deg);opacity:0}22%{opacity:1}100%{transform:translateX(710%) skewX(-18deg);opacity:0}}
   @keyframes starBloom{0%{opacity:0;transform:scale(.75) rotate(-4deg)}45%{opacity:.95}100%{opacity:0;transform:scale(1.22) rotate(6deg)}}
   @keyframes tagPop{35%{transform:rotate(-4deg) translateY(-4px) scale(1.08)}100%{transform:rotate(-7deg) translateY(0) scale(1)}}
   .tag{max-width:760px;margin:9px auto 0;color:var(--muted);font-size:clamp(.92rem,2vw,1.08rem);font-weight:500;line-height:1.4}
@@ -462,7 +471,7 @@
   .category-options::-webkit-scrollbar{display:none}
   .category-option{position:relative;display:inline-flex;flex:0 0 auto;scroll-snap-align:start}
   .category-option input{position:absolute;opacity:0;pointer-events:none}
-  .category-option span{display:inline-flex;align-items:center;min-height:42px;padding:8px 12px;border:1px solid var(--line);
+  .category-option span{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;border:1px solid var(--line);
     border-radius:999px;background:var(--bg-soft);color:var(--muted);font-size:.76rem;font-weight:850}
   .category-option input:checked + span{border-color:var(--blue);background:rgba(99,179,255,.11);color:var(--text);box-shadow:0 0 0 3px rgba(99,179,255,.06)}
   .category-option input:focus-visible + span{box-shadow:var(--focus)}
@@ -476,8 +485,27 @@
   .media-preview{display:grid;place-items:center;width:100%;aspect-ratio:16/10;border-radius:8px;background:var(--bg);overflow:hidden}
   .media-preview img{width:100%;height:100%;object-fit:cover}
   .media-name{display:block;margin-top:6px;overflow:hidden;color:var(--muted);font-size:.67rem;text-overflow:ellipsis;white-space:nowrap}
-  .media-remove{position:absolute;right:3px;top:3px;display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:9px;background:rgba(10,11,18,.9);color:var(--text);font-weight:900}
+  .media-remove{position:absolute;right:3px;top:3px;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:11px;background:rgba(10,11,18,.92);color:var(--text);font-weight:900}
   .media-status{min-height:20px;margin-top:6px;color:var(--muted);font-size:.72rem}.media-status.err{color:var(--red)}
+  .evidence-link-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)}
+  .evidence-link-form input{min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
+  .evidence-link-form button{min-height:44px}
+  .evidence-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+  .evidence-link{position:relative;min-width:0;border:1px solid var(--line-soft);border-radius:11px;background:var(--surface);overflow:hidden}
+  .evidence-link a{display:block;min-width:0;padding:8px 8px 9px;color:var(--text);text-decoration:none}
+  .evidence-link a:hover .evidence-link-name,.evidence-link a:focus-visible .evidence-link-name{color:var(--blue)}
+  .evidence-link-thumb{display:grid;place-items:center;width:100%;aspect-ratio:16/9;border-radius:8px;background:linear-gradient(135deg,#151a29,#0c0e16);overflow:hidden}
+  .evidence-link-thumb img{width:100%;height:100%;object-fit:cover}
+  .evidence-link-domain{font-size:1.25rem;color:var(--blue)}
+  .evidence-link-name{display:block;margin-top:6px;overflow:hidden;font-size:.68rem;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+  .evidence-link-url{display:block;margin-top:2px;overflow:hidden;color:var(--muted);font-size:.62rem;text-overflow:ellipsis;white-space:nowrap}
+  .evidence-link .media-remove{z-index:2}
+  .suggest-target-context{display:inline-flex;align-items:center;min-height:36px;margin:-7px 0 14px;padding:7px 11px;border:1px solid rgba(99,179,255,.34);border-radius:999px;background:rgba(99,179,255,.09);color:var(--blue);font-size:.78rem;font-weight:900}
+  .team-submissions{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+  .team-submission-copy{margin-top:7px;color:var(--muted);font-size:.74rem;line-height:1.45;white-space:pre-wrap}
+  .team-submission-links{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .team-submission-links a{display:inline-flex;align-items:center;min-height:44px;padding:7px 11px;border:1px solid rgba(99,179,255,.28);border-radius:999px;color:var(--blue);font-size:.72rem;font-weight:850;text-decoration:none}
+  .team-submission-contact{margin-top:8px;padding:8px 10px;border-radius:9px;background:rgba(85,229,154,.06);color:var(--green);font-size:.7rem;overflow-wrap:anywhere}
   .training-consent{margin-top:12px;padding:10px;border:1px solid rgba(185,134,255,.28);border-radius:11px;background:rgba(185,134,255,.045)}
   .auth-password-panel{margin-top:12px;padding:11px 12px;border:1px solid var(--line-soft);border-radius:12px;background:var(--bg-soft)}
   .auth-password-panel summary{min-height:34px;color:var(--blue);font-size:.8rem;font-weight:850;cursor:pointer}
@@ -576,8 +604,7 @@
     .top-btn{padding-inline:10px}
     header{padding-top:52px}
     .brand-lockup{padding:8px 4px 0}
-    .logo{font-size:clamp(2.45rem,14vw,3.25rem)}
-    .brand-mark{margin-right:-.18em}
+    .logo-art{font-size:clamp(2.05rem,10.4vw,3.1rem);padding-inline:.6em}
     .eyebrow{margin-right:5%;padding:4px 8px}
     .search-shell{grid-template-columns:21px minmax(0,1fr) auto;gap:7px;padding:6px 7px 6px 13px}
     .search-btn{padding-inline:12px}
@@ -620,7 +647,9 @@
       color:var(--yellow-ink);font-weight:950;box-shadow:0 14px 42px rgba(0,0,0,.5)}
     body.profile-live.mobile-cta-ready .mobile-suggest,body.home-live.mobile-cta-ready .mobile-suggest{display:block}
     body.suggest-dialog-open .mobile-suggest{display:none!important}
-    .media-list{grid-template-columns:1fr 1fr}
+    .media-list,.evidence-links{grid-template-columns:1fr 1fr}
+    .evidence-link-form{grid-template-columns:1fr}
+    .evidence-link-form button{width:100%}
     .impact-grid{grid-template-columns:1fr 1fr}
     .choice-row{grid-template-columns:1fr}
     .submit-bar{bottom:-18px;margin:16px 0 0;padding:12px 0 calc(12px + env(safe-area-inset-bottom))}
@@ -629,12 +658,13 @@
     html{scroll-behavior:auto}
     *,*:before,*:after{animation:none!important;transition:none!important}
     .logo:hover,.logo:focus-visible{filter:drop-shadow(0 0 12px rgba(99,179,255,.4))}
+    .brand-mark-heart:not(.emblem-shine){transform:none!important}
   }
 </style>
 <link rel="stylesheet" href="owner-studio.css?v=7">
 </head>
 <body>
-<a class="skip-link" href="#main">Skip to content</a>
+<a class="skip-link" id="skip-link" href="#main">Skip to content</a>
 <div class="bgfx"></div>
 <div class="gridfx"></div>
 <div class="top-actions">
@@ -667,27 +697,29 @@
   <header>
     <div class="brand-lockup">
       <a class="logo" id="logo" href="./" aria-label="FanRank">
-        <span class="brand-mark" aria-hidden="true">
-          <svg viewBox="0 0 100 100" focusable="false">
-            <defs>
-              <linearGradient id="heartGradient" x1="15" y1="12" x2="86" y2="90" gradientUnits="userSpaceOnUse"><stop stop-color="#ffb3de"></stop><stop offset=".45" stop-color="#ff72c6"></stop><stop offset="1" stop-color="#bd58ff"></stop></linearGradient>
-              <linearGradient id="starGradient" x1="18" y1="10" x2="82" y2="91" gradientUnits="userSpaceOnUse"><stop stop-color="#fff7a3"></stop><stop offset=".5" stop-color="#ffd129"></stop><stop offset="1" stop-color="#ff9d20"></stop></linearGradient>
-            </defs>
-            <path class="brand-mark-heart" d="M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z"></path>
-            <path class="brand-mark-heart emblem-shine" d="M27 30C33 22 41 22 45 28"></path>
-            <path class="brand-mark-team" d="M50 6 61.8 36.2 94.5 38.1 69.1 58.8 77.4 90.5 50 72.8 22.6 90.5 30.9 58.8 5.5 38.1 38.2 36.2Z"></path>
-          </svg>
-        </span>
-        <span class="logo-word" aria-hidden="true">
-          <span class="logo-fan">FAN</span>
-          <span class="logo-rank">
-            <span class="rank-letter rank-r">R<span class="podium-step">2</span></span>
-            <span class="rank-letter rank-a">A
-              <svg class="rank-trophy" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h28v12c0 11-6 18-14 18S18 31 18 20V8Z" fill="currentColor"></path><path d="M18 13H9v5c0 8 5 13 12 14M46 13h9v5c0 8-5 13-12 14M32 38v9M23 55h18M26 47h12v8"></path></svg>
-              <span class="podium-step">1</span>
+        <span class="logo-float" aria-hidden="true">
+          <span class="logo-art">
+            <span class="brand-mark">
+              <svg viewBox="0 0 100 100" focusable="false">
+                <defs>
+                  <linearGradient id="heartGradient" x1="18" y1="10" x2="82" y2="92" gradientUnits="userSpaceOnUse"><stop stop-color="#ff7088"></stop><stop offset=".42" stop-color="#ff174f"></stop><stop offset="1" stop-color="#b90036"></stop></linearGradient>
+                  <linearGradient id="starGradient" x1="18" y1="10" x2="82" y2="91" gradientUnits="userSpaceOnUse"><stop stop-color="#fff7a3"></stop><stop offset=".5" stop-color="#ffd129"></stop><stop offset="1" stop-color="#ff9d20"></stop></linearGradient>
+                </defs>
+                <path class="brand-mark-heart" d="M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z"></path>
+                <path class="brand-mark-heart emblem-shine" d="M27 30C33 22 41 22 45 28"></path>
+                <path class="brand-mark-team" d="M50 6 61.8 36.2 94.5 38.1 69.1 58.8 77.4 90.5 50 72.8 22.6 90.5 30.9 58.8 5.5 38.1 38.2 36.2Z"></path>
+              </svg>
             </span>
-            <span class="rank-letter rank-n">N</span>
-            <span class="rank-letter rank-k">K<span class="podium-step">3</span></span>
+            <span class="logo-word">
+              <span class="logo-fan">FAN</span>
+              <span class="logo-rank">
+                <span class="rank-place rank-r"><span class="rank-letter">R</span><span class="podium-step">2</span></span>
+                <span class="rank-place rank-a"><span class="rank-letter">A</span><span class="podium-step">1</span></span>
+                <span class="rank-place rank-n"><span class="rank-letter">N</span><span class="podium-step">3</span></span>
+                <span class="rank-k">K</span>
+              </span>
+              <svg class="rank-trophy" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h28v12c0 11-6 18-14 18S18 31 18 20V8Z" fill="currentColor"></path><path d="M18 13H9v5c0 8 5 13 12 14M46 13h9v5c0 8-5 13-12 14M32 38v9M23 55h18M26 47h12v8"></path></svg>
+            </span>
           </span>
         </span>
       </a>
@@ -720,7 +752,7 @@
     <section class="global-rank-block" aria-labelledby="trending-title">
       <div class="section-head global-rank-head">
         <div><h2 id="trending-title"></h2><p id="trending-subtitle"></p></div>
-        <div class="home-rank-tabs" role="tablist" aria-label="Global ranking">
+        <div class="home-rank-tabs" id="home-rank-tabs" role="tablist" aria-label="Global ranking">
           <button class="home-rank-tab active" id="home-rank-ai" data-home-rank="ai" type="button" role="tab" aria-selected="true" aria-controls="trending" tabindex="0"></button>
           <button class="home-rank-tab" id="home-rank-fans" data-home-rank="fans" type="button" role="tab" aria-selected="false" aria-controls="trending" tabindex="-1"></button>
         </div>
@@ -839,7 +871,7 @@
           <input class="filter-input" id="idea-filter" maxlength="120" autocomplete="off">
         </div>
       </div>
-      <div class="tabs" role="tablist" aria-label="Ranking">
+      <div class="tabs" id="profile-rank-tabs" role="tablist" aria-label="Ranking">
         <button class="tab active" data-sort="ai" id="tab-ai" type="button" role="tab" aria-selected="true"></button>
         <button class="tab" data-sort="source" id="tab-source" type="button" role="tab" aria-selected="false"></button>
         <button class="tab" data-sort="fans" id="tab-fans" type="button" role="tab" aria-selected="false"></button>
@@ -916,6 +948,7 @@
     <button class="dialog-close" id="suggest-close" type="button" aria-label="Close">×</button>
     <h2 id="submit-title"></h2>
     <p class="dialog-intro" id="submit-intro"></p>
+    <div class="suggest-target-context hidden" id="submit-target-context"></div>
     <form id="submit-form" novalidate>
       <div class="form-grid">
         <div class="field full hidden" id="submit-target-field">
@@ -952,6 +985,12 @@
           <button class="secondary-btn" id="media-pick" type="button"></button>
         </div>
         <input class="sr-only" id="submit-files" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+        <div class="evidence-link-form">
+          <label class="field-label" id="evidence-link-label" for="evidence-link-input"></label>
+          <input id="evidence-link-input" type="url" maxlength="2048" inputmode="url" autocomplete="url">
+          <button class="secondary-btn" id="evidence-link-add" type="button"></button>
+        </div>
+        <div class="evidence-links hidden" id="evidence-links"></div>
         <div class="media-list hidden" id="media-list"></div>
         <div class="media-status" id="media-status" role="status" aria-live="polite"></div>
       </section>
@@ -1210,6 +1249,8 @@
         </div>
       </div>
     </form>
+    <div class="section-head"><div><h2 id="team-submissions-title"></h2><p id="team-submissions-copy"></p></div></div>
+    <div class="team-submissions" id="team-submissions"></div>
     <div class="section-head"><div><h2 id="team-members-title"></h2><p id="team-members-copy"></p></div></div>
     <div class="team-list" id="team-list"></div>
   </div>
@@ -1245,6 +1286,7 @@ var API_HEADERS = {
 };
 var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var params = new URLSearchParams(location.search);
+var TELEMETRY_DISABLED = params.get("qa") === "1";
 var SECTION = params.get("s");
 var FAN_HANDLE = String(params.get("fan") || "").trim().toLowerCase();
 var QUICK_SUGGEST = params.get("suggest") === "1";
@@ -1280,6 +1322,7 @@ var chimePlayed = false;
 var pendingProPlan = PRO_PLAN_PARAM;
 var recoveryHandled = false;
 var pendingMedia = [];
+var pendingLinks = [];
 var currentFanProfile = null;
 var mobileCtaObserver = null;
 try{
@@ -1291,6 +1334,13 @@ var T = {
   en:{
     eyebrow:"FOR EVERYONE!",
     eyebrow_team:"VERIFIED TEAM",
+    skip_to_content:"Skip to content",
+    global_rank_label:"Global ranking",
+    profile_filters_label:"Profile filters",
+    ranking_label:"Idea ranking",
+    top_three_label:"Top three ideas",
+    logo_public_label:"FanRank heart — community mode",
+    logo_team_label:"FanRank star — verified team mode",
     hero_home:"<b>Improve what you use and follow.</b><br>Ideas for creators, games, companies and platforms, ranked by fans and AI.",
     hero_section:function(name){return "Fan ideas for <b>" + name + "</b>, ranked.<br><b>Vote</b> on what should improve next.";},
     search_label:"Find anyone or anything to improve",
@@ -1439,6 +1489,7 @@ var T = {
     suggest_open:"Suggest an improvement",
     submit_title:"Suggest an improvement",
     submit_intro:"Anonymous by default. Your idea enters a private review queue and is never published automatically.",
+    submit_for:function(name){return "For " + name;},
     idea_label:"What would you change or add? *",
     idea_help:"Explain the problem and your proposed improvement in one place. A clear first sentence becomes the title.",
     category_legend:"What kind of feedback is this?",
@@ -1448,16 +1499,25 @@ var T = {
     category_accessibility:"Accessibility",
     category_other:"Other",
     category_help:"Choose it yourself or leave Auto. Automatic rules never overwrite a category you choose.",
-    media_title:"Add screenshots",
-    media_help:"Paste with Ctrl+V, drop or choose up to 3 PNG, JPEG or WebP images (5 MB each). They stay private during review.",
+    media_title:"Add proof or a video link",
+    media_help:"Add up to 3 items total. YouTube links show a safe preview; screenshots stay private during review.",
     media_pick:"Choose images",
-    media_locked:"Sign in to attach private screenshots.",
-    media_ready:function(n){return n + (n === 1 ? " image ready" : " images ready");},
+    media_locked:"Links work anonymously. Sign in only to attach private screenshots.",
+    media_ready:function(n){return n + (n === 1 ? " item ready" : " items ready");},
     media_type_error:"Only PNG, JPEG and WebP images are accepted.",
     media_size_error:"Each image must be 5 MB or smaller.",
-    media_limit_error:"You can attach up to 3 images.",
-    media_uploading:"Encrypting and sending your private evidence...",
+    media_limit_error:"You can add up to 3 items total.",
+    media_uploading:"Sending your private evidence safely...",
     media_remove:"Remove image",
+    evidence_link_label:"YouTube or HTTPS link",
+    evidence_link_placeholder:"Paste a YouTube video or web link",
+    evidence_link_add:"Add link",
+    evidence_link_invalid:"Use a valid HTTPS link. YouTube links must point to one video.",
+    evidence_link_duplicate:"That link is already attached.",
+    evidence_link_remove:"Remove link",
+    evidence_link_youtube:"YouTube video",
+    evidence_link_web:"Supporting link",
+    evidence_links_count:function(n){return n + (n === 1 ? " link" : " links");},
     submit_send:"Send suggestion",
     submit_ok:"Suggestion received. Your contact stays private.",
     similar_head:"We found similar published ideas",
@@ -1566,6 +1626,10 @@ var T = {
     team_members_title:"Current members",
     team_members_copy:"Member identities stay private from the public.",
     team_members_empty:"No team members found.",
+    team_submissions_title:"New suggestions for your team",
+    team_submissions_copy:"Private inbox. Open the proof, review the context and decide what deserves official stars.",
+    team_submissions_empty:"No new suggestions yet.",
+    team_submission_contact:"Private contact",
     team_revoke:"Revoke access",
     team_revoke_confirm:"Revoke this person's team access? Their active stars will be removed from the official signal.",
     team_revoked:"Access revoked.",
@@ -1596,6 +1660,13 @@ var T = {
   },
   es:{
     eyebrow_team:"EQUIPO VERIFICADO",
+    skip_to_content:"Saltar al contenido",
+    global_rank_label:"Ranking global",
+    profile_filters_label:"Filtros de perfiles",
+    ranking_label:"Ranking de ideas",
+    top_three_label:"Las tres mejores ideas",
+    logo_public_label:"FanRank corazón — modo comunidad",
+    logo_team_label:"FanRank estrella — modo equipo verificado",
     category_legend:"¿Qué tipo de feedback es?",
     category_auto:"Automático",
     category_bug:"Bug",
@@ -1603,16 +1674,25 @@ var T = {
     category_accessibility:"Accesibilidad",
     category_other:"Otro",
     category_help:"Elige tú o deja Automático. FanRank nunca cambia en silencio una categoría elegida por ti.",
-    media_title:"Añade capturas",
-    media_help:"Pega con Ctrl+V, arrastra o elige hasta 3 imágenes PNG, JPEG o WebP (5 MB cada una). Permanecen privadas durante la revisión.",
+    media_title:"Añade una prueba o un vídeo",
+    media_help:"Hasta 3 elementos en total. Los enlaces de YouTube muestran una vista previa segura; las capturas siguen privadas durante la revisión.",
     media_pick:"Elegir imágenes",
-    media_locked:"Inicia sesión para adjuntar capturas privadas.",
-    media_ready:function(n){return n + (n === 1 ? " imagen preparada" : " imágenes preparadas");},
+    media_locked:"Los enlaces funcionan en anónimo. Inicia sesión solo para adjuntar capturas privadas.",
+    media_ready:function(n){return n + (n === 1 ? " elemento preparado" : " elementos preparados");},
     media_type_error:"Solo se aceptan imágenes PNG, JPEG y WebP.",
     media_size_error:"Cada imagen debe ocupar 5 MB o menos.",
-    media_limit_error:"Puedes adjuntar hasta 3 imágenes.",
-    media_uploading:"Protegiendo y enviando tus pruebas privadas...",
+    media_limit_error:"Puedes añadir hasta 3 elementos en total.",
+    media_uploading:"Enviando tus pruebas privadas de forma segura...",
     media_remove:"Quitar imagen",
+    evidence_link_label:"Enlace de YouTube o HTTPS",
+    evidence_link_placeholder:"Pega un vídeo de YouTube o un enlace web",
+    evidence_link_add:"Añadir enlace",
+    evidence_link_invalid:"Usa un enlace HTTPS válido. Si es YouTube, debe apuntar a un vídeo concreto.",
+    evidence_link_duplicate:"Ese enlace ya está adjunto.",
+    evidence_link_remove:"Quitar enlace",
+    evidence_link_youtube:"Vídeo de YouTube",
+    evidence_link_web:"Enlace de apoyo",
+    evidence_links_count:function(n){return n + (n === 1 ? " enlace" : " enlaces");},
     account_public_title:"Mostrar con mi perfil Fan público",
     account_public_copy:"Solo será pública si eliges esta opción y tu perfil Fan es público. Las ideas anónimas anteriores siguen anónimas.",
     training_consent:"Opcional: permito que FanRank use este texto para mejorar sus modelos de ranking. Está desactivado por defecto y podré revocarlo.",
@@ -1802,6 +1882,7 @@ var T = {
     suggest_open:"Proponer una mejora",
     submit_title:"Propón una mejora",
     submit_intro:"Anónima por defecto. Entra en revisión privada y nunca se publica automáticamente.",
+    submit_for:function(name){return "Para " + name;},
     idea_label:"¿Qué cambiarías o añadirías? *",
     idea_help:"Cuenta el problema y tu mejora en un solo sitio. Una primera frase clara se convertirá en el título.",
     submit_send:"Enviar sugerencia",
@@ -1872,6 +1953,10 @@ var T = {
     team_members_title:"Miembros actuales",
     team_members_copy:"Las identidades del equipo no son públicas.",
     team_members_empty:"No se han encontrado miembros.",
+    team_submissions_title:"Nuevas sugerencias para tu equipo",
+    team_submissions_copy:"Bandeja privada. Abre las pruebas, revisa el contexto y decide qué merece estrellas oficiales.",
+    team_submissions_empty:"Todavía no hay sugerencias nuevas.",
+    team_submission_contact:"Contacto privado",
     team_revoke:"Quitar acceso",
     team_revoke_confirm:"¿Quitar el acceso de equipo a esta persona? Sus estrellas activas desaparecerán de la señal oficial.",
     team_revoked:"Acceso retirado.",
@@ -1999,8 +2084,8 @@ function updateBrandMode(){
   var teamMode = !!(SECTION && session && membership && secMeta && secMeta.verification_status === "verified");
   document.body.classList.toggle("team-mode",teamMode);
   byId("eyebrow").textContent = tx(teamMode ? "eyebrow_team" : "eyebrow");
-  byId("logo").setAttribute("aria-label",teamMode ? "FanRank star - verified team mode" : "FanRank heart - community mode");
-  var color = teamMode ? "#ffd129" : "#ff72c6";
+  byId("logo").setAttribute("aria-label",tx(teamMode ? "logo_team_label" : "logo_public_label"));
+  var color = teamMode ? "#ffd129" : "#ff174f";
   var shape = teamMode
     ? '<path fill="' + color + '" d="M16 2.4 19.2 11l9.2.4-7.2 5.8 2.5 8.9L16 21.1 8.3 26.1l2.5-8.9-7.2-5.8 9.2-.4Z"/>'
     : '<path fill="' + color + '" d="M16 28C13.8 25.9 4 19.1 4 11.8 4 7.2 7.1 4 11.2 4c2.2 0 3.9 1.1 4.8 2.7C16.9 5.1 18.6 4 20.8 4 24.9 4 28 7.2 28 11.8 28 19.1 18.2 25.9 16 28Z"/>';
@@ -2035,7 +2120,7 @@ function callRpc(name,body){
   });
 }
 function sendEvent(event,data){
-  if(location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:"){return;}
+  if(TELEMETRY_DISABLED || location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:"){return;}
   var payload = data || {};
   var body = {
     event:event,
@@ -2135,13 +2220,18 @@ function setMediaStatus(message,type){
   node.textContent = message || "";
   node.className = "media-status " + (type || "");
 }
+function evidenceCount(){
+  return pendingMedia.length + pendingLinks.length;
+}
+function updateEvidenceStatus(){
+  byId("media-box").classList.toggle("locked",!session && !pendingLinks.length);
+  byId("training-consent-row").classList.toggle("hidden",!session);
+  if(evidenceCount()){setMediaStatus(tx("media_ready",evidenceCount()),"");}
+  else if(!session){setMediaStatus(tx("media_locked"),"");}
+  else{setMediaStatus("","");}
+}
 function renderPendingMedia(){
   var list = byId("media-list");
-  byId("media-box").classList.toggle("locked",!session);
-  byId("training-consent-row").classList.toggle("hidden",!session);
-  if(!session){setMediaStatus(tx("media_locked"),"");}
-  else if(pendingMedia.length){setMediaStatus(tx("media_ready",pendingMedia.length),"");}
-  else{setMediaStatus("","");}
   list.classList.toggle("hidden",pendingMedia.length === 0);
   list.innerHTML = pendingMedia.map(function(item,index){
     return '<article class="media-item"><div class="media-preview"><img src="' + esc(item.url) + '" alt=""></div>' +
@@ -2157,6 +2247,81 @@ function renderPendingMedia(){
       renderPendingMedia();
     });
   });
+  updateEvidenceStatus();
+}
+function normalizeEvidenceLink(value){
+  var raw = String(value || "").trim();
+  if(!raw || raw.length > 2048){return null;}
+  var parsed;
+  try{parsed = new URL(raw);}catch(error){return null;}
+  if(parsed.protocol !== "https:" || parsed.username || parsed.password){return null;}
+  parsed.hash = "";
+  var host = parsed.hostname.toLowerCase().replace(/\.$/,"");
+  var videoId = "";
+  if(host === "youtu.be"){
+    videoId = parsed.pathname.split("/").filter(Boolean)[0] || "";
+  }else if(["youtube.com","www.youtube.com","m.youtube.com","youtube-nocookie.com","www.youtube-nocookie.com"].indexOf(host) >= 0){
+    var segments = parsed.pathname.split("/").filter(Boolean);
+    if(parsed.pathname === "/watch"){videoId = parsed.searchParams.get("v") || "";}
+    else if(["shorts","live","embed"].indexOf(segments[0]) >= 0){videoId = segments[1] || "";}
+    else{return null;}
+  }else if(host.indexOf("youtube") >= 0 || host.indexOf("youtu.be") >= 0){
+    return null;
+  }
+  if(videoId){
+    if(!/^[A-Za-z0-9_-]{11}$/.test(videoId)){return null;}
+    return {
+      provider:"youtube",
+      videoId:videoId,
+      canonicalUrl:"https://www.youtube.com/watch?v=" + videoId,
+      thumbnailUrl:"https://i.ytimg.com/vi/" + videoId + "/hqdefault.jpg",
+      host:"youtube.com"
+    };
+  }
+  if(!host || raw.indexOf("\n") >= 0 || raw.indexOf("\r") >= 0){return null;}
+  return {provider:"web",videoId:null,canonicalUrl:parsed.href,thumbnailUrl:null,host:host};
+}
+function evidenceLinkPills(values){
+  var links = Array.isArray(values) ? values.map(normalizeEvidenceLink).filter(Boolean) : [];
+  if(!links.length){return "";}
+  return '<div class="team-submission-links">' + links.map(function(link){
+    var label = link.provider === "youtube" ? tx("evidence_link_youtube") : tx("evidence_link_web") + " · " + link.host;
+    return '<a href="' + esc(link.canonicalUrl) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + '</a>';
+  }).join("") + '</div>';
+}
+function renderPendingLinks(){
+  var list = byId("evidence-links");
+  list.classList.toggle("hidden",pendingLinks.length === 0);
+  list.innerHTML = pendingLinks.map(function(item,index){
+    var visual = item.thumbnailUrl
+      ? '<img src="' + esc(item.thumbnailUrl) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
+      : '<svg class="evidence-link-domain" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"></path></svg>';
+    var label = item.provider === "youtube" ? tx("evidence_link_youtube") : tx("evidence_link_web");
+    return '<article class="evidence-link"><button class="media-remove" type="button" data-link-remove="' + index + '" aria-label="' + esc(tx("evidence_link_remove")) + '">×</button>' +
+      '<a href="' + esc(item.canonicalUrl) + '" target="_blank" rel="noopener noreferrer"><span class="evidence-link-thumb">' + visual + '</span>' +
+      '<span class="evidence-link-name">' + esc(label) + '</span><span class="evidence-link-url">' + esc(item.host) + '</span></a></article>';
+  }).join("");
+  list.querySelectorAll("[data-link-remove]").forEach(function(button){
+    button.addEventListener("click",function(){
+      pendingLinks.splice(Number(button.dataset.linkRemove),1);
+      renderPendingLinks();
+      saveDraft();
+    });
+  });
+  updateEvidenceStatus();
+}
+function addEvidenceLink(value){
+  if(evidenceCount() >= 3){setMediaStatus(tx("media_limit_error"),"err");return false;}
+  var link = normalizeEvidenceLink(value);
+  if(!link){setMediaStatus(tx("evidence_link_invalid"),"err");return false;}
+  if(pendingLinks.some(function(item){return item.canonicalUrl === link.canonicalUrl;})){
+    setMediaStatus(tx("evidence_link_duplicate"),"err");return false;
+  }
+  pendingLinks.push(link);
+  byId("evidence-link-input").value = "";
+  renderPendingLinks();
+  saveDraft();
+  return true;
 }
 function clearPendingMedia(){
   pendingMedia.forEach(function(item){URL.revokeObjectURL(item.url);});
@@ -2164,11 +2329,16 @@ function clearPendingMedia(){
   byId("submit-files").value = "";
   renderPendingMedia();
 }
+function clearPendingLinks(){
+  pendingLinks = [];
+  byId("evidence-link-input").value = "";
+  renderPendingLinks();
+}
 function addMediaFiles(files){
   if(!session){openAuth("suggest");return;}
   var allowed = ["image/png","image/jpeg","image/webp"];
   var next = Array.from(files || []);
-  if(pendingMedia.length + next.length > 3){setMediaStatus(tx("media_limit_error"),"err");return;}
+  if(evidenceCount() + next.length > 3){setMediaStatus(tx("media_limit_error"),"err");return;}
   for(var i=0;i<next.length;i+=1){
     var file = next[i];
     if(allowed.indexOf(file.type) === -1){setMediaStatus(tx("media_type_error"),"err");return;}
@@ -2220,10 +2390,11 @@ function saveDraft(){
     allowContact:byId("submit-allow-contact").checked,
     attribution:suggestionAttribution(),
     category:(document.querySelector('input[name="submit-category"]:checked') || {}).value || "auto",
-    trainingConsent:byId("submit-training-consent").checked
+    trainingConsent:byId("submit-training-consent").checked,
+    links:pendingLinks.map(function(item){return item.canonicalUrl;})
   };
   try{
-    if(draft.text || draft.name || draft.contact){
+    if(draft.text || draft.name || draft.contact || draft.links.length){
       localStorage.setItem("fr_suggestion_draft",JSON.stringify(draft));
     }else{
       localStorage.removeItem("fr_suggestion_draft");
@@ -2247,6 +2418,8 @@ function restoreDraft(){
     byId("submit-training-consent").checked = !!(session && draft.trainingConsent);
     if(session && draft.attribution === "account"){byId("attribution-account").checked = true;}
     else if(draft.attribution === "contact"){byId("attribution-contact").checked = true;}
+    pendingLinks = Array.isArray(draft.links) ? draft.links.slice(0,3).map(normalizeEvidenceLink).filter(Boolean) : [];
+    renderPendingLinks();
     toggleSuggestionIdentity();
   }catch(error){}
 }
@@ -2342,10 +2515,14 @@ function setupMobileCta(){
 function openSuggestion(){
   formStartedAt = Date.now();
   byId("submit-target-field").classList.toggle("hidden",!!SECTION);
+  var context = byId("submit-target-context");
+  context.classList.toggle("hidden",!(SECTION && secMeta));
+  context.textContent = SECTION && secMeta ? tx("submit_for",secMeta.name) : "";
   if(!SECTION){populateSuggestionTargets();}
   restoreDraft();
   renderSimilarIdeas();
   renderPendingMedia();
+  renderPendingLinks();
   setStatus("submit-status","","");
   byId("submit-receipt").classList.add("hidden");
   document.body.classList.add("suggest-dialog-open");
@@ -2467,14 +2644,16 @@ function activityItem(title,status,meta){
 function submissionActivityItem(row){
   var category = row.category_final && row.category_final !== "pending" ? row.category_final : row.category_requested || "auto";
   var media = Number(row.attachment_count || 0);
-  var meta = row.section + " · " + category + (media ? " · " + media + " image" + (media === 1 ? "" : "s") : "");
+  var links = Array.isArray(row.evidence_links) ? row.evidence_links.length : 0;
+  var meta = row.section + " · " + category + (media ? " · " + media + " image" + (media === 1 ? "" : "s") : "") +
+    (links ? " · " + tx("evidence_links_count",links) : "");
   return '<article class="activity-item"><b>' + esc(row.title) + '</b><div class="activity-meta"><span class="status-pill ' +
-    esc(row.status) + '">' + esc(statusText(row.status)) + '</span><span>' + esc(meta) + '</span></div><label class="check-row">' +
+    esc(row.status) + '">' + esc(statusText(row.status)) + '</span><span>' + esc(meta) + '</span></div>' + evidenceLinkPills(row.evidence_links) + '<label class="check-row">' +
     '<input type="checkbox" data-training-consent="' + Number(row.id) + '" ' + (row.ai_training_consent ? "checked" : "") + '><span>' +
     esc(tx("training_activity")) + '</span></label></article>';
 }
 function fanProfileUrl(handle){
-  var url = new URL(location.origin + location.pathname);
+  var url = persistentUrl(location.origin + location.pathname);
   url.searchParams.set("fan",handle);
   if(LANG === "es"){url.searchParams.set("lang","es");}
   return url.href;
@@ -2515,7 +2694,7 @@ async function loadMyFanProfile(){
   }catch(error){renderMyFanProfile(null);return null;}
 }
 function fanSuggestionUrl(item){
-  var url = new URL(location.origin + location.pathname);
+  var url = persistentUrl(location.origin + location.pathname);
   url.searchParams.set("s",item.section);
   url.searchParams.set("idea",String(item.idea_id));
   if(LANG === "es"){url.searchParams.set("lang","es");}
@@ -2566,7 +2745,7 @@ async function openActivity(){
   try{
     var uid = encodeURIComponent(session.user.id);
     var result = await Promise.all([
-      api("fr_submissions?select=id,section,title,status,created_at,attribution_mode,category_requested,category_final,attachment_count,ai_training_consent&user_id=eq." + uid + "&order=created_at.desc&limit=50"),
+      api("fr_submissions?select=id,section,title,status,created_at,attribution_mode,category_requested,category_final,attachment_count,evidence_links,ai_training_consent&user_id=eq." + uid + "&order=created_at.desc&limit=50"),
       api("fr_claims?select=id,section,role,status,created_at&user_id=eq." + uid + "&order=created_at.desc&limit=20")
     ]);
     var html = "";
@@ -2587,7 +2766,7 @@ function roleText(role){
   return tx("role_" + role) || role;
 }
 function teamInviteUrl(token){
-  var url = new URL(location.origin + location.pathname);
+  var url = persistentUrl(location.origin + location.pathname);
   if(SECTION){url.searchParams.set("s",SECTION);}
   if(LANG === "es"){url.searchParams.set("lang","es");}
   url.hash = "invite=" + encodeURIComponent(token);
@@ -2612,6 +2791,32 @@ function renderTeam(rows){
     button.addEventListener("click",function(){revokeTeamMember(button.dataset.teamRevoke,button);});
   });
 }
+function renderTeamSubmissions(rows){
+  var list = byId("team-submissions");
+  if(!rows || !rows.length){
+    list.innerHTML = '<div class="empty-state">' + esc(tx("team_submissions_empty")) + '</div>';
+    return;
+  }
+  list.innerHTML = rows.map(function(row){
+    var category = row.category_final && row.category_final !== "pending" ? row.category_final : row.category_requested || "auto";
+    var contact = row.can_contact && (row.author || row.contact) ? '<div class="team-submission-contact"><b>' +
+      esc(tx("team_submission_contact")) + ':</b> ' + esc([row.author,row.contact].filter(Boolean).join(" · ")) + '</div>' : "";
+    return '<article class="activity-item"><b>' + esc(row.title) + '</b><div class="activity-meta"><span class="status-pill received">' +
+      esc(statusText(row.status)) + '</span><span>' + esc(category) + '</span></div>' +
+      (row.details ? '<div class="team-submission-copy">' + esc(row.details) + '</div>' : "") +
+      evidenceLinkPills(row.evidence_links) + contact + '</article>';
+  }).join("");
+}
+async function loadTeamSubmissions(){
+  if(!canManageTeam()){return;}
+  byId("team-submissions").innerHTML = '<div class="loading"><span class="spinner"></span><div>' + esc(tx("loading")) + '</div></div>';
+  try{
+    var rows = await callRpc("fr_team_submission_inbox",{p_section:SECTION,p_limit:50});
+    renderTeamSubmissions(rows || []);
+  }catch(error){
+    byId("team-submissions").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) + '</div>';
+  }
+}
 async function loadTeam(){
   if(!canManageTeam()){return;}
   byId("team-list").innerHTML = '<div class="loading"><span class="spinner"></span><div>' + esc(tx("loading")) + '</div></div>';
@@ -2628,7 +2833,7 @@ async function openTeam(){
   setStatus("team-status","","");
   updateTeamRoleControl();
   openDialog("team-dialog");
-  await loadTeam();
+  await Promise.all([loadTeam(),loadTeamSubmissions()]);
 }
 async function setTeamStarCap(select){
   if(!(membership && membership.role === "owner")){return;}
@@ -2681,20 +2886,34 @@ async function handlePendingInvite(){
     openDialog("auth-dialog");
   }
 }
+function persistentUrl(url){
+  var target = url instanceof URL ? url : new URL(url,location.origin);
+  if(TELEMETRY_DISABLED){target.searchParams.set("qa","1");}
+  return target;
+}
+function homeUrl(){
+  var url = persistentUrl(location.pathname);
+  if(LANG === "es"){url.searchParams.set("lang","es");}
+  return url.pathname + url.search;
+}
 function withLanguage(url){
-  if(LANG !== "es"){return url;}
-  return url + (url.indexOf("?") >= 0 ? "&" : "?") + "lang=es";
+  var target = persistentUrl(url);
+  if(LANG === "es"){target.searchParams.set("lang","es");}
+  return target.pathname + target.search + target.hash;
 }
 function sectionUrl(slug,quickSuggest){
-  var url = new URL(location.pathname,location.origin);
+  var url = persistentUrl(location.pathname);
   url.searchParams.set("s",slug);
   if(LANG === "es"){url.searchParams.set("lang","es");}
   if(quickSuggest){url.searchParams.set("suggest","1");}
   return url.pathname + url.search;
 }
 function ideaUrl(item){
-  return location.origin + location.pathname + "?s=" + encodeURIComponent(item.section) +
-    "&idea=" + encodeURIComponent(item.id) + (LANG === "es" ? "&lang=es" : "");
+  var url = persistentUrl(location.origin + location.pathname);
+  url.searchParams.set("s",item.section);
+  url.searchParams.set("idea",String(item.id));
+  if(LANG === "es"){url.searchParams.set("lang","es");}
+  return url.href;
 }
 var REFERRAL_SOURCES = {fan_share:true,idea_share:true,reddit:true,discord:true,x:true,whatsapp:true};
 function referralSource(){
@@ -2712,6 +2931,12 @@ function profileShareUrl(){
 
 function applyStaticText(){
   document.documentElement.lang = LANG;
+  byId("skip-link").textContent = tx("skip_to_content");
+  byId("home-rank-tabs").setAttribute("aria-label",tx("global_rank_label"));
+  byId("directory-filters").setAttribute("aria-label",tx("profile_filters_label"));
+  byId("profile-rank-tabs").setAttribute("aria-label",tx("ranking_label"));
+  byId("podium").setAttribute("aria-label",tx("top_three_label"));
+  byId("logo").setAttribute("aria-label",tx(document.body.classList.contains("team-mode") ? "logo_team_label" : "logo_public_label"));
   byId("lang-code").textContent = LANG === "es" ? "EN" : "ES";
   byId("lang-flag").setAttribute("data-flag",LANG === "es" ? "gb" : "es");
   byId("lang-btn").setAttribute("aria-label",LANG === "es" ? "Cambiar a inglés" : "Switch to Spanish");
@@ -2724,12 +2949,12 @@ function applyStaticText(){
   byId("loading-text").textContent = tx("loading");
   byId("profiles-title").textContent = tx("profiles_title");
   byId("profiles-subtitle").textContent = tx("profiles_subtitle");
-  byId("directory-filters").setAttribute("aria-label",tx("profiles_title"));
+  byId("directory-filters").setAttribute("aria-label",tx("profile_filters_label"));
   byId("trending-title").textContent = tx("trending_title");
   byId("trending-subtitle").textContent = tx("trending_subtitle");
   byId("home-rank-ai").textContent = tx("global_ai");
   byId("home-rank-fans").textContent = tx("global_fans");
-  byId("home-rank-ai").parentElement.setAttribute("aria-label",tx("trending_title"));
+  byId("home-rank-ai").parentElement.setAttribute("aria-label",tx("global_rank_label"));
   byId("fan-value-kicker").textContent = tx("fan_value_kicker");
   byId("fan-value-title").textContent = tx("fan_value_title");
   byId("fan-value-text").textContent = tx("fan_value_text");
@@ -2786,6 +3011,9 @@ function applyStaticText(){
   byId("media-title").textContent = tx("media_title");
   byId("media-help").textContent = tx("media_help");
   byId("media-pick").textContent = tx("media_pick");
+  byId("evidence-link-label").textContent = tx("evidence_link_label");
+  byId("evidence-link-input").placeholder = tx("evidence_link_placeholder");
+  byId("evidence-link-add").textContent = tx("evidence_link_add");
   byId("submit-name-label").innerHTML = tx("name_label");
   byId("submit-contact-label").innerHTML = tx("contact_label");
   byId("submit-contact-help").textContent = tx("contact_help");
@@ -2864,7 +3092,7 @@ function applyStaticText(){
   byId("fan-public-available-copy").textContent = tx("fan_public_available_copy");
   byId("fan-public-top-title").textContent = tx("fan_public_top_title");
   byId("fan-public-back").textContent = tx("fan_public_back");
-  byId("fan-public-back").href = location.pathname + (LANG === "es" ? "?lang=es" : "");
+  byId("fan-public-back").href = homeUrl();
   byId("password-change-title").textContent = tx("password_change_title");
   byId("password-change-label").textContent = tx("password_change_label");
   byId("password-change-help").textContent = tx("password_change_help");
@@ -2889,6 +3117,8 @@ function applyStaticText(){
   byId("invite-email-link").textContent = tx("team_email");
   byId("team-members-title").textContent = tx("team_members_title");
   byId("team-members-copy").textContent = tx("team_members_copy");
+  byId("team-submissions-title").textContent = tx("team_submissions_title");
+  byId("team-submissions-copy").textContent = tx("team_submissions_copy");
   byId("invite-title").textContent = tx("invite_title");
   byId("invite-intro").textContent = tx("invite_intro");
   byId("invite-accept").textContent = tx("invite_accept");
@@ -2906,7 +3136,7 @@ function applyStaticText(){
   byId("claim-send").textContent = tx("claim_send");
   byId("claim-cancel").textContent = tx("claim_cancel");
   byId("footer").innerHTML = tx("footer");
-  byId("logo").href = location.pathname + (LANG === "es" ? "?lang=es" : "");
+  byId("logo").href = homeUrl();
   renderProPlans();
   updateAccountUI();
 }
@@ -3194,7 +3424,7 @@ function requestFromSearch(query){
   sendEvent("search",{value:query});
   byId("search-panel").classList.add("hidden");
   if(SECTION){
-    location.href = location.pathname + (LANG === "es" ? "?lang=es" : "") + "#request-panel";
+    location.href = homeUrl() + "#request-panel";
     return;
   }
   byId("request-target").value = query.trim();
@@ -3365,12 +3595,12 @@ function loadSection(){
   secMeta = sections.find(function(item){return item.slug === SECTION;}) || null;
   ideas = allIdeas.filter(function(item){return item.section === SECTION;});
   if(!secMeta){
-    location.replace(location.pathname + (LANG === "es" ? "?lang=es" : ""));
+    location.replace(homeUrl());
     return;
   }
   document.title = "FanRank — " + secMeta.name;
   byId("hero-tag").innerHTML = tx("hero_section",esc(secMeta.name));
-  byId("crumb-text").innerHTML = '<a href="' + esc(location.pathname + (LANG === "es" ? "?lang=es" : "")) + '">' +
+  byId("crumb-text").innerHTML = '<a href="' + esc(homeUrl()) + '">' +
     esc(tx("all_profiles")) + '</a> <span aria-hidden="true">›</span> ' + esc(secMeta.name);
   byId("home-view").classList.add("hidden");
   byId("section-view").classList.remove("hidden");
@@ -3624,6 +3854,13 @@ byId("submit-target").addEventListener("change",function(event){
 });
 byId("team-star-cap").addEventListener("change",function(event){setTeamStarCap(event.target);});
 document.querySelectorAll('input[name="submit-category"]').forEach(function(input){input.addEventListener("change",saveDraft);});
+byId("evidence-link-add").addEventListener("click",function(){addEvidenceLink(byId("evidence-link-input").value);});
+byId("evidence-link-input").addEventListener("keydown",function(event){
+  if(event.key === "Enter"){
+    event.preventDefault();
+    addEvidenceLink(event.currentTarget.value);
+  }
+});
 byId("media-pick").addEventListener("click",function(){
   if(!session){openAuth("suggest");return;}
   byId("submit-files").click();
@@ -3976,7 +4213,8 @@ byId("submit-form").addEventListener("submit",async function(event){
       allow_contact:!!contact && allowContact,
       receipt_hash:receiptHash,
       category_requested:categoryRequested,
-      ai_training_consent:!!(session && byId("submit-training-consent").checked)
+      ai_training_consent:!!(session && byId("submit-training-consent").checked),
+      evidence_links:pendingLinks.map(function(item){return item.canonicalUrl;})
     };
     if(pendingMedia.length){
       if(!session || !session.access_token){openAuth("suggest");throw new Error("AUTH_REQUIRED");}
@@ -3988,6 +4226,7 @@ byId("submit-form").addEventListener("submit",async function(event){
       formData.append("allow_contact",String(submissionPayload.allow_contact));
       formData.append("ai_training_consent",String(submissionPayload.ai_training_consent));
       formData.append("website",byId("submit-website").value || "");
+      pendingLinks.forEach(function(item){formData.append("links",item.canonicalUrl);});
       pendingMedia.forEach(function(item){formData.append("files",item.file,item.file.name || "capture");});
       var mediaResponse = await fetch(SB_URL + "/functions/v1/fanrank-feedback-intake",{
         method:"POST",
@@ -4010,6 +4249,7 @@ byId("submit-form").addEventListener("submit",async function(event){
     if(!SECTION){populateSuggestionTargets();}
     toggleSuggestionIdentity();
     clearPendingMedia();
+    clearPendingLinks();
     clearDraft();
     renderSimilarIdeas();
     renderSubmissionReceipt();
