@@ -14,6 +14,7 @@ import argparse
 import base64
 import json
 import re
+import struct
 import subprocess
 import sys
 import unittest
@@ -27,6 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 HTML = INDEX.read_text(encoding="utf-8")
+SOCIAL_CARD = ROOT / "social-card.png"
 OWNER_JS_PATH = ROOT / "owner-studio.js"
 OWNER_CSS_PATH = ROOT / "owner-studio.css"
 OWNER_JS = OWNER_JS_PATH.read_text(encoding="utf-8")
@@ -758,8 +760,13 @@ class StaticAppTests(unittest.TestCase):
 
     def test_profile_sharing_has_a_clean_measurable_referral_loop(self) -> None:
         markers = [
+            '<link rel="canonical" href="https://eltonylfgi-blip.github.io/fanrank/">',
             '<meta property="og:title"',
-            '<meta name="twitter:card" content="summary">',
+            '<meta property="og:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png">',
+            '<meta property="og:image:width" content="1200">',
+            '<meta property="og:image:height" content="630">',
+            '<meta name="twitter:card" content="summary_large_image">',
+            '<meta name="twitter:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png">',
             'id="profile-share"',
             'id="profile-share-text"',
             "function referralSource()",
@@ -772,6 +779,11 @@ class StaticAppTests(unittest.TestCase):
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
         self.assertIn("return REFERRAL_SOURCES[source] ? source : null;", HTML)
+
+        card = SOCIAL_CARD.read_bytes()
+        self.assertEqual(b"\x89PNG\r\n\x1a\n", card[:8])
+        self.assertEqual((1200, 630), struct.unpack(">II", card[16:24]))
+        self.assertGreater(len(card), 50_000)
 
 
 def api_request(path: str, method: str = "GET", body: dict | None = None) -> tuple[int, str]:

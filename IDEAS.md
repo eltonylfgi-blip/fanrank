@@ -23,7 +23,17 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 
 ## Experimento activo (máximo 72 horas)
 
-No hay todavía un experimento de producto activo: el gate técnico ya pasó, pero hace falta uso humano posterior. El siguiente reloj empieza con exposición real, no con los tests.
+### FR-2026-07-15-007 — vista previa social que convierte un share en exposición medible
+
+- Estado: `active`; una sola intervención reversible. Inicio: 2026-07-15 23:55 CEST. Vence: 2026-07-18 23:55 CEST.
+- Decisión: mantener la tarjeta social grande o retirarla y probar un canal/mensaje distinto.
+- Evidencia previa anonimizada: últimas 72 h `page_view=75` (13 visitantes), `profile_open=41` (4), `suggest_open=11` (6), `submission=1` (1), `vote=1` (1) e `idea_share=0`; desde el último pulso no llegó ningún evento ni sugerencia nueva.
+- Defecto reproducible: el enlace publicado tenía `canonical` y `og:image` ausentes y `twitter:card=summary`, aunque ofrecía dos botones de compartir.
+- Cambio único: tarjeta FanRank 1200×630 reproducible, `canonical`, Open Graph completo y `summary_large_image`. No cambia compositor, datos, Auth, ranking ni RLS.
+- Selector técnico inmediato: HTML publicado referencia la imagen absoluta, la imagen responde 200 como PNG y mide exactamente 1200×630.
+- Selector externo ≤72 h: `idea_share >= 1` y al menos 10 `page_view` con referencia `fan_share`/`idea_share`; éxito de activación si al menos 2 de esos visitantes hacen `suggest_open` o `vote`. Menos de 5 visitas referidas indica fallo de exposición/canal, no del compositor.
+- Condición de parada: no iniciar otra mejora mientras el reloj siga abierto. Un test verde prueba el mecanismo; solo tráfico referido y acción posterior pueden probar efecto.
+- Hipótesis distinta para el siguiente pulso si la exposición sigue en cero: colocar un único enlace directo a Orslok en una superficie propia con referencia medible; no volver a retocar la tarjeta.
 
 ### Gate previo — telemetría confiable
 
@@ -32,7 +42,7 @@ No hay todavía un experimento de producto activo: el gate técnico ya pasó, pe
 - Selector: contrato live acepta todos los eventos emitidos y una sesión con `?qa=1` produce cero filas.
 - Deadline: 24 horas desde el despliegue; nunca más de 72 horas.
 
-### Siguiente experimento — probar activación con personas reales
+### Experimento posterior — probar activación con personas reales
 
 - Decisión: mantener la portada actual o simplificarla todavía más.
 - Experimento: enviar enlaces directos a 5 perfiles y pedir a 5 personas que dejen una idea sin instrucciones.
