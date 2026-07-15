@@ -37,6 +37,12 @@ OWNER_MIGRATION = ROOT / "supabase" / "migrations" / "20260715160000_fanrank_v7_
 OWNER_SQL = OWNER_MIGRATION.read_text(encoding="utf-8")
 PRO_MIGRATION = ROOT / "supabase" / "migrations" / "20260715170000_fanrank_v8_pro_pilot.sql"
 PRO_SQL = PRO_MIGRATION.read_text(encoding="utf-8")
+FAN_MEDIA_MIGRATION = ROOT / "supabase" / "migrations" / "20260715021357_fanrank_fan_profiles_media.sql"
+FAN_MEDIA_SQL = FAN_MEDIA_MIGRATION.read_text(encoding="utf-8")
+TEAM_STARS_MIGRATION = ROOT / "supabase" / "migrations" / "20260715183000_fanrank_v9_team_stars.sql"
+TEAM_STARS_SQL = TEAM_STARS_MIGRATION.read_text(encoding="utf-8")
+MEDIA_INTAKE_PATH = ROOT / "supabase" / "functions" / "fanrank-feedback-intake" / "index.ts"
+MEDIA_INTAKE = MEDIA_INTAKE_PATH.read_text(encoding="utf-8")
 
 
 def extract(pattern: str) -> str:
@@ -73,11 +79,19 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn("FanRank — the best ideas, ranked", HTML)
         self.assertNotIn("â€”", HTML)
 
+        suggest_dialog = extract(r'<dialog id="suggest-dialog"[\s\S]*?<form id="submit-form"[^>]*>([\s\S]*?)</form>')
+        self.assertEqual(1, suggest_dialog.count("<textarea"))
+        self.assertIn('<input id="submit-details" type="hidden">', suggest_dialog)
         self.assertLess(
-            HTML.index('id="submit-send"'),
-            HTML.index('<section class="privacy-box"'),
-            "The primary send action must stay above optional privacy fields on mobile.",
+            suggest_dialog.index('<section class="privacy-box"'),
+            suggest_dialog.index('id="submit-send"'),
+            "Identity and private contact choices must stay next to the idea and before the single send action.",
         )
+        self.assertIn('class="submit-bar"', suggest_dialog)
+        self.assertIn("margin:18px 0 0", HTML)
+        self.assertIn("margin:16px 0 0", HTML)
+        self.assertNotIn("margin:18px -24px", HTML)
+        self.assertNotIn("margin:16px -18px", HTML)
 
     def test_critical_product_flows_are_wired(self) -> None:
         markers = {
@@ -91,14 +105,19 @@ class StaticAppTests(unittest.TestCase):
             "similar ideas": 'id="similar-ideas"',
             "private contact": 'id="submit-contact"',
             "password account": 'id="auth-password"',
+            "passwordless account": 'id="auth-magic"',
             "password recovery": 'id="auth-recover"',
             "private activity": 'id="activity-dialog"',
+            "private screenshot intake": 'id="media-box"',
+            "feedback category": 'id="category-legend"',
+            "fan impact profile": 'id="fan-profile-form"',
+            "public fan profile": 'id="fan-public-view"',
             "password rotation": 'id="password-change-form"',
             "profile claim": 'id="claim-form"',
             "verified team management": 'id="team-dialog"',
             "secure invitation acceptance": 'id="invite-dialog"',
             "fan vote": 'data-vote="',
-            "team heart": 'data-interest="',
+            "verified team stars": 'data-team-star="',
             "shareable idea": "navigator.share",
             "product telemetry": 'postRow("fr_claims"',
             "event sink": 'fr_events',
@@ -189,7 +208,7 @@ class StaticAppTests(unittest.TestCase):
             'validTiming("submit-website","fr_last_submission",30000)',
             'validTiming("claim-website","fr_last_claim",60000)',
             'location.hostname === "127.0.0.1"',
-            "receipt_hash:await hashReceipt",
+            "var receiptHash = await hashReceipt(receipt)",
             "allow_contact",
             'url.hash = "invite="',
             "function armCelestialAudio",
@@ -197,6 +216,8 @@ class StaticAppTests(unittest.TestCase):
             "logoFloatIdle",
             "logoFloatActive",
             "tagPop",
+            'source_votes:"apoyo en la fuente"',
+            'source_votes_help:"Apoyo recibido en la publicación original; no son corazones de FanRank."',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
         self.assertNotIn("Search any <b>game, creator or company</b>", HTML)
@@ -224,16 +245,83 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn("array['spain','streamer','youtuber','tiktoker']", DISCOVERY_SQL)
         self.assertIn("with (security_invoker = true)", DISCOVERY_SQL)
 
-    def test_direct_password_auth_and_logo_effect_have_safe_guards(self) -> None:
+    def test_passwordless_primary_auth_and_contextual_brand_have_safe_guards(self) -> None:
+        self.assertIn("authClient.auth.signInWithOtp({", HTML)
+        self.assertIn("options:{emailRedirectTo:authRedirectUrl(),shouldCreateUser:true}", HTML)
+        self.assertIn('id="auth-magic"', HTML)
+        self.assertLess(HTML.index('id="auth-magic"'), HTML.index('id="auth-password-panel"'))
         self.assertIn("authClient.auth.signInWithPassword({email:email,password:password})", HTML)
         self.assertIn('autocomplete="current-password"', HTML)
         self.assertIn("authClient.auth.updateUser({password:nextPassword})", HTML)
         self.assertIn('autocomplete="new-password"', HTML)
-        self.assertNotIn("signInWithOtp", HTML)
         self.assertIn("if(REDUCED || !audioArmed || !audioContext || chimePlayed)", HTML)
         self.assertIn("setTimeout(function(){chimePlayed = false;},9000)", HTML)
-        self.assertIn("brand-mark-star", HTML)
-        self.assertIn("M50 9C55 34 66 45 91 50", HTML)
+        self.assertIn("brand-mark-heart", HTML)
+        self.assertIn("brand-mark-team", HTML)
+        self.assertIn('secMeta.verification_status === "verified"', HTML)
+        self.assertIn('document.body.classList.toggle("team-mode",teamMode)', HTML)
+        self.assertIn("M50 6 61.8 36.2 94.5 38.1", HTML)
+
+    def test_private_media_fan_profiles_and_consent_are_wired_end_to_end(self) -> None:
+        html_markers = [
+            'accept="image/png,image/jpeg,image/webp"',
+            'byId("suggest-dialog").addEventListener("paste"',
+            'byId("media-box").addEventListener("drop"',
+            'pendingMedia.length + next.length > 3',
+            'file.size > 5 * 1024 * 1024',
+            '"/functions/v1/fanrank-feedback-intake"',
+            'category_requested:categoryRequested',
+            'ai_training_consent:!!(session && byId("submit-training-consent").checked)',
+            'callRpc("fr_set_submission_ai_consent"',
+            'callRpc("fr_upsert_my_fan_profile"',
+            'callRpc("fr_public_fan_profile"',
+            'profile.top_suggestions.slice(0,3)',
+        ]
+        self.assertEqual([], [marker for marker in html_markers if marker not in HTML])
+        self.assertNotIn('accept="video/', HTML)
+
+        sql_markers = [
+            "ai_training_consent boolean not null default false",
+            "attachment_count between 0 and 3",
+            "new.category_final := new.category_requested",
+            "new.classification_method := 'user'",
+            "new.classification_method := 'rules_v1'",
+            "create table public.fr_submission_attachments",
+            "owner_user_id = (select auth.uid())",
+            "'fanrank-feedback-private'",
+            "public = false",
+            "create table public.fr_fan_profiles",
+            "where p.handle = pg_catalog.lower(pg_catalog.btrim(p_handle))",
+            "and p.is_public = true",
+            "limit 5",
+            "least(100, pg_catalog.round(2 * s.points))",
+        ]
+        self.assertEqual([], [marker for marker in sql_markers if marker.lower() not in FAN_MEDIA_SQL.lower()])
+        self.assertIn("No storage.objects policy is created", FAN_MEDIA_SQL)
+
+        intake_markers = [
+            "const MAX_FILES = 3",
+            "const MAX_FILE_BYTES = 5 * 1024 * 1024",
+            'admin.auth.getUser(token)',
+            'admin.rpc("fr_register_media_intake"',
+            "detectMime(new Uint8Array",
+            '.from("fr_submission_attachments")',
+            'review_status: duplicate ? "duplicate" : "quarantined"',
+            "public: false",
+        ]
+        self.assertEqual([], [marker for marker in intake_markers if marker not in MEDIA_INTAKE])
+        self.assertNotIn("video/", MEDIA_INTAKE)
+
+    def test_mobile_suggestion_cta_never_competes_with_inline_cta(self) -> None:
+        markers = [
+            "body.profile-live.mobile-cta-ready .mobile-suggest",
+            "body.suggest-dialog-open .mobile-suggest",
+            "new IntersectionObserver",
+            'document.body.classList.toggle("mobile-cta-ready",!entries[0].isIntersecting)',
+            'document.body.classList.add("suggest-dialog-open")',
+            'document.body.classList.remove("suggest-dialog-open")',
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
 
     def test_password_recovery_covers_magic_link_accounts(self) -> None:
         markers = [
@@ -312,21 +400,47 @@ class StaticAppTests(unittest.TestCase):
         self.assertNotIn('openPromotion("idea"', OWNER_JS)
 
     def test_team_signal_is_limited_and_not_a_public_identity_leak(self) -> None:
-        self.assertIn("Math.min(Number(item.team_interest_count || 0) * 5,15)", HTML)
-        self.assertIn("var av = rankScore(a);", HTML)
-        self.assertIn("myTeamInterestIds.has(item.id)", HTML)
-        self.assertIn("team_interest_count", HTML)
-        self.assertIn("fr_set_team_interest", HTML)
-        self.assertNotIn("owner_pick", HTML)
-        self.assertNotIn("* 1000", HTML)
+        rank_body = extract(r"function rankScore\(item\)\{([\s\S]*?)\n\}")
+        self.assertIn("Math.min(Number(item.web_votes || 0) * 2,20)", rank_body)
+        self.assertNotIn("team_", rank_body)
+        self.assertNotIn("owner_star", rank_body)
+        self.assertIn('sortMode === "team"', HTML)
+        self.assertIn("function officialTeamScore(item)", HTML)
+        self.assertIn("fr_set_team_star", HTML)
+        self.assertIn("fr_set_team_star_cap", HTML)
+        self.assertIn("team_member_star_cap", HTML)
+        self.assertIn('data-team-star="', HTML)
+        public_rating_body = extract(r"function teamRatingHtml\(item\)\{([\s\S]*?)\n\}")
+        self.assertNotIn("member_email", public_rating_body)
+        self.assertNotIn("selected_by", public_rating_body)
         self.assertIn(
             'document.querySelector(".claim-bar").classList.toggle("hidden",secMeta.verification_status === "verified")',
             HTML,
         )
 
+        sql_markers = [
+            "team_member_star_cap in (1, 3)",
+            "star_value between 1 and 5",
+            "create or replace function public.fr_set_team_star",
+            "create or replace function public.fr_my_team_stars",
+            "create or replace function public.fr_set_team_star_cap",
+            "and s.verification_status = 'verified'",
+            "and pm.status = 'active'",
+            "and pm.role = 'owner'",
+            "grant execute on function public.fr_set_team_star(integer, integer) to authenticated",
+            "with (security_invoker = true)",
+            "excluded from organic rank",
+        ]
+        self.assertEqual([], [marker for marker in sql_markers if marker.lower() not in TEAM_STARS_SQL.lower()])
+        self.assertNotRegex(TEAM_STARS_SQL, r"(?i)password\s*[:=]\s*['\"]")
+
     def test_anonymous_submission_contract_matches_the_private_queue(self) -> None:
-        self.assertIn('postRow("fr_submissions",{', HTML)
-        self.assertIn("section:SECTION,title:title,", HTML)
+        self.assertIn('postRow("fr_submissions",submissionPayload)', HTML)
+        self.assertIn("function submissionTextParts(value)", HTML)
+        self.assertIn("section:SECTION,title:textParts.title,", HTML)
+        self.assertIn("details:textParts.details", HTML)
+        self.assertIn('identityMode === "contact" ? byId("submit-contact").value.trim() : ""', HTML)
+        self.assertIn('session && identityMode === "account" ? "account" : "anonymous"', HTML)
         self.assertIn('headers:{"Prefer":"return=minimal"}', HTML)
         self.assertNotIn("section_slug:SECTION", HTML)
 
@@ -380,7 +494,7 @@ def api_request(path: str, method: str = "GET", body: dict | None = None) -> tup
 class LiveBoundaryTests(unittest.TestCase):
     def test_public_directory_and_rankings_are_readable(self) -> None:
         status, raw = api_request(
-            "fr_sections_stats?select=slug,name,kind,tags,featured_rank,ideas,recent_ideas,fan_votes,verification_status"
+            "fr_sections_stats?select=slug,name,kind,tags,featured_rank,ideas,recent_ideas,fan_votes,verification_status,team_member_star_cap"
         )
         self.assertEqual(200, status, raw)
         sections = json.loads(raw)
@@ -398,10 +512,11 @@ class LiveBoundaryTests(unittest.TestCase):
         self.assertEqual("company", by_slug["fanrank"]["kind"])
         self.assertEqual("verified", by_slug["fanrank"]["verification_status"])
         self.assertEqual(1, by_slug["fanrank"]["featured_rank"])
+        self.assertEqual(1, by_slug["fanrank"]["team_member_star_cap"])
 
         query = urllib.parse.urlencode(
             {
-                "select": "id,section,title,ai_score,web_votes,team_interest_count,owner_pick",
+                "select": "id,section,title,ai_score,web_votes,team_interest_count,owner_pick,owner_star_value,team_star_support_count",
                 "section": "eq.brawl-stars",
             }
         )
@@ -411,6 +526,8 @@ class LiveBoundaryTests(unittest.TestCase):
         self.assertGreaterEqual(len(ideas), 30)
         self.assertTrue(all(row["team_interest_count"] == 0 for row in ideas))
         self.assertTrue(all(row["owner_pick"] is False for row in ideas))
+        self.assertTrue(all(row["owner_star_value"] == 0 for row in ideas))
+        self.assertTrue(all(row["team_star_support_count"] == 0 for row in ideas))
 
     def test_private_queues_cannot_be_read_anonymously(self) -> None:
         for table in (
@@ -426,6 +543,8 @@ class LiveBoundaryTests(unittest.TestCase):
             "fr_profile_requests",
             "fr_promotion_requests",
             "fr_pro_requests",
+            "fr_submission_attachments",
+            "fr_fan_profiles",
         ):
             with self.subTest(table=table):
                 status, raw = api_request(f"{table}?select=*")
@@ -474,6 +593,9 @@ class LiveBoundaryTests(unittest.TestCase):
         for rpc, body in (
             ("fr_set_team_interest", {"p_idea_id": 1, "p_active": True}),
             ("fr_my_team_interests", {"p_section": "brawl-stars"}),
+            ("fr_set_team_star", {"p_idea_id": 1, "p_value": 1}),
+            ("fr_my_team_stars", {"p_section": "brawl-stars"}),
+            ("fr_set_team_star_cap", {"p_section": "fanrank", "p_cap": 3}),
             (
                 "fr_create_profile_invite",
                 {"p_section": "brawl-stars", "p_email": "nobody@example.com", "p_role": "contributor"},
@@ -501,6 +623,19 @@ class LiveBoundaryTests(unittest.TestCase):
                     "p_goal": "This anonymous call must be rejected",
                 },
             ),
+            ("fr_my_fan_profile", {}),
+            (
+                "fr_upsert_my_fan_profile",
+                {
+                    "p_handle": "anonymous-probe",
+                    "p_display_name": "Anonymous Probe",
+                    "p_headline": "",
+                    "p_skills": [],
+                    "p_is_public": False,
+                    "p_available_for_opportunities": False,
+                },
+            ),
+            ("fr_set_submission_ai_consent", {"p_submission_id": 1, "p_consent": True}),
         ):
             with self.subTest(rpc=rpc):
                 status, raw = api_request(f"rpc/{rpc}", method="POST", body=body)
@@ -511,6 +646,26 @@ class LiveBoundaryTests(unittest.TestCase):
         )
         self.assertEqual(200, status, raw)
         self.assertEqual([], json.loads(raw))
+
+    def test_private_media_intake_requires_a_real_session(self) -> None:
+        request = urllib.request.Request(
+            f"{SB_URL}/functions/v1/fanrank-feedback-intake",
+            data=b"--fanrank--\r\n",
+            headers={
+                "apikey": SB_KEY,
+                "Origin": "https://eltonylfgi-blip.github.io",
+                "Content-Type": "multipart/form-data; boundary=fanrank",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                status = response.status
+                raw = response.read().decode("utf-8")
+        except urllib.error.HTTPError as error:
+            status = error.code
+            raw = error.read().decode("utf-8")
+        self.assertIn(status, (401, 403), raw)
 
 
 def main() -> int:

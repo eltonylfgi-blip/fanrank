@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0b12">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a0b12'/%3E%3Cpath d='M50 9C55 34 66 45 91 50C66 55 55 66 50 91C45 66 34 55 9 50C34 45 45 34 50 9Z' fill='%23ffd129'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%2363b3ff'/%3E%3C/svg%3E">
+<link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a0b12'/%3E%3Cpath d='M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z' fill='%23ff72c6'/%3E%3Cpath d='M28 26C34 21 40 22 44 27' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' opacity='.75'/%3E%3C/svg%3E">
 <title>FanRank — the best ideas, ranked</title>
 <meta name="description" content="Starting with Brawl Stars: vote on the ideas fans want most, or request the next game, creator or company profile.">
 <meta property="og:type" content="website">
@@ -49,28 +49,41 @@
     padding:10px 14px;border-radius:10px;font-weight:800}
   .skip-link:focus{top:12px}
   .top-actions{position:fixed;top:12px;right:12px;z-index:30;display:flex;gap:8px}
-  .top-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 14px;
+  .top-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:7px 11px;
     border-radius:999px;border:1px solid var(--line);background:rgba(21,25,38,.92);color:var(--text);
-    font-weight:850;box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
+    font-size:.78rem;font-weight:850;box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
   .top-btn:hover{border-color:var(--yellow)}
-  .top-btn svg{width:18px;height:18px}
+  .top-btn svg{width:17px;height:17px}
+  .lang-flag{display:inline-block;width:20px;height:14px;border:1px solid rgba(255,255,255,.36);border-radius:2px;
+    box-shadow:0 1px 4px rgba(0,0,0,.28);overflow:hidden}
+  .flag-es{background:linear-gradient(to bottom,#aa151b 0 25%,#f1bf00 25% 75%,#aa151b 75%)}
+  .flag-gb{background:
+    linear-gradient(33deg,transparent 42%,#fff 42% 48%,#c8102e 48% 53%,#fff 53% 59%,transparent 59%),
+    linear-gradient(-33deg,transparent 42%,#fff 42% 48%,#c8102e 48% 53%,#fff 53% 59%,transparent 59%),
+    linear-gradient(to right,transparent 38%,#fff 38% 62%,transparent 62%),
+    linear-gradient(to bottom,transparent 31%,#fff 31% 69%,transparent 69%),
+    linear-gradient(to right,transparent 44%,#c8102e 44% 56%,transparent 56%),
+    linear-gradient(to bottom,transparent 39%,#c8102e 39% 61%,transparent 61%),#21468b}
   :focus-visible{outline:0;box-shadow:var(--focus)!important}
   .hidden{display:none!important}
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
   header{text-align:center;padding:14px 0 8px}
-  .brand-lockup{position:relative;display:inline-flex;align-items:flex-start;justify-content:center;padding:12px 42px 4px 8px}
+  .brand-lockup{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px 8px 0}
   .logo{position:relative;display:inline-flex;align-items:baseline;text-decoration:none;font-size:clamp(2.55rem,7vw,4.35rem);font-weight:950;
     letter-spacing:-.075em;line-height:.92;background:linear-gradient(100deg,var(--yellow) 4%,#fff4a8 25%,var(--blue) 57%,var(--purple) 82%,var(--pink));
     background-size:180% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;isolation:isolate;
     filter:drop-shadow(0 9px 30px rgba(0,0,0,.34));transform-origin:50% 72%;
     animation:logoFloatIdle 5.2s ease-in-out infinite;transition:filter .35s ease;will-change:transform}
-  .brand-mark{display:inline-flex;align-self:center;width:.7em;height:.7em;margin-right:.17em;transform:translateY(.015em);letter-spacing:0;
+  .brand-mark{display:inline-flex;align-self:center;width:.68em;height:.68em;margin-left:.19em;transform:translateY(.015em);letter-spacing:0;
     filter:drop-shadow(0 0 12px rgba(255,209,41,.32))}
   .brand-mark svg{display:block;width:100%;height:100%;overflow:visible}
-  .brand-mark-star{fill:var(--yellow)}
-  .brand-mark-core{fill:var(--blue)}
+  .brand-mark-heart{fill:var(--pink);stroke:#ffd8ef;stroke-width:2}
+  .brand-mark-team{display:none;fill:var(--yellow);stroke:#fff3a4;stroke-width:2.5;stroke-linejoin:round}
+  body.team-mode .brand-mark-heart{display:none}
+  body.team-mode .brand-mark-team{display:block}
+  body.team-mode .brand-mark{filter:drop-shadow(0 0 13px rgba(255,209,41,.55))}
   .logo-rank{font-style:italic}
   .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
     background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
@@ -92,7 +105,7 @@
   @keyframes tagPop{35%{transform:rotate(-4deg) translateY(-4px) scale(1.08)}100%{transform:rotate(-7deg) translateY(0) scale(1)}}
   .tag{max-width:760px;margin:9px auto 0;color:var(--muted);font-size:clamp(.92rem,2vw,1.08rem);line-height:1.4}
   .tag b{color:var(--text)}
-  .eyebrow{position:absolute;right:0;top:0;display:inline-flex;align-items:center;padding:5px 10px;border:1px solid rgba(255,209,41,.72);
+  .eyebrow{position:static;align-self:flex-end;display:inline-flex;align-items:center;margin-right:8%;padding:5px 10px;border:1px solid rgba(255,209,41,.72);
     border-radius:8px 11px 8px 10px;background:linear-gradient(105deg,var(--yellow),#ffab24);color:var(--yellow-ink);
     box-shadow:0 7px 24px rgba(255,209,41,.2);text-transform:uppercase;letter-spacing:.06em;
     font-size:clamp(.61rem,1.4vw,.72rem);font-style:italic;font-weight:950;transform:rotate(-7deg)}
@@ -371,8 +384,35 @@
   .choice:has(input:checked){border-color:var(--blue);background:rgba(99,179,255,.08);color:var(--text)}
   .choice input{margin:3px 0 0;accent-color:var(--blue)}
   .choice b{display:block;color:var(--text)}
+  .choice input:disabled + span{opacity:.62}
+  .identity-fields{margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)}
+  .suggestion-text{min-height:136px;resize:vertical}
   .check-row{display:flex;align-items:flex-start;gap:9px;margin-top:8px;color:var(--muted);font-size:.76rem}
   .check-row input{width:18px;height:18px;flex:0 0 auto;margin:1px 0 0;accent-color:var(--green)}
+  .category-picker{min-width:0;margin:13px 0 0;padding:0;border:0}
+  .category-picker legend{margin-bottom:7px;color:var(--text);font-size:.8rem;font-weight:850}
+  .category-options{display:flex;max-width:100%;gap:7px;overflow-x:auto;padding:2px 2px 5px;scroll-snap-type:x proximity}
+  .category-option{position:relative;display:inline-flex;flex:0 0 auto;scroll-snap-align:start}
+  .category-option input{position:absolute;opacity:0;pointer-events:none}
+  .category-option span{display:inline-flex;align-items:center;min-height:42px;padding:8px 12px;border:1px solid var(--line);
+    border-radius:999px;background:var(--bg-soft);color:var(--muted);font-size:.76rem;font-weight:850}
+  .category-option input:checked + span{border-color:var(--blue);background:rgba(99,179,255,.11);color:var(--text);box-shadow:0 0 0 3px rgba(99,179,255,.06)}
+  .category-option input:focus-visible + span{box-shadow:var(--focus)}
+  .media-box{margin-top:13px;padding:14px;border:1px dashed #46516d;border-radius:14px;background:rgba(10,11,18,.52);transition:border-color .18s ease,background .18s ease}
+  .media-box.dragging{border-color:var(--blue);background:rgba(99,179,255,.08)}
+  .media-box.locked{border-color:var(--line-soft)}
+  .media-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .media-head b{display:block;font-size:.84rem}.media-head span{display:block;color:var(--muted);font-size:.72rem}
+  .media-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+  .media-item{position:relative;min-width:0;padding:8px;border:1px solid var(--line-soft);border-radius:11px;background:var(--surface)}
+  .media-preview{display:grid;place-items:center;width:100%;aspect-ratio:16/10;border-radius:8px;background:var(--bg);overflow:hidden}
+  .media-preview img{width:100%;height:100%;object-fit:cover}
+  .media-name{display:block;margin-top:6px;overflow:hidden;color:var(--muted);font-size:.67rem;text-overflow:ellipsis;white-space:nowrap}
+  .media-remove{position:absolute;right:3px;top:3px;display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--line);border-radius:9px;background:rgba(10,11,18,.9);color:var(--text);font-weight:900}
+  .media-status{min-height:20px;margin-top:6px;color:var(--muted);font-size:.72rem}.media-status.err{color:var(--red)}
+  .training-consent{margin-top:12px;padding:10px;border:1px solid rgba(185,134,255,.28);border-radius:11px;background:rgba(185,134,255,.045)}
+  .auth-password-panel{margin-top:12px;padding:11px 12px;border:1px solid var(--line-soft);border-radius:12px;background:var(--bg-soft)}
+  .auth-password-panel summary{min-height:34px;color:var(--blue);font-size:.8rem;font-weight:850;cursor:pointer}
   .similar-wrap{margin:12px 0;padding:13px;border:1px solid rgba(85,229,154,.32);border-radius:13px;background:rgba(85,229,154,.045)}
   .similar-head{font-size:.78rem;font-weight:900;color:var(--green)}
   .similar-list{display:flex;flex-direction:column;gap:7px;margin-top:9px}
@@ -389,7 +429,27 @@
   .text-btn:hover{text-decoration:underline}
   .receipt{margin-top:12px;padding:12px;border:1px solid rgba(85,229,154,.35);border-radius:12px;
     background:rgba(85,229,154,.06);color:var(--green);font-size:.8rem}
+  .receipt b{display:block;color:var(--text);font-size:.88rem}.receipt span{display:block;margin-top:3px}
+  .receipt-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .submit-bar{position:sticky;bottom:-24px;z-index:4;margin:18px 0 0;padding:14px 0 calc(14px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);background:linear-gradient(to bottom,rgba(21,25,37,.94),#151925 32%);backdrop-filter:blur(14px)}
+  .submit-bar .primary-btn{width:100%;min-height:50px;font-size:.98rem;box-shadow:0 11px 32px rgba(255,185,31,.16)}
   .activity-user{margin:8px 0 15px;color:var(--muted);font-size:.8rem;word-break:break-word}
+  .fan-profile-card{margin:0 0 14px;padding:14px;border:1px solid rgba(255,114,198,.28);border-radius:14px;background:linear-gradient(135deg,rgba(255,114,198,.06),rgba(99,179,255,.05))}
+  .fan-profile-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .fan-profile-head b{display:block}.fan-profile-head span{display:block;color:var(--muted);font-size:.72rem}
+  .impact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:11px}
+  .impact-stat{padding:9px 5px;border:1px solid var(--line-soft);border-radius:10px;background:var(--bg-soft);text-align:center}
+  .impact-stat strong{display:block;color:var(--yellow);font-size:1.05rem}.impact-stat span{color:var(--muted);font-size:.58rem;text-transform:uppercase;letter-spacing:.05em}
+  .fan-profile-form{margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)}
+  .skill-options{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.skill-options .choice{padding:7px 9px}
+  .fan-share{margin-top:10px;color:var(--blue);font-size:.75rem;word-break:break-all}
+  .fan-public-view{max-width:760px;margin:20px auto 0;padding:22px;border:1px solid rgba(255,114,198,.32);border-radius:22px;background:linear-gradient(145deg,rgba(25,20,38,.92),rgba(16,21,34,.9));box-shadow:var(--shadow)}
+  .fan-public-view h1{margin:4px 0 0;font-size:clamp(1.6rem,5vw,2.5rem)}
+  .fan-kicker{color:var(--pink);font-size:.7rem;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
+  .fan-headline{margin:7px 0 0;color:var(--muted)}
+  .fan-top-list{display:grid;gap:8px;margin-top:14px}.fan-top-item{padding:12px;border:1px solid var(--line-soft);border-radius:12px;background:var(--bg-soft);color:var(--text);text-decoration:none}
+  .fan-top-item b{display:block}.fan-top-item span{color:var(--muted);font-size:.72rem}
   .activity-list{display:flex;flex-direction:column;gap:8px}
   .activity-item{padding:12px;border:1px solid var(--line-soft);border-radius:12px;background:var(--bg-soft)}
   .activity-item b{display:block;font-size:.85rem}
@@ -397,8 +457,17 @@
   .status-pill{padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--blue);font-weight:850}
   .status-pill.pending,.status-pill.received{color:var(--yellow)}
   .status-pill.verified,.status-pill.published{color:var(--green)}
-  .team-interest-btn{color:var(--muted)}
-  .team-interest-btn[aria-pressed="true"]{border-color:var(--gold);background:rgba(255,215,0,.1);color:var(--gold)}
+  .vote-heart{display:block;color:var(--pink);font-size:1rem;line-height:1;transform-origin:center}
+  .vote-btn.voted .vote-heart{animation:heartPop .35s var(--ease) both}
+  @keyframes heartPop{0%{transform:scale(.55)}65%{transform:scale(1.28)}100%{transform:scale(1)}}
+  .team-star-control{display:flex;align-items:center;gap:6px;min-height:48px;padding:5px 8px;border:1px solid rgba(255,215,0,.32);
+    border-radius:12px;background:rgba(255,215,0,.07);color:var(--gold)}
+  .team-star-control select{min-height:36px;border:0;background:transparent;color:var(--gold);font-weight:950;outline:0}
+  .team-star-control option{background:var(--surface);color:var(--text)}
+  .team-star-label{font-size:.7rem;font-weight:900;white-space:nowrap}
+  .team-rating-badge{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;padding:5px 10px;
+    border:1px solid rgba(255,215,0,.42);border-radius:10px;background:rgba(255,215,0,.1);color:var(--gold);font-size:.7rem;font-weight:900}
+  .team-rating-badge .stars{letter-spacing:.04em}.team-rating-badge .team-support{color:var(--text)}
   .signal-strip{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin:11px 0 0;color:var(--muted);font-size:.7rem}
   .signal-strip span{padding:5px 9px;border:1px solid var(--line-soft);border-radius:999px;background:rgba(21,25,38,.72)}
   .signal-strip b{color:var(--text)}
@@ -434,11 +503,11 @@
   @media (max-width:560px){
     .wrap{padding:18px 16px 132px}
     .top-actions{left:10px;right:10px;justify-content:flex-end}
-    .top-btn{padding-inline:12px}
-    header{padding-top:45px}
-    .brand-lockup{padding-right:34px}
+    .top-btn{padding-inline:10px}
+    header{padding-top:52px}
+    .brand-lockup{padding:8px 4px 0}
     .logo{font-size:clamp(2.45rem,14vw,3.25rem)}
-    .eyebrow{right:-2px;top:1px;padding:4px 8px}
+    .eyebrow{margin-right:5%;padding:4px 8px}
     .search-shell{grid-template-columns:21px minmax(0,1fr) auto;gap:7px;padding:6px 7px 6px 13px}
     .search-btn{padding-inline:12px}
     .directory-block{margin-inline:0;padding:15px;border-radius:19px}
@@ -474,7 +543,12 @@
     .mobile-suggest{position:fixed;display:none;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:28;
       min-height:54px;border:0;border-radius:15px;background:linear-gradient(100deg,var(--yellow),#ffb91f);
       color:var(--yellow-ink);font-weight:950;box-shadow:0 14px 42px rgba(0,0,0,.5)}
-    body.profile-live .mobile-suggest{display:block}
+    body.profile-live.mobile-cta-ready .mobile-suggest{display:block}
+    body.suggest-dialog-open .mobile-suggest{display:none!important}
+    .media-list{grid-template-columns:1fr 1fr}
+    .impact-grid{grid-template-columns:1fr 1fr}
+    .choice-row{grid-template-columns:1fr}
+    .submit-bar{bottom:-18px;margin:16px 0 0;padding:12px 0 calc(12px + env(safe-area-inset-bottom))}
   }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
@@ -495,15 +569,15 @@
     </svg>
     <span id="account-btn-text">Sign in</span>
   </button>
-  <button class="top-btn" id="lang-btn" type="button">ES</button>
+  <button class="top-btn" id="lang-btn" type="button"><span class="lang-flag flag-es" id="lang-flag" aria-hidden="true"></span><span id="lang-code">ES</span></button>
 </div>
 
 <main class="wrap" id="main">
   <header>
     <div class="brand-lockup">
       <a class="logo" id="logo" href="./" aria-label="FanRank">
-        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><path class="brand-mark-star" d="M50 7C55 33 67 45 93 50C67 55 55 67 50 93C45 67 33 55 7 50C33 45 45 33 50 7Z"></path><circle class="brand-mark-core" cx="50" cy="50" r="9"></circle></svg></span>
         <span>FAN</span><span class="logo-rank">RANK</span>
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><path class="brand-mark-heart" d="M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z"></path><path class="brand-mark-team" d="M50 6 61.8 36.2 94.5 38.1 69.1 58.8 77.4 90.5 50 72.8 22.6 90.5 30.9 58.8 5.5 38.1 38.2 36.2Z"></path></svg></span>
       </a>
       <span class="eyebrow" id="eyebrow"></span>
     </div>
@@ -639,6 +713,7 @@
         <button class="tab active" data-sort="ai" id="tab-ai" type="button" role="tab" aria-selected="true"></button>
         <button class="tab" data-sort="source" id="tab-source" type="button" role="tab" aria-selected="false"></button>
         <button class="tab" data-sort="fans" id="tab-fans" type="button" role="tab" aria-selected="false"></button>
+        <button class="tab hidden" data-sort="team" id="tab-team" type="button" role="tab" aria-selected="false"></button>
       </div>
     </div>
 
@@ -681,6 +756,26 @@
     </section>
   </section>
 
+  <section class="fan-public-view hidden" id="fan-public-view" aria-live="polite">
+    <div class="fan-kicker" id="fan-public-kicker"></div>
+    <h1 id="fan-public-name"></h1>
+    <div class="fan-share" id="fan-public-handle"></div>
+    <p class="fan-headline" id="fan-public-headline"></p>
+    <div class="profile-tags" id="fan-public-skills"></div>
+    <div class="impact-grid">
+      <div class="impact-stat"><strong id="fan-public-score">0</strong><span id="fan-public-score-label"></span></div>
+      <div class="impact-stat"><strong id="fan-public-ideas">0</strong><span id="fan-public-ideas-label"></span></div>
+      <div class="impact-stat"><strong id="fan-public-hearts">0</strong><span id="fan-public-hearts-label"></span></div>
+      <div class="impact-stat"><strong id="fan-public-votes">0</strong><span id="fan-public-votes-label"></span></div>
+    </div>
+    <div class="team-tools hidden" id="fan-public-available">
+      <div><b id="fan-public-available-title"></b><span id="fan-public-available-copy"></span></div>
+    </div>
+    <h2 id="fan-public-top-title"></h2>
+    <div class="fan-top-list" id="fan-public-top-list"></div>
+    <div class="form-actions"><a class="secondary-btn" id="fan-public-back" href="./"></a></div>
+  </section>
+
   <footer id="footer"></footer>
 </main>
 
@@ -695,26 +790,36 @@
       <div class="form-grid">
         <div class="field full">
           <label id="submit-idea-label" for="submit-idea"></label>
-          <input id="submit-idea" maxlength="140" autocomplete="off" required>
+          <textarea class="suggestion-text" id="submit-idea" maxlength="1000" autocomplete="off" required></textarea>
+          <span class="helper" id="submit-idea-help"></span>
         </div>
       </div>
+      <fieldset class="category-picker">
+        <legend id="category-legend"></legend>
+        <div class="category-options">
+          <label class="category-option"><input name="submit-category" type="radio" value="auto" checked><span id="category-auto"></span></label>
+          <label class="category-option"><input name="submit-category" type="radio" value="bug"><span id="category-bug"></span></label>
+          <label class="category-option"><input name="submit-category" type="radio" value="idea"><span id="category-idea"></span></label>
+          <label class="category-option"><input name="submit-category" type="radio" value="accessibility"><span id="category-accessibility"></span></label>
+          <label class="category-option"><input name="submit-category" type="radio" value="other"><span id="category-other"></span></label>
+        </div>
+        <span class="helper" id="category-help"></span>
+      </fieldset>
       <section class="similar-wrap hidden" id="similar-wrap" aria-live="polite">
         <div class="similar-head" id="similar-head"></div>
         <div class="similar-list" id="similar-ideas"></div>
         <span class="helper" id="similar-help"></span>
       </section>
-      <div class="form-grid">
-        <div class="field full">
-          <label id="submit-details-label" for="submit-details"></label>
-          <textarea id="submit-details" maxlength="1000"></textarea>
+      <input id="submit-details" type="hidden">
+      <section class="media-box" id="media-box" aria-labelledby="media-title" aria-describedby="media-help">
+        <div class="media-head">
+          <div><b id="media-title"></b><span id="media-help"></span></div>
+          <button class="secondary-btn" id="media-pick" type="button"></button>
         </div>
-      </div>
-      <div class="form-actions">
-        <button class="primary-btn" id="submit-send" type="submit"></button>
-        <button class="secondary-btn" id="submit-cancel" type="button"></button>
-      </div>
-      <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
-      <div class="receipt hidden" id="submit-receipt"></div>
+        <input class="sr-only" id="submit-files" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+        <div class="media-list hidden" id="media-list"></div>
+        <div class="media-status" id="media-status" role="status" aria-live="polite"></div>
+      </section>
       <section class="privacy-box" aria-labelledby="privacy-title">
         <div class="privacy-title"><span id="privacy-title"></span><span class="private-badge" id="privacy-badge"></span></div>
         <div class="choice-row">
@@ -722,12 +827,17 @@
             <input id="attribution-anonymous" name="attribution" type="radio" value="anonymous" checked>
             <span><b id="anonymous-title"></b><span id="anonymous-copy"></span></span>
           </label>
-          <label class="choice hidden" id="account-choice">
+          <label class="choice" id="account-choice">
             <input id="attribution-account" name="attribution" type="radio" value="account">
             <span><b id="account-title"></b><span id="account-copy"></span></span>
           </label>
+          <label class="choice" id="contact-choice">
+            <input id="attribution-contact" name="attribution" type="radio" value="contact">
+            <span><b id="contact-mode-title"></b><span id="contact-mode-copy"></span></span>
+          </label>
         </div>
-        <div class="form-grid" style="margin-top:12px">
+        <div class="identity-fields hidden" id="contact-identity-fields">
+        <div class="form-grid">
           <div class="field">
             <label id="submit-name-label" for="submit-name"></label>
             <input id="submit-name" maxlength="80" autocomplete="name">
@@ -742,12 +852,20 @@
           <input id="submit-allow-contact" type="checkbox">
           <span id="submit-consent-copy"></span>
         </label>
+        </div>
+        <label class="check-row training-consent hidden" id="training-consent-row">
+          <input id="submit-training-consent" type="checkbox">
+          <span id="training-consent-copy"></span>
+        </label>
       </section>
       <div class="auth-nudge" id="auth-nudge">
         <span id="auth-nudge-copy"></span>
         <button class="secondary-btn" id="suggest-sign-in" type="button"></button>
       </div>
+      <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
+      <div class="receipt hidden" id="submit-receipt"></div>
       <input class="hp" id="submit-website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="submit-bar"><button class="primary-btn" id="submit-send" type="submit"></button></div>
     </form>
   </div>
 </dialog>
@@ -763,16 +881,22 @@
         <input id="auth-email" type="email" maxlength="180" autocomplete="email" inputmode="email" required>
         <span class="helper" id="auth-email-help"></span>
       </div>
-      <div class="field" style="margin-top:12px">
-        <label id="auth-password-label" for="auth-password"></label>
-        <input id="auth-password" type="password" minlength="8" maxlength="200" autocomplete="current-password" required>
-        <span class="helper" id="auth-password-help"></span>
-      </div>
       <div class="form-actions">
-        <button class="primary-btn" id="auth-send" type="submit"></button>
+        <button class="primary-btn" id="auth-magic" type="button"></button>
       </div>
-      <button class="text-btn" id="auth-recover" type="button"></button>
-      <span class="helper" id="auth-recover-help"></span>
+      <details class="auth-password-panel" id="auth-password-panel">
+        <summary id="auth-password-toggle"></summary>
+        <div class="field" style="margin-top:10px">
+          <label id="auth-password-label" for="auth-password"></label>
+          <input id="auth-password" type="password" minlength="8" maxlength="200" autocomplete="current-password">
+          <span class="helper" id="auth-password-help"></span>
+        </div>
+        <div class="form-actions">
+          <button class="secondary-btn" id="auth-send" type="submit"></button>
+        </div>
+        <button class="text-btn" id="auth-recover" type="button"></button>
+        <span class="helper" id="auth-recover-help"></span>
+      </details>
       <div class="form-status" id="auth-status" role="status" aria-live="polite"></div>
     </form>
   </div>
@@ -783,6 +907,54 @@
     <button class="dialog-close" id="activity-close" type="button" aria-label="Close">×</button>
     <h2 id="activity-title"></h2>
     <div class="activity-user" id="activity-user"></div>
+    <section class="fan-profile-card" id="fan-profile-card">
+      <div class="fan-profile-head">
+        <div><b id="fan-profile-title"></b><span id="fan-profile-copy"></span></div>
+        <span class="private-badge" id="fan-profile-badge"></span>
+      </div>
+      <div class="impact-grid" aria-live="polite">
+        <div class="impact-stat"><strong id="fan-impact-score">0</strong><span id="fan-impact-score-label"></span></div>
+        <div class="impact-stat"><strong id="fan-impact-ideas">0</strong><span id="fan-impact-ideas-label"></span></div>
+        <div class="impact-stat"><strong id="fan-impact-hearts">0</strong><span id="fan-impact-hearts-label"></span></div>
+        <div class="impact-stat"><strong id="fan-impact-votes">0</strong><span id="fan-impact-votes-label"></span></div>
+      </div>
+      <form class="fan-profile-form" id="fan-profile-form" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label id="fan-handle-label" for="fan-handle"></label>
+            <input id="fan-handle" maxlength="30" pattern="[a-z0-9][a-z0-9-]{2,29}" autocomplete="username" required>
+            <span class="helper" id="fan-handle-help"></span>
+          </div>
+          <div class="field">
+            <label id="fan-name-label" for="fan-name"></label>
+            <input id="fan-name" maxlength="80" autocomplete="name" required>
+          </div>
+          <div class="field full">
+            <label id="fan-headline-label" for="fan-headline"></label>
+            <input id="fan-headline" maxlength="160">
+          </div>
+        </div>
+        <fieldset class="category-picker">
+          <legend id="fan-skills-label"></legend>
+          <div class="skill-options">
+            <label class="choice"><input name="fan-skill" type="checkbox" value="tester"><span id="fan-skill-tester"></span></label>
+            <label class="choice"><input name="fan-skill" type="checkbox" value="ux"><span id="fan-skill-ux"></span></label>
+            <label class="choice"><input name="fan-skill" type="checkbox" value="product"><span id="fan-skill-product"></span></label>
+            <label class="choice"><input name="fan-skill" type="checkbox" value="accessibility"><span id="fan-skill-accessibility"></span></label>
+            <label class="choice"><input name="fan-skill" type="checkbox" value="gaming"><span id="fan-skill-gaming"></span></label>
+            <label class="choice"><input name="fan-skill" type="checkbox" value="engineering"><span id="fan-skill-engineering"></span></label>
+          </div>
+        </fieldset>
+        <label class="check-row"><input id="fan-public" type="checkbox"><span id="fan-public-copy"></span></label>
+        <label class="check-row"><input id="fan-opportunities" type="checkbox"><span id="fan-opportunities-copy"></span></label>
+        <div class="form-actions">
+          <button class="primary-btn" id="fan-profile-save" type="submit"></button>
+          <button class="secondary-btn hidden" id="fan-profile-share" type="button"></button>
+        </div>
+        <div class="fan-share hidden" id="fan-share-url"></div>
+        <div class="form-status" id="fan-profile-status" role="status" aria-live="polite"></div>
+      </form>
+    </section>
     <div class="team-tools hidden" id="team-tools">
       <div><b id="team-tools-title"></b><span id="team-tools-copy"></span></div>
       <button class="secondary-btn" id="team-open" type="button"></button>
@@ -867,6 +1039,12 @@
     <button class="dialog-close" id="team-close" type="button" aria-label="Close">×</button>
     <h2 id="team-title"></h2>
     <p class="dialog-intro" id="team-intro"></p>
+    <section class="team-tools" id="team-star-cap-tool">
+      <div><b id="team-star-cap-title"></b><span id="team-star-cap-copy"></span></div>
+      <label class="field" for="team-star-cap"><span class="sr-only" id="team-star-cap-label"></span>
+        <select class="inline-select" id="team-star-cap"><option value="1">1 â˜…</option><option value="3">3 â˜…</option></select>
+      </label>
+    </section>
     <form id="team-invite-form" novalidate>
       <div class="form-grid">
         <div class="field">
@@ -933,6 +1111,7 @@ var API_HEADERS = {
 var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var params = new URLSearchParams(location.search);
 var SECTION = params.get("s");
+var FAN_HANDLE = String(params.get("fan") || "").trim().toLowerCase();
 var QUICK_SUGGEST = params.get("suggest") === "1";
 var QUICK_PRO = params.get("pro") === "1";
 var PRO_PLAN_PARAM = ["signal","decision","portfolio"].indexOf(params.get("plan")) >= 0 ? params.get("plan") : "decision";
@@ -955,13 +1134,16 @@ var authClient = null;
 var session = null;
 var membership = null;
 var authSubscription = null;
-var myTeamInterestIds = new Set();
+var myTeamStars = new Map();
 var invitePreview = null;
 var audioContext = null;
 var audioArmed = false;
 var chimePlayed = false;
 var pendingProPlan = PRO_PLAN_PARAM;
 var recoveryHandled = false;
+var pendingMedia = [];
+var currentFanProfile = null;
+var mobileCtaObserver = null;
 try{
   if(INVITE_TOKEN){sessionStorage.setItem("fr_pending_invite",INVITE_TOKEN);}
   else{INVITE_TOKEN = sessionStorage.getItem("fr_pending_invite") || "";}
@@ -970,6 +1152,7 @@ try{
 var T = {
   en:{
     eyebrow:"FOR EVERYONE!",
+    eyebrow_team:"VERIFIED TEAM",
     hero_home:"Pick a <b>creator, game, platform or AI</b>.<br>Leave an anonymous idea in seconds; fans and AI help the most useful ones rise.",
     hero_section:function(name){return "Fan ideas for <b>" + name + "</b>, ranked.<br><b>Vote</b> on what should improve next.";},
     search_label:"Find anyone or anything to improve",
@@ -1007,18 +1190,19 @@ var T = {
     trending_title:"Ideas rising now",
     trending_subtitle:"Useful ideas with the strongest signals across FanRank.",
     top_label:"TOP IDEA",
-    source_votes:"source votes",
+    source_votes:"support at source",
+    source_votes_help:"Support received on the original post; these are not FanRank hearts.",
     fan_votes:"fan votes",
     how:[
       ["light","Fans submit","Ideas enter one private review queue instead of disappearing across comments."],
       ["spark","AI helps rank","Approved ideas are scored for impact, feasibility and clarity — with a reason."],
-      ["shield","Teams add context","A verified team can mark interest. It is visible and useful, but never overrides fan demand."]
+      ["shield","Teams add official context","Verified owners rate 1–5 ★ and partners use the owner's limit. Stars stay separate and never override fan demand."]
     ],
     pro_kicker:"FanRank for teams",
     pro_title:"From noisy feedback to the next decision",
     pro_intro:"FanRank groups duplicates, ranks opportunities and turns the strongest evidence into implementation briefs your team can accept, reject or investigate.",
     pro_pilot_note:"Founding pilot · €199 for 14 days · interest only, no charge yet",
-    pro_guard:"<b>Trust rule:</b> paying never changes organic rank, AI score, votes or team hearts.",
+    pro_guard:"<b>Trust rule:</b> paying never changes organic rank, AI score, fan votes or official stars.",
     pro_plans:[
       {id:"signal",name:"Signal",price:"€149",suffix:"/ month",limit:"1 profile · 1,000 valid contributions / month",features:["Weekly differential digest","2 traceable implementation briefs / month","Duplicates, evidence and key risks"]},
       {id:"decision",name:"Decision",price:"€449",suffix:"/ month",limit:"3 profiles · 5,000 valid contributions / month",badge:"Recommended",features:["Weekly digest for each profile","8 implementation briefs / month","Investigate, implement, not now or reject"]},
@@ -1037,7 +1221,7 @@ var T = {
     pro_volume_label:"Feedback signals each month",
     pro_cadence_label:"Preferred decision digest",
     pro_goal_label:"Which recurring decision should FanRank make faster? *",
-    pro_guard_accept:"I understand payment never buys ranking, AI score, votes, hearts or guaranteed implementation.",
+    pro_guard_accept:"I understand payment never buys ranking, AI score, fan votes, official stars or guaranteed implementation.",
     pro_plan_signal:"Signal · €149 / month",
     pro_plan_decision:"Decision · €449 / month",
     pro_plan_portfolio:"Portfolio · €999 / month",
@@ -1062,20 +1246,22 @@ var T = {
     too_fast:"Please wait a moment and try again.",
     generic_error:"Something failed. Your text is still here — try again.",
     claim_bar_title:"UNVERIFIED FAN PROFILE",
-    claim_bar_copy:"Fan-made, not official. Are you on the team? Claim it to add verified team interest.",
+    claim_bar_copy:"Fan-made, not official. Are you on the team? Claim it to add verified official stars.",
     claim_open:"Claim profile",
     filter_label:"Search ideas in this profile",
     filter_placeholder:"Search a feature, problem or keyword…",
     tab_ai:"AI rank",
     tab_source:"Community",
     tab_fans:"Fan votes",
+    tab_team:"Team ★",
     no_ideas:"No ideas match that search.",
-    team_pick:function(n){return "VERIFIED TEAM INTEREST · " + n;},
-    team_interest_add:"Mark team interest",
-    team_interest_remove:"Remove team interest",
+    team_rating_owner:function(n){return "OWNER " + "★".repeat(n) + "☆".repeat(5-n);},
+    team_rating_support:function(n){return n + (n === 1 ? " team member supports it" : " team members support it");},
+    team_star_label:"Your team rating",
+    team_star_saved:"Team rating saved.",
     signal_ai:"<b>AI</b> usefulness base",
     signal_fans:"<b>Fans</b> demand",
-    signal_team:"<b>Verified team</b> capped interest",
+    signal_team:"<b>Team ★</b> official rating, separate from rank",
     ai_score:"AI",
     source:"source",
     vote:"VOTE",
@@ -1092,10 +1278,26 @@ var T = {
     suggest_open:"Suggest an improvement",
     submit_title:"Suggest an improvement",
     submit_intro:"Anonymous by default. Your idea enters a private review queue and is never published automatically.",
-    idea_label:"Describe your suggestion in one sentence *",
-    details_label:"Why would this help? <span class='optional'>(optional)</span>",
+    idea_label:"What would you change or add? *",
+    idea_help:"Explain the problem and your proposed improvement in one place. A clear first sentence becomes the title.",
+    category_legend:"What kind of feedback is this?",
+    category_auto:"Auto",
+    category_bug:"Bug",
+    category_idea:"Idea",
+    category_accessibility:"Accessibility",
+    category_other:"Other",
+    category_help:"Choose it yourself or leave Auto. Automatic rules never overwrite a category you choose.",
+    media_title:"Add screenshots",
+    media_help:"Paste with Ctrl+V, drop or choose up to 3 PNG, JPEG or WebP images (5 MB each). They stay private during review.",
+    media_pick:"Choose images",
+    media_locked:"Sign in to attach private screenshots.",
+    media_ready:function(n){return n + (n === 1 ? " image ready" : " images ready");},
+    media_type_error:"Only PNG, JPEG and WebP images are accepted.",
+    media_size_error:"Each image must be 5 MB or smaller.",
+    media_limit_error:"You can attach up to 3 images.",
+    media_uploading:"Encrypting and sending your private evidence...",
+    media_remove:"Remove image",
     submit_send:"Send suggestion",
-    submit_cancel:"Keep for later",
     submit_ok:"Suggestion received. Your contact stays private.",
     similar_head:"We found similar published ideas",
     similar_help:"Vote for one if it already says what you mean, or keep writing and send yours.",
@@ -1104,17 +1306,28 @@ var T = {
     privacy_badge:"PRIVATE BY DEFAULT",
     anonymous_title:"Anonymous publicly",
     anonymous_copy:"No public name. A private receipt confirms delivery on this device.",
-    account_title:"Save to my account",
-    account_copy:"Still anonymous publicly unless you choose account attribution.",
+    account_title:"Show with my public Fan profile",
+    account_copy:"Public only when this option is selected and your Fan profile is public. Past anonymous ideas stay anonymous.",
+    account_public_title:"Show with my public Fan profile",
+    account_public_copy:"Public only when this option is selected and your Fan profile is public. Past anonymous ideas stay anonymous.",
+    contact_mode_title:"Name + private contact",
+    contact_mode_copy:"Add who you are so FanRank can contact you if the idea needs clarification or creates an opportunity.",
     consent_copy:"FanRank may contact me privately about this suggestion. My contact is never public.",
+    training_consent:"Optional: allow FanRank to use this text to improve its ranking models. Off by default and revocable later.",
+    training_activity:"Allow model-improvement use",
+    training_updated:"AI training permission updated.",
     contact_consent_error:"Tick the private-contact permission or remove your contact.",
     auth_nudge:"Want this suggestion on every device? Sign in first. Your draft stays here.",
-    sign_in:"Sign in",
+    sign_in:"Enter",
     account:"My activity",
     auth_title:"Sign in",
-    auth_intro:"Use your password. If this account started with an email link, create one with the recovery option below.",
+    auth_intro:"Enter with a secure one-use email link. No password is required.",
+    auth_magic_intro:"Enter with a secure one-use email link. No password is required.",
     auth_email_label:"Your email *",
     auth_email_help:"Used only for sign-in and account recovery. It is not shared publicly.",
+    auth_magic:"Email me a secure sign-in link",
+    auth_magic_sent:"Secure link sent. Open the newest FanRank email on this device.",
+    auth_password_toggle:"Use a password instead",
     auth_password_label:"Your password *",
     auth_password_help:"FanRank never shows or stores your password in this page; Supabase verifies it securely.",
     auth_send:"Sign in with password",
@@ -1132,6 +1345,37 @@ var T = {
     auth_sent:"Link sent. Open it on this device; your draft is saved.",
     auth_unavailable:"Sign-in is temporarily unavailable. Anonymous suggestions still work.",
     activity_title:"My activity",
+    fan_profile_title:"Your FanRank ♥ profile",
+    fan_profile_copy:"Build a visible record of useful product feedback.",
+    fan_profile_badge:"YOU CONTROL IT",
+    fan_score_label:"impact / 100",
+    fan_ideas_label:"published ideas",
+    fan_hearts_label:"ideas starred by teams",
+    fan_votes_label:"fan votes",
+    fan_handle_label:"Public handle *",
+    fan_handle_help:"3-30 lowercase letters, numbers or hyphens. Share fanrank/?fan=your-handle.",
+    fan_name_label:"Public name *",
+    fan_headline_label:"Short bio <span class='optional'>(optional)</span>",
+    fan_skills_label:"What can people contact you for?",
+    fan_skill_tester:"Testing",
+    fan_skill_ux:"UX",
+    fan_skill_product:"Product",
+    fan_skill_accessibility:"Accessibility",
+    fan_skill_gaming:"Gaming",
+    fan_skill_engineering:"Engineering",
+    fan_public_copy:"Make my Fan profile public. This does not publish past anonymous suggestions.",
+    fan_opportunities_copy:"Show that I am open to testing or collaboration opportunities.",
+    fan_profile_save:"Save Fan profile",
+    fan_profile_saved:"Fan profile saved.",
+    fan_profile_share:"Share my profile",
+    fan_profile_error:"Check the handle and required fields.",
+    fan_public_kicker:"FANRANK ♥ COMMUNITY PROFILE",
+    fan_public_available_title:"Available to help",
+    fan_public_available_copy:"Open to relevant testing, UX or product opportunities. FanRank never reveals private contact details.",
+    fan_public_top_title:"Top contributions",
+    fan_public_empty:"No public-attributed ranked ideas yet.",
+    fan_public_missing:"This Fan profile is private or does not exist.",
+    fan_public_back:"Explore FanRank",
     activity_empty:"No saved suggestions or verification requests yet.",
     activity_loading:"Loading your private activity…",
     claims_label:"Profile claims",
@@ -1140,14 +1384,18 @@ var T = {
     signed_out:"Signed out.",
     receipt_copy:"Saved privately on this device. Status: received.",
     team_tools_title:"Verified team access",
-    team_tools_copy:"Invite partners and manage who can mark team interest.",
+    team_tools_copy:"Invite partners and control how many stars they can give.",
     team_open:"Manage team",
     team_title:"My profile team",
-    team_intro:"Invite only people you trust. Every member gets their own accountable heart; no one shares your login.",
+    team_intro:"Invite only people you trust. The owner can give 1–5 stars; every teammate uses their own accountable account.",
+    team_star_cap_title:"Partner star limit",
+    team_star_cap_copy:"Choose whether admins and contributors can give up to 1 or 3 stars. Only the owner can change it.",
+    team_star_cap_label:"Maximum stars per partner",
+    team_star_cap_saved:"Partner star limit saved.",
     team_email_label:"Teammate email *",
     team_role_label:"Permission",
-    team_role_contributor:"Contributor · can mark hearts",
-    team_role_admin:"Admin · can invite and mark hearts",
+    team_role_contributor:"Contributor · can rate up to the chosen limit",
+    team_role_admin:"Admin · can invite and rate up to the limit",
     team_invite_send:"Create secure invitation",
     team_invite_ready:"Secure invitation ready",
     team_invite_copy:"The link expires in 48 hours, works once and only for this email.",
@@ -1158,20 +1406,20 @@ var T = {
     team_members_copy:"Member identities stay private from the public.",
     team_members_empty:"No team members found.",
     team_revoke:"Revoke access",
-    team_revoke_confirm:"Revoke this person's team access? Their past hearts will be removed from the active signal.",
+    team_revoke_confirm:"Revoke this person's team access? Their active stars will be removed from the official signal.",
     team_revoked:"Access revoked.",
     invite_title:"Join a verified profile team",
     invite_intro:"Review the profile and permission before accepting. The link is bound to your signed-in email.",
     invite_accept:"Accept invitation",
     invite_decline:"Not now",
-    invite_accepted:"Invitation accepted. You can now mark team interest.",
+    invite_accepted:"Invitation accepted. You can now give official team stars.",
     invite_invalid:"This invitation is invalid, expired or belongs to another email.",
     role_owner:"Owner",
     role_admin:"Admin",
     role_contributor:"Contributor",
     close:"Close",
     claim_title:"Claim this profile",
-    claim_intro:"We verify claims before anyone can influence a team's ranking. A claim does not create public access automatically.",
+    claim_intro:"We verify claims before anyone can add official team stars. Those stars never change the organic ranking, and a claim never creates access automatically.",
     claim_name_label:"Your name *",
     claim_role_label:"Your role or relationship *",
     claim_contact_label:"Work email or public contact *",
@@ -1180,9 +1428,70 @@ var T = {
     claim_send:"Send verification request",
     claim_cancel:"Cancel",
     claim_ok:"Claim received. Nothing changes publicly until it is verified.",
-    footer:"<b>How ranking works:</b> an AI-assisted base score weighs impact, feasibility and clarity; fan demand adds a capped signal; verified team interest adds limited context, never an automatic #1.<br>Suggestions are reviewed before publication. Names, contacts, receipts and individual voters are private. FanRank · built with fans, for better decisions."
+    receipt_profile_title:"Turn this idea into your Fan portfolio",
+    receipt_profile_copy:"Create a FanRank ♥ profile to keep your best suggestions, impact and team recognition in one shareable place.",
+    receipt_profile_button:"Create my Fan profile",
+    footer:"<b>How ranking works:</b> AI usefulness and fan hearts order the main list. Verified team stars are shown as a separate official signal and never alter that organic rank.<br>Suggestions are reviewed before publication. Names, contacts, receipts and individual voters are private. FanRank · built with fans, for better decisions."
   },
   es:{
+    eyebrow_team:"EQUIPO VERIFICADO",
+    category_legend:"¿Qué tipo de feedback es?",
+    category_auto:"Automático",
+    category_bug:"Bug",
+    category_idea:"Idea",
+    category_accessibility:"Accesibilidad",
+    category_other:"Otro",
+    category_help:"Elige tú o deja Automático. FanRank nunca cambia en silencio una categoría elegida por ti.",
+    media_title:"Añade capturas",
+    media_help:"Pega con Ctrl+V, arrastra o elige hasta 3 imágenes PNG, JPEG o WebP (5 MB cada una). Permanecen privadas durante la revisión.",
+    media_pick:"Elegir imágenes",
+    media_locked:"Inicia sesión para adjuntar capturas privadas.",
+    media_ready:function(n){return n + (n === 1 ? " imagen preparada" : " imágenes preparadas");},
+    media_type_error:"Solo se aceptan imágenes PNG, JPEG y WebP.",
+    media_size_error:"Cada imagen debe ocupar 5 MB o menos.",
+    media_limit_error:"Puedes adjuntar hasta 3 imágenes.",
+    media_uploading:"Protegiendo y enviando tus pruebas privadas...",
+    media_remove:"Quitar imagen",
+    account_public_title:"Mostrar con mi perfil Fan público",
+    account_public_copy:"Solo será pública si eliges esta opción y tu perfil Fan es público. Las ideas anónimas anteriores siguen anónimas.",
+    training_consent:"Opcional: permito que FanRank use este texto para mejorar sus modelos de ranking. Está desactivado por defecto y podré revocarlo.",
+    training_activity:"Permitir uso para mejorar modelos",
+    training_updated:"Permiso de entrenamiento actualizado.",
+    auth_magic_intro:"Entra con un enlace seguro de un solo uso enviado a tu correo. No necesitas contraseña.",
+    auth_magic:"Enviarme un enlace seguro",
+    auth_magic_sent:"Enlace seguro enviado. Abre el correo más reciente de FanRank en este dispositivo.",
+    auth_password_toggle:"Usar contraseña en su lugar",
+    fan_profile_title:"Tu perfil FanRank ♥",
+    fan_profile_copy:"Construye un historial visible de feedback útil sobre productos.",
+    fan_profile_badge:"TÚ LO CONTROLAS",
+    fan_score_label:"impacto / 100",
+    fan_ideas_label:"ideas publicadas",
+    fan_hearts_label:"ideas con estrellas de equipos",
+    fan_votes_label:"votos de fans",
+    fan_handle_label:"Usuario público *",
+    fan_handle_help:"3-30 letras minúsculas, números o guiones. Comparte fanrank/?fan=tu-usuario.",
+    fan_name_label:"Nombre público *",
+    fan_headline_label:"Presentación breve <span class='optional'>(opcional)</span>",
+    fan_skills_label:"¿Para qué pueden contactarte?",
+    fan_skill_tester:"Testing",
+    fan_skill_ux:"UX",
+    fan_skill_product:"Producto",
+    fan_skill_accessibility:"Accesibilidad",
+    fan_skill_gaming:"Videojuegos",
+    fan_skill_engineering:"Ingeniería",
+    fan_public_copy:"Hacer público mi perfil Fan. Esto no publica sugerencias anónimas anteriores.",
+    fan_opportunities_copy:"Mostrar que acepto oportunidades para probar productos o colaborar.",
+    fan_profile_save:"Guardar perfil Fan",
+    fan_profile_saved:"Perfil Fan guardado.",
+    fan_profile_share:"Compartir mi perfil",
+    fan_profile_error:"Revisa el usuario y los campos obligatorios.",
+    fan_public_kicker:"PERFIL DE LA COMUNIDAD FANRANK ♥",
+    fan_public_available_title:"Disponible para ayudar",
+    fan_public_available_copy:"Acepta oportunidades relevantes de testing, UX o producto. FanRank nunca revela sus datos de contacto privados.",
+    fan_public_top_title:"Mejores aportaciones",
+    fan_public_empty:"Aún no tiene ideas rankeadas con atribución pública.",
+    fan_public_missing:"Este perfil Fan es privado o no existe.",
+    fan_public_back:"Explorar FanRank",
     eyebrow:"¡PARA TODOS!",
     hero_home:"Elige un <b>creador, videojuego, plataforma o IA</b>.<br>Deja una idea anónima en segundos; los fans y la IA hacen subir las más útiles.",
     hero_section:function(name){return "Ideas de fans para <b>" + name + "</b>, ordenadas.<br><b>Vota</b> qué debería mejorar.";},
@@ -1221,18 +1530,19 @@ var T = {
     trending_title:"Ideas que están subiendo",
     trending_subtitle:"Las ideas útiles con señales más fuertes en FanRank.",
     top_label:"IDEA TOP",
-    source_votes:"votos de origen",
+    source_votes:"apoyo en la fuente",
+    source_votes_help:"Apoyo recibido en la publicación original; no son corazones de FanRank.",
     fan_votes:"votos de fans",
     how:[
       ["light","Los fans proponen","Las ideas entran en una cola privada en vez de perderse entre comentarios."],
       ["spark","La IA ayuda a ordenar","Las aprobadas reciben nota por impacto, viabilidad y claridad — con un motivo."],
-      ["shield","El equipo aporta contexto","Un equipo verificado puede marcar interés. Se ve y ayuda, pero nunca pisa la demanda de los fans."]
+      ["shield","El equipo aporta contexto oficial","El dueño verificado valora de 1 a 5 ★ y sus socios usan el límite elegido. Las estrellas nunca pisan la demanda fan."]
     ],
     pro_kicker:"FanRank para equipos",
     pro_title:"Del ruido del feedback a la siguiente decisión",
     pro_intro:"FanRank agrupa duplicados, ordena oportunidades y convierte la evidencia más fuerte en briefs de implementación que el equipo puede aceptar, descartar o investigar.",
     pro_pilot_note:"Piloto fundador · 199 € durante 14 días · solo interés, todavía no cobra",
-    pro_guard:"<b>Regla de confianza:</b> pagar nunca cambia el ranking orgánico, la nota IA, los votos ni los corazones del equipo.",
+    pro_guard:"<b>Regla de confianza:</b> pagar nunca cambia el ranking orgánico, la nota IA, los corazones de fans ni las estrellas oficiales.",
     pro_plans:[
       {id:"signal",name:"Signal",price:"149 €",suffix:"/ mes",limit:"1 perfil · 1.000 aportaciones válidas / mes",features:["Digest semanal diferencial","2 briefs de implementación trazables / mes","Duplicados, evidencia y riesgos clave"]},
       {id:"decision",name:"Decision",price:"449 €",suffix:"/ mes",limit:"3 perfiles · 5.000 aportaciones válidas / mes",badge:"Recomendado",features:["Digest semanal por perfil","8 briefs de implementación / mes","Investigar, implementar, no ahora o descartar"]},
@@ -1251,7 +1561,7 @@ var T = {
     pro_volume_label:"Señales de feedback al mes",
     pro_cadence_label:"Digest de decisiones preferido",
     pro_goal_label:"¿Qué decisión repetida debería acelerar FanRank? *",
-    pro_guard_accept:"Entiendo que pagar nunca compra ranking, nota IA, votos, corazones ni implementación garantizada.",
+    pro_guard_accept:"Entiendo que pagar nunca compra ranking, nota IA, corazones de fans, estrellas oficiales ni implementación garantizada.",
     pro_plan_signal:"Signal · 149 € / mes",
     pro_plan_decision:"Decision · 449 € / mes",
     pro_plan_portfolio:"Portfolio · 999 € / mes",
@@ -1276,20 +1586,22 @@ var T = {
     too_fast:"Espera un momento y vuelve a intentarlo.",
     generic_error:"Algo ha fallado. Tu texto sigue ahí — inténtalo otra vez.",
     claim_bar_title:"PERFIL DE FANS NO VERIFICADO",
-    claim_bar_copy:"Hecho por fans, no es oficial. Si formas parte del equipo, reclámalo para añadir interés verificado.",
+    claim_bar_copy:"Hecho por fans, no es oficial. Si formas parte del equipo, reclámalo para añadir estrellas oficiales verificadas.",
     claim_open:"Reclamar perfil",
     filter_label:"Buscar ideas dentro de este perfil",
     filter_placeholder:"Busca una función, problema o palabra…",
     tab_ai:"Ranking IA",
     tab_source:"Comunidad",
     tab_fans:"Votos",
+    tab_team:"Equipo ★",
     no_ideas:"Ninguna idea coincide con esa búsqueda.",
-    team_pick:function(n){return "INTERÉS DE EQUIPO VERIFICADO · " + n;},
-    team_interest_add:"Marcar interés del equipo",
-    team_interest_remove:"Quitar interés del equipo",
+    team_rating_owner:function(n){return "DUEÑO " + "★".repeat(n) + "☆".repeat(5-n);},
+    team_rating_support:function(n){return n + (n === 1 ? " miembro del equipo la apoya" : " miembros del equipo la apoyan");},
+    team_star_label:"Tu valoración de equipo",
+    team_star_saved:"Valoración de equipo guardada.",
     signal_ai:"<b>IA</b> utilidad base",
     signal_fans:"<b>Fans</b> demanda",
-    signal_team:"<b>Equipo verificado</b> interés limitado",
+    signal_team:"<b>Equipo ★</b> valoración oficial separada del ranking",
     ai_score:"IA",
     source:"fuente",
     vote:"VOTAR",
@@ -1306,10 +1618,9 @@ var T = {
     suggest_open:"Proponer una mejora",
     submit_title:"Propón una mejora",
     submit_intro:"Anónima por defecto. Entra en revisión privada y nunca se publica automáticamente.",
-    idea_label:"Describe tu sugerencia en una frase *",
-    details_label:"¿Por qué ayudaría? <span class='optional'>(opcional)</span>",
+    idea_label:"¿Qué cambiarías o añadirías? *",
+    idea_help:"Cuenta el problema y tu mejora en un solo sitio. Una primera frase clara se convertirá en el título.",
     submit_send:"Enviar sugerencia",
-    submit_cancel:"Guardar para luego",
     submit_ok:"Sugerencia recibida. Tu contacto sigue siendo privado.",
     similar_head:"Hemos encontrado ideas publicadas parecidas",
     similar_help:"Vota una si ya expresa lo mismo o sigue escribiendo y envía la tuya.",
@@ -1318,12 +1629,14 @@ var T = {
     privacy_badge:"PRIVADO POR DEFECTO",
     anonymous_title:"Anónima públicamente",
     anonymous_copy:"No aparece ningún nombre. Un recibo privado confirma la entrega en este dispositivo.",
-    account_title:"Guardar en mi cuenta",
-    account_copy:"Puede seguir anónima públicamente aunque quede guardada para ti.",
+    account_title:"Mostrar con mi perfil Fan público",
+    account_copy:"Solo aparece tu perfil si eliges esta opción y lo tienes público. Lo anónimo anterior sigue anónimo.",
+    contact_mode_title:"Nombre + contacto privado",
+    contact_mode_copy:"Di quién eres para que FanRank pueda contactarte si hace falta aclarar la idea o surge una oportunidad.",
     consent_copy:"FanRank puede contactarme en privado sobre esta sugerencia. Mi contacto nunca será público.",
     contact_consent_error:"Marca el permiso de contacto privado o borra el contacto.",
     auth_nudge:"¿Quieres verla desde cualquier dispositivo? Inicia sesión antes. Tu borrador se conserva.",
-    sign_in:"Iniciar sesión",
+    sign_in:"Entrar",
     account:"Mi actividad",
     auth_title:"Inicia sesión",
     auth_intro:"Usa tu contraseña. Si esta cuenta nació con un enlace de correo, créala con la recuperación de abajo.",
@@ -1354,14 +1667,18 @@ var T = {
     signed_out:"Sesión cerrada.",
     receipt_copy:"Guardado en privado en este dispositivo. Estado: recibido.",
     team_tools_title:"Acceso de equipo verificado",
-    team_tools_copy:"Invita socios y gestiona quién puede marcar interés del equipo.",
+    team_tools_copy:"Invita socios y controla cuántas estrellas pueden dar.",
     team_open:"Gestionar equipo",
     team_title:"El equipo de mi perfil",
-    team_intro:"Invita solo a gente de confianza. Cada miembro tiene su propio corazón auditable; nadie comparte tu sesión.",
+    team_intro:"Invita solo a gente de confianza. El dueño puede dar de 1 a 5 estrellas; cada miembro usa su propia cuenta auditable.",
+    team_star_cap_title:"Límite de estrellas de socios",
+    team_star_cap_copy:"Elige si administradores y colaboradores pueden dar hasta 1 o 3 estrellas. Solo lo cambia el dueño.",
+    team_star_cap_label:"Máximo de estrellas por socio",
+    team_star_cap_saved:"Límite de estrellas guardado.",
     team_email_label:"Correo del miembro *",
     team_role_label:"Permiso",
-    team_role_contributor:"Colaborador · puede marcar corazones",
-    team_role_admin:"Administrador · puede invitar y marcar corazones",
+    team_role_contributor:"Colaborador · valora hasta el límite elegido",
+    team_role_admin:"Administrador · invita y valora hasta el límite",
     team_invite_send:"Crear invitación segura",
     team_invite_ready:"Invitación segura preparada",
     team_invite_copy:"El enlace caduca en 48 horas, funciona una vez y solo para este correo.",
@@ -1372,20 +1689,20 @@ var T = {
     team_members_copy:"Las identidades del equipo no son públicas.",
     team_members_empty:"No se han encontrado miembros.",
     team_revoke:"Quitar acceso",
-    team_revoke_confirm:"¿Quitar el acceso de equipo a esta persona? Sus corazones dejarán de contar como señal activa.",
+    team_revoke_confirm:"¿Quitar el acceso de equipo a esta persona? Sus estrellas activas desaparecerán de la señal oficial.",
     team_revoked:"Acceso retirado.",
     invite_title:"Únete al equipo de un perfil verificado",
     invite_intro:"Revisa el perfil y el permiso antes de aceptar. El enlace está ligado al correo de tu sesión.",
     invite_accept:"Aceptar invitación",
     invite_decline:"Ahora no",
-    invite_accepted:"Invitación aceptada. Ya puedes marcar interés del equipo.",
+    invite_accepted:"Invitación aceptada. Ya puedes dar estrellas oficiales del equipo.",
     invite_invalid:"La invitación no es válida, ha caducado o pertenece a otro correo.",
     role_owner:"Propietario",
     role_admin:"Administrador",
     role_contributor:"Colaborador",
     close:"Cerrar",
     claim_title:"Reclama este perfil",
-    claim_intro:"Verificamos cada solicitud antes de que alguien pueda influir en el ranking de un equipo. Reclamarlo no da acceso público automático.",
+    claim_intro:"Verificamos cada solicitud antes de que alguien pueda añadir estrellas oficiales. Esas estrellas nunca cambian el ranking orgánico y reclamar el perfil no da acceso automático.",
     claim_name_label:"Tu nombre *",
     claim_role_label:"Tu cargo o relación *",
     claim_contact_label:"Correo de trabajo o contacto público *",
@@ -1394,7 +1711,10 @@ var T = {
     claim_send:"Enviar solicitud de verificación",
     claim_cancel:"Cancelar",
     claim_ok:"Solicitud recibida. Nada cambia públicamente hasta verificarla.",
-    footer:"<b>Cómo se ordena:</b> una nota base asistida por IA pondera impacto, viabilidad y claridad; la demanda de fans añade una señal limitada; el interés de un equipo verificado aporta contexto, nunca un #1 automático.<br>Las sugerencias se revisan antes de publicarse. Nombres, contactos, recibos y votantes individuales son privados. FanRank · hecho con fans para tomar mejores decisiones."
+    receipt_profile_title:"Convierte esta idea en tu portfolio Fan",
+    receipt_profile_copy:"Crea un perfil FanRank ♥ para reunir tus mejores sugerencias, impacto y reconocimiento de equipos en un enlace.",
+    receipt_profile_button:"Crear mi perfil Fan",
+    footer:"<b>Cómo se ordena:</b> la utilidad IA y los corazones de fans ordenan la lista principal. Las estrellas del equipo verificado se muestran como señal oficial separada y nunca alteran ese ranking orgánico.<br>Las sugerencias se revisan antes de publicarse. Nombres, contactos, recibos y votantes individuales son privados. FanRank · hecho con fans para tomar mejores decisiones."
   }
 };
 
@@ -1487,8 +1807,20 @@ function icon(name){
   };
   return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths[name] + '</svg>';
 }
-function statHtml(number,label,green){
-  return '<div class="stat ' + (green ? "green" : "") + '"><div class="n">' + esc(number) + '</div><div class="l">' + esc(label) + '</div></div>';
+function statHtml(number,label,green,help){
+  var hint = help ? ' title="' + esc(help) + '" aria-label="' + esc(label + ". " + help) + '"' : "";
+  return '<div class="stat ' + (green ? "green" : "") + '"' + hint + '><div class="n">' + esc(number) + '</div><div class="l">' + esc(label) + '</div></div>';
+}
+function updateBrandMode(){
+  var teamMode = !!(SECTION && session && membership && secMeta && secMeta.verification_status === "verified");
+  document.body.classList.toggle("team-mode",teamMode);
+  byId("eyebrow").textContent = tx(teamMode ? "eyebrow_team" : "eyebrow");
+  byId("logo").setAttribute("aria-label",teamMode ? "FanRank star - verified team mode" : "FanRank heart - community mode");
+  var color = teamMode ? "#ffd129" : "#ff72c6";
+  var shape = teamMode
+    ? '<path fill="' + color + '" d="M16 2.4 19.2 11l9.2.4-7.2 5.8 2.5 8.9L16 21.1 8.3 26.1l2.5-8.9-7.2-5.8 9.2-.4Z"/>'
+    : '<path fill="' + color + '" d="M16 28C13.8 25.9 4 19.1 4 11.8 4 7.2 7.1 4 11.2 4c2.2 0 3.9 1.1 4.8 2.7C16.9 5.1 18.6 4 20.8 4 24.9 4 28 7.2 28 11.8 28 19.1 18.2 25.9 16 28Z"/>';
+  byId("favicon").href = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">' + shape + '</svg>');
 }
 
 async function api(path,options){
@@ -1575,6 +1907,7 @@ function authRedirectUrl(){
   var local = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:";
   var url = new URL(local ? APP_URL : location.origin + location.pathname);
   if(SECTION){url.searchParams.set("s",SECTION);}
+  if(FAN_HANDLE){url.searchParams.set("fan",FAN_HANDLE);}
   if(LANG === "es"){url.searchParams.set("lang","es");}
   if(INVITE_TOKEN){url.hash = "invite=" + encodeURIComponent(INVITE_TOKEN);}
   return url.href;
@@ -1582,6 +1915,7 @@ function authRedirectUrl(){
 function recoveryRedirectUrl(){
   var url = new URL(APP_URL);
   if(SECTION){url.searchParams.set("s",SECTION);}
+  if(FAN_HANDLE){url.searchParams.set("fan",FAN_HANDLE);}
   if(LANG === "es"){url.searchParams.set("lang","es");}
   url.searchParams.set("recover","1");
   return url.href;
@@ -1596,34 +1930,104 @@ function updateTeamRoleControl(){
   var canInviteAdmin = !!(membership && membership.role === "owner");
   adminOption.disabled = !canInviteAdmin;
   if(!canInviteAdmin && select.value === "admin"){select.value = "contributor";}
+  var starCap = byId("team-star-cap");
+  if(starCap){
+    starCap.value = String(Number(secMeta && secMeta.team_member_star_cap || 1));
+    starCap.disabled = !(membership && membership.role === "owner");
+  }
+}
+function suggestionAttribution(){
+  var selected = document.querySelector('input[name="attribution"]:checked');
+  return selected ? selected.value : "anonymous";
+}
+function toggleSuggestionIdentity(){
+  var accountInput = byId("attribution-account");
+  accountInput.disabled = !session;
+  if(!session && accountInput.checked){byId("attribution-anonymous").checked = true;}
+  byId("contact-identity-fields").classList.toggle("hidden",suggestionAttribution() !== "contact");
+}
+function setMediaStatus(message,type){
+  var node = byId("media-status");
+  node.textContent = message || "";
+  node.className = "media-status " + (type || "");
+}
+function renderPendingMedia(){
+  var list = byId("media-list");
+  byId("media-box").classList.toggle("locked",!session);
+  byId("training-consent-row").classList.toggle("hidden",!session);
+  if(!session){setMediaStatus(tx("media_locked"),"");}
+  else if(pendingMedia.length){setMediaStatus(tx("media_ready",pendingMedia.length),"");}
+  else{setMediaStatus("","");}
+  list.classList.toggle("hidden",pendingMedia.length === 0);
+  list.innerHTML = pendingMedia.map(function(item,index){
+    return '<article class="media-item"><div class="media-preview"><img src="' + esc(item.url) + '" alt=""></div>' +
+      '<span class="media-name">' + esc(item.file.name || "image") + '</span><button class="media-remove" type="button" ' +
+      'data-media-remove="' + index + '" aria-label="' + esc(tx("media_remove")) + '">×</button></article>';
+  }).join("");
+  list.querySelectorAll("[data-media-remove]").forEach(function(button){
+    button.addEventListener("click",function(){
+      var index = Number(button.dataset.mediaRemove);
+      if(!pendingMedia[index]){return;}
+      URL.revokeObjectURL(pendingMedia[index].url);
+      pendingMedia.splice(index,1);
+      renderPendingMedia();
+    });
+  });
+}
+function clearPendingMedia(){
+  pendingMedia.forEach(function(item){URL.revokeObjectURL(item.url);});
+  pendingMedia = [];
+  byId("submit-files").value = "";
+  renderPendingMedia();
+}
+function addMediaFiles(files){
+  if(!session){openAuth("suggest");return;}
+  var allowed = ["image/png","image/jpeg","image/webp"];
+  var next = Array.from(files || []);
+  if(pendingMedia.length + next.length > 3){setMediaStatus(tx("media_limit_error"),"err");return;}
+  for(var i=0;i<next.length;i+=1){
+    var file = next[i];
+    if(allowed.indexOf(file.type) === -1){setMediaStatus(tx("media_type_error"),"err");return;}
+    if(file.size > 5 * 1024 * 1024){setMediaStatus(tx("media_size_error"),"err");return;}
+  }
+  next.forEach(function(file){
+    var duplicate = pendingMedia.some(function(item){return item.file.name === file.name && item.file.size === file.size && item.file.lastModified === file.lastModified;});
+    if(!duplicate){pendingMedia.push({file:file,url:URL.createObjectURL(file)});}
+  });
+  renderPendingMedia();
 }
 function updateAccountUI(){
   var text = byId("account-btn-text");
   if(!text){return;}
   text.textContent = session ? tx("account") : tx("sign_in");
   byId("account-btn").setAttribute("aria-label",text.textContent);
-  byId("account-choice").classList.toggle("hidden",!session);
   byId("auth-nudge").classList.toggle("hidden",!!session);
   byId("team-tools").classList.toggle("hidden",!canManageTeam());
+  var teamTab = byId("tab-team");
+  if(teamTab){teamTab.classList.toggle("hidden",!(secMeta && secMeta.verification_status === "verified"));}
   if(!session){
     byId("attribution-anonymous").checked = true;
     byId("attribution-account").checked = false;
   }
+  toggleSuggestionIdentity();
   updateTeamRoleControl();
+  renderPendingMedia();
+  updateBrandMode();
 }
 function saveDraft(){
   if(!SECTION){return;}
   var draft = {
     section:SECTION,
-    title:byId("submit-idea").value,
-    details:byId("submit-details").value,
+    text:byId("submit-idea").value,
     name:byId("submit-name").value,
     contact:byId("submit-contact").value,
     allowContact:byId("submit-allow-contact").checked,
-    attribution:byId("attribution-account").checked ? "account" : "anonymous"
+    attribution:suggestionAttribution(),
+    category:(document.querySelector('input[name="submit-category"]:checked') || {}).value || "auto",
+    trainingConsent:byId("submit-training-consent").checked
   };
   try{
-    if(draft.title || draft.details || draft.name || draft.contact){
+    if(draft.text || draft.name || draft.contact){
       localStorage.setItem("fr_suggestion_draft",JSON.stringify(draft));
     }else{
       localStorage.removeItem("fr_suggestion_draft");
@@ -1634,16 +2038,37 @@ function restoreDraft(){
   try{
     var draft = JSON.parse(localStorage.getItem("fr_suggestion_draft") || "null");
     if(!draft || draft.section !== SECTION){return;}
-    byId("submit-idea").value = draft.title || "";
-    byId("submit-details").value = draft.details || "";
+    byId("submit-idea").value = draft.text || [draft.title,draft.details].filter(Boolean).join("\n\n");
     byId("submit-name").value = draft.name || "";
     byId("submit-contact").value = draft.contact || "";
     byId("submit-allow-contact").checked = !!draft.allowContact;
+    var category = document.querySelector('input[name="submit-category"][value="' + String(draft.category || "auto").replace(/[^a-z_]/g,"") + '"]');
+    if(category){category.checked = true;}
+    byId("submit-training-consent").checked = !!(session && draft.trainingConsent);
     if(session && draft.attribution === "account"){byId("attribution-account").checked = true;}
+    else if(draft.attribution === "contact"){byId("attribution-contact").checked = true;}
+    toggleSuggestionIdentity();
   }catch(error){}
 }
 function clearDraft(){
   try{localStorage.removeItem("fr_suggestion_draft");}catch(error){}
+}
+function submissionTextParts(value){
+  var full = String(value || "").trim();
+  var flat = full.replace(/\s+/g," ");
+  var sentenceEnd = flat.search(/[.!?](?:\s|$)/);
+  var candidate = sentenceEnd >= 2 && sentenceEnd < 140 ? flat.slice(0,sentenceEnd+1) : flat;
+  var title = candidate.length <= 140 ? candidate : candidate.slice(0,137).replace(/\s+\S*$/," ").trim() + "…";
+  if(title.length < 3){title = flat.slice(0,140);}
+  return {title:title,details:full === title ? null : full};
+}
+function renderSubmissionReceipt(){
+  var receipt = byId("submit-receipt");
+  receipt.innerHTML = '<b>' + esc(tx("receipt_profile_title")) + '</b><span>' + esc(tx("receipt_profile_copy")) +
+    '</span><div class="receipt-actions"><button class="secondary-btn" id="receipt-profile" type="button">' +
+    esc(tx("receipt_profile_button")) + '</button></div>';
+  receipt.classList.remove("hidden");
+  byId("receipt-profile").addEventListener("click",function(){session ? openActivity() : openAuth("activity");});
 }
 function randomReceipt(){
   var bytes = new Uint8Array(32);
@@ -1698,18 +2123,36 @@ function triggerCelestialLogo(withSound){
   setTimeout(function(){logo.classList.remove("celestial");},1050);
   if(withSound){playCelestialChime();}
 }
+function setupMobileCta(){
+  if(mobileCtaObserver){mobileCtaObserver.disconnect();mobileCtaObserver = null;}
+  document.body.classList.remove("mobile-cta-ready");
+  var inlineCta = document.querySelector(".suggest-cta");
+  if(!SECTION || !inlineCta){return;}
+  if("IntersectionObserver" in window){
+    mobileCtaObserver = new IntersectionObserver(function(entries){
+      document.body.classList.toggle("mobile-cta-ready",!entries[0].isIntersecting);
+    },{threshold:.08});
+    mobileCtaObserver.observe(inlineCta);
+  }else{
+    var rect = inlineCta.getBoundingClientRect();
+    document.body.classList.toggle("mobile-cta-ready",rect.bottom < 0 || rect.top > window.innerHeight);
+  }
+}
 function openSuggestion(){
   formStartedAt = Date.now();
   restoreDraft();
   renderSimilarIdeas();
+  renderPendingMedia();
   setStatus("submit-status","","");
   byId("submit-receipt").classList.add("hidden");
+  document.body.classList.add("suggest-dialog-open");
   openDialog("suggest-dialog");
   sendEvent("suggest_open",{section:SECTION});
   setTimeout(function(){byId("submit-idea").focus();},0);
 }
 function closeSuggestion(){
   saveDraft();
+  document.body.classList.remove("suggest-dialog-open");
   closeDialog("suggest-dialog");
 }
 function openAuth(action){
@@ -1717,6 +2160,7 @@ function openAuth(action){
   if(action){
     try{localStorage.setItem("fr_after_auth",action);}catch(error){}
   }
+  document.body.classList.remove("suggest-dialog-open");
   closeDialog("suggest-dialog");
   setStatus("auth-status","","");
   openDialog("auth-dialog");
@@ -1749,16 +2193,16 @@ async function openPasswordRecovery(){
 }
 async function loadMembership(){
   membership = null;
-  myTeamInterestIds = new Set();
+  myTeamStars = new Map();
   if(!session){return;}
   try{
     var rows = await api("fr_profile_members?select=section,role,status&user_id=eq." + encodeURIComponent(session.user.id));
     membership = SECTION ? rows.find(function(row){return row.section === SECTION && row.status === "active";}) || null : null;
     if(membership){
-      var interests = await callRpc("fr_my_team_interests",{p_section:SECTION});
-      myTeamInterestIds = new Set((interests || []).map(function(row){return Number(row.idea_id);}));
+      var ratings = await callRpc("fr_my_team_stars",{p_section:SECTION});
+      myTeamStars = new Map((ratings || []).map(function(row){return [Number(row.idea_id),Number(row.star_value || 0)];}));
     }
-  }catch(error){membership = null;myTeamInterestIds = new Set();}
+  }catch(error){membership = null;myTeamStars = new Map();}
 }
 async function initAuth(){
   if(!window.supabase || !window.supabase.createClient){
@@ -1801,6 +2245,7 @@ function resumeAfterAuth(){
   if(action === "claim"){openClaimPanel();}
   if(action === "suggest"){openSuggestion();}
   if(action === "pro"){openPro(pendingProPlan);}
+  if(action === "activity"){openActivity();}
 }
 function statusText(status){
   var map = LANG === "es" ? {
@@ -1813,6 +2258,95 @@ function activityItem(title,status,meta){
   return '<article class="activity-item"><b>' + esc(title) + '</b><div class="activity-meta"><span class="status-pill ' +
     esc(status) + '">' + esc(statusText(status)) + '</span><span>' + esc(meta) + '</span></div></article>';
 }
+function submissionActivityItem(row){
+  var category = row.category_final && row.category_final !== "pending" ? row.category_final : row.category_requested || "auto";
+  var media = Number(row.attachment_count || 0);
+  var meta = row.section + " · " + category + (media ? " · " + media + " image" + (media === 1 ? "" : "s") : "");
+  return '<article class="activity-item"><b>' + esc(row.title) + '</b><div class="activity-meta"><span class="status-pill ' +
+    esc(row.status) + '">' + esc(statusText(row.status)) + '</span><span>' + esc(meta) + '</span></div><label class="check-row">' +
+    '<input type="checkbox" data-training-consent="' + Number(row.id) + '" ' + (row.ai_training_consent ? "checked" : "") + '><span>' +
+    esc(tx("training_activity")) + '</span></label></article>';
+}
+function fanProfileUrl(handle){
+  var url = new URL(location.origin + location.pathname);
+  url.searchParams.set("fan",handle);
+  if(LANG === "es"){url.searchParams.set("lang","es");}
+  return url.href;
+}
+function setFanImpact(profile,prefix){
+  byId(prefix + "score").textContent = String(Number(profile && profile.impact_points || 0));
+  byId(prefix + "ideas").textContent = String(Number(profile && profile.published_ideas || 0));
+  byId(prefix + "hearts").textContent = String(Number(profile && profile.team_hearts || 0));
+  byId(prefix + "votes").textContent = fmt(profile && profile.fan_votes || 0);
+}
+function defaultFanHandle(){
+  var local = String(session && session.user && session.user.email || "fan").split("@")[0].toLowerCase();
+  local = local.replace(/[^a-z0-9-]/g,"-").replace(/-+/g,"-").replace(/^-|-$/g,"").slice(0,30);
+  return local.length >= 3 ? local : "fan-" + Math.random().toString(36).slice(2,8);
+}
+function renderMyFanProfile(profile){
+  currentFanProfile = profile || null;
+  setFanImpact(profile,"fan-impact-");
+  byId("fan-handle").value = profile && profile.handle || defaultFanHandle();
+  byId("fan-name").value = profile && profile.display_name || String(session && session.user && session.user.email || "Fan").split("@")[0];
+  byId("fan-headline").value = profile && profile.headline || "";
+  var skills = new Set(profile && Array.isArray(profile.skills) ? profile.skills : []);
+  document.querySelectorAll('input[name="fan-skill"]').forEach(function(input){input.checked = skills.has(input.value);});
+  byId("fan-public").checked = !!(profile && profile.is_public);
+  byId("fan-opportunities").checked = !!(profile && profile.available_for_opportunities);
+  var shareable = !!(profile && profile.is_public && profile.handle);
+  byId("fan-profile-share").classList.toggle("hidden",!shareable);
+  byId("fan-share-url").classList.toggle("hidden",!shareable);
+  byId("fan-share-url").textContent = shareable ? fanProfileUrl(profile.handle) : "";
+}
+async function loadMyFanProfile(){
+  if(!session){renderMyFanProfile(null);return null;}
+  try{
+    var rows = await callRpc("fr_my_fan_profile",{});
+    var profile = rows && rows[0] || null;
+    renderMyFanProfile(profile);
+    return profile;
+  }catch(error){renderMyFanProfile(null);return null;}
+}
+function fanSuggestionUrl(item){
+  var url = new URL(location.origin + location.pathname);
+  url.searchParams.set("s",item.section);
+  url.searchParams.set("idea",String(item.idea_id));
+  if(LANG === "es"){url.searchParams.set("lang","es");}
+  return url.href;
+}
+function renderPublicFan(profile){
+  setFanImpact(profile,"fan-public-");
+  byId("fan-public-name").textContent = profile ? profile.display_name : tx("fan_public_missing");
+  byId("fan-public-handle").textContent = profile ? "@" + profile.handle : "";
+  byId("fan-public-headline").textContent = profile && profile.headline || "";
+  byId("fan-public-skills").innerHTML = profile && Array.isArray(profile.skills) ? profile.skills.map(function(skill){
+    return '<span class="chip">' + esc(tx("fan_skill_" + skill) || skill) + '</span>';
+  }).join("") : "";
+  byId("fan-public-available").classList.toggle("hidden",!(profile && profile.available_for_opportunities));
+  var top = profile && Array.isArray(profile.top_suggestions) ? profile.top_suggestions.slice(0,3) : [];
+  byId("fan-public-top-list").innerHTML = top.length ? top.map(function(item){
+    var title = LANG === "es" && item.title_es ? item.title_es : item.title;
+    return '<a class="fan-top-item" href="' + esc(fanSuggestionUrl(item)) + '"><b>' + esc(title) + '</b><span>' +
+      esc(fmt(item.fan_votes) + " " + tx("fan_votes_label")) + '</span></a>';
+  }).join("") : '<div class="empty-state">' + esc(tx(profile ? "fan_public_empty" : "fan_public_missing")) + '</div>';
+}
+async function loadPublicFanProfile(){
+  if(!FAN_HANDLE){return;}
+  byId("home-view").classList.add("hidden");
+  byId("section-view").classList.add("hidden");
+  byId("stats").classList.add("hidden");
+  byId("crumb").classList.add("hidden");
+  byId("search-form").classList.add("hidden");
+  byId("fan-public-view").classList.remove("hidden");
+  document.body.classList.remove("home-live","profile-live");
+  byId("hero-tag").textContent = tx("fan_public_kicker");
+  try{
+    var rows = await callRpc("fr_public_fan_profile",{p_handle:FAN_HANDLE});
+    renderPublicFan(rows && rows[0] || null);
+    sendEvent("fan_profile_open",{value:FAN_HANDLE});
+  }catch(error){renderPublicFan(null);}
+}
 async function openActivity(){
   if(!session){openAuth();return;}
   await loadMembership();
@@ -1822,16 +2356,17 @@ async function openActivity(){
   byId("activity-list").innerHTML = '<div class="loading"><span class="spinner"></span><div>' + esc(tx("activity_loading")) + '</div></div>';
   setStatus("activity-status","","");
   sendEvent("activity_open",{section:SECTION || null});
+  await loadMyFanProfile();
   try{
     var uid = encodeURIComponent(session.user.id);
     var result = await Promise.all([
-      api("fr_submissions?select=id,section,title,status,created_at,attribution_mode&user_id=eq." + uid + "&order=created_at.desc&limit=50"),
+      api("fr_submissions?select=id,section,title,status,created_at,attribution_mode,category_requested,category_final,attachment_count,ai_training_consent&user_id=eq." + uid + "&order=created_at.desc&limit=50"),
       api("fr_claims?select=id,section,role,status,created_at&user_id=eq." + uid + "&order=created_at.desc&limit=20")
     ]);
     var html = "";
     if(result[0].length){
       html += '<div class="field-label">' + esc(tx("submissions_label")) + '</div>';
-      html += result[0].map(function(row){return activityItem(row.title,row.status,row.section);}).join("");
+      html += result[0].map(submissionActivityItem).join("");
     }
     if(result[1].length){
       html += '<div class="field-label" style="margin-top:12px">' + esc(tx("claims_label")) + '</div>';
@@ -1888,6 +2423,21 @@ async function openTeam(){
   updateTeamRoleControl();
   openDialog("team-dialog");
   await loadTeam();
+}
+async function setTeamStarCap(select){
+  if(!(membership && membership.role === "owner")){return;}
+  var cap = Number(select.value);
+  select.disabled = true;
+  try{
+    var result = await callRpc("fr_set_team_star_cap",{p_section:SECTION,p_cap:cap});
+    var returned = Array.isArray(result) ? result[0] : result;
+    secMeta.team_member_star_cap = Number(returned && returned.team_member_star_cap || cap);
+    sendEvent("team_star_cap",{section:SECTION,value:String(secMeta.team_member_star_cap)});
+    showToast(tx("team_star_cap_saved"),"ok");
+  }catch(error){
+    select.value = String(Number(secMeta && secMeta.team_member_star_cap || 1));
+    showToast(tx("generic_error"),"err");
+  }finally{select.disabled = false;}
 }
 async function revokeTeamMember(userId,button){
   if(!canManageTeam() || !window.confirm(tx("team_revoke_confirm"))){return;}
@@ -1956,7 +2506,8 @@ function profileShareUrl(){
 
 function applyStaticText(){
   document.documentElement.lang = LANG;
-  byId("lang-btn").textContent = LANG === "es" ? "EN" : "ES";
+  byId("lang-code").textContent = LANG === "es" ? "EN" : "ES";
+  byId("lang-flag").className = "lang-flag " + (LANG === "es" ? "flag-gb" : "flag-es");
   byId("lang-btn").setAttribute("aria-label",LANG === "es" ? "Cambiar a inglés" : "Switch to Spanish");
   byId("eyebrow").textContent = tx("eyebrow");
   byId("search-label").textContent = tx("search_label");
@@ -1993,6 +2544,7 @@ function applyStaticText(){
   byId("tab-ai").textContent = tx("tab_ai");
   byId("tab-source").textContent = tx("tab_source");
   byId("tab-fans").textContent = tx("tab_fans");
+  byId("tab-team").textContent = tx("tab_team");
   byId("suggest-cta-title").textContent = tx("suggest_cta_title");
   byId("suggest-cta-copy").textContent = tx("suggest_cta_copy");
   byId("profile-share-text").textContent = tx("share_profile");
@@ -2004,27 +2556,41 @@ function applyStaticText(){
   byId("submit-title").textContent = tx("submit_title");
   byId("submit-intro").textContent = tx("submit_intro");
   byId("submit-idea-label").textContent = tx("idea_label");
-  byId("submit-details-label").innerHTML = tx("details_label");
+  byId("submit-idea-help").textContent = tx("idea_help");
+  byId("category-legend").textContent = tx("category_legend");
+  byId("category-auto").textContent = tx("category_auto");
+  byId("category-bug").textContent = tx("category_bug");
+  byId("category-idea").textContent = tx("category_idea");
+  byId("category-accessibility").textContent = tx("category_accessibility");
+  byId("category-other").textContent = tx("category_other");
+  byId("category-help").textContent = tx("category_help");
+  byId("media-title").textContent = tx("media_title");
+  byId("media-help").textContent = tx("media_help");
+  byId("media-pick").textContent = tx("media_pick");
   byId("submit-name-label").innerHTML = tx("name_label");
   byId("submit-contact-label").innerHTML = tx("contact_label");
   byId("submit-contact-help").textContent = tx("contact_help");
   byId("submit-send").textContent = tx("submit_send");
-  byId("submit-cancel").textContent = tx("submit_cancel");
   byId("similar-head").textContent = tx("similar_head");
   byId("similar-help").textContent = tx("similar_help");
   byId("privacy-title").textContent = tx("privacy_title");
   byId("privacy-badge").textContent = tx("privacy_badge");
   byId("anonymous-title").textContent = tx("anonymous_title");
   byId("anonymous-copy").textContent = tx("anonymous_copy");
-  byId("account-title").textContent = tx("account_title");
-  byId("account-copy").textContent = tx("account_copy");
+  byId("account-title").textContent = tx("account_public_title");
+  byId("account-copy").textContent = tx("account_public_copy");
+  byId("contact-mode-title").textContent = tx("contact_mode_title");
+  byId("contact-mode-copy").textContent = tx("contact_mode_copy");
   byId("submit-consent-copy").textContent = tx("consent_copy");
+  byId("training-consent-copy").textContent = tx("training_consent");
   byId("auth-nudge-copy").textContent = tx("auth_nudge");
   byId("suggest-sign-in").textContent = tx("sign_in");
   byId("auth-title").textContent = tx("auth_title");
-  byId("auth-intro").textContent = tx("auth_intro");
+  byId("auth-intro").textContent = tx("auth_magic_intro");
   byId("auth-email-label").textContent = tx("auth_email_label");
   byId("auth-email-help").textContent = tx("auth_email_help");
+  byId("auth-magic").textContent = tx("auth_magic");
+  byId("auth-password-toggle").textContent = tx("auth_password_toggle");
   byId("auth-password-label").textContent = tx("auth_password_label");
   byId("auth-password-help").textContent = tx("auth_password_help");
   byId("auth-send").textContent = tx("auth_send");
@@ -2051,6 +2617,35 @@ function applyStaticText(){
   byId("pro-cadence-daily").textContent = tx("pro_cadence_daily");
   byId("pro-send").textContent = tx("pro_send");
   byId("activity-title").textContent = tx("activity_title");
+  byId("fan-profile-title").textContent = tx("fan_profile_title");
+  byId("fan-profile-copy").textContent = tx("fan_profile_copy");
+  byId("fan-profile-badge").textContent = tx("fan_profile_badge");
+  byId("fan-impact-score-label").textContent = tx("fan_score_label");
+  byId("fan-impact-ideas-label").textContent = tx("fan_ideas_label");
+  byId("fan-impact-hearts-label").textContent = tx("fan_hearts_label");
+  byId("fan-impact-votes-label").textContent = tx("fan_votes_label");
+  byId("fan-handle-label").textContent = tx("fan_handle_label");
+  byId("fan-handle-help").textContent = tx("fan_handle_help");
+  byId("fan-name-label").textContent = tx("fan_name_label");
+  byId("fan-headline-label").innerHTML = tx("fan_headline_label");
+  byId("fan-skills-label").textContent = tx("fan_skills_label");
+  ["tester","ux","product","accessibility","gaming","engineering"].forEach(function(skill){
+    byId("fan-skill-" + skill).textContent = tx("fan_skill_" + skill);
+  });
+  byId("fan-public-copy").textContent = tx("fan_public_copy");
+  byId("fan-opportunities-copy").textContent = tx("fan_opportunities_copy");
+  byId("fan-profile-save").textContent = tx("fan_profile_save");
+  byId("fan-profile-share").textContent = tx("fan_profile_share");
+  byId("fan-public-kicker").textContent = tx("fan_public_kicker");
+  byId("fan-public-score-label").textContent = tx("fan_score_label");
+  byId("fan-public-ideas-label").textContent = tx("fan_ideas_label");
+  byId("fan-public-hearts-label").textContent = tx("fan_hearts_label");
+  byId("fan-public-votes-label").textContent = tx("fan_votes_label");
+  byId("fan-public-available-title").textContent = tx("fan_public_available_title");
+  byId("fan-public-available-copy").textContent = tx("fan_public_available_copy");
+  byId("fan-public-top-title").textContent = tx("fan_public_top_title");
+  byId("fan-public-back").textContent = tx("fan_public_back");
+  byId("fan-public-back").href = location.pathname + (LANG === "es" ? "?lang=es" : "");
   byId("password-change-title").textContent = tx("password_change_title");
   byId("password-change-label").textContent = tx("password_change_label");
   byId("password-change-help").textContent = tx("password_change_help");
@@ -2061,6 +2656,9 @@ function applyStaticText(){
   byId("team-open").textContent = tx("team_open");
   byId("team-title").textContent = tx("team_title");
   byId("team-intro").textContent = tx("team_intro");
+  byId("team-star-cap-title").textContent = tx("team_star_cap_title");
+  byId("team-star-cap-copy").textContent = tx("team_star_cap_copy");
+  byId("team-star-cap-label").textContent = tx("team_star_cap_label");
   byId("team-email-label").textContent = tx("team_email_label");
   byId("team-role-label").textContent = tx("team_role_label");
   byId("team-role-contributor").textContent = tx("team_role_contributor");
@@ -2240,6 +2838,8 @@ function loadHome(){
   renderDirectoryFilters();
   renderSections();
   renderTrending();
+  updateBrandMode();
+  setupMobileCta();
 }
 
 function normalize(value){
@@ -2356,8 +2956,29 @@ function requestFromSearch(query){
 }
 
 function rankScore(item){
-  return Number(item.ai_score || 0) + Math.min(Number(item.web_votes || 0) * 2,20) +
-    Math.min(Number(item.team_interest_count || 0) * 5,15);
+  return Number(item.ai_score || 0) + Math.min(Number(item.web_votes || 0) * 2,20);
+}
+function officialTeamScore(item){
+  return Number(item.owner_star_value || 0) * 1000 + Number(item.team_star_support_count || 0);
+}
+function teamRatingHtml(item){
+  var ownerStars = Math.max(0,Math.min(5,Number(item.owner_star_value || 0)));
+  var support = Math.max(0,Number(item.team_star_support_count || 0));
+  if(!ownerStars && !support){return "";}
+  return '<div class="team-rating-badge">' +
+    (ownerStars ? '<span class="stars">' + esc(tx("team_rating_owner",ownerStars)) + '</span>' : '') +
+    (support ? '<span class="team-support">' + esc(tx("team_rating_support",support)) + '</span>' : '') + '</div>';
+}
+function teamStarControlHtml(item){
+  if(!(session && membership && secMeta && secMeta.verification_status === "verified")){return "";}
+  var max = membership.role === "owner" ? 5 : Number(secMeta.team_member_star_cap || 1);
+  var current = Math.max(0,Math.min(max,Number(myTeamStars.get(item.id) || 0)));
+  var options = '<option value="0">—</option>';
+  for(var value=1;value<=max;value+=1){
+    options += '<option value="' + value + '" ' + (value === current ? 'selected' : '') + '>' + value + ' ★</option>';
+  }
+  return '<label class="team-star-control"><span class="team-star-label">' + esc(tx("team_star_label")) +
+    '</span><select data-team-star="' + item.id + '" aria-label="' + esc(tx("team_star_label")) + '">' + options + '</select></label>';
 }
 function sortedIdeas(source){
   var list = (source || ideas).slice();
@@ -2366,6 +2987,8 @@ function sortedIdeas(source){
       return rankScore(b)-rankScore(a) || Number(b.ai_score)-Number(a.ai_score) ||
         Number(b.web_votes)-Number(a.web_votes) || Number(b.origin_upvotes)-Number(a.origin_upvotes);
     });
+  }else if(sortMode === "team"){
+    list.sort(function(a,b){return officialTeamScore(b)-officialTeamScore(a) || rankScore(b)-rankScore(a);});
   }else if(sortMode === "source"){
     list.sort(function(a,b){return Number(b.origin_upvotes)-Number(a.origin_upvotes) || Number(b.ai_score)-Number(a.ai_score);});
   }else{
@@ -2382,7 +3005,7 @@ function fanPosition(id){
 function renderProfileStats(){
   byId("stats").innerHTML =
     statHtml(ideas.length,tx("stats_ideas")) +
-    statHtml(fmt(ideas.reduce(function(sum,item){return sum+Number(item.origin_upvotes||0);},0)),tx("source_votes")) +
+    statHtml(fmt(ideas.reduce(function(sum,item){return sum+Number(item.origin_upvotes||0);},0)),tx("source_votes"),false,tx("source_votes_help")) +
     statHtml(ideas.reduce(function(sum,item){return sum+Number(item.web_votes||0);},0),tx("fan_votes"),true);
 }
 function renderProfileTags(){
@@ -2402,9 +3025,10 @@ function renderPodium(){
   byId("podium").innerHTML = positions.map(function(entry){
     if(!entry.item){return '<div></div>';}
     var score = sortMode === "fans" ? entry.item.web_votes : sortMode === "source" ? entry.item.origin_upvotes : rankScore(entry.item);
+    var scoreLabel = sortMode === "team" ? (Number(entry.item.owner_star_value || 0) ? Number(entry.item.owner_star_value) + "★" : Number(entry.item.team_star_support_count || 0) + "+") : fmt(score);
     return '<button class="podium-card ' + entry.cls + '" type="button" data-podium="' + entry.item.id + '">' +
       '<div class="podium-medal">#' + entry.rank + '</div><div class="podium-title">' + esc(ideaTitle(entry.item)) +
-      '</div><div class="podium-score">' + fmt(score) + '</div></button>';
+      '</div><div class="podium-score">' + esc(scoreLabel) + '</div></button>';
   }).join("");
   document.querySelectorAll("[data-podium]").forEach(function(button){
     button.addEventListener("click",function(){
@@ -2439,27 +3063,24 @@ function renderIdeas(){
     var source = safeUrl(item.source_url);
     var rankClass = index === 0 ? "top1" : index === 1 ? "top2" : index === 2 ? "top3" : "";
     var voted = mine.indexOf(item.id) >= 0;
-    var hasTeamInterest = Number(item.team_interest_count || 0) > 0;
-    return '<article class="idea-card ' + rankClass + ' ' + (hasTeamInterest ? "team-pick" : "") +
-      '" id="idea-' + item.id + '">' +
+    return '<article class="idea-card ' + rankClass + '" id="idea-' + item.id + '">' +
       '<div class="rank">' + (index+1) + '</div><div class="idea-main">' +
-      (hasTeamInterest ? '<div class="team-badge">' + icon("heart") + esc(tx("team_pick",Number(item.team_interest_count || 0))) + '</div>' : "") +
+      teamRatingHtml(item) +
       '<div class="idea-title">' + esc(ideaTitle(item)) + '</div><div class="score-row"><div class="score-track">' +
       '<div class="score-fill" data-score="' + score + '"></div></div><div class="score-label">' +
       esc(tx("ai_score")) + " " + score + '</div></div>' +
       '<div class="reason">' + esc(ideaReason(item)) + '</div><div class="idea-meta">' +
-      '<span class="chip">' + fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' +
+      '<span class="chip" title="' + esc(tx("source_votes_help")) + '" aria-label="' +
+      esc(fmt(item.origin_upvotes) + " " + tx("source_votes") + ". " + tx("source_votes_help")) + '">' +
+      fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' +
       (source ? '<a class="chip source-link" href="' + esc(source) + '" target="_blank" rel="noopener noreferrer">' +
       esc(tx("source")) + ' ↗</a>' : "") + '</div></div><div class="idea-actions">' +
       '<button class="icon-btn" type="button" data-share="' + item.id + '" aria-label="' + esc(tx("share")) +
       '" title="' + esc(tx("share")) + '">' + icon("share") + '</button>' +
       '<button class="vote-btn ' + (voted ? "voted" : "") + '" type="button" data-vote="' + item.id + '" ' +
-      (voted ? "disabled" : "") + '><span class="vote-count">' + Number(item.web_votes||0) +
+      (voted ? "disabled" : "") + '><span class="vote-heart" aria-hidden="true">♥</span><span class="vote-count">' + Number(item.web_votes||0) +
       '</span><span class="vote-label">' + esc(voted ? tx("voted") : tx("vote")) + '</span></button>' +
-      (session && membership && secMeta && secMeta.verification_status === "verified" ?
-        '<button class="icon-btn team-interest-btn" type="button" data-interest="' + item.id + '" aria-pressed="' +
-        (myTeamInterestIds.has(item.id) ? "true" : "false") + '" aria-label="' + esc(myTeamInterestIds.has(item.id) ? tx("team_interest_remove") : tx("team_interest_add")) +
-        '" title="' + esc(myTeamInterestIds.has(item.id) ? tx("team_interest_remove") : tx("team_interest_add")) + '">' + icon("heart") + '</button>' : "") +
+      teamStarControlHtml(item) +
       '</div></article>';
   }).join("");
   requestAnimationFrame(function(){
@@ -2471,8 +3092,8 @@ function renderIdeas(){
   document.querySelectorAll("[data-share]").forEach(function(button){
     button.addEventListener("click",function(){shareIdea(Number(button.dataset.share));});
   });
-  document.querySelectorAll("[data-interest]").forEach(function(button){
-    button.addEventListener("click",function(){setTeamInterest(Number(button.dataset.interest),button);});
+  document.querySelectorAll("[data-team-star]").forEach(function(select){
+    select.addEventListener("change",function(){setTeamStar(Number(select.dataset.teamStar),select);});
   });
 }
 function renderProfile(){
@@ -2511,6 +3132,8 @@ function loadSection(){
   document.body.classList.remove("home-live");
   document.body.classList.add("profile-live");
   renderProfile();
+  updateAccountUI();
+  setupMobileCta();
   focusDeepIdea();
   sendEvent("profile_open",{section:SECTION,value:"page_load"});
   if(QUICK_SUGGEST){
@@ -2549,27 +3172,27 @@ async function vote(id,button){
     }
   }
 }
-async function setTeamInterest(id,button){
+async function setTeamStar(id,select){
   if(!session || !membership){return;}
-  var active = button.getAttribute("aria-pressed") !== "true";
-  setBusy(button,true);
+  var value = Number(select.value || 0);
+  select.disabled = true;
   try{
-    var result = await callRpc("fr_set_team_interest",{p_idea_id:id,p_active:active});
+    var result = await callRpc("fr_set_team_star",{p_idea_id:id,p_value:value});
     var returned = Array.isArray(result) ? result[0] : result;
-    if(active){myTeamInterestIds.add(id);}else{myTeamInterestIds.delete(id);}
+    if(value){myTeamStars.set(id,value);}else{myTeamStars.delete(id);}
     var item = ideas.find(function(row){return row.id === id;});
-    if(item){
-      item.team_interest_count = returned ? Number(returned.team_interest_count || 0) : Math.max(0,Number(item.team_interest_count || 0) + (active ? 1 : -1));
+    if(item && returned){
+      item.owner_star_value = Number(returned.owner_star_value || 0);
+      item.team_star_support_count = Number(returned.team_star_support_count || 0);
+      item.team_interest_count = Number(returned.team_interest_count || 0);
     }
     var globalItem = allIdeas.find(function(row){return row.id === id;});
-    if(globalItem){
-      globalItem.team_interest_count = item ? item.team_interest_count : Number(globalItem.team_interest_count || 0);
-    }
+    if(globalItem && item){Object.assign(globalItem,{owner_star_value:item.owner_star_value,team_star_support_count:item.team_star_support_count,team_interest_count:item.team_interest_count});}
     renderProfile();
-    sendEvent("team_interest",{section:SECTION,idea_id:id,value:active ? "on" : "off"});
-    showToast(active ? tx("team_interest_add") : tx("team_interest_remove"),"ok");
+    sendEvent("team_star",{section:SECTION,idea_id:id,value:String(value)});
+    showToast(tx("team_star_saved"),"ok");
   }catch(error){
-    setBusy(button,false);
+    select.disabled = false;
     showToast(tx("generic_error"),"err");
   }
 }
@@ -2679,21 +3302,92 @@ byId("profile-share").addEventListener("click",shareProfile);
 byId("suggest-open").addEventListener("click",openSuggestion);
 byId("mobile-suggest").addEventListener("click",openSuggestion);
 byId("suggest-close").addEventListener("click",closeSuggestion);
-byId("submit-cancel").addEventListener("click",closeSuggestion);
 byId("suggest-sign-in").addEventListener("click",function(){openAuth("suggest");});
 byId("account-btn").addEventListener("click",function(){session ? openActivity() : openAuth();});
 byId("profile-pro-open").addEventListener("click",function(){openPro("decision");});
 byId("auth-close").addEventListener("click",function(){closeDialog("auth-dialog");});
 byId("auth-dialog").addEventListener("close",function(){byId("auth-password").value = "";});
+byId("suggest-dialog").addEventListener("close",function(){document.body.classList.remove("suggest-dialog-open");});
 byId("activity-close").addEventListener("click",function(){closeDialog("activity-dialog");});
+byId("activity-list").addEventListener("change",async function(event){
+  var input = event.target.closest("[data-training-consent]");
+  if(!input){return;}
+  input.disabled = true;
+  try{
+    await callRpc("fr_set_submission_ai_consent",{p_submission_id:Number(input.dataset.trainingConsent),p_consent:input.checked});
+    setStatus("activity-status",tx("training_updated"),"ok");
+  }catch(error){
+    input.checked = !input.checked;
+    setStatus("activity-status",tx("generic_error"),"err");
+  }finally{input.disabled = false;}
+});
 byId("pro-close").addEventListener("click",function(){closeDialog("pro-dialog");});
 byId("team-open").addEventListener("click",openTeam);
 byId("team-close").addEventListener("click",function(){closeDialog("team-dialog");});
 byId("invite-close").addEventListener("click",function(){closeDialog("invite-dialog");});
 byId("submit-idea").addEventListener("input",function(){saveDraft();renderSimilarIdeas();});
-["submit-details","submit-name","submit-contact","submit-allow-contact","attribution-anonymous","attribution-account"].forEach(function(id){
+["submit-name","submit-contact","submit-allow-contact","submit-training-consent","attribution-anonymous","attribution-account","attribution-contact"].forEach(function(id){
   byId(id).addEventListener("input",saveDraft);
-  byId(id).addEventListener("change",saveDraft);
+  byId(id).addEventListener("change",function(){toggleSuggestionIdentity();saveDraft();});
+});
+byId("team-star-cap").addEventListener("change",function(event){setTeamStarCap(event.target);});
+document.querySelectorAll('input[name="submit-category"]').forEach(function(input){input.addEventListener("change",saveDraft);});
+byId("media-pick").addEventListener("click",function(){
+  if(!session){openAuth("suggest");return;}
+  byId("submit-files").click();
+});
+byId("submit-files").addEventListener("change",function(event){addMediaFiles(event.target.files);event.target.value = "";});
+byId("media-box").addEventListener("dragover",function(event){event.preventDefault();byId("media-box").classList.add("dragging");});
+byId("media-box").addEventListener("dragleave",function(){byId("media-box").classList.remove("dragging");});
+byId("media-box").addEventListener("drop",function(event){
+  event.preventDefault();
+  byId("media-box").classList.remove("dragging");
+  addMediaFiles(event.dataTransfer.files);
+});
+byId("suggest-dialog").addEventListener("paste",function(event){
+  var files = Array.from(event.clipboardData && event.clipboardData.files || []).filter(function(file){return file.type.indexOf("image/") === 0;});
+  if(files.length){event.preventDefault();addMediaFiles(files);}
+});
+byId("fan-handle").addEventListener("input",function(event){
+  event.target.value = event.target.value.toLowerCase().replace(/[^a-z0-9-]/g,"").slice(0,30);
+});
+byId("fan-profile-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  if(!session){openAuth();return;}
+  var handle = byId("fan-handle").value.trim().toLowerCase();
+  var displayName = byId("fan-name").value.trim();
+  var skills = Array.from(document.querySelectorAll('input[name="fan-skill"]:checked')).map(function(input){return input.value;});
+  if(!/^[a-z0-9][a-z0-9-]{2,29}$/.test(handle) || displayName.length < 2 || displayName.length > 50 || skills.length > 5){
+    setStatus("fan-profile-status",tx("fan_profile_error"),"err");
+    return;
+  }
+  var button = byId("fan-profile-save");
+  setBusy(button,true);
+  setStatus("fan-profile-status","","");
+  try{
+    await callRpc("fr_upsert_my_fan_profile",{
+      p_handle:handle,
+      p_display_name:displayName,
+      p_headline:byId("fan-headline").value.trim(),
+      p_skills:skills,
+      p_is_public:byId("fan-public").checked,
+      p_available_for_opportunities:byId("fan-opportunities").checked
+    });
+    await loadMyFanProfile();
+    sendEvent("fan_profile_saved",{value:handle});
+    setStatus("fan-profile-status",tx("fan_profile_saved"),"ok");
+  }catch(error){setStatus("fan-profile-status",tx("fan_profile_error"),"err");}
+  finally{setBusy(button,false);}
+});
+byId("fan-profile-share").addEventListener("click",async function(){
+  if(!currentFanProfile || !currentFanProfile.is_public){return;}
+  var url = fanProfileUrl(currentFanProfile.handle);
+  try{
+    if(navigator.share){await navigator.share({title:"FanRank - " + currentFanProfile.display_name,url:url});}
+    else if(navigator.clipboard){await navigator.clipboard.writeText(url);}
+    else{window.prompt(tx("fan_profile_share"),url);}
+    showToast(tx("profile_shared"),"ok");
+  }catch(error){}
 });
 ["suggest-dialog","auth-dialog","activity-dialog","pro-dialog","team-dialog","invite-dialog"].forEach(function(id){
   byId(id).addEventListener("click",function(event){
@@ -2701,6 +3395,29 @@ byId("submit-idea").addEventListener("input",function(){saveDraft();renderSimila
       if(id === "suggest-dialog"){closeSuggestion();}else{closeDialog(id);}
     }
   });
+});
+
+byId("auth-magic").addEventListener("click",async function(){
+  var email = byId("auth-email").value.trim();
+  if(!email || !byId("auth-email").checkValidity()){
+    setStatus("auth-status",tx("required_error"),"err");
+    byId("auth-email").focus();
+    return;
+  }
+  if(!authClient){setStatus("auth-status",tx("auth_unavailable"),"err");return;}
+  var button = byId("auth-magic");
+  setBusy(button,true);
+  setStatus("auth-status","","");
+  try{
+    var result = await authClient.auth.signInWithOtp({
+      email:email,
+      options:{emailRedirectTo:authRedirectUrl(),shouldCreateUser:true}
+    });
+    if(result.error){throw result.error;}
+    sendEvent("auth_link_requested",{section:SECTION || null});
+    setStatus("auth-status",tx("auth_magic_sent"),"ok");
+  }catch(error){setStatus("auth-status",tx("generic_error"),"err");}
+  finally{setBusy(button,false);}
 });
 
 byId("auth-recover").addEventListener("click",async function(){
@@ -2866,6 +3583,8 @@ byId("logout-btn").addEventListener("click",async function(){
   if(authClient){await authClient.auth.signOut({scope:"local"});}
   session = null;
   membership = null;
+  currentFanProfile = null;
+  clearPendingMedia();
   updateAccountUI();
   closeDialog("activity-dialog");
   sendEvent("auth_signed_out",{section:SECTION || null});
@@ -2920,14 +3639,16 @@ byId("request-form").addEventListener("submit",async function(event){
 
 byId("submit-form").addEventListener("submit",async function(event){
   event.preventDefault();
-  var title = byId("submit-idea").value.trim();
-  if(title.length < 3){
+  var textParts = submissionTextParts(byId("submit-idea").value);
+  if(textParts.title.length < 3){
     setStatus("submit-status",tx("required_error"),"err");
     byId("submit-idea").focus();
     return;
   }
-  var contact = byId("submit-contact").value.trim();
-  var allowContact = byId("submit-allow-contact").checked;
+  var identityMode = suggestionAttribution();
+  var contact = identityMode === "contact" ? byId("submit-contact").value.trim() : "";
+  var author = identityMode === "contact" ? byId("submit-name").value.trim() : "";
+  var allowContact = identityMode === "contact" && byId("submit-allow-contact").checked;
   if(contact && !allowContact){
     setStatus("submit-status",tx("contact_consent_error"),"err");
     byId("submit-allow-contact").focus();
@@ -2942,27 +3663,56 @@ byId("submit-form").addEventListener("submit",async function(event){
   setStatus("submit-status","","");
   try{
     var receipt = randomReceipt();
-    var attribution = session && byId("attribution-account").checked ? "account" : "anonymous";
-    await postRow("fr_submissions",{
-      section:SECTION,title:title,
-      details:byId("submit-details").value.trim() || null,
-      author:byId("submit-name").value.trim() || null,
+    var receiptHash = await hashReceipt(receipt);
+    var attribution = session && identityMode === "account" ? "account" : "anonymous";
+    var categoryInput = document.querySelector('input[name="submit-category"]:checked');
+    var categoryRequested = categoryInput ? categoryInput.value : "auto";
+    var submissionPayload = {
+      section:SECTION,title:textParts.title,
+      details:textParts.details,
+      author:author || null,
       contact:contact || null,
       language:LANG,
       user_id:session ? session.user.id : null,
       attribution_mode:attribution,
       allow_contact:!!contact && allowContact,
-      receipt_hash:await hashReceipt(receipt)
-    });
-    storeReceipt(receipt,title);
+      receipt_hash:receiptHash,
+      category_requested:categoryRequested,
+      ai_training_consent:!!(session && byId("submit-training-consent").checked)
+    };
+    if(pendingMedia.length){
+      if(!session || !session.access_token){openAuth("suggest");throw new Error("AUTH_REQUIRED");}
+      setMediaStatus(tx("media_uploading"),"");
+      var formData = new FormData();
+      ["section","title","details","author","contact","language","attribution_mode","receipt_hash","category_requested"].forEach(function(key){
+        formData.append(key,submissionPayload[key] == null ? "" : String(submissionPayload[key]));
+      });
+      formData.append("allow_contact",String(submissionPayload.allow_contact));
+      formData.append("ai_training_consent",String(submissionPayload.ai_training_consent));
+      formData.append("website",byId("submit-website").value || "");
+      pendingMedia.forEach(function(item){formData.append("files",item.file,item.file.name || "capture");});
+      var mediaResponse = await fetch(SB_URL + "/functions/v1/fanrank-feedback-intake",{
+        method:"POST",
+        headers:{"apikey":SB_KEY,"Authorization":"Bearer " + session.access_token},
+        body:formData
+      });
+      if(!mediaResponse.ok){
+        var mediaError = await mediaResponse.json().catch(function(){return {};});
+        throw new Error(mediaError.error || "MEDIA_UPLOAD_FAILED");
+      }
+    }else{
+      await postRow("fr_submissions",submissionPayload);
+    }
+    storeReceipt(receipt,textParts.title);
     markWrite("fr_last_submission");
-    sendEvent("submission",{section:SECTION,value:title.slice(0,180)});
+    sendEvent("submission",{section:SECTION,value:textParts.title.slice(0,180)});
     setStatus("submit-status",tx("submit_ok"),"ok");
-    byId("submit-receipt").textContent = tx("receipt_copy");
-    byId("submit-receipt").classList.remove("hidden");
     byId("submit-form").reset();
+    toggleSuggestionIdentity();
+    clearPendingMedia();
     clearDraft();
     renderSimilarIdeas();
+    renderSubmissionReceipt();
     formStartedAt = Date.now();
   }catch(error){
     setStatus("submit-status",tx("generic_error"),"err");
@@ -3020,7 +3770,9 @@ async function boot(){
   try{
     await initAuth();
     await loadDirectory();
-    if(SECTION){loadSection();}else{loadHome();}
+    if(FAN_HANDLE){await loadPublicFanProfile();}
+    else if(SECTION){loadSection();}
+    else{loadHome();}
     if(session && RECOVERY_FLOW){await openPasswordRecovery();}else{resumeAfterAuth();}
     await handlePendingInvite();
     if(QUICK_PRO && !RECOVERY_FLOW){
