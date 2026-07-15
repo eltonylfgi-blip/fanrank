@@ -35,6 +35,8 @@ DISCOVERY_MIGRATION = ROOT / "supabase" / "migrations" / "20260715152000_fanrank
 DISCOVERY_SQL = DISCOVERY_MIGRATION.read_text(encoding="utf-8")
 OWNER_MIGRATION = ROOT / "supabase" / "migrations" / "20260715160000_fanrank_v7_owner_studio.sql"
 OWNER_SQL = OWNER_MIGRATION.read_text(encoding="utf-8")
+PRO_MIGRATION = ROOT / "supabase" / "migrations" / "20260715170000_fanrank_v8_pro_pilot.sql"
+PRO_SQL = PRO_MIGRATION.read_text(encoding="utf-8")
 
 
 def extract(pattern: str) -> str:
@@ -89,6 +91,7 @@ class StaticAppTests(unittest.TestCase):
             "similar ideas": 'id="similar-ideas"',
             "private contact": 'id="submit-contact"',
             "password account": 'id="auth-password"',
+            "password recovery": 'id="auth-recover"',
             "private activity": 'id="activity-dialog"',
             "password rotation": 'id="password-change-form"',
             "profile claim": 'id="claim-form"',
@@ -100,7 +103,8 @@ class StaticAppTests(unittest.TestCase):
             "product telemetry": 'postRow("fr_claims"',
             "event sink": 'fr_events',
             "bilingual UI": "var T = {",
-            "owner studio bundle": 'owner-studio.js?v=7',
+            "owner studio bundle": 'owner-studio.js?v=8',
+            "Pro pilot": 'id="pro-form"',
         }
         missing = [name for name, marker in markers.items() if marker not in HTML]
         self.assertEqual([], missing)
@@ -190,13 +194,15 @@ class StaticAppTests(unittest.TestCase):
             'url.hash = "invite="',
             "function armCelestialAudio",
             "function playCelestialChime",
-            "logoShakeSmooth",
+            "logoFloatIdle",
+            "logoFloatActive",
             "tagPop",
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
         self.assertNotIn("Search any <b>game, creator or company</b>", HTML)
         self.assertNotIn("Verified team picks score 100", HTML)
         self.assertNotIn("puntúan 100", HTML)
+        self.assertNotIn("logoShakeSmooth", HTML)
 
     def test_discovery_directory_is_practical_and_data_driven(self) -> None:
         html_markers = [
@@ -226,6 +232,20 @@ class StaticAppTests(unittest.TestCase):
         self.assertNotIn("signInWithOtp", HTML)
         self.assertIn("if(REDUCED || !audioArmed || !audioContext || chimePlayed)", HTML)
         self.assertIn("setTimeout(function(){chimePlayed = false;},9000)", HTML)
+        self.assertIn("brand-mark-star", HTML)
+        self.assertIn("M50 9C55 34 66 45 91 50", HTML)
+
+    def test_password_recovery_covers_magic_link_accounts(self) -> None:
+        markers = [
+            "authClient.auth.resetPasswordForEmail(email,{redirectTo:recoveryRedirectUrl()})",
+            'event === "PASSWORD_RECOVERY"',
+            "await openPasswordRecovery()",
+            'byId("password-change-panel").open = true',
+            'params.get("recover") === "1"',
+            'cleanRecoveryUrl.searchParams.delete("code")',
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
+        self.assertNotRegex(HTML, r"(?i)password\s*[:=]\s*['\"][^'\"]+['\"]")
 
     def test_owner_studio_is_private_practical_and_fair(self) -> None:
         markers = [
@@ -237,7 +257,7 @@ class StaticAppTests(unittest.TestCase):
             'window.postRow("fr_promotion_requests"',
             'data-feedback-zone',
             'capturePastedImage',
-            'Compra visibilidad, nunca puntuación de IA ni posición orgánica.',
+            'Nunca promociona una idea ni compra votos, nota IA o posición orgánica.',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in OWNER_JS])
         self.assertIn("body.fr-zone-picking [data-feedback-zone]", OWNER_CSS)
@@ -263,6 +283,33 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual([], [marker for marker in markers if marker.lower() not in OWNER_SQL.lower()])
         self.assertNotIn("eltonylfgi", OWNER_SQL.lower())
         self.assertNotRegex(OWNER_SQL, r"(?i)password\s*[:=]\s*['\"]")
+
+    def test_pro_pilot_is_measurable_private_and_cannot_buy_rank(self) -> None:
+        html_markers = [
+            'price:"149 €"',
+            'price:"449 €"',
+            'price:"999 €"',
+            "aportaciones válidas / mes",
+            'callRpc("fr_request_pro_pilot"',
+            "p_feedback_band:byId(\"pro-volume\").value",
+            "p_cadence:byId(\"pro-cadence\").value",
+            "p_goal:goal",
+            "pagar nunca cambia el ranking orgánico",
+        ]
+        self.assertEqual([], [marker for marker in html_markers if marker not in HTML])
+        sql_markers = [
+            "create table public.fr_pro_requests",
+            "alter table public.fr_pro_requests enable row level security",
+            "create or replace function public.fr_request_pro_pilot",
+            "v_actor uuid := auth.uid()",
+            "revoke all on function public.fr_request_pro_pilot",
+            "organic_rank_unchanged boolean not null default true check (organic_rank_unchanged = true)",
+            "fr_promotion_requests_profile_only_check",
+            "check (placement = 'profile' and idea_id is null)",
+        ]
+        self.assertEqual([], [marker for marker in sql_markers if marker.lower() not in PRO_SQL.lower()])
+        self.assertNotIn('data-promote-idea=', HTML)
+        self.assertNotIn('openPromotion("idea"', OWNER_JS)
 
     def test_team_signal_is_limited_and_not_a_public_identity_leak(self) -> None:
         self.assertIn("Math.min(Number(item.team_interest_count || 0) * 5,15)", HTML)
@@ -378,6 +425,7 @@ class LiveBoundaryTests(unittest.TestCase):
             "fr_owner_feedback",
             "fr_profile_requests",
             "fr_promotion_requests",
+            "fr_pro_requests",
         ):
             with self.subTest(table=table):
                 status, raw = api_request(f"{table}?select=*")
@@ -399,6 +447,17 @@ class LiveBoundaryTests(unittest.TestCase):
             (
                 "fr_promotion_requests",
                 {"user_id": "00000000-0000-0000-0000-000000000000", "section": "fanrank", "placement": "profile"},
+            ),
+            (
+                "fr_pro_requests",
+                {
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "organization_name": "Test",
+                    "plan": "signal",
+                    "feedback_band": "under_1000",
+                    "cadence": "weekly",
+                    "goal": "This direct write must be rejected",
+                },
             ),
         ]
         for table, body in probes:
@@ -429,6 +488,17 @@ class LiveBoundaryTests(unittest.TestCase):
                     "p_source_url": None,
                     "p_credit": None,
                     "p_rights": "generated",
+                },
+            ),
+            (
+                "fr_request_pro_pilot",
+                {
+                    "p_section": "fanrank",
+                    "p_organization": "Anonymous probe",
+                    "p_plan": "signal",
+                    "p_feedback_band": "under_1000",
+                    "p_cadence": "weekly",
+                    "p_goal": "This anonymous call must be rejected",
                 },
             ),
         ):

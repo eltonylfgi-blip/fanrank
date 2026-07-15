@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0b12">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0b12'/%3E%3Ctext x='10' y='80' font-size='78'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a0b12'/%3E%3Cpath d='M50 9C55 34 66 45 91 50C66 55 55 66 50 91C45 66 34 55 9 50C34 45 45 34 50 9Z' fill='%23ffd129'/%3E%3Ccircle cx='50' cy='50' r='8' fill='%2363b3ff'/%3E%3C/svg%3E">
 <title>FanRank — the best ideas, ranked</title>
 <meta name="description" content="Starting with Brawl Stars: vote on the ideas fans want most, or request the next game, creator or company profile.">
 <meta property="og:type" content="website">
@@ -60,15 +60,18 @@
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
   header{text-align:center;padding:14px 0 8px}
-  .brand-lockup{position:relative;display:inline-flex;align-items:flex-start;justify-content:center;padding:10px 42px 2px 8px}
+  .brand-lockup{position:relative;display:inline-flex;align-items:flex-start;justify-content:center;padding:12px 42px 4px 8px}
   .logo{position:relative;display:inline-flex;align-items:baseline;text-decoration:none;font-size:clamp(2.55rem,7vw,4.35rem);font-weight:950;
     letter-spacing:-.075em;line-height:.92;background:linear-gradient(100deg,var(--yellow) 4%,#fff4a8 25%,var(--blue) 57%,var(--purple) 82%,var(--pink));
     background-size:180% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;isolation:isolate;
     filter:drop-shadow(0 9px 30px rgba(0,0,0,.34));transform-origin:50% 72%;
-    transition:filter .35s ease}
+    animation:logoFloatIdle 5.2s ease-in-out infinite;transition:filter .35s ease;will-change:transform}
+  .brand-mark{display:inline-flex;align-self:center;width:.7em;height:.7em;margin-right:.17em;transform:translateY(.015em);letter-spacing:0;
+    filter:drop-shadow(0 0 12px rgba(255,209,41,.32))}
+  .brand-mark svg{display:block;width:100%;height:100%;overflow:visible}
+  .brand-mark-star{fill:var(--yellow)}
+  .brand-mark-core{fill:var(--blue)}
   .logo-rank{font-style:italic}
-  .logo-star{position:absolute;right:-.35em;top:-.28em;color:#fff;font-size:.3em;font-style:normal;letter-spacing:0;
-    -webkit-text-fill-color:#fff;text-shadow:0 0 12px #fff,0 0 22px var(--blue);transform:rotate(10deg)}
   .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
     background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
       radial-gradient(circle at 20% 80%,rgba(255,209,41,.55) 0 2%,transparent 3%),
@@ -77,19 +80,13 @@
   .logo:after{content:"";position:absolute;top:-35%;bottom:-35%;left:-38%;width:22%;z-index:2;opacity:0;
     transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);
     mix-blend-mode:screen;pointer-events:none}
-  .logo:hover,.logo:focus-visible,.logo.celestial{animation:logoShakeSmooth .82s var(--ease) both;
+  .logo:hover,.logo:focus-visible,.logo.celestial{animation:logoFloatActive 2.8s ease-in-out infinite;
     filter:drop-shadow(0 0 12px rgba(255,255,255,.5)) drop-shadow(0 0 28px rgba(99,179,255,.46))}
   .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
   .logo:hover:after,.logo:focus-visible:after,.logo.celestial:after{animation:logoShine .8s var(--ease) both}
   .logo:hover + .eyebrow,.logo:focus-visible + .eyebrow,.logo.celestial + .eyebrow{animation:tagPop .82s var(--ease) both}
-  @keyframes logoShakeSmooth{
-    0%{transform:translate3d(0,0,0) rotate(0) scale(1)}
-    20%{transform:translate3d(-2px,-3px,0) rotate(-1.1deg) scale(1.025)}
-    40%{transform:translate3d(2px,-2px,0) rotate(.8deg) scale(1.035)}
-    58%{transform:translate3d(-1px,-2px,0) rotate(-.45deg) scale(1.03)}
-    76%{transform:translate3d(1px,-1px,0) rotate(.2deg) scale(1.02)}
-    100%{transform:translate3d(0,-1px,0) rotate(0) scale(1.018)}
-  }
+  @keyframes logoFloatIdle{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(0,-4px,0) scale(1.004)}}
+  @keyframes logoFloatActive{0%,100%{transform:translate3d(0,-2px,0) scale(1.006)}50%{transform:translate3d(0,-7px,0) scale(1.01)}}
   @keyframes logoShine{0%{left:-38%;opacity:0}22%{opacity:1}100%{left:118%;opacity:0}}
   @keyframes starBloom{0%{opacity:0;transform:scale(.75) rotate(-4deg)}45%{opacity:.95}100%{opacity:0;transform:scale(1.22) rotate(6deg)}}
   @keyframes tagPop{35%{transform:rotate(-4deg) translateY(-4px) scale(1.08)}100%{transform:rotate(-7deg) translateY(0) scale(1)}}
@@ -154,6 +151,37 @@
   .step-title{margin-top:11px;font-weight:900}
   .step-desc{margin-top:4px;color:var(--muted);font-size:.8rem}
 
+  .pro-block{position:relative;margin-top:30px;padding:22px;border:1px solid rgba(99,179,255,.38);border-radius:22px;
+    background:linear-gradient(145deg,rgba(15,20,34,.98),rgba(25,20,40,.94));box-shadow:0 22px 70px rgba(0,0,0,.28);overflow:hidden}
+  .pro-block:before{content:"";position:absolute;right:-110px;top:-150px;width:360px;height:360px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle,rgba(99,179,255,.17),transparent 68%)}
+  .pro-head{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:22px}
+  .pro-kicker{display:inline-flex;align-items:center;gap:7px;color:var(--yellow);font-size:.7rem;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
+  .pro-kicker:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 14px rgba(85,229,154,.75)}
+  .pro-head h2{margin:5px 0 0;font-size:clamp(1.35rem,3.4vw,2rem);line-height:1.15}
+  .pro-head p{max-width:680px;margin:7px 0 0;color:var(--muted);font-size:.88rem}
+  .pro-pilot-note{max-width:230px;padding:10px 12px;border:1px solid rgba(255,209,41,.3);border-radius:12px;background:rgba(255,209,41,.06);
+    color:var(--yellow);font-size:.73rem;font-weight:850;text-align:right}
+  .pro-plans{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:17px}
+  .pro-card{display:flex;flex-direction:column;min-width:0;padding:17px;border:1px solid var(--line);border-radius:17px;background:rgba(15,18,29,.9)}
+  .pro-card.recommended{border-color:rgba(255,209,41,.62);box-shadow:inset 0 0 0 1px rgba(255,209,41,.1),0 14px 38px rgba(0,0,0,.25)}
+  .pro-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .pro-card-name{font-size:1rem;font-weight:950}
+  .pro-badge{padding:3px 8px;border-radius:999px;background:rgba(255,209,41,.12);color:var(--yellow);font-size:.63rem;font-weight:950}
+  .pro-price{margin-top:9px;font-size:1.65rem;font-weight:950;letter-spacing:-.04em}
+  .pro-price small{color:var(--muted);font-size:.7rem;font-weight:750;letter-spacing:0}
+  .pro-limit{min-height:36px;margin-top:2px;color:var(--blue);font-size:.78rem;font-weight:850;line-height:1.4}
+  .pro-list{display:grid;gap:8px;margin:13px 0 16px;padding:0;list-style:none;color:var(--muted);font-size:.82rem;line-height:1.45}
+  .pro-list li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:6px}
+  .pro-list li:before{content:"✦";color:var(--green);font-size:.68rem;margin-top:1px}
+  .pro-card .secondary-btn,.pro-card .primary-btn{width:100%;margin-top:auto}
+  .pro-guard{position:relative;display:flex;align-items:flex-start;gap:9px;margin-top:14px;padding:11px 13px;border:1px solid rgba(85,229,154,.25);
+    border-radius:12px;background:rgba(85,229,154,.045);color:var(--muted);font-size:.76rem}
+  .pro-guard b{color:var(--green)}
+  .profile-pro{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:12px 0 0;padding:13px 15px;
+    border:1px solid rgba(99,179,255,.3);border-radius:14px;background:linear-gradient(110deg,rgba(99,179,255,.07),rgba(185,134,255,.06))}
+  .profile-pro b{display:block}.profile-pro span{display:block;color:var(--muted);font-size:.76rem}
+
   .directory-block{position:relative;margin-top:15px;padding:17px;border:1px solid var(--line-soft);border-radius:22px;
     background:linear-gradient(145deg,rgba(21,25,38,.9),rgba(13,16,25,.78));box-shadow:0 20px 70px rgba(0,0,0,.18)}
   .directory-block .section-head{margin:0 0 12px}
@@ -177,11 +205,11 @@
   .sec-info{min-width:0}
   .sec-kind{display:block;margin-bottom:1px;color:var(--blue);font-size:.62rem;font-weight:950;text-transform:uppercase;letter-spacing:.08em}
   .sec-name{display:block;font-size:1.02rem;font-weight:950;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .sec-tag{display:-webkit-box;margin-top:8px;min-height:34px;color:var(--muted);font-size:.75rem;line-height:1.4;
+  .sec-tag{display:-webkit-box;margin-top:8px;min-height:34px;color:var(--muted);font-size:.79rem;line-height:1.45;
     -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .sec-card-foot{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:auto;padding-top:11px}
-  .sec-quick{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:7px 10px;border:1px solid rgba(255,209,41,.48);
-    border-radius:10px;background:rgba(255,209,41,.08);color:var(--yellow);font-size:.72rem;font-weight:950;text-decoration:none;white-space:nowrap}
+  .sec-quick{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:9px 12px;border:1px solid rgba(255,209,41,.48);
+    border-radius:10px;background:rgba(255,209,41,.08);color:var(--yellow);font-size:.78rem;font-weight:950;text-decoration:none;white-space:nowrap}
   .sec-quick:hover{background:var(--yellow);color:var(--yellow-ink)}
   .profile-tags{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
   .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
@@ -357,6 +385,8 @@
   .auth-nudge{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:11px 12px;
     border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:.76rem}
   .auth-nudge button{flex:0 0 auto}
+  .text-btn{min-height:44px;padding:8px 2px;border:0;background:transparent;color:var(--blue);font-size:.8rem;font-weight:850;text-align:left}
+  .text-btn:hover{text-decoration:underline}
   .receipt{margin-top:12px;padding:12px;border:1px solid rgba(85,229,154,.35);border-radius:12px;
     background:rgba(85,229,154,.06);color:var(--green);font-size:.8rem}
   .activity-user{margin:8px 0 15px;color:var(--muted);font-size:.8rem;word-break:break-word}
@@ -388,9 +418,10 @@
     border-radius:11px;background:var(--surface-2);color:var(--text);font-weight:850;text-decoration:none}
   .mobile-suggest{display:none}
 
-  @media (max-width:760px){
+  @media (max-width:900px){
     .wrap{padding-top:18px}
     .how{grid-template-columns:1fr}
+    .pro-head{grid-template-columns:1fr}.pro-pilot-note{max-width:none;text-align:left}.pro-plans{grid-template-columns:1fr}
     .sections{grid-template-columns:repeat(2,minmax(0,1fr))}
     .trending{grid-template-columns:1fr}
     .trend-card{min-height:120px}
@@ -401,7 +432,7 @@
     .suggest-open{width:100%}
   }
   @media (max-width:560px){
-    .wrap{padding:18px 13px 132px}
+    .wrap{padding:18px 16px 132px}
     .top-actions{left:10px;right:10px;justify-content:flex-end}
     .top-btn{padding-inline:12px}
     header{padding-top:45px}
@@ -410,13 +441,25 @@
     .eyebrow{right:-2px;top:1px;padding:4px 8px}
     .search-shell{grid-template-columns:21px minmax(0,1fr) auto;gap:7px;padding:6px 7px 6px 13px}
     .search-btn{padding-inline:12px}
-    .directory-block{margin-inline:-2px;padding:13px;border-radius:19px}
+    .directory-block{margin-inline:0;padding:15px;border-radius:19px}
     .directory-block .section-head{align-items:flex-start}
-    .sections{grid-template-columns:1fr}
-    .sec-card{min-height:158px}
-    .form-grid{grid-template-columns:1fr}
+    .sections{grid-template-columns:1fr;gap:14px}
+    .sec-card{min-height:0;padding:17px}
+    .sec-tag{-webkit-line-clamp:3;min-height:0}
+    .sec-card-foot{align-items:stretch;flex-direction:column;padding-top:14px}
+    .sec-quick{width:100%;min-height:48px}
+    .trend-card{min-height:150px;padding:18px}
+    .trend-title{font-size:.95rem;line-height:1.5}
+    .trend-meta{font-size:.8rem;line-height:1.45}
+    .pro-card{padding:19px}
+    .pro-card-name{font-size:1.05rem}
+    .pro-limit{min-height:0;margin-top:5px}
+    .pro-list{gap:10px;font-size:.87rem}
+    .pro-card .secondary-btn,.pro-card .primary-btn{min-height:48px}
+    .form-grid{grid-template-columns:1fr;gap:18px}
     .field.full{grid-column:auto}
     .claim-bar{align-items:flex-start;flex-direction:column}
+    .profile-pro{align-items:flex-start;flex-direction:column}.profile-pro .secondary-btn{width:100%}
     .podium{gap:6px}
     .podium-card{padding:11px 7px}
     .podium-card.first{min-height:135px}.podium-card.second{min-height:116px}.podium-card.third{min-height:105px}
@@ -459,7 +502,8 @@
   <header>
     <div class="brand-lockup">
       <a class="logo" id="logo" href="./" aria-label="FanRank">
-        <span>FAN</span><span class="logo-rank">RANK</span><span class="logo-star" aria-hidden="true">✦</span>
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><path class="brand-mark-star" d="M50 7C55 33 67 45 93 50C67 55 55 67 50 93C45 67 33 55 7 50C33 45 45 33 50 7Z"></path><circle class="brand-mark-core" cx="50" cy="50" r="9"></circle></svg></span>
+        <span>FAN</span><span class="logo-rank">RANK</span>
       </a>
       <span class="eyebrow" id="eyebrow"></span>
     </div>
@@ -500,6 +544,19 @@
     <div class="trending" id="trending"></div>
 
     <div class="how" id="how"></div>
+
+    <section class="pro-block" id="fanrank-pro" aria-labelledby="pro-title">
+      <div class="pro-head">
+        <div>
+          <span class="pro-kicker" id="pro-kicker"></span>
+          <h2 id="pro-title"></h2>
+          <p id="pro-intro"></p>
+        </div>
+        <div class="pro-pilot-note" id="pro-pilot-note"></div>
+      </div>
+      <div class="pro-plans" id="pro-plans"></div>
+      <div class="pro-guard" id="pro-guard"></div>
+    </section>
 
     <section class="panel" id="request-panel">
       <h2 id="request-title"></h2>
@@ -563,6 +620,10 @@
     <div class="signal-strip" id="signal-strip" aria-label="Ranking signals">
       <span id="signal-ai"></span><span id="signal-fans"></span><span id="signal-team"></span>
     </div>
+    <section class="profile-pro hidden" id="profile-pro" aria-labelledby="profile-pro-title">
+      <div><b id="profile-pro-title"></b><span id="profile-pro-copy"></span></div>
+      <button class="secondary-btn" id="profile-pro-open" type="button"></button>
+    </section>
 
     <div class="profile-tools">
       <div>
@@ -710,6 +771,8 @@
       <div class="form-actions">
         <button class="primary-btn" id="auth-send" type="submit"></button>
       </div>
+      <button class="text-btn" id="auth-recover" type="button"></button>
+      <span class="helper" id="auth-recover-help"></span>
       <div class="form-status" id="auth-status" role="status" aria-live="polite"></div>
     </form>
   </div>
@@ -725,7 +788,7 @@
       <button class="secondary-btn" id="team-open" type="button"></button>
     </div>
     <div class="activity-list" id="activity-list"></div>
-    <details class="privacy-box" style="margin-top:14px">
+    <details class="privacy-box" id="password-change-panel" style="margin-top:14px">
       <summary id="password-change-title" style="cursor:pointer;font-weight:850"></summary>
       <form id="password-change-form" novalidate style="margin-top:12px">
         <div class="field">
@@ -741,6 +804,61 @@
       <button class="secondary-btn" id="logout-btn" type="button"></button>
     </div>
     <div class="form-status" id="activity-status" role="status" aria-live="polite"></div>
+  </div>
+</dialog>
+
+<dialog id="pro-dialog" aria-labelledby="pro-dialog-title">
+  <div class="dialog-card wide">
+    <button class="dialog-close" id="pro-close" type="button" aria-label="Close">×</button>
+    <h2 id="pro-dialog-title"></h2>
+    <p class="dialog-intro" id="pro-dialog-intro"></p>
+    <form id="pro-form" novalidate>
+      <div class="form-grid">
+        <div class="field">
+          <label id="pro-organization-label" for="pro-organization"></label>
+          <input id="pro-organization" maxlength="120" autocomplete="organization" required>
+        </div>
+        <div class="field">
+          <label id="pro-profile-label" for="pro-profile"></label>
+          <select class="inline-select" id="pro-profile"></select>
+        </div>
+        <div class="field">
+          <label id="pro-plan-label" for="pro-plan"></label>
+          <select class="inline-select" id="pro-plan">
+            <option value="signal" id="pro-plan-signal"></option>
+            <option value="decision" id="pro-plan-decision"></option>
+            <option value="portfolio" id="pro-plan-portfolio"></option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="pro-volume-label" for="pro-volume"></label>
+          <select class="inline-select" id="pro-volume">
+            <option value="under_1000" id="pro-volume-under-1000"></option>
+            <option value="1000_5000" id="pro-volume-1000-5000"></option>
+            <option value="5000_20000" id="pro-volume-5000-20000"></option>
+            <option value="over_20000" id="pro-volume-over-20000"></option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="pro-cadence-label" for="pro-cadence"></label>
+          <select class="inline-select" id="pro-cadence">
+            <option value="monthly" id="pro-cadence-monthly"></option>
+            <option value="weekly" id="pro-cadence-weekly"></option>
+            <option value="daily" id="pro-cadence-daily"></option>
+          </select>
+        </div>
+        <div class="field full">
+          <label id="pro-goal-label" for="pro-goal"></label>
+          <textarea id="pro-goal" minlength="15" maxlength="1200" required></textarea>
+        </div>
+      </div>
+      <label class="check-row">
+        <input id="pro-guard-accept" type="checkbox" required>
+        <span id="pro-guard-accept-copy"></span>
+      </label>
+      <div class="form-actions"><button class="primary-btn" id="pro-send" type="submit"></button></div>
+      <div class="form-status" id="pro-status" role="status" aria-live="polite"></div>
+    </form>
   </div>
 </dialog>
 
@@ -816,9 +934,12 @@ var REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var params = new URLSearchParams(location.search);
 var SECTION = params.get("s");
 var QUICK_SUGGEST = params.get("suggest") === "1";
+var QUICK_PRO = params.get("pro") === "1";
+var PRO_PLAN_PARAM = ["signal","decision","portfolio"].indexOf(params.get("plan")) >= 0 ? params.get("plan") : "decision";
 var DEEP_IDEA = parseInt(params.get("idea") || "0", 10) || null;
 var hashParams = new URLSearchParams(location.hash.replace(/^#/,""));
 var INVITE_TOKEN = hashParams.get("invite") || "";
+var RECOVERY_FLOW = params.get("recover") === "1" || hashParams.get("type") === "recovery";
 var LANG = (params.get("lang") || localStorage.getItem("fr_lang") || "en") === "es" ? "es" : "en";
 var sections = [];
 var allIdeas = [];
@@ -839,6 +960,8 @@ var invitePreview = null;
 var audioContext = null;
 var audioArmed = false;
 var chimePlayed = false;
+var pendingProPlan = PRO_PLAN_PARAM;
+var recoveryHandled = false;
 try{
   if(INVITE_TOKEN){sessionStorage.setItem("fr_pending_invite",INVITE_TOKEN);}
   else{INVITE_TOKEN = sessionStorage.getItem("fr_pending_invite") || "";}
@@ -891,6 +1014,42 @@ var T = {
       ["spark","AI helps rank","Approved ideas are scored for impact, feasibility and clarity — with a reason."],
       ["shield","Teams add context","A verified team can mark interest. It is visible and useful, but never overrides fan demand."]
     ],
+    pro_kicker:"FanRank for teams",
+    pro_title:"From noisy feedback to the next decision",
+    pro_intro:"FanRank groups duplicates, ranks opportunities and turns the strongest evidence into implementation briefs your team can accept, reject or investigate.",
+    pro_pilot_note:"Founding pilot · €199 for 14 days · interest only, no charge yet",
+    pro_guard:"<b>Trust rule:</b> paying never changes organic rank, AI score, votes or team hearts.",
+    pro_plans:[
+      {id:"signal",name:"Signal",price:"€149",suffix:"/ month",limit:"1 profile · 1,000 valid contributions / month",features:["Weekly differential digest","2 traceable implementation briefs / month","Duplicates, evidence and key risks"]},
+      {id:"decision",name:"Decision",price:"€449",suffix:"/ month",limit:"3 profiles · 5,000 valid contributions / month",badge:"Recommended",features:["Weekly digest for each profile","8 implementation briefs / month","Investigate, implement, not now or reject"]},
+      {id:"portfolio",name:"Portfolio",price:"€999",suffix:"/ month",limit:"10 profiles · 20,000 valid contributions / month",features:["20 implementation briefs / month","Cross-profile evidence and change detection","Executive summary and implementation review"]}
+    ],
+    pro_plan_cta:"Request founding pilot",
+    profile_pro_title:"FanRank Pro for this team",
+    profile_pro_copy:"Get the top opportunities as implementation briefs. Participation and ranking remain independent of payment.",
+    profile_pro_open:"Explore the pilot",
+    pro_dialog_title:"Request a FanRank Pro pilot",
+    pro_dialog_intro:"Tell us the feedback volume and decision you need to improve. This records interest only; there is no checkout or charge.",
+    pro_organization_label:"Organization or creator name *",
+    pro_profile_label:"FanRank profile",
+    pro_no_profile:"No FanRank profile yet",
+    pro_plan_label:"Pilot level",
+    pro_volume_label:"Feedback signals each month",
+    pro_cadence_label:"Preferred decision digest",
+    pro_goal_label:"Which recurring decision should FanRank make faster? *",
+    pro_guard_accept:"I understand payment never buys ranking, AI score, votes, hearts or guaranteed implementation.",
+    pro_plan_signal:"Signal · €149 / month",
+    pro_plan_decision:"Decision · €449 / month",
+    pro_plan_portfolio:"Portfolio · €999 / month",
+    pro_volume_under_1000:"Fewer than 1,000",
+    pro_volume_1000_5000:"1,000–5,000",
+    pro_volume_5000_20000:"5,000–20,000",
+    pro_volume_over_20000:"More than 20,000",
+    pro_cadence_monthly:"Monthly",
+    pro_cadence_weekly:"Weekly",
+    pro_cadence_daily:"Daily / continuous",
+    pro_send:"Register pilot interest",
+    pro_ok:"Pilot interest registered. Nothing has been charged; FanRank will qualify the fit before offering a paid pilot.",
     request_title:"Missing someone?",
     request_intro:"Request a profile for any game, creator or company. We will start with the ones people actually ask for.",
     target_label:"Game, creator or company *",
@@ -953,12 +1112,16 @@ var T = {
     sign_in:"Sign in",
     account:"My activity",
     auth_title:"Sign in",
-    auth_intro:"Use your email and password. This works directly and does not depend on an email link.",
+    auth_intro:"Use your password. If this account started with an email link, create one with the recovery option below.",
     auth_email_label:"Your email *",
     auth_email_help:"Used only for sign-in and account recovery. It is not shared publicly.",
     auth_password_label:"Your password *",
     auth_password_help:"FanRank never shows or stores your password in this page; Supabase verifies it securely.",
     auth_send:"Sign in with password",
+    auth_recover:"I never set a password / I forgot it",
+    auth_recover_help:"We will send a one-use link so you can choose a new password securely.",
+    auth_recovery_sent:"Recovery email sent. Open the newest link on this computer and choose a new password.",
+    auth_recovery_ready:"Recovery link verified. Choose a new password below to finish.",
     auth_success:"You are signed in.",
     auth_invalid:"The email or password is incorrect.",
     password_change_title:"Change password",
@@ -1065,6 +1228,42 @@ var T = {
       ["spark","La IA ayuda a ordenar","Las aprobadas reciben nota por impacto, viabilidad y claridad — con un motivo."],
       ["shield","El equipo aporta contexto","Un equipo verificado puede marcar interés. Se ve y ayuda, pero nunca pisa la demanda de los fans."]
     ],
+    pro_kicker:"FanRank para equipos",
+    pro_title:"Del ruido del feedback a la siguiente decisión",
+    pro_intro:"FanRank agrupa duplicados, ordena oportunidades y convierte la evidencia más fuerte en briefs de implementación que el equipo puede aceptar, descartar o investigar.",
+    pro_pilot_note:"Piloto fundador · 199 € durante 14 días · solo interés, todavía no cobra",
+    pro_guard:"<b>Regla de confianza:</b> pagar nunca cambia el ranking orgánico, la nota IA, los votos ni los corazones del equipo.",
+    pro_plans:[
+      {id:"signal",name:"Signal",price:"149 €",suffix:"/ mes",limit:"1 perfil · 1.000 aportaciones válidas / mes",features:["Digest semanal diferencial","2 briefs de implementación trazables / mes","Duplicados, evidencia y riesgos clave"]},
+      {id:"decision",name:"Decision",price:"449 €",suffix:"/ mes",limit:"3 perfiles · 5.000 aportaciones válidas / mes",badge:"Recomendado",features:["Digest semanal por perfil","8 briefs de implementación / mes","Investigar, implementar, no ahora o descartar"]},
+      {id:"portfolio",name:"Portfolio",price:"999 €",suffix:"/ mes",limit:"10 perfiles · 20.000 aportaciones válidas / mes",features:["20 briefs de implementación / mes","Evidencia cruzada y detección de cambios","Resumen ejecutivo y revisión de implementación"]}
+    ],
+    pro_plan_cta:"Solicitar piloto fundador",
+    profile_pro_title:"FanRank Pro para este equipo",
+    profile_pro_copy:"Recibe las mejores oportunidades como briefs de implementación. Participar y ordenar siguen siendo independientes del pago.",
+    profile_pro_open:"Explorar el piloto",
+    pro_dialog_title:"Solicita un piloto FanRank Pro",
+    pro_dialog_intro:"Cuéntanos el volumen de feedback y la decisión que necesitas mejorar. Solo registra interés: no hay checkout ni cobro.",
+    pro_organization_label:"Empresa, proyecto o creador *",
+    pro_profile_label:"Perfil en FanRank",
+    pro_no_profile:"Todavía no tengo perfil en FanRank",
+    pro_plan_label:"Nivel del piloto",
+    pro_volume_label:"Señales de feedback al mes",
+    pro_cadence_label:"Digest de decisiones preferido",
+    pro_goal_label:"¿Qué decisión repetida debería acelerar FanRank? *",
+    pro_guard_accept:"Entiendo que pagar nunca compra ranking, nota IA, votos, corazones ni implementación garantizada.",
+    pro_plan_signal:"Signal · 149 € / mes",
+    pro_plan_decision:"Decision · 449 € / mes",
+    pro_plan_portfolio:"Portfolio · 999 € / mes",
+    pro_volume_under_1000:"Menos de 1.000",
+    pro_volume_1000_5000:"1.000–5.000",
+    pro_volume_5000_20000:"5.000–20.000",
+    pro_volume_over_20000:"Más de 20.000",
+    pro_cadence_monthly:"Mensual",
+    pro_cadence_weekly:"Semanal",
+    pro_cadence_daily:"Diario / continuo",
+    pro_send:"Registrar interés en el piloto",
+    pro_ok:"Interés registrado. No se ha cobrado nada; FanRank comprobará el encaje antes de ofrecer un piloto de pago.",
     request_title:"¿Falta alguien?",
     request_intro:"Pide un perfil para cualquier juego, creador o empresa. Empezaremos por los que la gente pida de verdad.",
     target_label:"Juego, creador o empresa *",
@@ -1127,12 +1326,16 @@ var T = {
     sign_in:"Iniciar sesión",
     account:"Mi actividad",
     auth_title:"Inicia sesión",
-    auth_intro:"Usa tu correo y contraseña. Entra directamente sin depender del enlace del correo.",
+    auth_intro:"Usa tu contraseña. Si esta cuenta nació con un enlace de correo, créala con la recuperación de abajo.",
     auth_email_label:"Tu correo *",
     auth_email_help:"Solo se usa para entrar y recuperar tu cuenta. No se muestra públicamente.",
     auth_password_label:"Tu contraseña *",
     auth_password_help:"FanRank no muestra ni guarda tu contraseña en esta página; Supabase la verifica de forma segura.",
     auth_send:"Entrar con contraseña",
+    auth_recover:"Nunca creé una contraseña / la olvidé",
+    auth_recover_help:"Te enviaremos un enlace de un solo uso para elegir una contraseña nueva de forma segura.",
+    auth_recovery_sent:"Correo de recuperación enviado. Abre el enlace más reciente en este ordenador y elige una contraseña nueva.",
+    auth_recovery_ready:"Enlace verificado. Elige abajo una contraseña nueva para terminar.",
     auth_success:"Sesión iniciada.",
     auth_invalid:"El correo o la contraseña no son correctos.",
     password_change_title:"Cambiar contraseña",
@@ -1376,6 +1579,13 @@ function authRedirectUrl(){
   if(INVITE_TOKEN){url.hash = "invite=" + encodeURIComponent(INVITE_TOKEN);}
   return url.href;
 }
+function recoveryRedirectUrl(){
+  var url = new URL(APP_URL);
+  if(SECTION){url.searchParams.set("s",SECTION);}
+  if(LANG === "es"){url.searchParams.set("lang","es");}
+  url.searchParams.set("recover","1");
+  return url.href;
+}
 function canManageTeam(){
   return !!(membership && (membership.role === "owner" || membership.role === "admin"));
 }
@@ -1513,6 +1723,30 @@ function openAuth(action){
   sendEvent("auth_open",{section:SECTION || null,value:action || "account"});
   setTimeout(function(){byId("auth-email").focus();},0);
 }
+function populateProProfiles(){
+  var selected = SECTION || "";
+  byId("pro-profile").innerHTML = '<option value="">' + esc(tx("pro_no_profile")) + '</option>' +
+    sections.map(function(item){return '<option value="' + esc(item.slug) + '">' + esc(item.name) + '</option>';}).join("");
+  byId("pro-profile").value = sections.some(function(item){return item.slug === selected;}) ? selected : "";
+}
+function openPro(plan){
+  pendingProPlan = ["signal","decision","portfolio"].indexOf(plan) >= 0 ? plan : pendingProPlan;
+  if(!session){openAuth("pro");return;}
+  populateProProfiles();
+  byId("pro-plan").value = pendingProPlan;
+  setStatus("pro-status","","");
+  openDialog("pro-dialog");
+  setTimeout(function(){byId("pro-organization").focus();},0);
+}
+async function openPasswordRecovery(){
+  if(!session || recoveryHandled){return;}
+  recoveryHandled = true;
+  closeDialog("auth-dialog");
+  await openActivity();
+  byId("password-change-panel").open = true;
+  setStatus("password-change-status",tx("auth_recovery_ready"),"ok");
+  setTimeout(function(){byId("password-change-input").focus();},0);
+}
 async function loadMembership(){
   membership = null;
   myTeamInterestIds = new Set();
@@ -1546,7 +1780,13 @@ async function initAuth(){
       await loadMembership();
       updateAccountUI();
       if(SECTION && secMeta){renderIdeas();}
-      if(event === "SIGNED_IN"){sendEvent("auth_signed_in",{section:SECTION || null});}
+      if(event === "PASSWORD_RECOVERY"){
+        sendEvent("auth_recovery_requested",{section:SECTION || null,value:"link_verified"});
+        await openPasswordRecovery();
+      }else if(event === "SIGNED_IN"){
+        sendEvent("auth_signed_in",{section:SECTION || null});
+        resumeAfterAuth();
+      }
     },0);
   });
   authSubscription = listener.data.subscription;
@@ -1560,6 +1800,7 @@ function resumeAfterAuth(){
   }catch(error){}
   if(action === "claim"){openClaimPanel();}
   if(action === "suggest"){openSuggestion();}
+  if(action === "pro"){openPro(pendingProPlan);}
 }
 function statusText(status){
   var map = LANG === "es" ? {
@@ -1727,6 +1968,14 @@ function applyStaticText(){
   byId("directory-filters").setAttribute("aria-label",tx("profiles_title"));
   byId("trending-title").textContent = tx("trending_title");
   byId("trending-subtitle").textContent = tx("trending_subtitle");
+  byId("pro-kicker").textContent = tx("pro_kicker");
+  byId("pro-title").textContent = tx("pro_title");
+  byId("pro-intro").textContent = tx("pro_intro");
+  byId("pro-pilot-note").textContent = tx("pro_pilot_note");
+  byId("pro-guard").innerHTML = tx("pro_guard");
+  byId("profile-pro-title").textContent = tx("profile_pro_title");
+  byId("profile-pro-copy").textContent = tx("profile_pro_copy");
+  byId("profile-pro-open").textContent = tx("profile_pro_open");
   byId("request-title").textContent = tx("request_title");
   byId("request-intro").textContent = tx("request_intro");
   byId("request-target-label").textContent = tx("target_label");
@@ -1779,6 +2028,28 @@ function applyStaticText(){
   byId("auth-password-label").textContent = tx("auth_password_label");
   byId("auth-password-help").textContent = tx("auth_password_help");
   byId("auth-send").textContent = tx("auth_send");
+  byId("auth-recover").textContent = tx("auth_recover");
+  byId("auth-recover-help").textContent = tx("auth_recover_help");
+  byId("pro-dialog-title").textContent = tx("pro_dialog_title");
+  byId("pro-dialog-intro").textContent = tx("pro_dialog_intro");
+  byId("pro-organization-label").textContent = tx("pro_organization_label");
+  byId("pro-profile-label").textContent = tx("pro_profile_label");
+  byId("pro-plan-label").textContent = tx("pro_plan_label");
+  byId("pro-volume-label").textContent = tx("pro_volume_label");
+  byId("pro-cadence-label").textContent = tx("pro_cadence_label");
+  byId("pro-goal-label").textContent = tx("pro_goal_label");
+  byId("pro-guard-accept-copy").textContent = tx("pro_guard_accept");
+  byId("pro-plan-signal").textContent = tx("pro_plan_signal");
+  byId("pro-plan-decision").textContent = tx("pro_plan_decision");
+  byId("pro-plan-portfolio").textContent = tx("pro_plan_portfolio");
+  byId("pro-volume-under-1000").textContent = tx("pro_volume_under_1000");
+  byId("pro-volume-1000-5000").textContent = tx("pro_volume_1000_5000");
+  byId("pro-volume-5000-20000").textContent = tx("pro_volume_5000_20000");
+  byId("pro-volume-over-20000").textContent = tx("pro_volume_over_20000");
+  byId("pro-cadence-monthly").textContent = tx("pro_cadence_monthly");
+  byId("pro-cadence-weekly").textContent = tx("pro_cadence_weekly");
+  byId("pro-cadence-daily").textContent = tx("pro_cadence_daily");
+  byId("pro-send").textContent = tx("pro_send");
   byId("activity-title").textContent = tx("activity_title");
   byId("password-change-title").textContent = tx("password_change_title");
   byId("password-change-label").textContent = tx("password_change_label");
@@ -1805,7 +2076,7 @@ function applyStaticText(){
   byId("invite-intro").textContent = tx("invite_intro");
   byId("invite-accept").textContent = tx("invite_accept");
   byId("invite-decline").textContent = tx("invite_decline");
-  ["suggest-close","auth-close","activity-close","team-close","invite-close"].forEach(function(id){
+  ["suggest-close","auth-close","activity-close","pro-close","team-close","invite-close"].forEach(function(id){
     byId(id).setAttribute("aria-label",tx("close"));
   });
   byId("claim-title").textContent = tx("claim_title");
@@ -1819,6 +2090,7 @@ function applyStaticText(){
   byId("claim-cancel").textContent = tx("claim_cancel");
   byId("footer").innerHTML = tx("footer");
   byId("logo").href = location.pathname + (LANG === "es" ? "?lang=es" : "");
+  renderProPlans();
   updateAccountUI();
 }
 
@@ -1837,6 +2109,19 @@ function renderHow(){
     return '<article class="step"><div class="step-icon">' + icon(step[0]) + '</div><div class="step-title">' +
       esc(step[1]) + '</div><div class="step-desc">' + esc(step[2]) + '</div></article>';
   }).join("");
+}
+function renderProPlans(){
+  byId("pro-plans").innerHTML = tx("pro_plans").map(function(plan){
+    return '<article class="pro-card ' + (plan.id === "decision" ? 'recommended' : '') + '"><div class="pro-card-top"><span class="pro-card-name">' +
+      esc(plan.name) + '</span>' + (plan.badge ? '<span class="pro-badge">' + esc(plan.badge) + '</span>' : '') + '</div><div class="pro-price">' +
+      esc(plan.price) + ' <small>' + esc(plan.suffix) + '</small></div><div class="pro-limit">' + esc(plan.limit) + '</div><ul class="pro-list">' +
+      plan.features.map(function(feature){return '<li><span>' + esc(feature) + '</span></li>';}).join("") + '</ul><button class="' +
+      (plan.id === "decision" ? 'primary-btn' : 'secondary-btn') + '" type="button" data-pro-plan="' + esc(plan.id) + '">' +
+      esc(tx("pro_plan_cta")) + '</button></article>';
+  }).join("");
+  document.querySelectorAll("[data-pro-plan]").forEach(function(button){
+    button.addEventListener("click",function(){openPro(button.dataset.proPlan);});
+  });
 }
 function renderHomeStats(){
   byId("stats").innerHTML =
@@ -2175,10 +2460,6 @@ function renderIdeas(){
         '<button class="icon-btn team-interest-btn" type="button" data-interest="' + item.id + '" aria-pressed="' +
         (myTeamInterestIds.has(item.id) ? "true" : "false") + '" aria-label="' + esc(myTeamInterestIds.has(item.id) ? tx("team_interest_remove") : tx("team_interest_add")) +
         '" title="' + esc(myTeamInterestIds.has(item.id) ? tx("team_interest_remove") : tx("team_interest_add")) + '">' + icon("heart") + '</button>' : "") +
-      (window.FanRankOwnerStudio && window.FanRankOwnerStudio.canPromote() ?
-        '<button class="icon-btn promote-interest-btn" type="button" data-promote-idea="' + item.id + '" aria-label="' +
-        esc(LANG === "es" ? "Solicitar promoción transparente" : "Request transparent promotion") + '" title="' +
-        esc(LANG === "es" ? "Solicitar promoción transparente" : "Request transparent promotion") + '">↗</button>' : "") +
       '</div></article>';
   }).join("");
   requestAnimationFrame(function(){
@@ -2192,9 +2473,6 @@ function renderIdeas(){
   });
   document.querySelectorAll("[data-interest]").forEach(function(button){
     button.addEventListener("click",function(){setTeamInterest(Number(button.dataset.interest),button);});
-  });
-  document.querySelectorAll("[data-promote-idea]").forEach(function(button){
-    button.addEventListener("click",function(){window.FanRankOwnerStudio.openPromotion("idea",Number(button.dataset.promoteIdea));});
   });
 }
 function renderProfile(){
@@ -2229,6 +2507,7 @@ function loadSection(){
   byId("home-view").classList.add("hidden");
   byId("section-view").classList.remove("hidden");
   document.querySelector(".claim-bar").classList.toggle("hidden",secMeta.verification_status === "verified");
+  byId("profile-pro").classList.toggle("hidden",secMeta.verification_status !== "verified");
   document.body.classList.remove("home-live");
   document.body.classList.add("profile-live");
   renderProfile();
@@ -2403,9 +2682,11 @@ byId("suggest-close").addEventListener("click",closeSuggestion);
 byId("submit-cancel").addEventListener("click",closeSuggestion);
 byId("suggest-sign-in").addEventListener("click",function(){openAuth("suggest");});
 byId("account-btn").addEventListener("click",function(){session ? openActivity() : openAuth();});
+byId("profile-pro-open").addEventListener("click",function(){openPro("decision");});
 byId("auth-close").addEventListener("click",function(){closeDialog("auth-dialog");});
 byId("auth-dialog").addEventListener("close",function(){byId("auth-password").value = "";});
 byId("activity-close").addEventListener("click",function(){closeDialog("activity-dialog");});
+byId("pro-close").addEventListener("click",function(){closeDialog("pro-dialog");});
 byId("team-open").addEventListener("click",openTeam);
 byId("team-close").addEventListener("click",function(){closeDialog("team-dialog");});
 byId("invite-close").addEventListener("click",function(){closeDialog("invite-dialog");});
@@ -2414,12 +2695,63 @@ byId("submit-idea").addEventListener("input",function(){saveDraft();renderSimila
   byId(id).addEventListener("input",saveDraft);
   byId(id).addEventListener("change",saveDraft);
 });
-["suggest-dialog","auth-dialog","activity-dialog","team-dialog","invite-dialog"].forEach(function(id){
+["suggest-dialog","auth-dialog","activity-dialog","pro-dialog","team-dialog","invite-dialog"].forEach(function(id){
   byId(id).addEventListener("click",function(event){
     if(event.target === byId(id)){
       if(id === "suggest-dialog"){closeSuggestion();}else{closeDialog(id);}
     }
   });
+});
+
+byId("auth-recover").addEventListener("click",async function(){
+  var email = byId("auth-email").value.trim();
+  if(!email || !byId("auth-email").checkValidity()){
+    setStatus("auth-status",tx("required_error"),"err");
+    byId("auth-email").focus();
+    return;
+  }
+  if(!authClient){setStatus("auth-status",tx("auth_unavailable"),"err");return;}
+  var button = byId("auth-recover");
+  setBusy(button,true);
+  setStatus("auth-status","","");
+  try{
+    var result = await authClient.auth.resetPasswordForEmail(email,{redirectTo:recoveryRedirectUrl()});
+    if(result.error){throw result.error;}
+    sendEvent("auth_recovery_requested",{section:SECTION || null,value:"email_sent"});
+    setStatus("auth-status",tx("auth_recovery_sent"),"ok");
+  }catch(error){setStatus("auth-status",tx("generic_error"),"err");}
+  finally{setBusy(button,false);}
+});
+
+byId("pro-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  if(!session){openAuth("pro");return;}
+  var organization = byId("pro-organization").value.trim();
+  var goal = byId("pro-goal").value.trim();
+  if(organization.length < 2 || goal.length < 15 || !byId("pro-guard-accept").checked){
+    setStatus("pro-status",tx("required_error"),"err");
+    if(organization.length < 2){byId("pro-organization").focus();}
+    else if(goal.length < 15){byId("pro-goal").focus();}
+    else{byId("pro-guard-accept").focus();}
+    return;
+  }
+  var button = byId("pro-send");
+  setBusy(button,true);
+  setStatus("pro-status","","");
+  try{
+    await callRpc("fr_request_pro_pilot",{
+      p_section:byId("pro-profile").value || null,
+      p_organization:organization,
+      p_plan:byId("pro-plan").value,
+      p_feedback_band:byId("pro-volume").value,
+      p_cadence:byId("pro-cadence").value,
+      p_goal:goal
+    });
+    sendEvent("pro_interest",{section:byId("pro-profile").value || null,value:byId("pro-plan").value});
+    setStatus("pro-status",tx("pro_ok"),"ok");
+    byId("pro-guard-accept").checked = false;
+  }catch(error){setStatus("pro-status",error.status === 429 ? tx("too_fast") : tx("generic_error"),"err");}
+  finally{setBusy(button,false);}
 });
 
 byId("team-invite-form").addEventListener("submit",async function(event){
@@ -2518,6 +2850,14 @@ byId("password-change-form").addEventListener("submit",async function(event){
     if(result.error){throw result.error;}
     byId("password-change-input").value = "";
     setStatus("password-change-status",tx("password_change_ok"),"ok");
+    if(RECOVERY_FLOW){
+      var cleanRecoveryUrl = new URL(location.href);
+      cleanRecoveryUrl.searchParams.delete("recover");
+      cleanRecoveryUrl.searchParams.delete("code");
+      if(hashParams.get("type") === "recovery"){cleanRecoveryUrl.hash = "";}
+      history.replaceState(null,"",cleanRecoveryUrl.pathname + cleanRecoveryUrl.search + cleanRecoveryUrl.hash);
+      RECOVERY_FLOW = false;
+    }
   }catch(error){setStatus("password-change-status",tx("generic_error"),"err");}
   finally{setBusy(button,false);}
 });
@@ -2681,8 +3021,16 @@ async function boot(){
     await initAuth();
     await loadDirectory();
     if(SECTION){loadSection();}else{loadHome();}
-    resumeAfterAuth();
+    if(session && RECOVERY_FLOW){await openPasswordRecovery();}else{resumeAfterAuth();}
     await handlePendingInvite();
+    if(QUICK_PRO && !RECOVERY_FLOW){
+      QUICK_PRO = false;
+      var cleanProUrl = new URL(location.href);
+      cleanProUrl.searchParams.delete("pro");
+      cleanProUrl.searchParams.delete("plan");
+      history.replaceState(null,"",cleanProUrl.pathname + cleanProUrl.search + cleanProUrl.hash);
+      setTimeout(function(){openPro(PRO_PLAN_PARAM);},0);
+    }
   }catch(error){
     byId("sections").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) +
       '<br><button class="secondary-btn retry-btn" type="button" onclick="location.reload()">' +
@@ -2692,6 +3040,6 @@ async function boot(){
 }
 boot();
 </script>
-<script src="owner-studio.js?v=7"></script>
+<script src="owner-studio.js?v=8"></script>
 </body>
 </html>

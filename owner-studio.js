@@ -19,8 +19,8 @@
       profile:"Perfil",image:"Imagen *",alt:"Descripción accesible *",source:"URL de la fuente",credit:"Crédito",rights:"Base de derechos *",
       official_press:"Press kit oficial",licensed:"Con licencia",public_domain:"Dominio público",owner_upload:"Subida por el titular",generated:"Generada para FanRank",
       rights_help:"Para press kit, licencia o dominio público, añade el enlace original que lo demuestra.",photo_send:"Publicar foto",photo_ok:"Foto actualizada.",
-      promote:"Promocionar",promote_title:"Solicitar promoción",promote_intro:"Esto registra interés; hoy no cobra nada.",placement:"Qué promocionar",profile_placement:"Perfil",idea_placement:"Idea",
-      goal:"Objetivo de la promoción",promote_rule:"La promoción será publicidad claramente marcada. Compra visibilidad, nunca puntuación de IA ni posición orgánica.",
+      promote:"Promocionar",promote_title:"Solicitar promoción",promote_intro:"Esto registra interés para dar visibilidad al perfil; hoy no cobra nada. Las ideas concretas no se promocionan.",placement:"Qué promocionar",profile_placement:"Perfil",idea_placement:"Idea antigua (cancelada)",
+      goal:"Objetivo de la promoción",promote_rule:"La publicidad solo puede dar visibilidad a un perfil o convocatoria futura. Nunca promociona una idea ni compra votos, nota IA o posición orgánica.",
       promote_send:"Registrar interés",promote_ok:"Interés registrado. No se ha realizado ningún cobro.",owner_mode:"PROPIETARIO",verified:"Perfil verificado",
       generic_error:"No se pudo completar. Tu contenido sigue aquí.",required:"Completa los campos obligatorios.",bad_image:"Usa JPG, PNG o WebP dentro del límite de tamaño.",bad_source:"Añade una URL original válida para demostrar los derechos.",
       zones:{hero:"Cabecera y buscador",stats:"Métricas",home_directory:"Perfiles y categorías",trending:"Tendencias",request_profile:"Petición pública de perfil",profile_identity:"Cabecera del perfil",suggest_cta:"Botón de sugerencia",profile_ranking:"Filtros del ranking",podium:"Podio",profile_ideas:"Lista de ideas",footer:"Pie de página"}
@@ -42,8 +42,8 @@
       profile:"Profile",image:"Image *",alt:"Accessible description *",source:"Source URL",credit:"Credit",rights:"Rights basis *",
       official_press:"Official press kit",licensed:"Licensed",public_domain:"Public domain",owner_upload:"Rights-holder upload",generated:"Generated for FanRank",
       rights_help:"For press kits, licensed or public-domain media, add the original page that proves it.",photo_send:"Publish photo",photo_ok:"Photo updated.",
-      promote:"Promote",promote_title:"Request promotion",promote_intro:"This records interest; no payment is taken today.",placement:"What to promote",profile_placement:"Profile",idea_placement:"Idea",
-      goal:"Promotion goal",promote_rule:"Promotion will be clearly labeled advertising. It buys visibility, never AI score or organic position.",
+      promote:"Promote",promote_title:"Request promotion",promote_intro:"This records interest in profile visibility; no payment is taken today. Individual ideas cannot be promoted.",placement:"What to promote",profile_placement:"Profile",idea_placement:"Legacy idea request (cancelled)",
+      goal:"Promotion goal",promote_rule:"Advertising may only distribute a profile or future research call. It never promotes an idea or buys votes, AI score or organic position.",
       promote_send:"Register interest",promote_ok:"Interest registered. No payment was made.",owner_mode:"OWNER",verified:"Verified profile",
       generic_error:"This could not be completed. Your content is still here.",required:"Complete the required fields.",bad_image:"Use JPG, PNG or WebP within the size limit.",bad_source:"Add a valid original URL that proves the usage rights.",
       zones:{hero:"Header and search",stats:"Metrics",home_directory:"Profiles and categories",trending:"Trending",request_profile:"Public profile request",profile_identity:"Profile header",suggest_cta:"Suggestion call to action",profile_ranking:"Ranking filters",podium:"Podium",profile_ideas:"Ideas list",footer:"Footer"}
@@ -137,7 +137,7 @@
     el("studio-photo").addEventListener("click",function(){closeModal("owner-studio-dialog");openPhoto();});
     el("owner-feedback-profile").addEventListener("click",function(){openFeedback(window.SECTION ? "profile_ideas" : "home_directory");});
     el("owner-photo-open").addEventListener("click",openPhoto);
-    el("owner-promote-profile").addEventListener("click",function(){openPromotion("profile",null);});
+    el("owner-promote-profile").addEventListener("click",openPromotion);
     document.querySelectorAll("[data-owner-close]").forEach(function(button){button.addEventListener("click",function(){closeModal(button.dataset.ownerClose);});});
     ["owner-studio-dialog","owner-feedback-dialog","owner-profile-dialog","owner-photo-dialog","owner-promotion-dialog"].forEach(function(id){el(id).addEventListener("click",function(event){if(event.target===el(id)){closeModal(id);}});});
     el("owner-feedback-select").addEventListener("click",beginZonePick);
@@ -315,16 +315,16 @@
     finally{setButtonBusy("owner-photo-send",false);}
   }
 
-  function openPromotion(placement,ideaId){
+  function openPromotion(){
     if(!canPromote() || !window.SECTION){return;}
-    state.promotion={placement:placement,ideaId:ideaId||null,section:window.SECTION};
-    var label=placement==="idea"?s("idea_placement")+" #"+ideaId:s("profile_placement")+" · "+(window.secMeta?window.secMeta.name:window.SECTION);
+    state.promotion={placement:"profile",ideaId:null,section:window.SECTION};
+    var label=s("profile_placement")+" · "+(window.secMeta?window.secMeta.name:window.SECTION);
     el("owner-promotion-label").value=label;setFormStatus("owner-promotion-status","","");openModal("owner-promotion-dialog");
   }
   async function submitPromotion(event){
     event.preventDefault();if(!state.promotion || !canPromote()){return;}
     setButtonBusy("owner-promotion-send",true);setFormStatus("owner-promotion-status","","");
-    try{await window.postRow("fr_promotion_requests",{user_id:window.session.user.id,section:state.promotion.section,idea_id:state.promotion.ideaId,placement:state.promotion.placement,goal:el("owner-promotion-goal").value.trim()||null});if(window.sendEvent){window.sendEvent("promotion_interest",{section:state.promotion.section,idea_id:state.promotion.ideaId,value:state.promotion.placement});}el("owner-promotion-goal").value="";setFormStatus("owner-promotion-status",s("promote_ok"),"ok");}
+    try{await window.postRow("fr_promotion_requests",{user_id:window.session.user.id,section:state.promotion.section,idea_id:null,placement:"profile",goal:el("owner-promotion-goal").value.trim()||null});if(window.sendEvent){window.sendEvent("promotion_interest",{section:state.promotion.section,value:"profile"});}el("owner-promotion-goal").value="";setFormStatus("owner-promotion-status",s("promote_ok"),"ok");}
     catch(error){setFormStatus("owner-promotion-status",s("generic_error"),"err");}
     finally{setButtonBusy("owner-promotion-send",false);}
   }
