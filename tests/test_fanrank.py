@@ -756,6 +756,7 @@ class StaticAppTests(unittest.TestCase):
             'influencer:"Influencer"',
             '["tag:influencer","#","Influencer"]',
             '["tag:streamer","#","Streamer"]',
+            'var socialCreator = ["streamer","youtuber","tiktoker"].some',
             'directoryMode.indexOf("tag:") === 0',
             'var selectedTag = directoryMode.slice(4);',
             'data-sort="balanced"',

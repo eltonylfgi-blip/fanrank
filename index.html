@@ -2039,7 +2039,8 @@ function sectionTagline(item){
 }
 function sectionTags(item){
   var tags = Array.isArray(item && item.tags) ? item.tags.slice() : [];
-  if(item && item.kind === "creator" && tags.indexOf("influencer") < 0){tags.push("influencer");}
+  var socialCreator = ["streamer","youtuber","tiktoker"].some(function(tag){return tags.indexOf(tag) >= 0;});
+  if(item && item.kind === "creator" && socialCreator && tags.indexOf("influencer") < 0){tags.push("influencer");}
   return tags;
 }
 function profileImageUrl(path){
