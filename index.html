@@ -391,7 +391,9 @@
   .check-row input{width:18px;height:18px;flex:0 0 auto;margin:1px 0 0;accent-color:var(--green)}
   .category-picker{min-width:0;margin:13px 0 0;padding:0;border:0}
   .category-picker legend{margin-bottom:7px;color:var(--text);font-size:.8rem;font-weight:850}
-  .category-options{display:flex;max-width:100%;gap:7px;overflow-x:auto;padding:2px 2px 5px;scroll-snap-type:x proximity}
+  .category-options{display:flex;max-width:100%;gap:7px;overflow-x:auto;padding:2px 2px 5px;scroll-snap-type:x proximity;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .category-options::-webkit-scrollbar{display:none}
   .category-option{position:relative;display:inline-flex;flex:0 0 auto;scroll-snap-align:start}
   .category-option input{position:absolute;opacity:0;pointer-events:none}
   .category-option span{display:inline-flex;align-items:center;min-height:42px;padding:8px 12px;border:1px solid var(--line);
