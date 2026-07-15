@@ -14,19 +14,20 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 - Oferta FanRank Pro visible y cola privada de interés: precios por aportaciones válidas analizadas, no por riqueza, empleados ni asientos.
 - Marca dual coherente: `FanRank ♥` para fans y público; `FanRank ★` únicamente dentro de un equipo verificado.
 
-## Preparado localmente, todavía no publicado
+## Publicado y validado técnicamente (beneficio todavía pendiente)
 
 - Enlaces HTTPS de apoyo y miniatura segura para vídeos concretos de YouTube, sin iframe ni subida de MP4.
 - Telemetría separada de QA mediante `?qa=1` y contrato SQL alineado con los eventos emitidos.
-- Evidencia actual: 22/22 pruebas estáticas pasan. Esto demuestra cableado local; no demuestra despliegue, uso ni beneficio.
+- Bandeja privada de sugerencias y pruebas para `owner/admin` de un perfil verificado; el contacto solo aparece con consentimiento.
+- Evidencia actual: 25/25 pruebas estáticas y 31/31 pruebas live; GitHub Pages desplegó `9d096c5`; una sesión productiva QA conservó `?qa=1`, rechazó un dominio falso de YouTube, creó la miniatura válida y mantuvo `fr_events` en 143→143. Esto demuestra mecanismo y despliegue, no beneficio de mercado.
 
 ## Experimento activo (máximo 72 horas)
 
-No hay todavía un experimento de producto activo: primero deben publicarse y verificarse en producción la telemetría y los enlaces preparados localmente. Solo entonces empieza el reloj del siguiente experimento.
+No hay todavía un experimento de producto activo: el gate técnico ya pasó, pero hace falta uso humano posterior. El siguiente reloj empieza con exposición real, no con los tests.
 
 ### Gate previo — telemetría confiable
 
-- Estado: `ready_local`; validación live pendiente.
+- Estado: `validated_mechanism`; beneficio pendiente.
 - Decisión: si los eventos ya pueden seleccionar una mejora sin mezclar QA con uso real.
 - Selector: contrato live acepta todos los eventos emitidos y una sesión con `?qa=1` produce cero filas.
 - Deadline: 24 horas desde el despliegue; nunca más de 72 horas.
@@ -102,7 +103,7 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 
 ### FR-2026-07-15-001 — reparar telemetría y excluir QA
 
-- Estado: `ready_local`; 22/22 pruebas estáticas, migración live y prueba QA pendientes. Beneficio no medido.
+- Estado: `validated_mechanism`; 25/25 estáticas, 31/31 live y QA productivo 143→143. Beneficio no medido.
 - Fuentes: fallo reproducible en `fr_events`; auditoría de producción.
 - Decisión que cambia: si las métricas pueden seleccionar la siguiente mejora.
 - Score: 96.
@@ -112,7 +113,7 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 
 ### FR-2026-07-15-002 — enlaces YouTube con miniatura segura
 
-- Estado: `ready_local`; 22/22 pruebas estáticas. Migración, despliegue y envío E2E real pendientes; valor no medido.
+- Estado: `validated_mechanism`; SQL v10/v11 y Edge v3 live, Pages `9d096c5`, vista previa de Orslok y rechazo de host falso comprobados. Valor no medido.
 - Fuentes: petición explícita de Tony para Orslok + revisión de seguridad.
 - Decisión que cambia: si un enlace estructurado genera sugerencias más concretas para creadores.
 - Score: 88.
@@ -140,7 +141,7 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 
 ### FR-2026-07-15-005 — logo corazón + podio + trofeo
 
-- Estado: `ready_local`; 22/22 pruebas estáticas. Revisión visual real, despliegue y aceptación de Tony pendientes; beneficio no medido.
+- Estado: `validated_mechanism`; revisión visual local y productiva, Pages `9d096c5` y crítica adversaria sin P0/P1 fuera de Auth. Aceptación de Tony y beneficio siguen pendientes.
 - Fuentes: corrección explícita de Tony + referencia generada por ChatGPT.
 - Decisión que cambia: si la marca comunica fans + ranking + ganador sin explicación.
 - Score: 76.
