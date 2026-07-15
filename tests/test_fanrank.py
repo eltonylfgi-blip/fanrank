@@ -315,6 +315,7 @@ class StaticAppTests(unittest.TestCase):
     def test_mobile_suggestion_cta_never_competes_with_inline_cta(self) -> None:
         markers = [
             "body.profile-live.mobile-cta-ready .mobile-suggest",
+            "body.home-live.mobile-cta-ready .mobile-suggest",
             "body.suggest-dialog-open .mobile-suggest",
             "new IntersectionObserver",
             'document.body.classList.toggle("mobile-cta-ready",!entries[0].isIntersecting)',
@@ -437,12 +438,54 @@ class StaticAppTests(unittest.TestCase):
     def test_anonymous_submission_contract_matches_the_private_queue(self) -> None:
         self.assertIn('postRow("fr_submissions",submissionPayload)', HTML)
         self.assertIn("function submissionTextParts(value)", HTML)
-        self.assertIn("section:SECTION,title:textParts.title,", HTML)
+        self.assertIn("var targetSection = currentSuggestionSection();", HTML)
+        self.assertIn("section:targetSection,title:textParts.title,", HTML)
         self.assertIn("details:textParts.details", HTML)
         self.assertIn('identityMode === "contact" ? byId("submit-contact").value.trim() : ""', HTML)
         self.assertIn('session && identityMode === "account" ? "account" : "anonymous"', HTML)
         self.assertIn('headers:{"Prefer":"return=minimal"}', HTML)
         self.assertNotIn("section_slug:SECTION", HTML)
+
+    def test_home_activation_is_universal_ranked_compact_and_accessible(self) -> None:
+        markers = [
+            "Improve what you use and follow.",
+            "Mejora lo que usas y sigues.",
+            'id="home-suggest"',
+            'id="submit-target"',
+            "function currentSuggestionSection()",
+            "function populateSuggestionTargets()",
+            'data-home-rank="ai"',
+            'data-home-rank="fans"',
+            'aria-controls="trending"',
+            'id="trending" role="tabpanel"',
+            'function activateHomeRank(tab,focusTab)',
+            '["ArrowLeft","ArrowRight","Home","End"]',
+            'data-home-vote="',
+            'id="fan-value-title"',
+            'id="home-profile-cta"',
+            'id="directory-more"',
+            'var initialLimit = window.matchMedia("(max-width:560px)").matches ? 3 : 6;',
+            'var familiar = ["rubius","brawl-stars","discord"',
+            "scroll-snap-type:x mandatory",
+            '.trend-card{flex:0 0 min(360px,82%)',
+            "rank-r",
+            "rank-a",
+            "rank-k",
+            "podium-step",
+            "rank-trophy",
+            "flag-view-gb",
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
+        self.assertLess(HTML.index('id="home-suggest"'), HTML.index('class="global-rank-block"'))
+        self.assertLess(HTML.index('class="global-rank-block"'), HTML.index('class="directory-block"'))
+        self.assertNotIn('content="Ranked Brawl Stars', HTML)
+        self.assertNotIn("will-change:transform", HTML)
+        self.assertIn('byId("lang-flag").setAttribute("data-flag"', HTML)
+        self.assertIn('if(SECTION){renderProfile();renderSimilarIdeas();}else{renderTrending();renderSimilarIdeas();}', HTML)
+        render_sections = extract(r"function renderSections\(\)\{([\s\S]*?)\n\}\nfunction trendingIdeas")
+        render_trending = extract(r"function renderTrending\(\)\{([\s\S]*?)\n\}\nfunction loadHome")
+        self.assertIn('moreButton.classList.toggle("hidden"', render_sections)
+        self.assertNotIn("moreButton", render_trending)
 
     def test_celestial_logo_respects_user_control(self) -> None:
         markers = [

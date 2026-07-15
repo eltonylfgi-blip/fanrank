@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0a0b12">
 <link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a0b12'/%3E%3Cpath d='M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z' fill='%23ff72c6'/%3E%3Cpath d='M28 26C34 21 40 22 44 27' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' opacity='.75'/%3E%3C/svg%3E">
 <title>FanRank — the best ideas, ranked</title>
-<meta name="description" content="Starting with Brawl Stars: vote on the ideas fans want most, or request the next game, creator or company profile.">
+<meta name="description" content="Suggest and vote on useful ideas for creators, games, companies, platforms and AI. FanRank turns fan feedback into clear, ranked opportunities.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FanRank">
 <meta property="og:title" content="FanRank - the best ideas, ranked">
@@ -54,37 +54,51 @@
     font-size:.78rem;font-weight:850;box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
   .top-btn:hover{border-color:var(--yellow)}
   .top-btn svg{width:17px;height:17px}
-  .lang-flag{display:inline-block;width:20px;height:14px;border:1px solid rgba(255,255,255,.36);border-radius:2px;
-    box-shadow:0 1px 4px rgba(0,0,0,.28);overflow:hidden}
-  .flag-es{background:linear-gradient(to bottom,#aa151b 0 25%,#f1bf00 25% 75%,#aa151b 75%)}
-  .flag-gb{background:
-    linear-gradient(33deg,transparent 42%,#fff 42% 48%,#c8102e 48% 53%,#fff 53% 59%,transparent 59%),
-    linear-gradient(-33deg,transparent 42%,#fff 42% 48%,#c8102e 48% 53%,#fff 53% 59%,transparent 59%),
-    linear-gradient(to right,transparent 38%,#fff 38% 62%,transparent 62%),
-    linear-gradient(to bottom,transparent 31%,#fff 31% 69%,transparent 69%),
-    linear-gradient(to right,transparent 44%,#c8102e 44% 56%,transparent 56%),
-    linear-gradient(to bottom,transparent 39%,#c8102e 39% 61%,transparent 61%),#21468b}
+  .lang-flag{display:block;width:23px;height:16px;border:1px solid rgba(255,255,255,.48);border-radius:3px;
+    box-shadow:0 1px 5px rgba(0,0,0,.34);overflow:hidden;flex:0 0 auto}
+  .lang-flag .flag-view{display:none}
+  .lang-flag[data-flag="gb"] .flag-view-gb,.lang-flag[data-flag="es"] .flag-view-es{display:block}
   :focus-visible{outline:0;box-shadow:var(--focus)!important}
   .hidden{display:none!important}
   .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
     clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
   header{text-align:center;padding:14px 0 8px}
-  .brand-lockup{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px 8px 0}
-  .logo{position:relative;display:inline-flex;align-items:baseline;text-decoration:none;font-size:clamp(2.55rem,7vw,4.35rem);font-weight:950;
-    letter-spacing:-.075em;line-height:.92;background:linear-gradient(100deg,var(--yellow) 4%,#fff4a8 25%,var(--blue) 57%,var(--purple) 82%,var(--pink));
-    background-size:180% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;isolation:isolate;
-    filter:drop-shadow(0 9px 30px rgba(0,0,0,.34));transform-origin:50% 72%;
-    animation:logoFloatIdle 5.2s ease-in-out infinite;transition:filter .35s ease;will-change:transform}
-  .brand-mark{display:inline-flex;align-self:center;width:.68em;height:.68em;margin-left:.19em;transform:translateY(.015em);letter-spacing:0;
-    filter:drop-shadow(0 0 12px rgba(255,209,41,.32))}
+  .brand-lockup{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px 8px 0}
+  .logo{position:relative;display:inline-flex;align-items:center;text-decoration:none;font-size:clamp(2.7rem,7.4vw,4.65rem);font-weight:950;
+    line-height:.88;isolation:isolate;filter:drop-shadow(0 10px 34px rgba(0,0,0,.38));transform-origin:50% 72%;
+    animation:logoFloatIdle 5.2s ease-in-out infinite;transition:filter .3s ease}
+  .logo-word{position:relative;z-index:2;display:inline-flex;align-items:flex-end;letter-spacing:-.078em;white-space:nowrap}
+  .logo-fan,.rank-letter{display:inline-block;background:linear-gradient(105deg,var(--yellow) 2%,#fff4a8 27%,var(--blue) 59%,var(--purple) 82%,var(--pink));
+    background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 10px rgba(99,179,255,.14));transition:filter .28s ease,transform .28s var(--ease)}
+  .logo-fan{position:relative;z-index:2}
+  .brand-mark{position:relative;z-index:1;display:inline-flex;width:.94em;height:.94em;margin-right:-.21em;transform:rotate(-9deg) translateY(.02em);
+    filter:drop-shadow(0 0 8px rgba(255,114,198,.55)) drop-shadow(0 0 24px rgba(255,114,198,.28));
+    animation:emblemBeat 3.8s ease-in-out infinite;transition:transform .28s var(--ease),filter .28s ease}
+  .brand-mark:after{content:"";position:absolute;right:-.02em;top:.08em;width:.14em;height:.14em;border-radius:50%;background:#fff7c7;
+    box-shadow:0 0 12px 3px rgba(255,209,41,.86);opacity:.75}
   .brand-mark svg{display:block;width:100%;height:100%;overflow:visible}
-  .brand-mark-heart{fill:var(--pink);stroke:#ffd8ef;stroke-width:2}
-  .brand-mark-team{display:none;fill:var(--yellow);stroke:#fff3a4;stroke-width:2.5;stroke-linejoin:round}
+  .brand-mark-heart{fill:url(#heartGradient);stroke:#ffd8ef;stroke-width:2}
+  .brand-mark-heart.emblem-shine{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;opacity:.72}
+  .brand-mark-team{display:none;fill:url(#starGradient);stroke:#fff7bd;stroke-width:2.5;stroke-linejoin:round}
   body.team-mode .brand-mark-heart{display:none}
   body.team-mode .brand-mark-team{display:block}
-  body.team-mode .brand-mark{filter:drop-shadow(0 0 13px rgba(255,209,41,.55))}
-  .logo-rank{font-style:italic}
+  body.team-mode .brand-mark{filter:drop-shadow(0 0 10px rgba(255,209,41,.72)) drop-shadow(0 0 26px rgba(255,209,41,.32))}
+  .logo-rank{position:relative;display:inline-flex;align-items:flex-end;margin-left:.015em;padding:0 .02em .17em 0;font-style:italic}
+  .rank-letter{position:relative;z-index:2}
+  .rank-r{transform:translateY(.105em)}
+  .rank-a{transform:translateY(-.035em)}
+  .rank-n{transform:translateY(.035em)}
+  .rank-k{transform:translateY(.13em)}
+  .podium-step{position:absolute;left:51%;bottom:-.205em;z-index:-1;display:grid;place-items:center;width:.78em;height:.22em;
+    transform:translateX(-50%);border:1px solid rgba(255,255,255,.25);border-radius:.055em .055em .025em .025em;
+    color:#0b0d14;font-size:.18em;font-style:normal;font-weight:950;letter-spacing:0;line-height:1}
+  .rank-r .podium-step{background:linear-gradient(180deg,#f4f7ff,#9ba8c2)}
+  .rank-a .podium-step{height:.31em;background:linear-gradient(180deg,#fff09a,var(--yellow));box-shadow:0 0 14px rgba(255,209,41,.42)}
+  .rank-k .podium-step{background:linear-gradient(180deg,#ffc28b,#c27649)}
+  .rank-trophy{position:absolute;left:51%;top:-.27em;width:.31em;height:.31em;transform:translateX(-50%) rotate(3deg);overflow:visible;
+    color:var(--yellow);filter:drop-shadow(0 0 8px rgba(255,209,41,.7));transition:transform .28s var(--ease)}
   .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
     background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
       radial-gradient(circle at 20% 80%,rgba(255,209,41,.55) 0 2%,transparent 3%),
@@ -94,16 +108,23 @@
     transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);
     mix-blend-mode:screen;pointer-events:none}
   .logo:hover,.logo:focus-visible,.logo.celestial{animation:logoFloatActive 2.8s ease-in-out infinite;
-    filter:drop-shadow(0 0 12px rgba(255,255,255,.5)) drop-shadow(0 0 28px rgba(99,179,255,.46))}
+    filter:drop-shadow(0 0 14px rgba(255,255,255,.52)) drop-shadow(0 0 30px rgba(99,179,255,.48))}
+  .logo:hover .brand-mark,.logo:focus-visible .brand-mark,.logo.celestial .brand-mark{transform:rotate(-13deg) translateY(-.02em) scale(1.11);
+    filter:drop-shadow(0 0 12px rgba(255,114,198,.8)) drop-shadow(0 0 34px rgba(255,114,198,.45))}
+  .logo:hover .logo-fan,.logo:focus-visible .logo-fan,.logo.celestial .logo-fan,
+  .logo:hover .rank-letter,.logo:focus-visible .rank-letter,.logo.celestial .rank-letter{filter:drop-shadow(0 0 9px rgba(255,255,255,.44));animation:logoGradientFlow 1.9s linear infinite}
+  .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateX(-50%) translateY(-.07em) rotate(8deg) scale(1.09)}
   .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
   .logo:hover:after,.logo:focus-visible:after,.logo.celestial:after{animation:logoShine .8s var(--ease) both}
   .logo:hover + .eyebrow,.logo:focus-visible + .eyebrow,.logo.celestial + .eyebrow{animation:tagPop .82s var(--ease) both}
   @keyframes logoFloatIdle{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(0,-4px,0) scale(1.004)}}
   @keyframes logoFloatActive{0%,100%{transform:translate3d(0,-2px,0) scale(1.006)}50%{transform:translate3d(0,-7px,0) scale(1.01)}}
+  @keyframes emblemBeat{0%,100%{scale:1}48%{scale:1}55%{scale:1.045}62%{scale:1}}
+  @keyframes logoGradientFlow{to{background-position:-240% 0}}
   @keyframes logoShine{0%{left:-38%;opacity:0}22%{opacity:1}100%{left:118%;opacity:0}}
   @keyframes starBloom{0%{opacity:0;transform:scale(.75) rotate(-4deg)}45%{opacity:.95}100%{opacity:0;transform:scale(1.22) rotate(6deg)}}
   @keyframes tagPop{35%{transform:rotate(-4deg) translateY(-4px) scale(1.08)}100%{transform:rotate(-7deg) translateY(0) scale(1)}}
-  .tag{max-width:760px;margin:9px auto 0;color:var(--muted);font-size:clamp(.92rem,2vw,1.08rem);line-height:1.4}
+  .tag{max-width:760px;margin:9px auto 0;color:var(--muted);font-size:clamp(.92rem,2vw,1.08rem);font-weight:500;line-height:1.4}
   .tag b{color:var(--text)}
   .eyebrow{position:static;align-self:flex-end;display:inline-flex;align-items:center;margin-right:8%;padding:5px 10px;border:1px solid rgba(255,209,41,.72);
     border-radius:8px 11px 8px 10px;background:linear-gradient(105deg,var(--yellow),#ffab24);color:var(--yellow-ink);
@@ -139,6 +160,15 @@
   .search-empty{padding:14px;color:var(--muted)}
   .search-empty b{display:block;color:var(--text);margin-bottom:3px}
   .search-empty button{margin-top:10px}
+
+  .hero-action-row{display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;margin:11px auto 0}
+  .hero-suggest{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 18px;border:1px solid rgba(255,114,198,.62);
+    border-radius:13px;background:linear-gradient(115deg,rgba(255,114,198,.17),rgba(185,134,255,.12));color:#ffd9ee;font-weight:950;
+    box-shadow:0 10px 32px rgba(255,114,198,.08);transition:transform .18s var(--ease),border-color .18s ease,background .18s ease}
+  .hero-suggest span:first-child{color:var(--pink);font-size:1.08rem;filter:drop-shadow(0 0 8px rgba(255,114,198,.55))}
+  .hero-suggest:hover{transform:translateY(-2px);border-color:var(--pink);background:linear-gradient(115deg,rgba(255,114,198,.24),rgba(185,134,255,.17))}
+  .hero-action-note{color:var(--muted);font-size:.75rem}
+  body.profile-live .hero-action-row{display:none}
 
   .crumb{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;
     color:var(--muted);font-size:.9rem}
@@ -207,6 +237,9 @@
   .directory-filter[aria-pressed="true"]{border-color:rgba(255,209,41,.75);background:rgba(255,209,41,.11);color:var(--yellow);
     box-shadow:0 0 0 3px rgba(255,209,41,.06)}
   .sections{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+  .directory-more{display:block;min-height:44px;margin:13px auto 0;padding:9px 15px;border:1px solid var(--line);border-radius:12px;
+    background:var(--bg-soft);color:var(--text);font-size:.78rem;font-weight:900}
+  .directory-more:hover{border-color:var(--blue)}
   .sec-card{position:relative;display:flex;flex-direction:column;min-width:0;min-height:180px;padding:14px;border:1px solid var(--line);
     border-radius:17px;background:linear-gradient(150deg,rgba(27,32,48,.98),rgba(17,20,31,.96));color:var(--text);
     transition:transform .2s var(--ease),border-color .2s ease,box-shadow .2s ease;overflow:hidden}
@@ -231,14 +264,47 @@
   .chip.hot{color:var(--yellow)}
   .chip.category{border-color:rgba(99,179,255,.26);color:var(--blue)}
 
-  .trending{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .global-rank-block{position:relative;margin-top:20px;padding:18px;border:1px solid rgba(99,179,255,.28);border-radius:22px;
+    background:linear-gradient(145deg,rgba(15,20,34,.96),rgba(24,18,38,.9));box-shadow:0 20px 70px rgba(0,0,0,.22);overflow:hidden}
+  .global-rank-block:before{content:"";position:absolute;right:-120px;top:-160px;width:360px;height:360px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle,rgba(185,134,255,.16),transparent 68%)}
+  .global-rank-head{position:relative;margin:0 0 13px}
+  .home-rank-tabs{display:flex;gap:6px;padding:4px;border:1px solid var(--line-soft);border-radius:13px;background:rgba(8,10,17,.55)}
+  .home-rank-tab{min-height:40px;padding:8px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);font-size:.76rem;font-weight:900}
+  .home-rank-tab:hover{color:var(--text)}
+  .home-rank-tab.active{background:rgba(99,179,255,.13);color:var(--blue);box-shadow:inset 0 0 0 1px rgba(99,179,255,.28)}
+  .trending{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
   .trend-card{display:flex;flex-direction:column;min-height:166px;padding:15px;border:1px solid var(--line);
     border-radius:16px;background:linear-gradient(145deg,rgba(27,32,48,.96),rgba(17,20,31,.96));
-    text-decoration:none;transition:transform .18s var(--ease),border-color .18s ease}
+    transition:transform .18s var(--ease),border-color .18s ease}
   .trend-card:hover{transform:translateY(-2px);border-color:var(--blue)}
+  .trend-link{display:flex;flex:1;flex-direction:column;color:inherit;text-decoration:none}
   .trend-rank{color:var(--yellow);font-size:.73rem;font-weight:950;letter-spacing:.08em}
   .trend-title{margin-top:10px;font-weight:850;line-height:1.35}
   .trend-meta{margin-top:auto;padding-top:12px;color:var(--muted);font-size:.75rem}
+  .trend-actions{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line-soft)}
+  .trend-signal{color:var(--blue);font-size:.7rem;font-weight:850}
+  .home-vote{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:8px 11px;border:1px solid rgba(255,114,198,.38);
+    border-radius:11px;background:rgba(255,114,198,.08);color:#ffd9ee;font-size:.76rem;font-weight:950}
+  .home-vote:hover{border-color:var(--pink);background:rgba(255,114,198,.15)}
+  .home-vote[disabled]{opacity:.7;cursor:default}
+
+  .fan-value{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:17px;margin-top:18px;padding:19px 20px;
+    border:1px solid rgba(255,114,198,.3);border-radius:20px;background:linear-gradient(120deg,rgba(255,114,198,.07),rgba(99,179,255,.055))}
+  .fan-value-emblem{display:grid;place-items:center;width:58px;height:58px;border:1px solid rgba(255,114,198,.42);border-radius:18px;
+    background:rgba(255,114,198,.1);color:var(--pink);font-size:1.85rem;filter:drop-shadow(0 0 15px rgba(255,114,198,.24))}
+  .fan-value-kicker{display:block;color:var(--pink);font-size:.68rem;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
+  .fan-value h2{margin:3px 0 0;font-size:clamp(1.2rem,3vw,1.55rem)}
+  .fan-value p{margin:5px 0 0;color:var(--muted);font-size:.84rem;line-height:1.5}
+  .fan-value-points{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+  .fan-value-point{padding:5px 8px;border:1px solid var(--line-soft);border-radius:999px;background:rgba(9,11,18,.52);color:var(--text);font-size:.68rem;font-weight:800}
+  .fan-value-privacy{display:block;margin-top:8px;color:var(--green);font-size:.66rem;font-weight:800}
+  .fan-value-cta{white-space:nowrap}
+
+  .trust-stat{display:inline-flex;align-items:center;gap:7px;min-height:34px;padding:7px 11px;border:1px solid var(--line-soft);border-radius:999px;
+    background:rgba(21,25,38,.72);color:var(--muted);font-size:.7rem;font-weight:850}
+  .trust-stat b{color:var(--text)}
+  .trust-stat .trust-icon{color:var(--yellow);font-size:.85rem}
 
   .panel{margin-top:30px;padding:21px;border:1px solid var(--line);border-radius:var(--radius);
     background:linear-gradient(135deg,rgba(255,209,41,.055),rgba(185,134,255,.055))}
@@ -447,7 +513,7 @@
   .skill-options{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.skill-options .choice{padding:7px 9px}
   .fan-share{margin-top:10px;color:var(--blue);font-size:.75rem;word-break:break-all}
   .fan-public-view{max-width:760px;margin:20px auto 0;padding:22px;border:1px solid rgba(255,114,198,.32);border-radius:22px;background:linear-gradient(145deg,rgba(25,20,38,.92),rgba(16,21,34,.9));box-shadow:var(--shadow)}
-  .fan-public-view h1{margin:4px 0 0;font-size:clamp(1.6rem,5vw,2.5rem)}
+  .fan-public-view h2{margin:4px 0 0;font-size:clamp(1.6rem,5vw,2.5rem)}
   .fan-kicker{color:var(--pink);font-size:.7rem;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
   .fan-headline{margin:7px 0 0;color:var(--muted)}
   .fan-top-list{display:grid;gap:8px;margin-top:14px}.fan-top-item{padding:12px;border:1px solid var(--line-soft);border-radius:12px;background:var(--bg-soft);color:var(--text);text-decoration:none}
@@ -494,13 +560,15 @@
     .how{grid-template-columns:1fr}
     .pro-head{grid-template-columns:1fr}.pro-pilot-note{max-width:none;text-align:left}.pro-plans{grid-template-columns:1fr}
     .sections{grid-template-columns:repeat(2,minmax(0,1fr))}
-    .trending{grid-template-columns:1fr}
-    .trend-card{min-height:120px}
+    .trending{display:flex;gap:10px;margin-right:-18px;padding-right:18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin}
+    .trend-card{flex:0 0 min(360px,82%);min-height:120px;scroll-snap-align:start}
     .profile-tools{grid-template-columns:1fr}
     .tabs{overflow-x:auto}
     .tab{flex:1}
     .suggest-cta{grid-template-columns:1fr}
     .suggest-open{width:100%}
+    .global-rank-head{align-items:flex-start;flex-direction:column}.home-rank-tabs{width:100%}.home-rank-tab{flex:1}
+    .fan-value{grid-template-columns:auto minmax(0,1fr)}.fan-value-cta{grid-column:1/-1;width:100%}
   }
   @media (max-width:560px){
     .wrap{padding:18px 16px 132px}
@@ -509,9 +577,12 @@
     header{padding-top:52px}
     .brand-lockup{padding:8px 4px 0}
     .logo{font-size:clamp(2.45rem,14vw,3.25rem)}
+    .brand-mark{margin-right:-.18em}
     .eyebrow{margin-right:5%;padding:4px 8px}
     .search-shell{grid-template-columns:21px minmax(0,1fr) auto;gap:7px;padding:6px 7px 6px 13px}
     .search-btn{padding-inline:12px}
+    .hero-action-row{align-items:stretch;flex-direction:column}.hero-suggest{width:100%}.hero-action-note{text-align:center}
+    .global-rank-block{padding:15px;border-radius:19px}
     .directory-block{margin-inline:0;padding:15px;border-radius:19px}
     .directory-block .section-head{align-items:flex-start}
     .sections{grid-template-columns:1fr;gap:14px}
@@ -519,7 +590,8 @@
     .sec-tag{-webkit-line-clamp:3;min-height:0}
     .sec-card-foot{align-items:stretch;flex-direction:column;padding-top:14px}
     .sec-quick{width:100%;min-height:48px}
-    .trend-card{min-height:150px;padding:18px}
+    .trending{display:flex;gap:10px;margin-right:-15px;padding-right:15px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin}
+    .trend-card{flex:0 0 88%;min-height:150px;padding:18px;scroll-snap-align:start}
     .trend-title{font-size:.95rem;line-height:1.5}
     .trend-meta{font-size:.8rem;line-height:1.45}
     .pro-card{padding:19px}
@@ -527,6 +599,7 @@
     .pro-limit{min-height:0;margin-top:5px}
     .pro-list{gap:10px;font-size:.87rem}
     .pro-card .secondary-btn,.pro-card .primary-btn{min-height:48px}
+    .fan-value{grid-template-columns:1fr;padding:18px;text-align:center}.fan-value-emblem{margin:0 auto}.fan-value-points{justify-content:center}
     .form-grid{grid-template-columns:1fr;gap:18px}
     .field.full{grid-column:auto}
     .claim-bar{align-items:flex-start;flex-direction:column}
@@ -545,7 +618,7 @@
     .mobile-suggest{position:fixed;display:none;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));z-index:28;
       min-height:54px;border:0;border-radius:15px;background:linear-gradient(100deg,var(--yellow),#ffb91f);
       color:var(--yellow-ink);font-weight:950;box-shadow:0 14px 42px rgba(0,0,0,.5)}
-    body.profile-live.mobile-cta-ready .mobile-suggest{display:block}
+    body.profile-live.mobile-cta-ready .mobile-suggest,body.home-live.mobile-cta-ready .mobile-suggest{display:block}
     body.suggest-dialog-open .mobile-suggest{display:none!important}
     .media-list{grid-template-columns:1fr 1fr}
     .impact-grid{grid-template-columns:1fr 1fr}
@@ -571,19 +644,56 @@
     </svg>
     <span id="account-btn-text">Sign in</span>
   </button>
-  <button class="top-btn" id="lang-btn" type="button"><span class="lang-flag flag-es" id="lang-flag" aria-hidden="true"></span><span id="lang-code">ES</span></button>
+  <button class="top-btn" id="lang-btn" type="button">
+    <svg class="lang-flag" id="lang-flag" data-flag="es" viewBox="0 0 60 36" aria-hidden="true" focusable="false">
+      <defs><clipPath id="flag-clip"><rect width="60" height="36" rx="2"></rect></clipPath></defs>
+      <g class="flag-view flag-view-gb" clip-path="url(#flag-clip)">
+        <rect width="60" height="36" fill="#012169"></rect>
+        <path d="M0 0 60 36M60 0 0 36" stroke="#fff" stroke-width="9"></path>
+        <path d="M0 0 60 36M60 0 0 36" stroke="#c8102e" stroke-width="4.5"></path>
+        <path d="M30 0V36M0 18H60" stroke="#fff" stroke-width="13"></path>
+        <path d="M30 0V36M0 18H60" stroke="#c8102e" stroke-width="7"></path>
+      </g>
+      <g class="flag-view flag-view-es" clip-path="url(#flag-clip)">
+        <rect width="60" height="36" fill="#aa151b"></rect><rect y="9" width="60" height="18" fill="#f1bf00"></rect>
+        <rect x="17" y="14" width="5" height="9" rx="1" fill="#aa151b"></rect><circle cx="19.5" cy="13" r="2" fill="#f7d75d"></circle>
+      </g>
+    </svg>
+    <span id="lang-code">ES</span>
+  </button>
 </div>
 
 <main class="wrap" id="main">
   <header>
     <div class="brand-lockup">
       <a class="logo" id="logo" href="./" aria-label="FanRank">
-        <span>FAN</span><span class="logo-rank">RANK</span>
-        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><path class="brand-mark-heart" d="M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z"></path><path class="brand-mark-team" d="M50 6 61.8 36.2 94.5 38.1 69.1 58.8 77.4 90.5 50 72.8 22.6 90.5 30.9 58.8 5.5 38.1 38.2 36.2Z"></path></svg></span>
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 100 100" focusable="false">
+            <defs>
+              <linearGradient id="heartGradient" x1="15" y1="12" x2="86" y2="90" gradientUnits="userSpaceOnUse"><stop stop-color="#ffb3de"></stop><stop offset=".45" stop-color="#ff72c6"></stop><stop offset="1" stop-color="#bd58ff"></stop></linearGradient>
+              <linearGradient id="starGradient" x1="18" y1="10" x2="82" y2="91" gradientUnits="userSpaceOnUse"><stop stop-color="#fff7a3"></stop><stop offset=".5" stop-color="#ffd129"></stop><stop offset="1" stop-color="#ff9d20"></stop></linearGradient>
+            </defs>
+            <path class="brand-mark-heart" d="M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z"></path>
+            <path class="brand-mark-heart emblem-shine" d="M27 30C33 22 41 22 45 28"></path>
+            <path class="brand-mark-team" d="M50 6 61.8 36.2 94.5 38.1 69.1 58.8 77.4 90.5 50 72.8 22.6 90.5 30.9 58.8 5.5 38.1 38.2 36.2Z"></path>
+          </svg>
+        </span>
+        <span class="logo-word" aria-hidden="true">
+          <span class="logo-fan">FAN</span>
+          <span class="logo-rank">
+            <span class="rank-letter rank-r">R<span class="podium-step">2</span></span>
+            <span class="rank-letter rank-a">A
+              <svg class="rank-trophy" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h28v12c0 11-6 18-14 18S18 31 18 20V8Z" fill="currentColor"></path><path d="M18 13H9v5c0 8 5 13 12 14M46 13h9v5c0 8-5 13-12 14M32 38v9M23 55h18M26 47h12v8"></path></svg>
+              <span class="podium-step">1</span>
+            </span>
+            <span class="rank-letter rank-n">N</span>
+            <span class="rank-letter rank-k">K<span class="podium-step">3</span></span>
+          </span>
+        </span>
       </a>
       <span class="eyebrow" id="eyebrow"></span>
     </div>
-    <div class="tag" id="hero-tag"></div>
+    <h1 class="tag" id="hero-tag"></h1>
 
     <form class="search-area" id="search-form" role="search" novalidate>
       <label class="field-label" id="search-label" for="global-search"></label>
@@ -595,6 +705,10 @@
         <button class="search-btn" id="search-btn" type="submit"></button>
       </div>
       <div class="search-panel hidden" id="search-panel" aria-live="polite"></div>
+      <div class="hero-action-row" id="hero-actions">
+        <button class="hero-suggest" id="home-suggest" type="button"><span aria-hidden="true">♥</span><span id="home-suggest-text"></span></button>
+        <span class="hero-action-note" id="home-suggest-note"></span>
+      </div>
     </form>
 
     <div class="crumb" id="crumb"><span class="dot"></span><span id="crumb-text"></span></div>
@@ -603,6 +717,17 @@
   <div class="stats" id="stats"></div>
 
   <section id="home-view">
+    <section class="global-rank-block" aria-labelledby="trending-title">
+      <div class="section-head global-rank-head">
+        <div><h2 id="trending-title"></h2><p id="trending-subtitle"></p></div>
+        <div class="home-rank-tabs" role="tablist" aria-label="Global ranking">
+          <button class="home-rank-tab active" id="home-rank-ai" data-home-rank="ai" type="button" role="tab" aria-selected="true" aria-controls="trending" tabindex="0"></button>
+          <button class="home-rank-tab" id="home-rank-fans" data-home-rank="fans" type="button" role="tab" aria-selected="false" aria-controls="trending" tabindex="-1"></button>
+        </div>
+      </div>
+      <div class="trending" id="trending" role="tabpanel" aria-labelledby="home-rank-ai" aria-live="polite"></div>
+    </section>
+
     <section class="directory-block" aria-labelledby="profiles-title">
       <div class="section-head">
         <div><h2 id="profiles-title"></h2><p id="profiles-subtitle"></p></div>
@@ -612,12 +737,15 @@
       <div class="sections" id="sections">
         <div class="loading"><span class="spinner"></span><div id="loading-text"></div></div>
       </div>
+      <button class="directory-more hidden" id="directory-more" type="button"></button>
     </section>
 
-    <div class="section-head">
-      <div><h2 id="trending-title"></h2><p id="trending-subtitle"></p></div>
-    </div>
-    <div class="trending" id="trending"></div>
+    <section class="fan-value" id="fan-value" aria-labelledby="fan-value-title">
+      <div class="fan-value-emblem" aria-hidden="true">♥</div>
+      <div class="fan-value-copy"><span class="fan-value-kicker" id="fan-value-kicker"></span><h2 id="fan-value-title"></h2><p id="fan-value-text"></p>
+        <div class="fan-value-points" id="fan-value-points"></div><span class="fan-value-privacy" id="fan-value-privacy"></span></div>
+      <button class="secondary-btn fan-value-cta" id="home-profile-cta" type="button"></button>
+    </section>
 
     <div class="how" id="how"></div>
 
@@ -760,7 +888,7 @@
 
   <section class="fan-public-view hidden" id="fan-public-view" aria-live="polite">
     <div class="fan-kicker" id="fan-public-kicker"></div>
-    <h1 id="fan-public-name"></h1>
+    <h2 id="fan-public-name"></h2>
     <div class="fan-share" id="fan-public-handle"></div>
     <p class="fan-headline" id="fan-public-headline"></p>
     <div class="profile-tags" id="fan-public-skills"></div>
@@ -790,6 +918,11 @@
     <p class="dialog-intro" id="submit-intro"></p>
     <form id="submit-form" novalidate>
       <div class="form-grid">
+        <div class="field full hidden" id="submit-target-field">
+          <label id="submit-target-label" for="submit-target"></label>
+          <select class="inline-select" id="submit-target" required></select>
+          <span class="helper" id="submit-target-help"></span>
+        </div>
         <div class="field full">
           <label id="submit-idea-label" for="submit-idea"></label>
           <textarea class="suggestion-text" id="submit-idea" maxlength="1000" autocomplete="off" required></textarea>
@@ -1128,6 +1261,9 @@ var ideas = [];
 var secMeta = null;
 var sortMode = "ai";
 var directoryMode = "featured";
+var homeRankMode = "ai";
+var suggestionSection = SECTION || "";
+var directoryExpanded = false;
 var profileQuery = "";
 var toastTimer = null;
 var formStartedAt = Date.now();
@@ -1155,7 +1291,7 @@ var T = {
   en:{
     eyebrow:"FOR EVERYONE!",
     eyebrow_team:"VERIFIED TEAM",
-    hero_home:"Pick a <b>creator, game, platform or AI</b>.<br>Leave an anonymous idea in seconds; fans and AI help the most useful ones rise.",
+    hero_home:"<b>Improve what you use and follow.</b><br>Ideas for creators, games, companies and platforms, ranked by fans and AI.",
     hero_section:function(name){return "Fan ideas for <b>" + name + "</b>, ranked.<br><b>Vote</b> on what should improve next.";},
     search_label:"Find anyone or anything to improve",
     search_placeholder:"Search Rubius, Brawl Stars, Discord, ChatGPT…",
@@ -1170,10 +1306,15 @@ var T = {
     stats_profiles:"profiles",
     stats_ideas:"ranked ideas",
     stats_votes:"fan votes",
+    home_trust:[["♥","Anonymous if you want"],["✦","AI groups and ranks"],["★","Verified teams add stars"]],
+    home_suggest:"Suggest something now",
+    home_suggest_note:"Anonymous by default · about 30 seconds",
     loading:"Loading live rankings…",
     profiles_title:"Choose who to improve",
     profiles_subtitle:"Open a profile or send a suggestion in one tap.",
     directory_count:function(n){return n + (n === 1 ? " profile" : " profiles");},
+    directory_more:function(n){return "See " + n + " more profiles";},
+    directory_less:"Show fewer profiles",
     directory_filters:[
       ["featured","✦","Featured"],["trending","↗","Trending"],["popular","★","Popular"],["active","⚡","Most active"],
       ["creators-es","🎙️","Creators · Spain"],["games","🎮","Video games"],["companies","🏢","Companies"],["social","💬","Social platforms"],["ai","✨","AI"]
@@ -1189,8 +1330,26 @@ var T = {
     empty_profile:"No ranked ideas yet. Be the first person to give this profile a useful signal.",
     empty_profile_button:"Send the first suggestion",
     no_profiles_filter:"No profiles match this view yet.",
-    trending_title:"Ideas rising now",
-    trending_subtitle:"Useful ideas with the strongest signals across FanRank.",
+    trending_title:"Global top ideas",
+    trending_subtitle:"Switch between AI usefulness and community demand. Vote without leaving the page.",
+    global_ai:"Best by AI",
+    global_fans:"Most loved ♥",
+    global_ai_signal:function(n){return "AI usefulness " + n + "/100";},
+    global_fan_signal:function(n){return n + (n === 1 ? " heart" : " hearts");},
+    home_vote:"Support",
+    home_voted:"Supported",
+    home_vote_saved:"Your support now counts in the community ranking.",
+    fan_value_kicker:"YOUR FANRANK ♥ PROFILE",
+    fan_value_title:"Let your best ideas speak for you",
+    fan_value_text:"Keep your suggestions, show which ones AI and teams value, and build a useful public portfolio for testing, UX or product opportunities.",
+    fan_value_points:["Keep every suggestion","Show measurable impact","Be discovered by teams"],
+    fan_value_privacy:"You choose what is public. Private contact details are never shown.",
+    fan_value_cta:"Create my Fan profile ♥",
+    fan_value_cta_signed:"Open my Fan profile ♥",
+    submit_target_label:"Who or what is this for? *",
+    submit_target_placeholder:"Choose a profile",
+    submit_target_help:"This lets FanRank compare your idea with the right feedback.",
+    submit_target_error:"Choose a creator, game, company or platform first.",
     top_label:"TOP IDEA",
     source_votes:"support at source",
     source_votes_help:"Support received on the original post; these are not FanRank hearts.",
@@ -1495,7 +1654,7 @@ var T = {
     fan_public_missing:"Este perfil Fan es privado o no existe.",
     fan_public_back:"Explorar FanRank",
     eyebrow:"¡PARA TODOS!",
-    hero_home:"Elige un <b>creador, videojuego, plataforma o IA</b>.<br>Deja una idea anónima en segundos; los fans y la IA hacen subir las más útiles.",
+    hero_home:"<b>Mejora lo que usas y sigues.</b><br>Ideas para creadores, videojuegos, empresas y plataformas, ordenadas por fans e IA.",
     hero_section:function(name){return "Ideas de fans para <b>" + name + "</b>, ordenadas.<br><b>Vota</b> qué debería mejorar.";},
     search_label:"Busca a quién o qué quieres mejorar",
     search_placeholder:"Busca Rubius, Brawl Stars, Discord, ChatGPT…",
@@ -1510,10 +1669,15 @@ var T = {
     stats_profiles:"perfiles",
     stats_ideas:"ideas ordenadas",
     stats_votes:"votos de fans",
+    home_trust:[["♥","Anónimo si quieres"],["✦","La IA agrupa y ordena"],["★","Equipos verificados dan estrellas"]],
+    home_suggest:"Dejar una sugerencia ahora",
+    home_suggest_note:"Anónima por defecto · unos 30 segundos",
     loading:"Cargando rankings vivos…",
     profiles_title:"Elige a quién mejorar",
     profiles_subtitle:"Abre un perfil o manda una sugerencia con un toque.",
     directory_count:function(n){return n + (n === 1 ? " perfil" : " perfiles");},
+    directory_more:function(n){return "Ver " + n + " perfiles más";},
+    directory_less:"Mostrar menos perfiles",
     directory_filters:[
       ["featured","✦","Destacados"],["trending","↗","Tendencias"],["popular","★","Populares"],["active","⚡","Más activas"],
       ["creators-es","🎙️","Creadores · España"],["games","🎮","Videojuegos"],["companies","🏢","Empresas"],["social","💬","Redes sociales"],["ai","✨","IA"]
@@ -1529,8 +1693,26 @@ var T = {
     empty_profile:"Aún no hay ideas ordenadas. Sé la primera persona en dejar una señal útil para este perfil.",
     empty_profile_button:"Enviar la primera sugerencia",
     no_profiles_filter:"Todavía no hay perfiles en esta vista.",
-    trending_title:"Ideas que están subiendo",
-    trending_subtitle:"Las ideas útiles con señales más fuertes en FanRank.",
+    trending_title:"Top global de ideas",
+    trending_subtitle:"Cambia entre utilidad según IA y apoyo de la comunidad. Vota sin salir de aquí.",
+    global_ai:"Mejores según IA",
+    global_fans:"Más queridas ♥",
+    global_ai_signal:function(n){return "Utilidad IA " + n + "/100";},
+    global_fan_signal:function(n){return n + (n === 1 ? " corazón" : " corazones");},
+    home_vote:"Apoyar",
+    home_voted:"Apoyada",
+    home_vote_saved:"Tu apoyo ya cuenta en el ranking de la comunidad.",
+    fan_value_kicker:"TU PERFIL FANRANK ♥",
+    fan_value_title:"Que tus buenas ideas hablen por ti",
+    fan_value_text:"Guarda tus sugerencias, enseña cuáles valora la IA o reconoce un equipo y crea un portfolio útil para oportunidades de testing, UX o producto.",
+    fan_value_points:["Guarda cada sugerencia","Muestra impacto medible","Haz que equipos te descubran"],
+    fan_value_privacy:"Tú eliges qué es público. Tus datos de contacto privados nunca se muestran.",
+    fan_value_cta:"Crear mi perfil Fan ♥",
+    fan_value_cta_signed:"Abrir mi perfil Fan ♥",
+    submit_target_label:"¿Para quién o qué es? *",
+    submit_target_placeholder:"Elige un perfil",
+    submit_target_help:"Así FanRank compara tu idea con el feedback correcto.",
+    submit_target_error:"Elige primero un creador, videojuego, empresa o plataforma.",
     top_label:"IDEA TOP",
     source_votes:"apoyo en la fuente",
     source_votes_help:"Apoyo recibido en la publicación original; no son corazones de FanRank.",
@@ -2003,6 +2185,7 @@ function updateAccountUI(){
   if(!text){return;}
   text.textContent = session ? tx("account") : tx("sign_in");
   byId("account-btn").setAttribute("aria-label",text.textContent);
+  byId("home-profile-cta").textContent = tx(session ? "fan_value_cta_signed" : "fan_value_cta");
   byId("auth-nudge").classList.toggle("hidden",!!session);
   byId("team-tools").classList.toggle("hidden",!canManageTeam());
   var teamTab = byId("tab-team");
@@ -2016,10 +2199,21 @@ function updateAccountUI(){
   renderPendingMedia();
   updateBrandMode();
 }
+function currentSuggestionSection(){
+  return SECTION || suggestionSection || "";
+}
+function populateSuggestionTargets(){
+  var select = byId("submit-target");
+  if(!select){return;}
+  select.innerHTML = '<option value="">' + esc(tx("submit_target_placeholder")) + '</option>' + sections.map(function(item){
+    return '<option value="' + esc(item.slug) + '">' + esc(item.name) + ' · ' + esc(kindLabel(item.kind)) + '</option>';
+  }).join("");
+  if(sections.some(function(item){return item.slug === suggestionSection;})){select.value = suggestionSection;}
+}
 function saveDraft(){
-  if(!SECTION){return;}
+  var targetSection = currentSuggestionSection();
   var draft = {
-    section:SECTION,
+    section:targetSection,
     text:byId("submit-idea").value,
     name:byId("submit-name").value,
     contact:byId("submit-contact").value,
@@ -2039,7 +2233,11 @@ function saveDraft(){
 function restoreDraft(){
   try{
     var draft = JSON.parse(localStorage.getItem("fr_suggestion_draft") || "null");
-    if(!draft || draft.section !== SECTION){return;}
+    if(!draft || (SECTION && draft.section !== SECTION)){return;}
+    if(!SECTION && draft.section && sections.some(function(item){return item.slug === draft.section;})){
+      suggestionSection = draft.section;
+      byId("submit-target").value = suggestionSection;
+    }
     byId("submit-idea").value = draft.text || [draft.title,draft.details].filter(Boolean).join("\n\n");
     byId("submit-name").value = draft.name || "";
     byId("submit-contact").value = draft.contact || "";
@@ -2084,10 +2282,10 @@ async function hashReceipt(value){
   var digest = await crypto.subtle.digest("SHA-256",bytes);
   return Array.from(new Uint8Array(digest)).map(function(item){return item.toString(16).padStart(2,"0");}).join("");
 }
-function storeReceipt(token,title){
+function storeReceipt(token,title,section){
   try{
     var receipts = JSON.parse(localStorage.getItem("fr_receipts") || "[]");
-    receipts.unshift({section:SECTION,token:token,title:title,created_at:new Date().toISOString()});
+    receipts.unshift({section:section || currentSuggestionSection() || "section-request",token:token,title:title,created_at:new Date().toISOString()});
     localStorage.setItem("fr_receipts",JSON.stringify(receipts.slice(0,20)));
   }catch(error){}
 }
@@ -2128,8 +2326,9 @@ function triggerCelestialLogo(withSound){
 function setupMobileCta(){
   if(mobileCtaObserver){mobileCtaObserver.disconnect();mobileCtaObserver = null;}
   document.body.classList.remove("mobile-cta-ready");
-  var inlineCta = document.querySelector(".suggest-cta");
-  if(!SECTION || !inlineCta){return;}
+  var inlineCta = SECTION ? document.querySelector(".suggest-cta") : byId("hero-actions");
+  if(!inlineCta){return;}
+  byId("mobile-suggest").textContent = SECTION ? tx("suggest_open") : tx("home_suggest");
   if("IntersectionObserver" in window){
     mobileCtaObserver = new IntersectionObserver(function(entries){
       document.body.classList.toggle("mobile-cta-ready",!entries[0].isIntersecting);
@@ -2142,6 +2341,8 @@ function setupMobileCta(){
 }
 function openSuggestion(){
   formStartedAt = Date.now();
+  byId("submit-target-field").classList.toggle("hidden",!!SECTION);
+  if(!SECTION){populateSuggestionTargets();}
   restoreDraft();
   renderSimilarIdeas();
   renderPendingMedia();
@@ -2149,8 +2350,11 @@ function openSuggestion(){
   byId("submit-receipt").classList.add("hidden");
   document.body.classList.add("suggest-dialog-open");
   openDialog("suggest-dialog");
-  sendEvent("suggest_open",{section:SECTION});
-  setTimeout(function(){byId("submit-idea").focus();},0);
+  sendEvent("suggest_open",{section:currentSuggestionSection() || null});
+  setTimeout(function(){
+    if(!SECTION && !currentSuggestionSection()){byId("submit-target").focus();}
+    else{byId("submit-idea").focus();}
+  },0);
 }
 function closeSuggestion(){
   saveDraft();
@@ -2509,18 +2713,29 @@ function profileShareUrl(){
 function applyStaticText(){
   document.documentElement.lang = LANG;
   byId("lang-code").textContent = LANG === "es" ? "EN" : "ES";
-  byId("lang-flag").className = "lang-flag " + (LANG === "es" ? "flag-gb" : "flag-es");
+  byId("lang-flag").setAttribute("data-flag",LANG === "es" ? "gb" : "es");
   byId("lang-btn").setAttribute("aria-label",LANG === "es" ? "Cambiar a inglés" : "Switch to Spanish");
   byId("eyebrow").textContent = tx("eyebrow");
   byId("search-label").textContent = tx("search_label");
   byId("global-search").placeholder = tx("search_placeholder");
   byId("search-btn").textContent = tx("search_button");
+  byId("home-suggest-text").textContent = tx("home_suggest");
+  byId("home-suggest-note").textContent = tx("home_suggest_note");
   byId("loading-text").textContent = tx("loading");
   byId("profiles-title").textContent = tx("profiles_title");
   byId("profiles-subtitle").textContent = tx("profiles_subtitle");
   byId("directory-filters").setAttribute("aria-label",tx("profiles_title"));
   byId("trending-title").textContent = tx("trending_title");
   byId("trending-subtitle").textContent = tx("trending_subtitle");
+  byId("home-rank-ai").textContent = tx("global_ai");
+  byId("home-rank-fans").textContent = tx("global_fans");
+  byId("home-rank-ai").parentElement.setAttribute("aria-label",tx("trending_title"));
+  byId("fan-value-kicker").textContent = tx("fan_value_kicker");
+  byId("fan-value-title").textContent = tx("fan_value_title");
+  byId("fan-value-text").textContent = tx("fan_value_text");
+  byId("fan-value-points").innerHTML = tx("fan_value_points").map(function(point){return '<span class="fan-value-point">' + esc(point) + '</span>';}).join("");
+  byId("fan-value-privacy").textContent = tx("fan_value_privacy");
+  byId("home-profile-cta").textContent = tx("fan_value_cta");
   byId("pro-kicker").textContent = tx("pro_kicker");
   byId("pro-title").textContent = tx("pro_title");
   byId("pro-intro").textContent = tx("pro_intro");
@@ -2557,6 +2772,8 @@ function applyStaticText(){
   byId("signal-team").innerHTML = tx("signal_team");
   byId("submit-title").textContent = tx("submit_title");
   byId("submit-intro").textContent = tx("submit_intro");
+  byId("submit-target-label").textContent = tx("submit_target_label");
+  byId("submit-target-help").textContent = tx("submit_target_help");
   byId("submit-idea-label").textContent = tx("idea_label");
   byId("submit-idea-help").textContent = tx("idea_help");
   byId("category-legend").textContent = tx("category_legend");
@@ -2724,12 +2941,16 @@ function renderProPlans(){
   });
 }
 function renderHomeStats(){
-  byId("stats").innerHTML =
-    statHtml(sections.length,tx("stats_profiles")) +
-    statHtml(sections.reduce(function(sum,item){return sum+Number(item.ideas||0);},0),tx("stats_ideas")) +
-    statHtml(sections.reduce(function(sum,item){return sum+Number(item.fan_votes||0);},0),tx("stats_votes"),true);
+  byId("stats").innerHTML = tx("home_trust").map(function(item){
+    return '<span class="trust-stat"><span class="trust-icon" aria-hidden="true">' + esc(item[0]) + '</span><b>' + esc(item[1]) + '</b></span>';
+  }).join("");
 }
 function directoryScore(item,mode){
+  if(mode === "featured"){
+    var familiar = ["rubius","brawl-stars","discord","orslok","ibai","roblox","chatgpt","fanrank","x-twitter","claude","cuaderno-madre"];
+    var familiarIndex = familiar.indexOf(item.slug);
+    if(familiarIndex >= 0){return 20000-familiarIndex*1000;}
+  }
   if(mode === "trending"){
     return Number(item.recent_ideas||0)*20 + Number(item.fan_votes||0)*18 + Number(item.reddit_upvotes||0)*.02;
   }
@@ -2769,6 +2990,7 @@ function renderDirectoryFilters(){
   document.querySelectorAll("[data-directory-mode]").forEach(function(button){
     button.addEventListener("click",function(){
       directoryMode = button.dataset.directoryMode;
+      directoryExpanded = false;
       renderDirectoryFilters();
       renderSections();
       sendEvent("search",{value:"filter:" + directoryMode});
@@ -2776,10 +2998,14 @@ function renderDirectoryFilters(){
   });
 }
 function renderSections(){
-  var visible = directoryItems();
-  byId("directory-count").textContent = tx("directory_count",visible.length);
-  if(!visible.length){
+  var allVisible = directoryItems();
+  var initialLimit = window.matchMedia("(max-width:560px)").matches ? 3 : 6;
+  var visible = directoryExpanded ? allVisible : allVisible.slice(0,initialLimit);
+  var moreButton = byId("directory-more");
+  byId("directory-count").textContent = tx("directory_count",allVisible.length);
+  if(!allVisible.length){
     byId("sections").innerHTML = '<div class="empty-state">' + esc(tx("no_profiles_filter")) + '</div>';
+    moreButton.classList.add("hidden");
     return;
   }
   byId("sections").innerHTML = visible.map(function(item){
@@ -2796,6 +3022,8 @@ function renderSections(){
       esc(sectionUrl(item.slug,true)) + '" data-quick-suggest="' + esc(item.slug) + '">+ ' + esc(tx("quick_suggest")) +
       '</a></div></article>';
   }).join("");
+  moreButton.classList.toggle("hidden",allVisible.length <= initialLimit);
+  moreButton.textContent = directoryExpanded ? tx("directory_less") : tx("directory_more",allVisible.length-visible.length);
   document.querySelectorAll("[data-profile]").forEach(function(link){
     link.addEventListener("click",function(){
       sendEvent("profile_open",{section:link.dataset.profile,value:"home_card"});
@@ -2813,21 +3041,36 @@ function trendingIdeas(){
     return !meta || meta.kind !== "project";
   });
   return publicIdeas.sort(function(a,b){
-    var av = rankScore(a);
-    var bv = rankScore(b);
-    return bv-av || Number(b.origin_upvotes||0)-Number(a.origin_upvotes||0);
+    if(homeRankMode === "fans"){
+      return Number(b.web_votes||0)-Number(a.web_votes||0) || Number(b.ai_score||0)-Number(a.ai_score||0);
+    }
+    return Number(b.ai_score||0)-Number(a.ai_score||0) || Number(b.web_votes||0)-Number(a.web_votes||0);
   }).slice(0,3);
 }
 function renderTrending(){
   var top = trendingIdeas();
+  var mine = myVotes();
+  if(!top.length){byId("trending").innerHTML = '<div class="empty-state">' + esc(tx("no_ideas")) + '</div>';return;}
   byId("trending").innerHTML = top.map(function(item,index){
     var meta = sections.find(function(s){return s.slug === item.section;});
-    return '<a class="trend-card" href="' + esc(ideaUrl(item)) + '" data-idea-open="' + item.id + '">' +
+    var voted = mine.indexOf(item.id) >= 0;
+    var signal = homeRankMode === "fans" ? tx("global_fan_signal",Number(item.web_votes||0)) : tx("global_ai_signal",Math.round(Number(item.ai_score||0)));
+    return '<article class="trend-card"><a class="trend-link" href="' + esc(ideaUrl(item)) + '" data-idea-open="' + item.id + '">' +
       '<span class="trend-rank">' + esc(tx("top_label")) + ' · #' + (index+1) + '</span>' +
       '<span class="trend-title">' + esc(ideaTitle(item)) + '</span>' +
-      '<span class="trend-meta">' + esc(meta ? meta.name : item.section) + ' · ' +
-      fmt(item.web_votes) + ' ' + esc(tx("fan_votes")) + '</span></a>';
+      '<span class="trend-meta">' + esc(meta ? meta.name : item.section) + '</span></a>' +
+      '<div class="trend-actions"><span class="trend-signal">' + esc(signal) + '</span><button class="home-vote" type="button" data-home-vote="' +
+      item.id + '" ' + (voted ? 'disabled' : '') + '><span aria-hidden="true">♥</span>' + esc(voted ? tx("home_voted") : tx("home_vote")) + '</button></div></article>';
   }).join("");
+  document.querySelectorAll("[data-idea-open]").forEach(function(link){
+    link.addEventListener("click",function(){
+      var opened = top.find(function(item){return item.id === Number(link.dataset.ideaOpen);});
+      sendEvent("idea_open",{section:opened ? opened.section : null,idea_id:Number(link.dataset.ideaOpen),value:"home_top"});
+    });
+  });
+  document.querySelectorAll("[data-home-vote]").forEach(function(button){
+    if(!button.disabled){button.addEventListener("click",function(){vote(Number(button.dataset.homeVote),button);});}
+  });
 }
 function loadHome(){
   document.title = LANG === "es" ? "FanRank — las mejores ideas, ordenadas" : "FanRank — the best ideas, ranked";
@@ -2856,7 +3099,9 @@ function similarIdeas(query){
   var clean = normalize(query);
   if(clean.length < 8){return [];}
   var queryTokens = keywordTokens(clean);
-  return ideas.map(function(item){
+  var targetSection = currentSuggestionSection();
+  var pool = targetSection ? allIdeas.filter(function(item){return item.section === targetSection;}) : [];
+  return pool.map(function(item){
     var haystack = normalize((item.title || "") + " " + (item.title_es || ""));
     var tokens = keywordTokens(haystack);
     var overlap = queryTokens.filter(function(token){return tokens.indexOf(token) >= 0;}).length;
@@ -2885,7 +3130,7 @@ function renderSimilarIdeas(){
   wrap.classList.remove("hidden");
   document.querySelectorAll("[data-sim-vote]").forEach(function(button){
     if(!button.disabled){button.addEventListener("click",function(){
-      sendEvent("similar_vote",{section:SECTION,idea_id:Number(button.dataset.simVote)});
+      sendEvent("similar_vote",{section:currentSuggestionSection() || null,idea_id:Number(button.dataset.simVote)});
       vote(Number(button.dataset.simVote),button);
     });}
   });
@@ -3158,15 +3403,20 @@ async function vote(id,button){
     if(item){item.web_votes = Number(item.web_votes||0)+1;}
     var globalItem = allIdeas.find(function(row){return row.id === id;});
     if(globalItem && globalItem !== item){globalItem.web_votes = Number(globalItem.web_votes||0)+1;}
-    renderProfile();
-    renderSimilarIdeas();
-    sendEvent("vote",{section:SECTION,idea_id:id});
-    showToast(tx("vote_rank",fanPosition(id)),"ok");
+    if(SECTION){
+      renderProfile();
+      renderSimilarIdeas();
+      showToast(tx("vote_rank",fanPosition(id)),"ok");
+    }else{
+      renderTrending();
+      renderSimilarIdeas();
+      showToast(tx("home_vote_saved"),"ok");
+    }
+    sendEvent("vote",{section:globalItem ? globalItem.section : (SECTION || null),idea_id:id});
   }catch(error){
     if(error.status === 409){
       markVoted(id);
-      renderProfile();
-      renderSimilarIdeas();
+      if(SECTION){renderProfile();renderSimilarIdeas();}else{renderTrending();renderSimilarIdeas();}
       showToast(tx("already_voted"),"ok");
     }else{
       setBusy(button,false);
@@ -3284,6 +3534,39 @@ document.querySelectorAll(".tab").forEach(function(tab){
     renderProfile();
   });
 });
+function activateHomeRank(tab,focusTab){
+  document.querySelectorAll("[data-home-rank]").forEach(function(other){
+    var selected = other === tab;
+    other.classList.toggle("active",selected);
+    other.setAttribute("aria-selected",selected ? "true" : "false");
+    other.tabIndex = selected ? 0 : -1;
+  });
+  byId("trending").setAttribute("aria-labelledby",tab.id);
+  homeRankMode = tab.dataset.homeRank;
+  renderTrending();
+  sendEvent("search",{value:"home_rank:" + homeRankMode});
+  if(focusTab){tab.focus();}
+}
+document.querySelectorAll("[data-home-rank]").forEach(function(tab){
+  tab.addEventListener("click",function(){activateHomeRank(tab,false);});
+  tab.addEventListener("keydown",function(event){
+    if(["ArrowLeft","ArrowRight","Home","End"].indexOf(event.key) === -1){return;}
+    event.preventDefault();
+    var tabs = Array.prototype.slice.call(document.querySelectorAll("[data-home-rank]"));
+    var index = tabs.indexOf(tab);
+    if(event.key === "Home"){index = 0;}
+    else if(event.key === "End"){index = tabs.length - 1;}
+    else if(event.key === "ArrowRight"){index = (index + 1) % tabs.length;}
+    else{index = (index - 1 + tabs.length) % tabs.length;}
+    activateHomeRank(tabs[index],true);
+  });
+});
+byId("directory-more").addEventListener("click",function(){
+  directoryExpanded = !directoryExpanded;
+  renderSections();
+  sendEvent("search",{value:directoryExpanded ? "profiles_expand" : "profiles_collapse"});
+  if(!directoryExpanded){document.querySelector(".directory-block").scrollIntoView({behavior:REDUCED ? "auto" : "smooth",block:"start"});}
+});
 byId("idea-filter").addEventListener("input",function(event){
   profileQuery = event.target.value;
   renderIdeas();
@@ -3302,7 +3585,9 @@ byId("claim-cancel").addEventListener("click",function(){
 });
 byId("profile-share").addEventListener("click",shareProfile);
 byId("suggest-open").addEventListener("click",openSuggestion);
+byId("home-suggest").addEventListener("click",openSuggestion);
 byId("mobile-suggest").addEventListener("click",openSuggestion);
+byId("home-profile-cta").addEventListener("click",function(){session ? openActivity() : openAuth("activity");});
 byId("suggest-close").addEventListener("click",closeSuggestion);
 byId("suggest-sign-in").addEventListener("click",function(){openAuth("suggest");});
 byId("account-btn").addEventListener("click",function(){session ? openActivity() : openAuth();});
@@ -3328,6 +3613,11 @@ byId("team-open").addEventListener("click",openTeam);
 byId("team-close").addEventListener("click",function(){closeDialog("team-dialog");});
 byId("invite-close").addEventListener("click",function(){closeDialog("invite-dialog");});
 byId("submit-idea").addEventListener("input",function(){saveDraft();renderSimilarIdeas();});
+byId("submit-target").addEventListener("change",function(event){
+  suggestionSection = event.target.value;
+  saveDraft();
+  renderSimilarIdeas();
+});
 ["submit-name","submit-contact","submit-allow-contact","submit-training-consent","attribution-anonymous","attribution-account","attribution-contact"].forEach(function(id){
   byId(id).addEventListener("input",saveDraft);
   byId(id).addEventListener("change",function(){toggleSuggestionIdentity();saveDraft();});
@@ -3628,7 +3918,7 @@ byId("request-form").addEventListener("submit",async function(event){
       allow_contact:!!requestContact && requestConsent,
       receipt_hash:await hashReceipt(requestReceipt)
     });
-    storeReceipt(requestReceipt,target);
+    storeReceipt(requestReceipt,target,"section-request");
     markWrite("fr_last_request");
     sendEvent("section_request",{value:target});
     setStatus("request-status",tx("request_ok"),"ok");
@@ -3641,6 +3931,12 @@ byId("request-form").addEventListener("submit",async function(event){
 
 byId("submit-form").addEventListener("submit",async function(event){
   event.preventDefault();
+  var targetSection = currentSuggestionSection();
+  if(!targetSection){
+    setStatus("submit-status",tx("submit_target_error"),"err");
+    byId("submit-target").focus();
+    return;
+  }
   var textParts = submissionTextParts(byId("submit-idea").value);
   if(textParts.title.length < 3){
     setStatus("submit-status",tx("required_error"),"err");
@@ -3670,7 +3966,7 @@ byId("submit-form").addEventListener("submit",async function(event){
     var categoryInput = document.querySelector('input[name="submit-category"]:checked');
     var categoryRequested = categoryInput ? categoryInput.value : "auto";
     var submissionPayload = {
-      section:SECTION,title:textParts.title,
+      section:targetSection,title:textParts.title,
       details:textParts.details,
       author:author || null,
       contact:contact || null,
@@ -3705,11 +4001,13 @@ byId("submit-form").addEventListener("submit",async function(event){
     }else{
       await postRow("fr_submissions",submissionPayload);
     }
-    storeReceipt(receipt,textParts.title);
+    storeReceipt(receipt,textParts.title,targetSection);
     markWrite("fr_last_submission");
-    sendEvent("submission",{section:SECTION,value:textParts.title.slice(0,180)});
+    sendEvent("submission",{section:targetSection,value:textParts.title.slice(0,180)});
     setStatus("submit-status",tx("submit_ok"),"ok");
     byId("submit-form").reset();
+    suggestionSection = targetSection;
+    if(!SECTION){populateSuggestionTargets();}
     toggleSuggestionIdentity();
     clearPendingMedia();
     clearDraft();
