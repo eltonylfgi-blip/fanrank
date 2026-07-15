@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0b12">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230a0b12'/%3E%3Ctext x='10' y='80' font-size='78'%3E%E2%9A%A1%3C/text%3E%3C/svg%3E">
 <title>FanRank — the best ideas, ranked</title>
 <meta name="description" content="Starting with Brawl Stars: vote on the ideas fans want most, or request the next game, creator or company profile.">
 <meta property="og:type" content="website">
@@ -438,6 +439,7 @@
     .logo:hover,.logo:focus-visible{filter:drop-shadow(0 0 12px rgba(99,179,255,.4))}
   }
 </style>
+<link rel="stylesheet" href="owner-studio.css?v=7">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -646,6 +648,12 @@
           <textarea id="submit-details" maxlength="1000"></textarea>
         </div>
       </div>
+      <div class="form-actions">
+        <button class="primary-btn" id="submit-send" type="submit"></button>
+        <button class="secondary-btn" id="submit-cancel" type="button"></button>
+      </div>
+      <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
+      <div class="receipt hidden" id="submit-receipt"></div>
       <section class="privacy-box" aria-labelledby="privacy-title">
         <div class="privacy-title"><span id="privacy-title"></span><span class="private-badge" id="privacy-badge"></span></div>
         <div class="choice-row">
@@ -679,12 +687,6 @@
         <button class="secondary-btn" id="suggest-sign-in" type="button"></button>
       </div>
       <input class="hp" id="submit-website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="form-actions">
-        <button class="primary-btn" id="submit-send" type="submit"></button>
-        <button class="secondary-btn" id="submit-cancel" type="button"></button>
-      </div>
-      <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
-      <div class="receipt hidden" id="submit-receipt"></div>
     </form>
   </div>
 </dialog>
@@ -699,6 +701,11 @@
         <label id="auth-email-label" for="auth-email"></label>
         <input id="auth-email" type="email" maxlength="180" autocomplete="email" inputmode="email" required>
         <span class="helper" id="auth-email-help"></span>
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label id="auth-password-label" for="auth-password"></label>
+        <input id="auth-password" type="password" minlength="8" maxlength="200" autocomplete="current-password" required>
+        <span class="helper" id="auth-password-help"></span>
       </div>
       <div class="form-actions">
         <button class="primary-btn" id="auth-send" type="submit"></button>
@@ -718,6 +725,18 @@
       <button class="secondary-btn" id="team-open" type="button"></button>
     </div>
     <div class="activity-list" id="activity-list"></div>
+    <details class="privacy-box" style="margin-top:14px">
+      <summary id="password-change-title" style="cursor:pointer;font-weight:850"></summary>
+      <form id="password-change-form" novalidate style="margin-top:12px">
+        <div class="field">
+          <label id="password-change-label" for="password-change-input"></label>
+          <input id="password-change-input" type="password" minlength="12" maxlength="200" autocomplete="new-password" required>
+          <span class="helper" id="password-change-help"></span>
+        </div>
+        <div class="form-actions"><button class="primary-btn" id="password-change-send" type="submit"></button></div>
+        <div class="form-status" id="password-change-status" role="status" aria-live="polite"></div>
+      </form>
+    </details>
     <div class="form-actions">
       <button class="secondary-btn" id="logout-btn" type="button"></button>
     </div>
@@ -849,13 +868,14 @@ var T = {
     directory_count:function(n){return n + (n === 1 ? " profile" : " profiles");},
     directory_filters:[
       ["featured","✦","Featured"],["trending","↗","Trending"],["popular","★","Popular"],["active","⚡","Most active"],
-      ["creators-es","🎙️","Creators · Spain"],["games","🎮","Video games"],["social","💬","Social platforms"],["ai","✨","AI"]
+      ["creators-es","🎙️","Creators · Spain"],["games","🎮","Video games"],["companies","🏢","Companies"],["social","💬","Social platforms"],["ai","✨","AI"]
     ],
-    kind_labels:{creator:"Creator",game:"Video game",social:"Social platform",ai:"AI",project:"Project"},
+    kind_labels:{creator:"Creator",company:"Company",game:"Video game",social:"Social platform",ai:"AI",project:"Project"},
     tag_labels:{spain:"Spain",streamer:"Streamer",youtuber:"YouTuber",tiktoker:"TikToker",podcaster:"Podcaster",
       mobile:"Mobile",supercell:"Supercell",platform:"Platform",ugc:"Creator tools",multiplayer:"Multiplayer",
       communities:"Communities",chat:"Chat","social-network":"Social network",microblogging:"Microblogging",
-      assistant:"Assistant",openai:"OpenAI",anthropic:"Anthropic",productivity:"Productivity","living-project":"Living project"},
+      assistant:"Assistant",openai:"OpenAI",anthropic:"Anthropic",productivity:"Productivity","living-project":"Living project",
+      "feedback-platform":"Feedback platform",community:"Community","ai-ranking":"AI ranking"},
     quick_suggest:"Suggest",
     first_signal:"Be the first",
     empty_profile:"No ranked ideas yet. Be the first person to give this profile a useful signal.",
@@ -932,11 +952,20 @@ var T = {
     auth_nudge:"Want this suggestion on every device? Sign in first. Your draft stays here.",
     sign_in:"Sign in",
     account:"My activity",
-    auth_title:"Sign in without a password",
-    auth_intro:"We will email you a secure magic link. Signing in is optional for suggesting and voting.",
+    auth_title:"Sign in",
+    auth_intro:"Use your email and password. This works directly and does not depend on an email link.",
     auth_email_label:"Your email *",
     auth_email_help:"Used only for sign-in and account recovery. It is not shared publicly.",
-    auth_send:"Email me a sign-in link",
+    auth_password_label:"Your password *",
+    auth_password_help:"FanRank never shows or stores your password in this page; Supabase verifies it securely.",
+    auth_send:"Sign in with password",
+    auth_success:"You are signed in.",
+    auth_invalid:"The email or password is incorrect.",
+    password_change_title:"Change password",
+    password_change_label:"New password *",
+    password_change_help:"Use at least 12 characters and a password you do not reuse elsewhere.",
+    password_change_send:"Save new password",
+    password_change_ok:"Password changed securely.",
     auth_sent:"Link sent. Open it on this device; your draft is saved.",
     auth_unavailable:"Sign-in is temporarily unavailable. Anonymous suggestions still work.",
     activity_title:"My activity",
@@ -1013,13 +1042,14 @@ var T = {
     directory_count:function(n){return n + (n === 1 ? " perfil" : " perfiles");},
     directory_filters:[
       ["featured","✦","Destacados"],["trending","↗","Tendencias"],["popular","★","Populares"],["active","⚡","Más activas"],
-      ["creators-es","🎙️","Creadores · España"],["games","🎮","Videojuegos"],["social","💬","Redes sociales"],["ai","✨","IA"]
+      ["creators-es","🎙️","Creadores · España"],["games","🎮","Videojuegos"],["companies","🏢","Empresas"],["social","💬","Redes sociales"],["ai","✨","IA"]
     ],
-    kind_labels:{creator:"Creador",game:"Videojuego",social:"Red social",ai:"IA",project:"Proyecto"},
+    kind_labels:{creator:"Creador",company:"Empresa",game:"Videojuego",social:"Red social",ai:"IA",project:"Proyecto"},
     tag_labels:{spain:"España",streamer:"Streamer",youtuber:"YouTuber",tiktoker:"TikToker",podcaster:"Podcaster",
       mobile:"Móvil",supercell:"Supercell",platform:"Plataforma",ugc:"Creación",multiplayer:"Multijugador",
       communities:"Comunidades",chat:"Chat","social-network":"Red social",microblogging:"Microblogging",
-      assistant:"Asistente",openai:"OpenAI",anthropic:"Anthropic",productivity:"Productividad","living-project":"Proyecto vivo"},
+      assistant:"Asistente",openai:"OpenAI",anthropic:"Anthropic",productivity:"Productividad","living-project":"Proyecto vivo",
+      "feedback-platform":"Plataforma de feedback",community:"Comunidad","ai-ranking":"Ranking IA"},
     quick_suggest:"Sugerir",
     first_signal:"Sé el primero",
     empty_profile:"Aún no hay ideas ordenadas. Sé la primera persona en dejar una señal útil para este perfil.",
@@ -1096,11 +1126,20 @@ var T = {
     auth_nudge:"¿Quieres verla desde cualquier dispositivo? Inicia sesión antes. Tu borrador se conserva.",
     sign_in:"Iniciar sesión",
     account:"Mi actividad",
-    auth_title:"Entra sin contraseña",
-    auth_intro:"Te enviaremos un enlace seguro por correo. Iniciar sesión es opcional para proponer y votar.",
+    auth_title:"Inicia sesión",
+    auth_intro:"Usa tu correo y contraseña. Entra directamente sin depender del enlace del correo.",
     auth_email_label:"Tu correo *",
     auth_email_help:"Solo se usa para entrar y recuperar tu cuenta. No se muestra públicamente.",
-    auth_send:"Enviarme enlace de acceso",
+    auth_password_label:"Tu contraseña *",
+    auth_password_help:"FanRank no muestra ni guarda tu contraseña en esta página; Supabase la verifica de forma segura.",
+    auth_send:"Entrar con contraseña",
+    auth_success:"Sesión iniciada.",
+    auth_invalid:"El correo o la contraseña no son correctos.",
+    password_change_title:"Cambiar contraseña",
+    password_change_label:"Nueva contraseña *",
+    password_change_help:"Usa al menos 12 caracteres y una contraseña que no repitas en otro sitio.",
+    password_change_send:"Guardar nueva contraseña",
+    password_change_ok:"Contraseña cambiada de forma segura.",
     auth_sent:"Enlace enviado. Ábrelo en este dispositivo; tu borrador está guardado.",
     auth_unavailable:"El acceso no está disponible ahora. Las sugerencias anónimas siguen funcionando.",
     activity_title:"Mi actividad",
@@ -1191,6 +1230,19 @@ function sectionTagline(item){
 }
 function sectionTags(item){
   return Array.isArray(item && item.tags) ? item.tags : [];
+}
+function profileImageUrl(path){
+  if(!path){return "";}
+  return SB_URL + "/storage/v1/object/public/fanrank-profile-images/" + String(path).split("/").map(encodeURIComponent).join("/");
+}
+function sectionAvatar(item,className){
+  var name = item && item.name ? item.name : "FanRank";
+  var image = item && item.image_path ? profileImageUrl(item.image_path) : "";
+  if(image){
+    return '<span class="' + esc(className + " has-image") + '"><img src="' + esc(image) + '" alt="' +
+      esc(item.image_alt || name) + '" loading="lazy" decoding="async"></span>';
+  }
+  return '<span class="' + esc(className) + '" aria-hidden="true">' + esc(item && item.emoji || "•") + '</span>';
 }
 function kindLabel(kind){
   var labels = tx("kind_labels") || {};
@@ -1724,8 +1776,14 @@ function applyStaticText(){
   byId("auth-intro").textContent = tx("auth_intro");
   byId("auth-email-label").textContent = tx("auth_email_label");
   byId("auth-email-help").textContent = tx("auth_email_help");
+  byId("auth-password-label").textContent = tx("auth_password_label");
+  byId("auth-password-help").textContent = tx("auth_password_help");
   byId("auth-send").textContent = tx("auth_send");
   byId("activity-title").textContent = tx("activity_title");
+  byId("password-change-title").textContent = tx("password_change_title");
+  byId("password-change-label").textContent = tx("password_change_label");
+  byId("password-change-help").textContent = tx("password_change_help");
+  byId("password-change-send").textContent = tx("password_change_send");
   byId("logout-btn").textContent = tx("sign_out");
   byId("team-tools-title").textContent = tx("team_tools_title");
   byId("team-tools-copy").textContent = tx("team_tools_copy");
@@ -1804,6 +1862,8 @@ function directoryItems(){
     list = list.filter(function(item){return item.kind === "creator" && sectionTags(item).indexOf("spain") >= 0;});
   }else if(directoryMode === "games"){
     list = list.filter(function(item){return item.kind === "game";});
+  }else if(directoryMode === "companies"){
+    list = list.filter(function(item){return item.kind === "company";});
   }else if(directoryMode === "social"){
     list = list.filter(function(item){return item.kind === "social";});
   }else if(directoryMode === "ai"){
@@ -1843,8 +1903,8 @@ function renderSections(){
     }).join("");
     var signal = Number(item.ideas||0) ? fmt(item.ideas) + " " + tx("stats_ideas") : tx("first_signal");
     return '<article class="sec-card"><a class="sec-card-main" href="' + esc(sectionUrl(item.slug)) +
-      '" data-profile="' + esc(item.slug) + '"><span class="sec-em" aria-hidden="true">' + esc(item.emoji || "•") +
-      '</span><span class="sec-info"><span class="sec-kind">' + esc(kindLabel(item.kind)) + '</span><span class="sec-name">' +
+      '" data-profile="' + esc(item.slug) + '">' + sectionAvatar(item,"sec-em") +
+      '<span class="sec-info"><span class="sec-kind">' + esc(kindLabel(item.kind)) + '</span><span class="sec-name">' +
       esc(item.name) + '</span></span><span class="result-arrow" aria-hidden="true">→</span></a>' +
       '<span class="sec-tag">' + esc(sectionTagline(item)) + '</span><div class="chips">' + tags + '</div>' +
       '<div class="sec-card-foot"><span class="chip hot">' + esc(signal) + '</span><a class="sec-quick" href="' +
@@ -1966,7 +2026,7 @@ function renderSearchPanel(query){
   matches.sections.forEach(function(item){
     var searchTags = sectionTags(item).slice(0,2).map(tagLabel).join(" · ");
     html += '<a class="search-result" href="' + esc(sectionUrl(item.slug)) + '" data-search-profile="' + esc(item.slug) + '">' +
-      '<span class="result-avatar" aria-hidden="true">' + esc(item.emoji || "•") + '</span>' +
+      sectionAvatar(item,"result-avatar") +
       '<span><span class="result-title">' + esc(item.name) + '</span><span class="result-meta">' + esc(kindLabel(item.kind)) +
       (searchTags ? ' · ' + esc(searchTags) : '') + '</span></span><span class="result-arrow">→</span></a>';
   });
@@ -2115,6 +2175,10 @@ function renderIdeas(){
         '<button class="icon-btn team-interest-btn" type="button" data-interest="' + item.id + '" aria-pressed="' +
         (myTeamInterestIds.has(item.id) ? "true" : "false") + '" aria-label="' + esc(myTeamInterestIds.has(item.id) ? tx("team_interest_remove") : tx("team_interest_add")) +
         '" title="' + esc(myTeamInterestIds.has(item.id) ? tx("team_interest_remove") : tx("team_interest_add")) + '">' + icon("heart") + '</button>' : "") +
+      (window.FanRankOwnerStudio && window.FanRankOwnerStudio.canPromote() ?
+        '<button class="icon-btn promote-interest-btn" type="button" data-promote-idea="' + item.id + '" aria-label="' +
+        esc(LANG === "es" ? "Solicitar promoción transparente" : "Request transparent promotion") + '" title="' +
+        esc(LANG === "es" ? "Solicitar promoción transparente" : "Request transparent promotion") + '">↗</button>' : "") +
       '</div></article>';
   }).join("");
   requestAnimationFrame(function(){
@@ -2129,12 +2193,16 @@ function renderIdeas(){
   document.querySelectorAll("[data-interest]").forEach(function(button){
     button.addEventListener("click",function(){setTeamInterest(Number(button.dataset.interest),button);});
   });
+  document.querySelectorAll("[data-promote-idea]").forEach(function(button){
+    button.addEventListener("click",function(){window.FanRankOwnerStudio.openPromotion("idea",Number(button.dataset.promoteIdea));});
+  });
 }
 function renderProfile(){
   renderProfileTags();
   renderProfileStats();
   renderPodium();
   renderIdeas();
+  if(window.FanRankOwnerStudio){window.FanRankOwnerStudio.renderProfileEnhancements();}
 }
 function focusDeepIdea(){
   if(!DEEP_IDEA){return;}
@@ -2160,6 +2228,7 @@ function loadSection(){
     esc(tx("all_profiles")) + '</a> <span aria-hidden="true">›</span> ' + esc(secMeta.name);
   byId("home-view").classList.add("hidden");
   byId("section-view").classList.remove("hidden");
+  document.querySelector(".claim-bar").classList.toggle("hidden",secMeta.verification_status === "verified");
   document.body.classList.remove("home-live");
   document.body.classList.add("profile-live");
   renderProfile();
@@ -2335,6 +2404,7 @@ byId("submit-cancel").addEventListener("click",closeSuggestion);
 byId("suggest-sign-in").addEventListener("click",function(){openAuth("suggest");});
 byId("account-btn").addEventListener("click",function(){session ? openActivity() : openAuth();});
 byId("auth-close").addEventListener("click",function(){closeDialog("auth-dialog");});
+byId("auth-dialog").addEventListener("close",function(){byId("auth-password").value = "";});
 byId("activity-close").addEventListener("click",function(){closeDialog("activity-dialog");});
 byId("team-open").addEventListener("click",openTeam);
 byId("team-close").addEventListener("click",function(){closeDialog("team-dialog");});
@@ -2411,9 +2481,11 @@ byId("invite-decline").addEventListener("click",function(){
 byId("auth-form").addEventListener("submit",async function(event){
   event.preventDefault();
   var email = byId("auth-email").value.trim();
-  if(!email || !byId("auth-email").checkValidity()){
+  var password = byId("auth-password").value;
+  if(!email || !byId("auth-email").checkValidity() || password.length < 8){
     setStatus("auth-status",tx("required_error"),"err");
-    byId("auth-email").focus();
+    if(!email || !byId("auth-email").checkValidity()){byId("auth-email").focus();}
+    else{byId("auth-password").focus();}
     return;
   }
   if(!authClient){setStatus("auth-status",tx("auth_unavailable"),"err");return;}
@@ -2421,14 +2493,32 @@ byId("auth-form").addEventListener("submit",async function(event){
   setBusy(button,true);
   setStatus("auth-status","","");
   try{
-    var result = await authClient.auth.signInWithOtp({
-      email:email,
-      options:{emailRedirectTo:authRedirectUrl(),shouldCreateUser:true}
-    });
+    var result = await authClient.auth.signInWithPassword({email:email,password:password});
     if(result.error){throw result.error;}
-    sendEvent("auth_link_requested",{section:SECTION || null});
-    setStatus("auth-status",tx("auth_sent"),"ok");
-  }catch(error){setStatus("auth-status",tx("generic_error"),"err");}
+    byId("auth-password").value = "";
+    closeDialog("auth-dialog");
+    showToast(tx("auth_success"),"ok");
+  }catch(error){setStatus("auth-status",tx("auth_invalid"),"err");}
+  finally{setBusy(button,false);}
+});
+
+byId("password-change-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  var nextPassword = byId("password-change-input").value;
+  if(!session || !authClient || nextPassword.length < 12){
+    setStatus("password-change-status",tx("required_error"),"err");
+    byId("password-change-input").focus();
+    return;
+  }
+  var button = byId("password-change-send");
+  setBusy(button,true);
+  setStatus("password-change-status","","");
+  try{
+    var result = await authClient.auth.updateUser({password:nextPassword});
+    if(result.error){throw result.error;}
+    byId("password-change-input").value = "";
+    setStatus("password-change-status",tx("password_change_ok"),"ok");
+  }catch(error){setStatus("password-change-status",tx("generic_error"),"err");}
   finally{setBusy(button,false);}
 });
 
@@ -2602,5 +2692,6 @@ async function boot(){
 }
 boot();
 </script>
+<script src="owner-studio.js?v=7"></script>
 </body>
 </html>

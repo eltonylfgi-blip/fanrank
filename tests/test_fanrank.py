@@ -27,8 +27,14 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 HTML = INDEX.read_text(encoding="utf-8")
+OWNER_JS_PATH = ROOT / "owner-studio.js"
+OWNER_CSS_PATH = ROOT / "owner-studio.css"
+OWNER_JS = OWNER_JS_PATH.read_text(encoding="utf-8")
+OWNER_CSS = OWNER_CSS_PATH.read_text(encoding="utf-8")
 DISCOVERY_MIGRATION = ROOT / "supabase" / "migrations" / "20260715152000_fanrank_v6_discovery_directory.sql"
 DISCOVERY_SQL = DISCOVERY_MIGRATION.read_text(encoding="utf-8")
+OWNER_MIGRATION = ROOT / "supabase" / "migrations" / "20260715160000_fanrank_v7_owner_studio.sql"
+OWNER_SQL = OWNER_MIGRATION.read_text(encoding="utf-8")
 
 
 def extract(pattern: str) -> str:
@@ -65,6 +71,12 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn("FanRank — the best ideas, ranked", HTML)
         self.assertNotIn("â€”", HTML)
 
+        self.assertLess(
+            HTML.index('id="submit-send"'),
+            HTML.index('<section class="privacy-box"'),
+            "The primary send action must stay above optional privacy fields on mobile.",
+        )
+
     def test_critical_product_flows_are_wired(self) -> None:
         markers = {
             "universal search": 'id="global-search"',
@@ -76,8 +88,9 @@ class StaticAppTests(unittest.TestCase):
             "idea submission": 'id="submit-form"',
             "similar ideas": 'id="similar-ideas"',
             "private contact": 'id="submit-contact"',
-            "passwordless account": 'id="auth-form"',
+            "password account": 'id="auth-password"',
             "private activity": 'id="activity-dialog"',
+            "password rotation": 'id="password-change-form"',
             "profile claim": 'id="claim-form"',
             "verified team management": 'id="team-dialog"',
             "secure invitation acceptance": 'id="invite-dialog"',
@@ -87,6 +100,7 @@ class StaticAppTests(unittest.TestCase):
             "product telemetry": 'postRow("fr_claims"',
             "event sink": 'fr_events',
             "bilingual UI": "var T = {",
+            "owner studio bundle": 'owner-studio.js?v=7',
         }
         missing = [name for name, marker in markers.items() if marker not in HTML]
         self.assertEqual([], missing)
@@ -119,6 +133,15 @@ class StaticAppTests(unittest.TestCase):
             timeout=10,
         )
         self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+
+        owner_result = subprocess.run(
+            ["node", "--check", str(OWNER_JS_PATH)],
+            text=True,
+            capture_output=True,
+            check=False,
+            timeout=10,
+        )
+        self.assertEqual(0, owner_result.returncode, owner_result.stderr or owner_result.stdout)
 
     def test_public_key_is_scoped_to_expected_anon_project(self) -> None:
         self.assertEqual(f"https://{EXPECTED_PROJECT_REF}.supabase.co", SB_URL)
@@ -180,6 +203,7 @@ class StaticAppTests(unittest.TestCase):
             '["featured","✦","Destacados"]',
             '["creators-es","🎙️","Creadores · España"]',
             '["games","🎮","Videojuegos"]',
+            '["companies","🏢","Empresas"]',
             '["social","💬","Redes sociales"]',
             '["ai","✨","IA"]',
             'sectionTags(item).slice(0,3)',
@@ -194,11 +218,51 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn("array['spain','streamer','youtuber','tiktoker']", DISCOVERY_SQL)
         self.assertIn("with (security_invoker = true)", DISCOVERY_SQL)
 
-    def test_auth_redirect_and_logo_effect_have_safe_guards(self) -> None:
-        self.assertIn('options:{emailRedirectTo:authRedirectUrl(),shouldCreateUser:true}', HTML)
-        self.assertIn('location.hostname === "localhost"', HTML)
+    def test_direct_password_auth_and_logo_effect_have_safe_guards(self) -> None:
+        self.assertIn("authClient.auth.signInWithPassword({email:email,password:password})", HTML)
+        self.assertIn('autocomplete="current-password"', HTML)
+        self.assertIn("authClient.auth.updateUser({password:nextPassword})", HTML)
+        self.assertIn('autocomplete="new-password"', HTML)
+        self.assertNotIn("signInWithOtp", HTML)
         self.assertIn("if(REDUCED || !audioArmed || !audioContext || chimePlayed)", HTML)
         self.assertIn("setTimeout(function(){chimePlayed = false;},9000)", HTML)
+
+    def test_owner_studio_is_private_practical_and_fair(self) -> None:
+        markers = [
+            'fr_platform_admins?select=user_id,role,status',
+            'window.authClient.storage.from("fanrank-owner-feedback").upload',
+            'window.postRow("fr_owner_feedback"',
+            'window.postRow("fr_profile_requests"',
+            'window.callRpc("fr_admin_set_profile_image"',
+            'window.postRow("fr_promotion_requests"',
+            'data-feedback-zone',
+            'capturePastedImage',
+            'Compra visibilidad, nunca puntuación de IA ni posición orgánica.',
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in OWNER_JS])
+        self.assertIn("body.fr-zone-picking [data-feedback-zone]", OWNER_CSS)
+        self.assertIn("@media(prefers-reduced-motion:reduce)", OWNER_CSS)
+        self.assertNotIn("sb_secret_", OWNER_JS)
+
+    def test_owner_database_boundary_is_rls_enforced(self) -> None:
+        markers = [
+            "create table public.fr_platform_admins",
+            "create table public.fr_owner_feedback",
+            "create table public.fr_profile_requests",
+            "create table public.fr_promotion_requests",
+            "alter table public.fr_owner_feedback enable row level security",
+            "alter table public.fr_profile_requests enable row level security",
+            "alter table public.fr_promotion_requests enable row level security",
+            "organic_rank_unchanged boolean not null default true check (organic_rank_unchanged = true)",
+            "('fanrank-owner-feedback', 'fanrank-owner-feedback', false",
+            "('fanrank-profile-images', 'fanrank-profile-images', true",
+            "create or replace function public.fr_admin_set_profile_image",
+            "revoke all on function public.fr_admin_set_profile_image",
+            "'fanrank', 'FanRank', '⚡', 'company'",
+        ]
+        self.assertEqual([], [marker for marker in markers if marker.lower() not in OWNER_SQL.lower()])
+        self.assertNotIn("eltonylfgi", OWNER_SQL.lower())
+        self.assertNotRegex(OWNER_SQL, r"(?i)password\s*[:=]\s*['\"]")
 
     def test_team_signal_is_limited_and_not_a_public_identity_leak(self) -> None:
         self.assertIn("Math.min(Number(item.team_interest_count || 0) * 5,15)", HTML)
@@ -208,6 +272,10 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn("fr_set_team_interest", HTML)
         self.assertNotIn("owner_pick", HTML)
         self.assertNotIn("* 1000", HTML)
+        self.assertIn(
+            'document.querySelector(".claim-bar").classList.toggle("hidden",secMeta.verification_status === "verified")',
+            HTML,
+        )
 
     def test_anonymous_submission_contract_matches_the_private_queue(self) -> None:
         self.assertIn('postRow("fr_submissions",{', HTML)
@@ -280,6 +348,9 @@ class LiveBoundaryTests(unittest.TestCase):
         self.assertEqual("game", by_slug["roblox"]["kind"])
         self.assertEqual("social", by_slug["discord"]["kind"])
         self.assertEqual("ai", by_slug["chatgpt"]["kind"])
+        self.assertEqual("company", by_slug["fanrank"]["kind"])
+        self.assertEqual("verified", by_slug["fanrank"]["verification_status"])
+        self.assertEqual(1, by_slug["fanrank"]["featured_rank"])
 
         query = urllib.parse.urlencode(
             {
@@ -303,6 +374,10 @@ class LiveBoundaryTests(unittest.TestCase):
             "fr_profile_members",
             "fr_team_interests",
             "fr_profile_invites",
+            "fr_platform_admins",
+            "fr_owner_feedback",
+            "fr_profile_requests",
+            "fr_promotion_requests",
         ):
             with self.subTest(table=table):
                 status, raw = api_request(f"{table}?select=*")
@@ -313,6 +388,18 @@ class LiveBoundaryTests(unittest.TestCase):
             ("fr_submissions", {"section": "brawl-stars", "title": "x"}),
             ("fr_claims", {"section": "brawl-stars", "name": "x", "role": "x", "contact": "x"}),
             ("fr_votes", {"idea_id": 1, "voter": "short"}),
+            (
+                "fr_owner_feedback",
+                {"user_id": "00000000-0000-0000-0000-000000000000", "page_path": "/", "zone": "hero", "message": "x"},
+            ),
+            (
+                "fr_profile_requests",
+                {"requested_by": "00000000-0000-0000-0000-000000000000", "name": "Test", "kind": "company"},
+            ),
+            (
+                "fr_promotion_requests",
+                {"user_id": "00000000-0000-0000-0000-000000000000", "section": "fanrank", "placement": "profile"},
+            ),
         ]
         for table, body in probes:
             with self.subTest(table=table):
@@ -333,6 +420,17 @@ class LiveBoundaryTests(unittest.TestCase):
                 {"p_section": "brawl-stars", "p_email": "nobody@example.com", "p_role": "contributor"},
             ),
             ("fr_profile_team", {"p_section": "brawl-stars"}),
+            (
+                "fr_admin_set_profile_image",
+                {
+                    "p_section": "fanrank",
+                    "p_path": "fanrank/nope/file.webp",
+                    "p_alt": "Nope",
+                    "p_source_url": None,
+                    "p_credit": None,
+                    "p_rights": "generated",
+                },
+            ),
         ):
             with self.subTest(rpc=rpc):
                 status, raw = api_request(f"rpc/{rpc}", method="POST", body=body)
