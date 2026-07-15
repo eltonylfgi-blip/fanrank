@@ -747,6 +747,35 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn('moreButton.classList.toggle("hidden"', render_sections)
         self.assertNotIn("moreButton", render_trending)
 
+    def test_activation_clarity_matches_the_public_product_contract(self) -> None:
+        markers = [
+            'search_label:"Find who or what you want to suggest something to"',
+            'search_label:"Busca a qui\u00e9n o qu\u00e9 quieres sugerirle"',
+            'kind_labels:{creator:"Content creator"',
+            'kind_labels:{creator:"Creador de contenido"',
+            'influencer:"Influencer"',
+            '["tag:influencer","#","Influencer"]',
+            '["tag:streamer","#","Streamer"]',
+            'directoryMode.indexOf("tag:") === 0',
+            'var selectedTag = directoryMode.slice(4);',
+            'data-sort="balanced"',
+            'id="tab-balanced"',
+            'var sortMode = "balanced";',
+            'if(sortMode === "balanced")',
+            'else if(sortMode === "ai")',
+            'claim_bar_title_named:function(name)',
+            'tx("claim_bar_title_named",secMeta.name)',
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
+        self.assertRegex(HTML, r"[.]logo-art\{[^}]*max-width:calc\(100vw - 32px\)")
+        self.assertRegex(HTML, r"[.]rank-trophy\{[^}]*width:[.]74em;height:[.]74em")
+        self.assertLess(HTML.index('id="home-suggest"'), HTML.index('id="directory-filters"'))
+
+        sorted_ideas = extract(r"function sortedIdeas\(source\)\{([\s\S]*?)\n\}")
+        self.assertIn('return rankScore(b)-rankScore(a)', sorted_ideas)
+        self.assertIn('return Number(b.ai_score)-Number(a.ai_score)', sorted_ideas)
+        self.assertIn('return Number(b.web_votes)-Number(a.web_votes)', sorted_ideas)
+
     def test_celestial_logo_respects_user_control(self) -> None:
         markers = [
             "logoShine",

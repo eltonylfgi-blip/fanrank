@@ -6,20 +6,22 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 
 - Acceso directo con correo y contraseña una vez establecida; la recuperación permite crearla si la cuenta nació con enlace mágico.
 - Sugerencias anónimas o vinculadas a una cuenta, con contacto siempre privado.
-- Equipos verificados: propietario, administradores y colaboradores con corazones auditables.
+- Equipos verificados: propietario, administradores y colaboradores con estrellas oficiales separadas del ranking orgánico.
 - Perfil verificado de FanRank para recibir feedback sobre el propio producto.
 - Estudio privado de propietario: seleccionar zona, escribir feedback, pegar/adjuntar captura, pedir perfiles y cambiar fotos.
 - Fotos con metadatos de fuente, crédito y base de derechos. No se aceptan miniaturas de Google Imágenes como fuente.
 - Solicitudes de promoción limitadas a perfiles: una idea concreta no puede comprar impresiones, votos indirectos, nota IA ni posición orgánica.
 - Oferta FanRank Pro visible y cola privada de interés: precios por aportaciones válidas analizadas, no por riqueza, empleados ni asientos.
 - Marca dual coherente: `FanRank ♥` para fans y público; `FanRank ★` únicamente dentro de un equipo verificado.
+- Descubrimiento directo por etiquetas visibles (`Influencer`, `Streamer`, `YouTuber`, `TikToker`) y tipo explícito `Creador de contenido`.
+- Ranking de perfil legible y separable: `Equilibrado`, `Solo IA`, `Apoyo original`, `Fans ♥` y, cuando corresponde, `Equipo ★`.
 
 ## Publicado y validado técnicamente (beneficio todavía pendiente)
 
 - Enlaces HTTPS de apoyo y miniatura segura para vídeos concretos de YouTube, sin iframe ni subida de MP4.
 - Telemetría separada de QA mediante `?qa=1` y contrato SQL alineado con los eventos emitidos.
 - Bandeja privada de sugerencias y pruebas para `owner/admin` de un perfil verificado; el contacto solo aparece con consentimiento.
-- Evidencia actual: 25/25 pruebas estáticas y 31/31 pruebas live; GitHub Pages desplegó `9d096c5`; una sesión productiva QA conservó `?qa=1`, rechazó un dominio falso de YouTube, creó la miniatura válida y mantuvo `fr_events` en 143→143. Esto demuestra mecanismo y despliegue, no beneficio de mercado.
+- Evidencia actual: 26/26 pruebas estáticas y 32/32 al incluir límites live; la comprobación visual local pasó en 320/375/768/1440 px y el CTA principal quedó dentro de 320×667. Esto demuestra mecanismo, no beneficio de mercado.
 
 ## Experimento activo (máximo 72 horas)
 
@@ -101,9 +103,30 @@ Gate de lanzamiento: no cobrar hasta que existan al menos 3 solicitudes reales d
 ## Ranking IA — mejora útil, no caja negra
 
 - Mantener visibles las señales: utilidad base, demanda de fans e interés limitado del equipo.
-- Próximo aprendizaje: comparar el orden de la IA con 20 corazones de equipos verificados.
+- Próximo aprendizaje: comparar el orden de la IA con 20 valoraciones de equipos verificados.
 - Selector: tasa de acuerdo, ideas que el equipo considera mal ordenadas y cambios posteriores que mejoran ese acuerdo.
-- Regla: una promoción nunca entra en el cálculo; un corazón del equipo aporta contexto limitado, no un número 1 automático.
+- Regla: una promoción nunca entra en el cálculo; una estrella del equipo aporta contexto oficial separado, no un número 1 automático.
+
+## Criterio de entidad y evaluación prioritaria — especificación segura, no implementada
+
+El criterio no será un prompt libre con poder sobre el ranking. Será una rúbrica estructurada, versionada e inmutable por evaluación, con máximo ocho dimensiones y pesos validados. Solo `owner/admin` puede editarla o activarla. La entidad elige una proyección `public` explicable o `private`; la privada solo ordena su bandeja y nunca escribe `ai_score`, votos, publicación ni ranking público.
+
+El modelo recibe la rúbrica como datos no confiables, sin herramientas ni red, y devuelve JSON estricto. Cada resultado conserva versión de rúbrica, versión de modelo, fecha y hash de entrada. Primero funciona en `shadow mode`: se compara con estrellas reales antes de permitir que ordene la bandeja privada.
+
+Una futura tarifa de 1 € solo podría comprar un SLA de análisis privado:
+
+1. Nunca compra mejor nota, aprobación, publicación, exposición, corazón, estrella ni ranking.
+2. Máximo una prioridad por idea; spam, duplicado o imposibilidad de evaluar implica devolución o crédito.
+3. La publicación/moderación mantiene su cola normal. Como máximo el 25 % de la capacidad diaria se reserva a análisis prioritarios; el 75 % sigue siendo gratuito y envejece para evitar inanición.
+4. El pago se confirma por webhook firmado e idempotente; después se crea el trabajo y una notificación privada en cuenta. El navegador nunca confirma el cobro.
+5. Gate: no construir Checkout hasta tener un perfil verificado y, sobre al menos 50 exposiciones elegibles, 5 solicitudes de prioridad y 2 confirmaciones explícitas de intención de pago.
+
+## Equipo verificado — guardas antes de abrirlo a terceros
+
+- El propietario conserva 1–5 ★. Cada miembro no propietario tiene un límite individual de 1 o 3 ★ elegido por el propietario.
+- Antes del primer equipo externo: máximo cinco asientos con voto no-owner, aplicado al aceptar invitaciones. Los asientos extra, si llegan a existir, serán solo lectura y nunca se venderá más capacidad de voto.
+- Vista privada para `owner/admin` con idea, miembro, rol, estrellas y fecha. El público solo ve agregados; la identidad individual no se expone.
+- Estas estrellas sirven para la pestaña oficial y para aprender el criterio privado; no modifican el orden orgánico.
 
 ## Cola IA ránkeada — 2026-07-15
 
@@ -151,12 +174,13 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 
 ### FR-2026-07-15-005 — logo corazón + podio + trofeo
 
-- Estado: `validated_mechanism`; revisión visual local y productiva, Pages `9d096c5` y crítica adversaria sin P0/P1 fuera de Auth. Aceptación de Tony y beneficio siguen pendientes.
-- Fuentes: corrección explícita de Tony + referencia generada por ChatGPT.
+- Estado: `validated_mechanism`; segunda corrección preparada tras rechazo visual explícito de Tony. Beneficio y aceptación final siguen pendientes.
+- Fuentes: corrección explícita de Tony + geometría DOM + crítica adversaria de ChatGPT con evidencia anonimizada.
 - Decisión que cambia: si la marca comunica fans + ranking + ganador sin explicación.
 - Score: 76.
 - Cambio mínimo: corazón carmesí detrás de `FAN`, `R-A-N` en 2-1-3, `K` legible y trofeo a la derecha.
-- Selector: reconocimiento inmediato por Tony y cero overflow a 320/375/768/1440 px.
+- Prueba directa: el solape corazón/FAN bajó de 50,7 % a 42 %, el trofeo pasó a 96,8 % de la altura de la K, el podio queda separado de las letras y no hay overflow a 320/375/768/1440 px.
+- Selector: reconocimiento inmediato por Tony; la geometría ya pasa, pero no sustituye su juicio de marca.
 - Deadline: revisión visual y decisión dentro de 72 horas desde el despliegue.
 
 ### FR-2026-07-15-006 — retorno correcto desde Auth
@@ -168,6 +192,34 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 - Cambio mínimo: verificar la URL pública y los redirects autorizados en Supabase; nunca incrustar credenciales ni automatizar la identidad de una persona.
 - Selector: un flujo real de acceso o recuperación vuelve a la URL pública de FanRank, reconoce la sesión y no termina en localhost.
 - Deadline: cerrar como validado, fallido o replanteado dentro de 72 horas desde que pueda realizarse el paso de identidad.
+
+### FR-2026-07-16-008 — descubrimiento y ranking sin nombres engañosos
+
+- Estado: `validated_mechanism`; no abre un experimento nuevo y conserva el selector activo de distribución.
+- Fuentes: petición explícita de Tony + auditoría UX del producto real + revisión externa con evidencia anonimizada.
+- Decisión que cambia: si una persona encuentra a quién sugerirle algo y entiende qué señal está ordenando las ideas.
+- Score: 91.
+- Cambio mínimo: copy de intención, `Creador de contenido`, filtro visible por etiquetas y separación `Equilibrado`/`Solo IA`/`Fans`/`Equipo`.
+- Prueba directa: filtro `Influencer` devuelve Rubius, Orslok e Ibai; CTA termina a 420 px en 320×667; 26/26 estáticas y 32/32 con live.
+- Selector ≤72 h: con 5 personas externas, al menos 4 encuentran un creador concreto en ≤15 segundos y explican que las estrellas oficiales no alteran el ranking orgánico.
+
+### FR-2026-07-16-009 — rúbrica de entidad y SLA privado de 1 €
+
+- Estado: `candidate`; no implementar pago ni worker todavía.
+- Fuentes: petición explícita de Tony + auditoría de fairness + crítica adversaria con evidencia anonimizada.
+- Decisión que cambia: si existe demanda real para acelerar un análisis privado sin corromper el ranking.
+- Score: 49 mientras solo exista señal de una persona y ninguna entidad verificada usuaria.
+- Cambio mínimo siguiente: botón no cobrable de interés, solo después de Auth estable y un perfil reclamado.
+- Selector: 5 solicitudes sobre 50 exposiciones elegibles y 2 confirmaciones de intención de pago; cualquier petición de “pagar para subir” refuta el encaje y obliga a aclarar la promesa.
+
+### FR-2026-07-16-010 — límite de equipo y auditoría privada de estrellas
+
+- Estado: `planned_before_external_team`; P1 de integridad, no bloquea el uso fan actual.
+- Fuentes: inspección directa de migraciones/RPC: existen límites de valor por rol, pero no límite de miembros ni auditoría por idea para `owner/admin`.
+- Decisión que cambia: si se puede abrir la colaboración verificada sin permitir inflación coordinada de la señal oficial.
+- Score: 94.
+- Cambio mínimo: cinco asientos votantes no-owner, `star_cap` individual 1/3 y RPC privada de auditoría; sin alterar ranking orgánico.
+- Selector: test de aceptación concurrente impide el sexto asiento y owner/admin ve autor/valor/fecha de cada estrella; anon y contributors no pueden leer esa auditoría.
 
 ## Rutina `fanrank-mejora`
 

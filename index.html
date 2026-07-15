@@ -77,7 +77,7 @@
   .logo{position:relative;display:inline-flex;align-items:center;text-decoration:none;isolation:isolate;
     filter:drop-shadow(0 10px 34px rgba(0,0,0,.38));transition:filter .3s ease}
   .logo-float{display:inline-flex;animation:logoFloatIdle 5.6s cubic-bezier(.45,0,.55,1) infinite}
-  .logo-art{position:relative;display:inline-flex;align-items:flex-end;padding:.18em .62em .32em .52em;
+  .logo-art{position:relative;display:inline-flex;align-items:flex-end;max-width:calc(100vw - 32px);padding:.18em .72em .43em;
     font-size:clamp(2.7rem,7.1vw,4.75rem);font-weight:950;line-height:.84;transform-origin:50% 72%;
     transition:transform .24s var(--ease),filter .24s ease}
   .logo-word{position:relative;z-index:2;display:inline-flex;align-items:flex-end;letter-spacing:-.078em;white-space:nowrap}
@@ -102,17 +102,17 @@
   .logo-rank{position:relative;display:inline-flex;align-items:flex-end;margin-left:.015em;padding:0 .01em .17em 0;font-style:italic}
   .rank-place{position:relative;z-index:2;display:inline-flex;align-items:flex-end}
   .rank-letter{position:relative;z-index:2}
-  .rank-r{transform:translateY(.075em)}
-  .rank-a{transform:translateY(-.075em)}
-  .rank-n{transform:translateY(.105em)}
-  .rank-k{position:relative;z-index:2;transform:translateY(.105em)}
-  .podium-step{position:absolute;left:51%;bottom:-1.25em;z-index:1;display:grid;place-items:center;width:4em;height:1.12em;
+  .rank-r{transform:translateY(.04em)}
+  .rank-a{transform:translateY(-.05em)}
+  .rank-n{transform:translateY(.06em)}
+  .rank-k{position:relative;z-index:2;transform:translateY(.06em)}
+  .podium-step{position:absolute;left:51%;bottom:-1.8em;z-index:1;display:grid;place-items:center;width:4em;height:1.12em;
     transform:translateX(-50%);border:1px solid rgba(255,255,255,.25);border-radius:.28em .28em .12em .12em;
     color:#0b0d14;font-size:.18em;font-style:normal;font-weight:950;letter-spacing:0;line-height:1}
   .rank-r .podium-step{background:linear-gradient(180deg,#f4f7ff,#9ba8c2)}
   .rank-a .podium-step{height:1.58em;background:linear-gradient(180deg,#fff09a,var(--yellow));box-shadow:0 0 14px rgba(255,209,41,.42)}
   .rank-n .podium-step{background:linear-gradient(180deg,#ffc28b,#c27649)}
-  .rank-trophy{position:relative;z-index:3;flex:0 0 auto;width:.52em;height:.52em;margin-left:.07em;transform:translateY(-.14em) rotate(7deg);overflow:visible;
+  .rank-trophy{position:relative;z-index:3;flex:0 0 auto;width:.74em;height:.74em;margin-left:.09em;transform:translateY(-.07em) rotate(6deg);overflow:visible;
     color:var(--yellow);filter:drop-shadow(0 0 8px rgba(255,209,41,.72)) drop-shadow(0 0 18px rgba(255,174,32,.3));transition:transform .28s var(--ease),filter .28s ease}
   .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
     background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
@@ -131,7 +131,7 @@
   .logo:hover .logo-fan,.logo:focus-visible .logo-fan,.logo.celestial .logo-fan,
   .logo:hover .rank-letter,.logo:focus-visible .rank-letter,.logo.celestial .rank-letter,
   .logo:hover .rank-k,.logo:focus-visible .rank-k,.logo.celestial .rank-k{filter:drop-shadow(0 0 9px rgba(255,255,255,.44));animation:logoGradientFlow 1.9s linear infinite}
-  .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateY(-.24em) rotate(13deg) scale(1.08);filter:drop-shadow(0 0 12px rgba(255,209,41,.95))}
+  .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateY(-.13em) rotate(11deg) scale(1.08);filter:drop-shadow(0 0 12px rgba(255,209,41,.95))}
   .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
   .logo:hover:after,.logo:focus-visible:after,.logo.celestial:after{animation:logoShine .8s var(--ease) both}
   .logo:hover + .eyebrow,.logo:focus-visible + .eyebrow,.logo.celestial + .eyebrow{animation:tagPop .82s var(--ease) both}
@@ -371,9 +371,10 @@
   .filter-wrap{position:relative}
   .filter-wrap svg{position:absolute;left:12px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--muted)}
   .filter-input{padding-left:39px}
-  .tabs{display:flex;gap:6px;padding:5px;border:1px solid var(--line);border-radius:13px;background:var(--bg-soft)}
-  .tab{min-height:42px;padding:8px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);
-    font-size:.82rem;font-weight:850;white-space:nowrap}
+  .tabs{display:flex;max-width:100%;gap:6px;padding:5px;border:1px solid var(--line);border-radius:13px;background:var(--bg-soft);
+    overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:thin}
+  .tab{flex:0 0 auto;min-height:42px;padding:8px 12px;border:0;border-radius:9px;background:transparent;color:var(--muted);
+    font-size:.82rem;font-weight:850;white-space:nowrap;scroll-snap-align:start}
   .tab:hover{color:var(--text)}
   .tab.active{background:var(--surface-2);color:var(--text);box-shadow:0 5px 18px rgba(0,0,0,.22)}
 
@@ -601,7 +602,7 @@
     .trend-card{flex:0 0 min(360px,82%);min-height:120px;scroll-snap-align:start}
     .profile-tools{grid-template-columns:1fr}
     .tabs{overflow-x:auto}
-    .tab{flex:1}
+    .tab{flex:0 0 auto}
     .suggest-cta{grid-template-columns:1fr}
     .suggest-open{width:100%}
     .global-rank-head{align-items:flex-start;flex-direction:column}.home-rank-tabs{width:100%}.home-rank-tab{flex:1}
@@ -613,7 +614,7 @@
     .top-btn{padding-inline:10px}
     header{padding-top:52px}
     .brand-lockup{padding:8px 4px 0}
-    .logo-art{font-size:clamp(2.05rem,10.4vw,3.1rem);padding-inline:.6em}
+    .logo-art{font-size:clamp(2.05rem,9.8vw,3.1rem);padding:.18em .72em .43em}
     .eyebrow{margin-right:5%;padding:4px 8px}
     .search-shell{grid-template-columns:21px minmax(0,1fr) auto;gap:7px;padding:6px 7px 6px 13px}
     .search-btn{padding-inline:12px}
@@ -881,7 +882,8 @@
         </div>
       </div>
       <div class="tabs" id="profile-rank-tabs" role="tablist" aria-label="Ranking">
-        <button class="tab active" data-sort="ai" id="tab-ai" type="button" role="tab" aria-selected="true"></button>
+        <button class="tab active" data-sort="balanced" id="tab-balanced" type="button" role="tab" aria-selected="true"></button>
+        <button class="tab" data-sort="ai" id="tab-ai" type="button" role="tab" aria-selected="false"></button>
         <button class="tab" data-sort="source" id="tab-source" type="button" role="tab" aria-selected="false"></button>
         <button class="tab" data-sort="fans" id="tab-fans" type="button" role="tab" aria-selected="false"></button>
         <button class="tab hidden" data-sort="team" id="tab-team" type="button" role="tab" aria-selected="false"></button>
@@ -1310,7 +1312,7 @@ var sections = [];
 var allIdeas = [];
 var ideas = [];
 var secMeta = null;
-var sortMode = "ai";
+var sortMode = "balanced";
 var directoryMode = "featured";
 var homeRankMode = "ai";
 var suggestionSection = SECTION || "";
@@ -1352,7 +1354,7 @@ var T = {
     logo_team_label:"FanRank star — verified team mode",
     hero_home:"<b>Improve what you use and follow.</b><br>Ideas for creators, games, companies and platforms, ranked by fans and AI.",
     hero_section:function(name){return "Fan ideas for <b>" + name + "</b>, ranked.<br><b>Vote</b> on what should improve next.";},
-    search_label:"Find anyone or anything to improve",
+    search_label:"Find who or what you want to suggest something to",
     search_placeholder:"Search Rubius, Brawl Stars, Discord, ChatGPT…",
     search_button:"Search",
     search_profile:"Profile",
@@ -1376,10 +1378,11 @@ var T = {
     directory_less:"Show fewer profiles",
     directory_filters:[
       ["featured","✦","Featured"],["trending","↗","Trending"],["popular","★","Popular"],["active","⚡","Most active"],
-      ["creators-es","🎙️","Creators · Spain"],["games","🎮","Video games"],["companies","🏢","Companies"],["social","💬","Social platforms"],["ai","✨","AI"]
+      ["creators-es","🎙️","Creators · Spain"],["games","🎮","Video games"],["companies","🏢","Companies"],["social","💬","Social platforms"],["ai","✨","AI"],
+      ["tag:influencer","#","Influencer"],["tag:streamer","#","Streamer"],["tag:youtuber","#","YouTuber"],["tag:tiktoker","#","TikToker"]
     ],
-    kind_labels:{creator:"Creator",company:"Company",game:"Video game",social:"Social platform",ai:"AI",project:"Project"},
-    tag_labels:{spain:"Spain",streamer:"Streamer",youtuber:"YouTuber",tiktoker:"TikToker",podcaster:"Podcaster",
+    kind_labels:{creator:"Content creator",company:"Company",game:"Video game",social:"Social platform",ai:"AI",project:"Project"},
+    tag_labels:{spain:"Spain",streamer:"Streamer",youtuber:"YouTuber",tiktoker:"TikToker",podcaster:"Podcaster",influencer:"Influencer",
       mobile:"Mobile",supercell:"Supercell",platform:"Platform",ugc:"Creator tools",multiplayer:"Multiplayer",
       communities:"Communities",chat:"Chat","social-network":"Social network",microblogging:"Microblogging",
       assistant:"Assistant",openai:"OpenAI",anthropic:"Anthropic",productivity:"Productivity","living-project":"Living project",
@@ -1466,13 +1469,15 @@ var T = {
     too_fast:"Please wait a moment and try again.",
     generic_error:"Something failed. Your text is still here — try again.",
     claim_bar_title:"UNVERIFIED FAN PROFILE",
+    claim_bar_title_named:function(name){return "Are you " + name + " or part of the team?";},
     claim_bar_copy:"Fan-made, not official. Are you on the team? Claim it to add verified official stars.",
     claim_open:"Claim profile",
     filter_label:"Search ideas in this profile",
     filter_placeholder:"Search a feature, problem or keyword…",
-    tab_ai:"AI rank",
-    tab_source:"Community",
-    tab_fans:"Fan votes",
+    tab_balanced:"Balanced",
+    tab_ai:"AI only",
+    tab_source:"Source support",
+    tab_fans:"Fans ♥",
     tab_team:"Team ★",
     no_ideas:"No ideas match that search.",
     team_rating_owner:function(n){return "OWNER " + "★".repeat(n) + "☆".repeat(5-n);},
@@ -1745,7 +1750,7 @@ var T = {
     eyebrow:"¡PARA TODOS!",
     hero_home:"<b>Mejora lo que usas y sigues.</b><br>Ideas para creadores, videojuegos, empresas y plataformas, ordenadas por fans e IA.",
     hero_section:function(name){return "Ideas de fans para <b>" + name + "</b>, ordenadas.<br><b>Vota</b> qué debería mejorar.";},
-    search_label:"Busca a quién o qué quieres mejorar",
+    search_label:"Busca a quién o qué quieres sugerirle",
     search_placeholder:"Busca Rubius, Brawl Stars, Discord, ChatGPT…",
     search_button:"Buscar",
     search_profile:"Perfil",
@@ -1769,10 +1774,11 @@ var T = {
     directory_less:"Mostrar menos perfiles",
     directory_filters:[
       ["featured","✦","Destacados"],["trending","↗","Tendencias"],["popular","★","Populares"],["active","⚡","Más activas"],
-      ["creators-es","🎙️","Creadores · España"],["games","🎮","Videojuegos"],["companies","🏢","Empresas"],["social","💬","Redes sociales"],["ai","✨","IA"]
+      ["creators-es","🎙️","Creadores · España"],["games","🎮","Videojuegos"],["companies","🏢","Empresas"],["social","💬","Redes sociales"],["ai","✨","IA"],
+      ["tag:influencer","#","Influencer"],["tag:streamer","#","Streamer"],["tag:youtuber","#","YouTuber"],["tag:tiktoker","#","TikToker"]
     ],
-    kind_labels:{creator:"Creador",company:"Empresa",game:"Videojuego",social:"Red social",ai:"IA",project:"Proyecto"},
-    tag_labels:{spain:"España",streamer:"Streamer",youtuber:"YouTuber",tiktoker:"TikToker",podcaster:"Podcaster",
+    kind_labels:{creator:"Creador de contenido",company:"Empresa",game:"Videojuego",social:"Red social",ai:"IA",project:"Proyecto"},
+    tag_labels:{spain:"España",streamer:"Streamer",youtuber:"YouTuber",tiktoker:"TikToker",podcaster:"Podcaster",influencer:"Influencer",
       mobile:"Móvil",supercell:"Supercell",platform:"Plataforma",ugc:"Creación",multiplayer:"Multijugador",
       communities:"Comunidades",chat:"Chat","social-network":"Red social",microblogging:"Microblogging",
       assistant:"Asistente",openai:"OpenAI",anthropic:"Anthropic",productivity:"Productividad","living-project":"Proyecto vivo",
@@ -1859,13 +1865,15 @@ var T = {
     too_fast:"Espera un momento y vuelve a intentarlo.",
     generic_error:"Algo ha fallado. Tu texto sigue ahí — inténtalo otra vez.",
     claim_bar_title:"PERFIL DE FANS NO VERIFICADO",
+    claim_bar_title_named:function(name){return "¿Eres " + name + " o formas parte de su equipo?";},
     claim_bar_copy:"Hecho por fans, no es oficial. Si formas parte del equipo, reclámalo para añadir estrellas oficiales verificadas.",
     claim_open:"Reclamar perfil",
     filter_label:"Buscar ideas dentro de este perfil",
     filter_placeholder:"Busca una función, problema o palabra…",
-    tab_ai:"Ranking IA",
-    tab_source:"Comunidad",
-    tab_fans:"Votos",
+    tab_balanced:"Equilibrado",
+    tab_ai:"Solo IA",
+    tab_source:"Apoyo original",
+    tab_fans:"Fans ♥",
     tab_team:"Equipo ★",
     no_ideas:"Ninguna idea coincide con esa búsqueda.",
     team_rating_owner:function(n){return "DUEÑO " + "★".repeat(n) + "☆".repeat(5-n);},
@@ -2030,7 +2038,9 @@ function sectionTagline(item){
   return LANG === "es" && item.tagline_es ? item.tagline_es : (item.tagline || "");
 }
 function sectionTags(item){
-  return Array.isArray(item && item.tags) ? item.tags : [];
+  var tags = Array.isArray(item && item.tags) ? item.tags.slice() : [];
+  if(item && item.kind === "creator" && tags.indexOf("influencer") < 0){tags.push("influencer");}
+  return tags;
 }
 function profileImageUrl(path){
   if(!path){return "";}
@@ -2992,6 +3002,7 @@ function applyStaticText(){
   byId("claim-open-text").textContent = tx("claim_open");
   byId("filter-label").textContent = tx("filter_label");
   byId("idea-filter").placeholder = tx("filter_placeholder");
+  byId("tab-balanced").textContent = tx("tab_balanced");
   byId("tab-ai").textContent = tx("tab_ai");
   byId("tab-source").textContent = tx("tab_source");
   byId("tab-fans").textContent = tx("tab_fans");
@@ -3203,7 +3214,10 @@ function directoryScore(item,mode){
 }
 function directoryItems(){
   var list = sections.slice();
-  if(directoryMode === "creators-es"){
+  if(directoryMode.indexOf("tag:") === 0){
+    var selectedTag = directoryMode.slice(4);
+    list = list.filter(function(item){return sectionTags(item).indexOf(selectedTag) >= 0;});
+  }else if(directoryMode === "creators-es"){
     list = list.filter(function(item){return item.kind === "creator" && sectionTags(item).indexOf("spain") >= 0;});
   }else if(directoryMode === "games"){
     list = list.filter(function(item){return item.kind === "game";});
@@ -3468,10 +3482,15 @@ function teamStarControlHtml(item){
 }
 function sortedIdeas(source){
   var list = (source || ideas).slice();
-  if(sortMode === "ai"){
+  if(sortMode === "balanced"){
     list.sort(function(a,b){
       return rankScore(b)-rankScore(a) || Number(b.ai_score)-Number(a.ai_score) ||
         Number(b.web_votes)-Number(a.web_votes) || Number(b.origin_upvotes)-Number(a.origin_upvotes);
+    });
+  }else if(sortMode === "ai"){
+    list.sort(function(a,b){
+      return Number(b.ai_score)-Number(a.ai_score) || Number(b.web_votes)-Number(a.web_votes) ||
+        Number(b.origin_upvotes)-Number(a.origin_upvotes);
     });
   }else if(sortMode === "team"){
     list.sort(function(a,b){return officialTeamScore(b)-officialTeamScore(a) || rankScore(b)-rankScore(a);});
@@ -3510,7 +3529,8 @@ function renderPodium(){
   ];
   byId("podium").innerHTML = positions.map(function(entry){
     if(!entry.item){return '<div></div>';}
-    var score = sortMode === "fans" ? entry.item.web_votes : sortMode === "source" ? entry.item.origin_upvotes : rankScore(entry.item);
+    var score = sortMode === "fans" ? entry.item.web_votes : sortMode === "source" ? entry.item.origin_upvotes :
+      sortMode === "ai" ? entry.item.ai_score : rankScore(entry.item);
     var scoreLabel = sortMode === "team" ? (Number(entry.item.owner_star_value || 0) ? Number(entry.item.owner_star_value) + "★" : Number(entry.item.team_star_support_count || 0) + "+") : fmt(score);
     return '<button class="podium-card ' + entry.cls + '" type="button" data-podium="' + entry.item.id + '">' +
       '<div class="podium-medal">#' + entry.rank + '</div><div class="podium-title">' + esc(ideaTitle(entry.item)) +
@@ -3609,6 +3629,7 @@ function loadSection(){
   }
   document.title = "FanRank — " + secMeta.name;
   byId("hero-tag").innerHTML = tx("hero_section",esc(secMeta.name));
+  byId("claim-bar-title").textContent = tx("claim_bar_title_named",secMeta.name);
   byId("crumb-text").innerHTML = '<a href="' + esc(homeUrl()) + '">' +
     esc(tx("all_profiles")) + '</a> <span aria-hidden="true">›</span> ' + esc(secMeta.name);
   byId("home-view").classList.add("hidden");
@@ -3770,6 +3791,7 @@ document.querySelectorAll(".tab").forEach(function(tab){
     tab.classList.add("active");
     tab.setAttribute("aria-selected","true");
     sortMode = tab.dataset.sort;
+    sendEvent("search",{section:SECTION || null,value:"profile_rank:" + sortMode});
     renderProfile();
   });
 });
