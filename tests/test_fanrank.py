@@ -197,7 +197,7 @@ class StaticAppTests(unittest.TestCase):
             "product telemetry": 'postRow("fr_claims"',
             "event sink": 'fr_events',
             "bilingual UI": "var T = {",
-            "owner studio bundle": 'owner-studio.js?v=8',
+            "owner studio bundle": 'owner-studio.js?v=9',
             "Pro pilot": 'id="pro-form"',
         }
         missing = [name for name, marker in markers.items() if marker not in HTML]
@@ -335,7 +335,7 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn("brand-mark-team", HTML)
         self.assertIn('secMeta.verification_status === "verified"', HTML)
         self.assertIn('document.body.classList.toggle("team-mode",teamMode)', HTML)
-        self.assertIn("M50 6 61.8 36.2 94.5 38.1", HTML)
+        self.assertIn("M60 5 73 40 111 42", HTML)
 
     def test_private_media_fan_profiles_and_consent_are_wired_end_to_end(self) -> None:
         html_markers = [
@@ -774,19 +774,23 @@ class StaticAppTests(unittest.TestCase):
         markers = [
             'id="home-owner-verify"',
             'owner_verify_kicker:"FOR CREATORS AND COMPANIES"',
-            'owner_verify_kicker:"\u00a1VERIF\u00cdCATE YA COMO FAMOSO O EMPRESA!"',
-            'owner_verify_title:"Verify your profile and turn it into your feedback hub"',
-            'owner_verify_title:"Verifica tu perfil y convi\u00e9rtelo en tu centro de feedback"',
-            'owner_verify_copy:"Personal\u00edzalo, crea temas y pide ideas a tu audiencia."',
+            'owner_verify_kicker:"PARA CREADORES Y EMPRESAS"',
+            'owner_verify_title:"Do you represent a creator or company?"',
+            'owner_verify_title:"\u00bfRepresentas a un creador o una empresa?"',
+            'owner_verify_copy:"Reclama el perfil para organizar ideas y valorar propuestas."',
             'owner_verify_action:"Request verification"',
             'owner_verify_action:"Solicitar verificaci\u00f3n"',
+            '"Estrellas oficiales · fuera del ranking"',
+            'document.querySelector(".global-rank-block").after(byId("stats"))',
+            'byId("section-view").before(byId("stats"))',
             'sendEvent("owner_cta_open"',
             'params.get("claim") === "1"',
             'searchParams.set("claim","1")',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
         self.assertLess(HTML.index('id="home-suggest"'), HTML.index('id="home-owner-verify"'))
-        self.assertLess(HTML.index('id="home-owner-verify"'), HTML.index('class="global-rank-block"'))
+        self.assertLess(HTML.index('class="global-rank-block"'), HTML.index('id="home-owner-verify"'))
+        self.assertLess(HTML.index('id="home-owner-verify"'), HTML.index('class="directory-block"'))
         self.assertRegex(HTML, r"[.]owner-verify-cta\{[^}]*background:transparent")
         self.assertRegex(HTML, r"[.]owner-verify-cta\{[^}]*min-height:48px")
 
@@ -916,9 +920,16 @@ class StaticAppTests(unittest.TestCase):
             'data-feedback-zone',
             'capturePastedImage',
             'Nunca promociona una idea ni compra votos, nota IA o posición orgánica.',
+            'unverified:"Perfil creado por fans · pendiente de verificar"',
+            'class="profile-monogram"',
+            'identity.querySelector(".profile-identity-detail").appendChild(tags)',
+            'identity.appendChild(claimBar)',
+            'claimBar.classList.toggle("hidden",verified)',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in OWNER_JS])
         self.assertIn("body.fr-zone-picking [data-feedback-zone]", OWNER_CSS)
+        self.assertIn('.profile-identity{display:grid', OWNER_CSS)
+        self.assertIn('.profile-claim{grid-area:claim', OWNER_CSS)
         self.assertIn("@media(prefers-reduced-motion:reduce)", OWNER_CSS)
         self.assertNotIn("sb_secret_", OWNER_JS)
 
@@ -1037,9 +1048,9 @@ class StaticAppTests(unittest.TestCase):
             'var familiar = ["rubius","brawl-stars","discord"',
             "scroll-snap-type:x mandatory",
             '.trend-card{flex:0 0 min(360px,82%)',
-            "rank-r",
-            "rank-a",
-            "rank-k",
+            'data-fanrank-logo',
+            '<span class="rank-text">RANK</span>',
+            'class="rank-podium"',
             "podium-step",
             "rank-trophy",
             "flag-view-gb",
@@ -1077,18 +1088,18 @@ class StaticAppTests(unittest.TestCase):
             'tx("claim_bar_title_named",secMeta.name)',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
-        self.assertRegex(HTML, r"[.]logo-art\{[^}]*max-width:calc\(100vw - 32px\)")
+        self.assertRegex(HTML, r"[.]logo-art\{[^}]*max-width:calc\(100vw - 24px\)[^}]*overflow:visible")
+        self.assertRegex(HTML, r"[.]logo-fan,[.]rank-text\{[^}]*overflow:visible")
+        self.assertRegex(HTML, r"[.]rank-podium\{[^}]*top:[.]88em")
+        self.assertRegex(HTML, r"[.]rank-trophy\{[^}]*width:[.]96em;height:[.]96em")
         self.assertRegex(
             HTML,
-            r"[.]rank-letter,[.]rank-k\{[^}]*padding-inline:[.]06em;margin-inline:-[.]06em",
+            r"@media \(max-width:560px\)\{[\s\S]*?[.]logo-art\{[^}]*--logo-size:clamp\(48px,13[.]6vw,54px\)",
         )
-        self.assertRegex(HTML, r"[.]logo-art\{[^}]*padding:[.]18em [.]72em [.]55em")
-        self.assertRegex(HTML, r"[.]podium-step\{[^}]*bottom:-2[.]85em")
-        self.assertRegex(HTML, r"[.]rank-trophy\{[^}]*width:[.]86em;height:[.]86em")
-        self.assertRegex(
-            HTML,
-            r"@media \(max-width:560px\)\{[\s\S]*?[.]logo-art\{[^}]*padding:[.]18em [.]72em [.]55em",
-        )
+        self.assertEqual(1, HTML.count('<span class="rank-text">RANK</span>'))
+        self.assertNotIn('class="rank-letter', HTML)
+        self.assertNotIn('class="rank-place', HTML)
+        self.assertIn('viewBox="5 4 70 78"', HTML)
         self.assertLess(HTML.index('id="home-suggest"'), HTML.index('id="directory-filters"'))
 
         sorted_ideas = extract(r"function sortedIdeas\(source\)\{([\s\S]*?)\n\}")
@@ -1099,9 +1110,11 @@ class StaticAppTests(unittest.TestCase):
     def test_celestial_logo_respects_user_control_without_a_rectangular_shine_slab(self) -> None:
         markers = [
             "starBloom",
-            "logoGradientFlow",
+            "trophyFloat",
             "document.addEventListener(\"pointerdown\",armCelestialAudio",
             "byId(\"logo\").addEventListener(\"pointerenter\"",
+            "byId(\"logo\").addEventListener(\"pointermove\"",
+            'window.matchMedia("(hover:hover) and (pointer:fine)").matches',
             "if(REDUCED || !audioArmed",
             "chimePlayed",
         ]

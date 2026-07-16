@@ -76,47 +76,52 @@
 
   header{text-align:center;padding:14px 0 8px}
   .brand-lockup{position:relative;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:16px 8px 0}
-  .logo{position:relative;display:inline-flex;align-items:center;text-decoration:none;isolation:isolate;
-    filter:drop-shadow(0 10px 34px rgba(0,0,0,.38));transition:filter .3s ease}
+  .logo{--tilt-x:0deg;--tilt-y:0deg;position:relative;display:inline-flex;align-items:center;text-decoration:none;isolation:isolate;
+    perspective:900px;filter:drop-shadow(0 10px 34px rgba(0,0,0,.38));transition:filter .3s ease}
   .logo-float{display:inline-flex;animation:logoFloatIdle 5.6s cubic-bezier(.45,0,.55,1) infinite}
-  .logo-art{position:relative;display:inline-flex;align-items:flex-end;max-width:calc(100vw - 32px);padding:.18em .72em .55em;
-    font-size:clamp(2.7rem,7.1vw,4.75rem);font-weight:950;line-height:.84;transform-origin:50% 72%;
-    transition:transform .24s var(--ease),filter .24s ease}
-  .logo-word{position:relative;z-index:2;display:inline-flex;align-items:flex-end;letter-spacing:-.078em;white-space:nowrap}
-  .logo-fan,.rank-letter,.rank-k{display:inline-block;background:linear-gradient(105deg,#fff8b5 2%,var(--yellow) 23%,var(--blue) 58%,var(--purple) 82%,var(--pink));
-    background-size:240% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 10px rgba(99,179,255,.14));transition:filter .28s ease,transform .28s var(--ease)}
-  .logo-fan{position:relative;z-index:2;background:linear-gradient(180deg,#fff8b5 0%,#ffd129 57%,#ffad12 100%);
-    -webkit-background-clip:text;background-clip:text}
-  .brand-mark{position:absolute;z-index:0;left:.01em;top:.02em;display:inline-flex;width:1.2em;height:1.16em;
+  .logo-art{--logo-size:clamp(52px,9.6vw,96px);position:relative;display:inline-flex;align-items:flex-start;width:max-content;
+    max-width:calc(100vw - 24px);padding:.08em .08em .36em .48em;overflow:visible;font-size:var(--logo-size);font-weight:950;
+    line-height:1;transform-origin:50% 72%;transform-style:preserve-3d;transition:transform .24s var(--ease),filter .24s ease}
+  .logo-art:after{content:"";position:absolute;z-index:0;left:1.25em;right:.42em;bottom:.17em;height:.035em;border-radius:999px;
+    background:linear-gradient(90deg,transparent,rgba(255,40,80,.4),rgba(255,194,32,.85),rgba(70,205,255,.65),transparent);
+    filter:blur(.035em);opacity:.76;pointer-events:none}
+  .logo-word{position:relative;z-index:2;display:inline-flex;align-items:flex-start;margin-top:.15em;overflow:visible;white-space:nowrap;
+    transform:rotateX(var(--tilt-x)) rotateY(var(--tilt-y));transform-style:preserve-3d;transition:transform .18s ease,filter .22s ease}
+  .logo-fan,.rank-text{display:inline-block;padding-inline:.06em;margin-inline:-.06em;overflow:visible;
+    font-family:Impact,"Arial Black",system-ui,sans-serif;font-weight:900;font-style:italic;line-height:.78;letter-spacing:-.075em;
+    color:transparent;-webkit-background-clip:text;background-clip:text;background-size:220% 100%;background-position:0 50%;
+    -webkit-text-stroke:.011em rgba(255,247,190,.85);transition:background-position .65s ease,filter .22s ease}
+  .logo-fan{position:relative;z-index:2;margin-right:-.1em;background-image:linear-gradient(145deg,#fffbd1 0%,#ffe664 18%,#ffc21b 43%,#ff9200 72%,#ff5c00 100%);
+    text-shadow:0 .018em 0 rgba(255,255,255,.5),0 .035em 0 #713200,0 0 .07em rgba(255,172,0,.9),0 0 .19em rgba(255,126,0,.38)}
+  .brand-mark{position:absolute;z-index:1;left:.1em;top:-.04em;display:inline-flex;width:1.18em;height:1.06em;
     transform:rotate(-10deg);filter:drop-shadow(0 0 8px rgba(255,23,79,.82)) drop-shadow(0 0 24px rgba(255,23,79,.42));
     transition:filter .24s ease}
   .brand-mark:after{content:"";position:absolute;right:.04em;top:.08em;width:.12em;height:.12em;border-radius:50%;background:#fff;
     box-shadow:0 0 12px 3px rgba(255,112,136,.88);opacity:.78}
   .brand-mark svg{display:block;width:100%;height:100%;overflow:visible}
-  .brand-mark-heart{fill:url(#heartGradient);stroke:#ff9bac;stroke-width:2.2}
+  .brand-mark-heart{fill:url(#heartGradient);stroke:#ff8aa3;stroke-width:4.5;stroke-linejoin:round}
   .brand-mark-heart:not(.emblem-shine){transform-box:fill-box;transform-origin:50% 62%;animation:heartBeat 3.4s ease-in-out infinite}
-  .brand-mark-heart.emblem-shine{fill:none;stroke:#fff6f7;stroke-width:4.5;stroke-linecap:round;opacity:.76}
+  .brand-mark-heart.emblem-shine{fill:none;stroke:#fff6f7;stroke-width:5;stroke-linecap:round;opacity:.8}
   .brand-mark-team{display:none;fill:url(#starGradient);stroke:#fff7bd;stroke-width:2.5;stroke-linejoin:round}
   body.team-mode .brand-mark-heart{display:none}
   body.team-mode .brand-mark-team{display:block}
   body.team-mode .brand-mark{filter:drop-shadow(0 0 10px rgba(255,209,41,.72)) drop-shadow(0 0 26px rgba(255,209,41,.32))}
-  .logo-rank{position:relative;display:inline-flex;align-items:flex-end;margin-left:.015em;padding:0 .01em .17em 0;font-style:italic}
-  .rank-place{position:relative;z-index:2;display:inline-flex;align-items:flex-end}
-  .rank-letter,.rank-k{padding-inline:.06em;margin-inline:-.06em}
-  .rank-letter{position:relative;z-index:2}
-  .rank-r{transform:translateY(.04em)}
-  .rank-a{transform:translateY(-.05em)}
-  .rank-n{transform:translateY(.06em)}
-  .rank-k{position:relative;z-index:2;transform:translateY(.06em)}
-  .podium-step{position:absolute;left:51%;bottom:-2.85em;z-index:1;display:grid;place-items:center;width:4em;height:1.12em;
-    transform:translateX(-50%);border:1px solid rgba(255,255,255,.25);border-radius:.28em .28em .12em .12em;
-    color:#0b0d14;font-size:.18em;font-style:normal;font-weight:950;letter-spacing:0;line-height:1}
-  .rank-r .podium-step{background:linear-gradient(180deg,#f4f7ff,#9ba8c2)}
-  .rank-a .podium-step{height:1.58em;background:linear-gradient(180deg,#fff09a,var(--yellow));box-shadow:0 0 14px rgba(255,209,41,.42)}
-  .rank-n .podium-step{background:linear-gradient(180deg,#ffc28b,#c27649)}
-  .rank-trophy{position:relative;z-index:3;flex:0 0 auto;width:.86em;height:.86em;margin-left:.12em;transform:translateY(-.03em) rotate(5deg);overflow:visible;
-    color:var(--yellow);filter:drop-shadow(0 0 8px rgba(255,209,41,.72)) drop-shadow(0 0 18px rgba(255,174,32,.3));transition:transform .28s var(--ease),filter .28s ease}
+  .logo-rank{position:relative;display:inline-block;margin-left:-.015em;padding-bottom:.3em;overflow:visible}
+  .rank-text{background-image:linear-gradient(130deg,#fff8b0 0%,#ffd548 25%,#79efff 53%,#2d9cff 76%,#865cff 100%);
+    text-shadow:0 .018em rgba(255,255,255,.65),0 .035em #133d78,0 0 .08em rgba(38,179,255,.95),0 0 .2em rgba(80,77,255,.38)}
+  .rank-podium{position:absolute;z-index:3;left:0;right:23%;top:.88em;height:.23em;overflow:visible;pointer-events:none}
+  .podium-step{position:absolute;top:.35em;display:grid;place-items:center;width:34%;height:1.35em;border:1px solid rgba(255,255,255,.7);
+    border-radius:.25em;transform:translateX(-50%);color:#161616;font-family:system-ui,sans-serif;font-size:clamp(7px,.13em,11px);font-style:normal;
+    font-weight:950;letter-spacing:0;line-height:1;text-shadow:0 .08em rgba(255,255,255,.6);
+    box-shadow:inset 0 .16em .22em rgba(255,255,255,.55),0 .13em 0 #241300,0 .3em .6em rgba(255,191,0,.24)}
+  .podium-step.step-2{left:17%;background:linear-gradient(180deg,#fff,#bfc7d1 48%,#6e7784)}
+  .podium-step.step-1{left:50%;top:0;width:36%;height:1.7em;background:linear-gradient(180deg,#fff8a4,#ffc61c 46%,#d98700);
+    box-shadow:inset 0 .18em .24em rgba(255,255,255,.68),0 .13em 0 #5b3200,0 .34em .72em rgba(255,189,0,.45)}
+  .podium-step.step-3{left:83%;background:linear-gradient(180deg,#ffc58c,#ce6d24 52%,#74300d)}
+  .rank-trophy{position:relative;z-index:2;flex:0 0 auto;width:.96em;height:.96em;margin-top:-.015em;margin-left:.045em;overflow:visible;
+    transform-box:fill-box;transform-origin:center bottom;transform:rotateZ(-9deg) rotateY(-14deg);
+    filter:drop-shadow(0 0 .035em rgba(255,255,190,.9)) drop-shadow(0 0 .11em rgba(255,180,0,.9)) drop-shadow(0 0 .22em rgba(255,111,0,.38));
+    animation:trophyFloat 4.4s ease-in-out infinite;transition:transform .32s var(--ease),filter .25s ease}
   .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
     background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
       radial-gradient(circle at 20% 80%,rgba(255,209,41,.55) 0 2%,transparent 3%),
@@ -129,15 +134,15 @@
     filter:drop-shadow(0 0 13px rgba(255,23,79,.96)) drop-shadow(0 0 36px rgba(255,23,79,.58))}
   .logo:hover .brand-mark-heart:not(.emblem-shine),.logo:focus-visible .brand-mark-heart:not(.emblem-shine),.logo.celestial .brand-mark-heart:not(.emblem-shine){animation-duration:1.8s}
   .logo:hover .logo-fan,.logo:focus-visible .logo-fan,.logo.celestial .logo-fan,
-  .logo:hover .rank-letter,.logo:focus-visible .rank-letter,.logo.celestial .rank-letter,
-  .logo:hover .rank-k,.logo:focus-visible .rank-k,.logo.celestial .rank-k{filter:drop-shadow(0 0 9px rgba(255,255,255,.44));animation:logoGradientFlow 1.9s linear infinite}
-  .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateY(-.13em) rotate(11deg) scale(1.08);filter:drop-shadow(0 0 12px rgba(255,209,41,.95))}
+  .logo:hover .rank-text,.logo:focus-visible .rank-text,.logo.celestial .rank-text{background-position:100% 50%;filter:brightness(1.1) saturate(1.12)}
+  .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateY(-.045em) rotateZ(-15deg) rotateY(-23deg) scale(1.065);
+    filter:drop-shadow(0 0 .045em rgba(255,255,210,1)) drop-shadow(0 0 .15em rgba(255,190,0,1)) drop-shadow(0 0 .3em rgba(255,92,0,.5))}
   .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
   .logo:hover + .eyebrow,.logo:focus-visible + .eyebrow,.logo.celestial + .eyebrow{animation:tagPop .82s var(--ease) both}
   @keyframes logoFloatIdle{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-5px,0)}}
   @keyframes logoFloatActive{0%,100%{transform:translate3d(0,-2px,0)}50%{transform:translate3d(0,-8px,0)}}
-  @keyframes heartBeat{0%,38%,58%,100%{transform:scale(1)}42%{transform:scale(1.075)}47%{transform:scale(.99)}52%{transform:scale(1.04)}}
-  @keyframes logoGradientFlow{to{background-position:-240% 0}}
+  @keyframes heartBeat{0%,84%,100%{transform:scale(1)}87%{transform:scale(1.065)}89%{transform:scale(.99)}92%{transform:scale(1.04)}95%{transform:scale(1)}}
+  @keyframes trophyFloat{0%,100%{translate:0 0}50%{translate:0 -.028em}}
   @keyframes starBloom{0%{opacity:0;transform:scale(.75) rotate(-4deg)}45%{opacity:.95}100%{opacity:0;transform:scale(1.22) rotate(6deg)}}
   @keyframes tagPop{35%{transform:rotate(-4deg) translateY(-4px) scale(1.08)}100%{transform:rotate(-7deg) translateY(0) scale(1)}}
   .tag{max-width:760px;margin:9px auto 0;color:var(--muted);font-size:clamp(.92rem,2vw,1.08rem);font-weight:500;line-height:1.4}
@@ -186,7 +191,7 @@
   .hero-suggest:hover{transform:translateY(-2px);border-color:var(--pink);background:linear-gradient(115deg,rgba(255,114,198,.24),rgba(185,134,255,.17))}
   .hero-action-note{color:var(--muted);font-size:.75rem}
   .owner-verify-cta{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:3px 14px;width:min(660px,100%);min-height:48px;
-    padding:9px 12px;border:1px solid rgba(255,209,41,.26);border-radius:13px;background:transparent;color:var(--muted);text-align:left;
+    margin:12px auto 0;padding:9px 12px;border:1px solid rgba(255,209,41,.26);border-radius:13px;background:transparent;color:var(--muted);text-align:left;
     transition:border-color .18s ease,background .18s ease,transform .18s var(--ease)}
   .owner-verify-cta:hover{transform:translateY(-1px);border-color:rgba(255,209,41,.62);background:rgba(255,209,41,.055)}
   .owner-verify-copy{display:grid;gap:1px;min-width:0}
@@ -693,7 +698,7 @@
     .top-btn .lang-flag{width:34px;height:23px}
     header{padding-top:52px}
     .brand-lockup{padding:8px 4px 0}
-    .logo-art{font-size:clamp(2.05rem,11.5vw,3.1rem);padding:.18em .72em .55em}
+    .logo-art{--logo-size:clamp(48px,13.6vw,54px);padding:.08em .07em .36em .48em}
     .eyebrow{margin-right:5%;padding:4px 8px}
     .search-shell{grid-template-columns:21px minmax(0,1fr) auto;gap:7px;padding:6px 7px 6px 13px}
     .search-btn{padding-inline:12px}
@@ -730,6 +735,14 @@
     .rank{font-size:1.05rem}
     .reason{font-size:.76rem}
     .stats{gap:6px;flex-wrap:nowrap}.stat{min-width:0;flex:1 1 0;padding-inline:5px}.stat .l{font-size:.58rem}
+    body.profile-live .suggest-cta{grid-template-columns:44px minmax(0,1fr);gap:10px 8px;padding:12px 13px}
+    body.profile-live .suggest-cta>div{display:contents}
+    body.profile-live .suggest-cta h2{grid-column:1/-1}
+    body.profile-live .suggest-cta p{display:none}
+    body.profile-live .profile-share{grid-column:1;grid-row:2;justify-content:center;width:44px;min-height:48px;margin:0;padding:0;
+      border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+    body.profile-live .profile-share span{display:none}
+    body.profile-live .suggest-open{grid-column:2;grid-row:2;width:100%;min-width:0;min-height:48px;padding-inline:14px}
     .choice-row{grid-template-columns:1fr}
     .dialog-card{width:100%;max-width:100%;max-height:92dvh;border-radius:20px 20px 0 0;padding:20px 15px 24px}
     dialog{margin:auto 0 0;width:100%;max-width:none}
@@ -756,9 +769,10 @@
     *,*:before,*:after{animation:none!important;transition:none!important}
     .logo:hover,.logo:focus-visible{filter:drop-shadow(0 0 12px rgba(99,179,255,.4))}
     .brand-mark-heart:not(.emblem-shine){transform:none!important}
+    .logo-word{transform:none!important}
   }
 </style>
-<link rel="stylesheet" href="owner-studio.css?v=7">
+<link rel="stylesheet" href="owner-studio.css?v=8">
 </head>
 <body>
 <a class="skip-link" id="skip-link" href="#main">Skip to content</a>
@@ -793,29 +807,41 @@
 <main class="wrap" id="main">
   <header>
     <div class="brand-lockup">
-      <a class="logo" id="logo" href="./" aria-label="FanRank">
+      <a class="logo" id="logo" data-fanrank-logo href="./" aria-label="FanRank">
         <span class="logo-float" aria-hidden="true">
           <span class="logo-art">
             <span class="brand-mark">
-              <svg viewBox="0 0 100 100" focusable="false">
+              <svg viewBox="0 0 120 108" focusable="false">
                 <defs>
-                  <linearGradient id="heartGradient" x1="18" y1="10" x2="82" y2="92" gradientUnits="userSpaceOnUse"><stop stop-color="#ff7088"></stop><stop offset=".42" stop-color="#ff174f"></stop><stop offset="1" stop-color="#b90036"></stop></linearGradient>
-                  <linearGradient id="starGradient" x1="18" y1="10" x2="82" y2="91" gradientUnits="userSpaceOnUse"><stop stop-color="#fff7a3"></stop><stop offset=".5" stop-color="#ffd129"></stop><stop offset="1" stop-color="#ff9d20"></stop></linearGradient>
+                  <linearGradient id="heartGradient" x1="10" y1="5" x2="111" y2="103" gradientUnits="userSpaceOnUse"><stop stop-color="#ff557b"></stop><stop offset=".45" stop-color="#ed003f"></stop><stop offset="1" stop-color="#850020"></stop></linearGradient>
+                  <linearGradient id="starGradient" x1="14" y1="6" x2="105" y2="102" gradientUnits="userSpaceOnUse"><stop stop-color="#fff7a3"></stop><stop offset=".5" stop-color="#ffd129"></stop><stop offset="1" stop-color="#ff9d20"></stop></linearGradient>
                 </defs>
-                <path class="brand-mark-heart" d="M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z"></path>
-                <path class="brand-mark-heart emblem-shine" d="M27 30C33 22 41 22 45 28"></path>
-                <path class="brand-mark-team" d="M50 6 61.8 36.2 94.5 38.1 69.1 58.8 77.4 90.5 50 72.8 22.6 90.5 30.9 58.8 5.5 38.1 38.2 36.2Z"></path>
+                <path class="brand-mark-heart" d="M60 101C48 91 11 63 11 34C11 16 24 7 40 7C50 7 57 13 60 21C64 13 71 7 82 7C98 7 111 16 111 34C111 63 73 91 60 101Z"></path>
+                <path class="brand-mark-heart emblem-shine" d="M27 27C31 18 39 15 47 17"></path>
+                <path class="brand-mark-team" d="M60 5 73 40 111 42 81 66 91 102 60 82 29 102 39 66 9 42 47 40Z"></path>
               </svg>
             </span>
             <span class="logo-word">
               <span class="logo-fan">FAN</span>
               <span class="logo-rank">
-                <span class="rank-place rank-r"><span class="rank-letter">R</span><span class="podium-step">2</span></span>
-                <span class="rank-place rank-a"><span class="rank-letter">A</span><span class="podium-step">1</span></span>
-                <span class="rank-place rank-n"><span class="rank-letter">N</span><span class="podium-step">3</span></span>
-                <span class="rank-k">K</span>
+                <span class="rank-text">RANK</span>
+                <span class="rank-podium" aria-hidden="true">
+                  <span class="podium-step step-2">2</span>
+                  <span class="podium-step step-1">1</span>
+                  <span class="podium-step step-3">3</span>
+                </span>
               </span>
-              <svg class="rank-trophy" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h28v12c0 11-6 18-14 18S18 31 18 20V8Z" fill="currentColor"></path><path d="M18 13H9v5c0 8 5 13 12 14M46 13h9v5c0 8-5 13-12 14M32 38v9M23 55h18M26 47h12v8"></path></svg>
+              <svg class="rank-trophy" viewBox="5 4 70 78" focusable="false">
+                <defs>
+                  <linearGradient id="cupGold" x1="10" y1="5" x2="68" y2="80" gradientUnits="userSpaceOnUse"><stop stop-color="#fff8b5"></stop><stop offset=".22" stop-color="#ffd538"></stop><stop offset=".56" stop-color="#ff9f00"></stop><stop offset=".8" stop-color="#fff078"></stop><stop offset="1" stop-color="#d66a00"></stop></linearGradient>
+                </defs>
+                <g fill="url(#cupGold)" stroke="#fff09a" stroke-width="2" stroke-linejoin="round">
+                  <path d="M24 10H56V23C56 41 50 52 40 52C30 52 24 41 24 23Z"></path>
+                  <path d="M24 16H11V23C11 34 17 41 27 42M56 16H69V23C69 34 63 41 53 42" fill="none" stroke-width="4"></path>
+                  <rect x="37" y="51" width="6" height="15" rx="2"></rect><path d="M29 66H51L56 74H24Z"></path><rect x="20" y="74" width="40" height="7" rx="3"></rect>
+                  <path d="M31 14C30 29 33 40 38 45" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".62"></path>
+                </g>
+              </svg>
             </span>
           </span>
         </span>
@@ -839,14 +865,6 @@
           <button class="hero-suggest" id="home-suggest" type="button"><span aria-hidden="true">♥</span><span id="home-suggest-text"></span></button>
           <span class="hero-action-note" id="home-suggest-note"></span>
         </div>
-        <button class="owner-verify-cta" id="home-owner-verify" type="button">
-          <span class="owner-verify-copy">
-            <span class="owner-verify-kicker" id="owner-verify-kicker"></span>
-            <span class="owner-verify-title" id="owner-verify-title"></span>
-            <span class="owner-verify-detail" id="owner-verify-copy"></span>
-          </span>
-          <span class="owner-verify-action" id="owner-verify-action"></span>
-        </button>
       </div>
     </form>
 
@@ -866,6 +884,15 @@
       </div>
       <div class="trending" id="trending" role="tabpanel" aria-labelledby="home-rank-ai" aria-live="polite"></div>
     </section>
+
+    <button class="owner-verify-cta" id="home-owner-verify" type="button">
+      <span class="owner-verify-copy">
+        <span class="owner-verify-kicker" id="owner-verify-kicker"></span>
+        <span class="owner-verify-title" id="owner-verify-title"></span>
+        <span class="owner-verify-detail" id="owner-verify-copy"></span>
+      </span>
+      <span class="owner-verify-action" id="owner-verify-action"></span>
+    </button>
 
     <section class="directory-block" aria-labelledby="profiles-title">
       <div class="section-head">
@@ -1581,12 +1608,12 @@ var T = {
     stats_profiles:"profiles",
     stats_ideas:"ranked ideas",
     stats_votes:"fan votes",
-    home_trust:[["♥","Anonymous if you want"],["✦","AI groups and ranks"],["★","Verified teams add stars"]],
+    home_trust:[["♥","Anonymous if you want"],["✦","AI groups and ranks"],["★","Official stars · outside the ranking"]],
     home_suggest:"Suggest something now",
     home_suggest_note:"Anonymous by default · about 30 seconds",
     owner_verify_kicker:"FOR CREATORS AND COMPANIES",
-    owner_verify_title:"Verify your profile and turn it into your feedback hub",
-    owner_verify_copy:"Customize it, create topics, and ask your audience for ideas.",
+    owner_verify_title:"Do you represent a creator or company?",
+    owner_verify_copy:"Claim the profile to organize ideas and evaluate proposals.",
     owner_verify_action:"Request verification",
     owner_verify_search:"Search for your creator, company or project profile",
     loading:"Loading live rankings…",
@@ -2044,12 +2071,12 @@ var T = {
     stats_profiles:"perfiles",
     stats_ideas:"ideas ordenadas",
     stats_votes:"votos de fans",
-    home_trust:[["♥","Anónimo si quieres"],["✦","La IA agrupa y ordena"],["★","Equipos verificados dan estrellas"]],
+    home_trust:[["♥","Anónimo si quieres"],["✦","La IA agrupa y ordena"],["★","Estrellas oficiales · fuera del ranking"]],
     home_suggest:"Dejar una sugerencia ahora",
     home_suggest_note:"Anónima por defecto · unos 30 segundos",
-    owner_verify_kicker:"¡VERIFÍCATE YA COMO FAMOSO O EMPRESA!",
-    owner_verify_title:"Verifica tu perfil y conviértelo en tu centro de feedback",
-    owner_verify_copy:"Personalízalo, crea temas y pide ideas a tu audiencia.",
+    owner_verify_kicker:"PARA CREADORES Y EMPRESAS",
+    owner_verify_title:"¿Representas a un creador o una empresa?",
+    owner_verify_copy:"Reclama el perfil para organizar ideas y valorar propuestas.",
     owner_verify_action:"Solicitar verificación",
     owner_verify_search:"Busca el perfil de tu creador, empresa o proyecto",
     loading:"Cargando rankings vivos…",
@@ -3858,6 +3885,7 @@ function loadHome(){
   renderDirectoryFilters();
   renderSections();
   renderTrending();
+  document.querySelector(".global-rank-block").after(byId("stats"));
   updateBrandMode();
   setupMobileCta();
 }
@@ -4249,6 +4277,7 @@ function loadSection(){
   byId("crumb-text").innerHTML = '<a href="' + esc(homeUrl()) + '">' +
     esc(tx("all_profiles")) + '</a> <span aria-hidden="true">›</span> ' + esc(secMeta.name);
   byId("home-view").classList.add("hidden");
+  byId("section-view").before(byId("stats"));
   byId("section-view").classList.remove("hidden");
   document.querySelector(".claim-bar").classList.toggle("hidden",secMeta.verification_status === "verified");
   byId("profile-pro").classList.toggle("hidden",secMeta.verification_status !== "verified");
@@ -4432,6 +4461,19 @@ document.addEventListener("pointerdown",armCelestialAudio,{once:true,passive:tru
 document.addEventListener("keydown",armCelestialAudio,{once:true});
 byId("logo").addEventListener("pointerenter",function(){triggerCelestialLogo(true);});
 byId("logo").addEventListener("focus",function(){triggerCelestialLogo(false);});
+if(!REDUCED && window.matchMedia("(hover:hover) and (pointer:fine)").matches){
+  byId("logo").addEventListener("pointermove",function(event){
+    var rect = byId("logo").getBoundingClientRect();
+    var x = (event.clientX-rect.left)/rect.width-.5;
+    var y = (event.clientY-rect.top)/rect.height-.5;
+    byId("logo").style.setProperty("--tilt-y",String(x*7)+"deg");
+    byId("logo").style.setProperty("--tilt-x",String(y*-4)+"deg");
+  });
+  byId("logo").addEventListener("pointerleave",function(){
+    byId("logo").style.setProperty("--tilt-x","0deg");
+    byId("logo").style.setProperty("--tilt-y","0deg");
+  });
+}
 byId("global-search").addEventListener("input",function(event){renderSearchPanel(event.target.value);});
 byId("global-search").addEventListener("focus",function(event){renderSearchPanel(event.target.value);});
 byId("search-form").addEventListener("submit",function(event){
@@ -5138,6 +5180,6 @@ async function boot(){
 }
 boot();
 </script>
-<script src="owner-studio.js?v=8"></script>
+<script src="owner-studio.js?v=9"></script>
 </body>
 </html>

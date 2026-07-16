@@ -21,7 +21,7 @@
       rights_help:"Para press kit, licencia o dominio público, añade el enlace original que lo demuestra.",photo_send:"Publicar foto",photo_ok:"Foto actualizada.",
       promote:"Promocionar",promote_title:"Solicitar promoción",promote_intro:"Esto registra interés para dar visibilidad al perfil; hoy no cobra nada. Las ideas concretas no se promocionan.",placement:"Qué promocionar",profile_placement:"Perfil",idea_placement:"Idea antigua (cancelada)",
       goal:"Objetivo de la promoción",promote_rule:"La publicidad solo puede dar visibilidad a un perfil o convocatoria futura. Nunca promociona una idea ni compra votos, nota IA o posición orgánica.",
-      promote_send:"Registrar interés",promote_ok:"Interés registrado. No se ha realizado ningún cobro.",owner_mode:"PROPIETARIO",verified:"Perfil verificado",
+      promote_send:"Registrar interés",promote_ok:"Interés registrado. No se ha realizado ningún cobro.",owner_mode:"PROPIETARIO",verified:"Perfil verificado",unverified:"Perfil creado por fans · pendiente de verificar",
       generic_error:"No se pudo completar. Tu contenido sigue aquí.",required:"Completa los campos obligatorios.",bad_image:"Usa JPG, PNG o WebP dentro del límite de tamaño.",bad_source:"Añade una URL original válida para demostrar los derechos.",
       zones:{hero:"Cabecera y buscador",stats:"Métricas",home_directory:"Perfiles y categorías",trending:"Tendencias",request_profile:"Petición pública de perfil",profile_identity:"Cabecera del perfil",suggest_cta:"Botón de sugerencia",profile_ranking:"Filtros del ranking",podium:"Podio",profile_ideas:"Lista de ideas",footer:"Pie de página"}
     },
@@ -44,7 +44,7 @@
       rights_help:"For press kits, licensed or public-domain media, add the original page that proves it.",photo_send:"Publish photo",photo_ok:"Photo updated.",
       promote:"Promote",promote_title:"Request promotion",promote_intro:"This records interest in profile visibility; no payment is taken today. Individual ideas cannot be promoted.",placement:"What to promote",profile_placement:"Profile",idea_placement:"Legacy idea request (cancelled)",
       goal:"Promotion goal",promote_rule:"Advertising may only distribute a profile or future research call. It never promotes an idea or buys votes, AI score or organic position.",
-      promote_send:"Register interest",promote_ok:"Interest registered. No payment was made.",owner_mode:"OWNER",verified:"Verified profile",
+      promote_send:"Register interest",promote_ok:"Interest registered. No payment was made.",owner_mode:"OWNER",verified:"Verified profile",unverified:"Fan-created profile · awaiting verification",
       generic_error:"This could not be completed. Your content is still here.",required:"Complete the required fields.",bad_image:"Use JPG, PNG or WebP within the size limit.",bad_source:"Add a valid original URL that proves the usage rights.",
       zones:{hero:"Header and search",stats:"Metrics",home_directory:"Profiles and categories",trending:"Trending",request_profile:"Public profile request",profile_identity:"Profile header",suggest_cta:"Suggestion call to action",profile_ranking:"Ranking filters",podium:"Podium",profile_ideas:"Ideas list",footer:"Footer"}
     }
@@ -177,10 +177,23 @@
   function renderProfileEnhancements(){
     if(!window.secMeta || !el("profile-identity")){return;}
     var meta=window.secMeta;
-    var avatar=meta.image_path ? '<img src="'+escapeHtml(profileImageUrl(meta.image_path))+'" alt="'+escapeHtml(meta.image_alt || meta.name)+'">' : escapeHtml(meta.emoji || "•");
+    var identity=el("profile-identity");
+    var tags=el("profile-tags");
+    var claimButton=el("claim-open");
+    var claimBar=claimButton ? claimButton.closest(".claim-bar") : null;
+    var verified=meta.verification_status==="verified";
+    identity.classList.toggle("is-verified",verified);
+    var initials=String(meta.name || "?").trim().split(/\s+/).slice(0,2).map(function(part){return part.charAt(0);}).join("").toUpperCase().slice(0,3) || "?";
+    var avatar=meta.image_path ? '<img src="'+escapeHtml(profileImageUrl(meta.image_path))+'" alt="'+escapeHtml(meta.image_alt || meta.name)+'" loading="eager" decoding="async">' : '<span class="profile-monogram" aria-hidden="true">'+escapeHtml(initials)+'</span>';
     var credit=meta.image_credit ? escapeHtml(meta.image_credit) : "";
     var creditHtml=credit ? (meta.image_source_url && validHttpUrl(meta.image_source_url) ? '<a class="profile-image-credit" href="'+escapeHtml(meta.image_source_url)+'" target="_blank" rel="noopener noreferrer">'+credit+' ↗</a>' : '<span class="profile-image-credit">'+credit+'</span>') : "";
-    el("profile-identity").innerHTML='<div class="profile-avatar">'+avatar+'</div><div class="profile-identity-copy"><strong>'+escapeHtml(meta.name)+'</strong>'+(meta.verification_status==="verified"?'<span class="verified-mark">✓ '+escapeHtml(s("verified"))+'</span>':"")+creditHtml+'</div>';
+    identity.innerHTML='<div class="profile-identity-main"><div class="profile-avatar">'+avatar+'</div><div class="profile-identity-copy"><strong>'+escapeHtml(meta.name)+'</strong><span class="profile-status '+(verified?'is-verified':'is-community')+'"><i aria-hidden="true"></i>'+escapeHtml(s(verified?"verified":"unverified"))+'</span>'+creditHtml+'</div></div><div class="profile-identity-detail"></div>';
+    if(tags){identity.querySelector(".profile-identity-detail").appendChild(tags);}
+    if(claimBar){
+      claimBar.classList.add("profile-claim");
+      claimBar.classList.toggle("hidden",verified);
+      identity.appendChild(claimBar);
+    }
     updateInterfaceShallow();
   }
   function updateInterfaceShallow(){
