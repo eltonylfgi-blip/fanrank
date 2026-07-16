@@ -739,6 +739,8 @@
     .rank{font-size:1.05rem}
     .reason{font-size:.76rem}
     .stats{gap:6px;flex-wrap:nowrap}.stat{min-width:0;flex:1 1 0;padding-inline:5px}.stat .l{font-size:.58rem}
+    body.home-live #stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    body.home-live #stats .trust-stat{justify-content:flex-start;min-width:0;border-radius:14px;text-align:left;line-height:1.28}
     body.profile-live .suggest-cta{grid-template-columns:44px minmax(0,1fr);gap:10px 8px;padding:12px 13px}
     body.profile-live .suggest-cta>div{display:contents}
     body.profile-live .suggest-cta h2{grid-column:1/-1}
@@ -1612,7 +1614,7 @@ var T = {
     stats_profiles:"profiles",
     stats_ideas:"ranked ideas",
     stats_votes:"fan votes",
-    home_trust:[["♥","Anonymous if you want"],["✦","AI groups and ranks"],["★","Official stars · outside the ranking"],["◆","Verified real-world impact","impact"]],
+    home_trust:[["♥","Anonymous if you want"],["✦","AI groups and ranks"],["★","The creator or team rates ideas"],["◆","Verified real-world impact","impact"]],
     home_suggest:"Suggest something now",
     home_suggest_note:"Anonymous by default · about 30 seconds",
     owner_verify_kicker:"FOR CREATORS AND COMPANIES",
@@ -1673,7 +1675,7 @@ var T = {
     how:[
       ["light","Fans submit","Ideas enter one private review queue instead of disappearing across comments."],
       ["spark","AI helps rank","Approved ideas are scored for impact, feasibility and clarity — with a reason."],
-      ["shield","Teams add official context","Verified owners rate 1–5 ★ and partners use the owner's limit. Stars stay separate and never override fan demand."],
+      ["shield","The creator or team rates ideas","They can mark the ideas that help them most. AI learns their priorities without replacing fan hearts."],
       ["diamond","Verified impact","◆ appears only after the profile confirms implementation and a measurable result. Any agreed reward stays separate and never buys rank."]
     ],
     pro_kicker:"FanRank for teams",
@@ -2076,7 +2078,7 @@ var T = {
     stats_profiles:"perfiles",
     stats_ideas:"ideas ordenadas",
     stats_votes:"votos de fans",
-    home_trust:[["♥","Anónimo si quieres"],["✦","La IA agrupa y ordena"],["★","Estrellas oficiales · fuera del ranking"],["◆","Impacto real verificado","impact"]],
+    home_trust:[["♥","Anónimo si quieres"],["✦","La IA agrupa y ordena"],["★","El famoso o su equipo valora ideas"],["◆","Impacto real verificado","impact"]],
     home_suggest:"Dejar una sugerencia ahora",
     home_suggest_note:"Anónima por defecto · unos 30 segundos",
     owner_verify_kicker:"PARA CREADORES Y EMPRESAS",
@@ -2137,7 +2139,7 @@ var T = {
     how:[
       ["light","Los fans proponen","Las ideas entran en una cola privada en vez de perderse entre comentarios."],
       ["spark","La IA ayuda a ordenar","Las aprobadas reciben nota por impacto, viabilidad y claridad — con un motivo."],
-      ["shield","El equipo aporta contexto oficial","El dueño verificado valora de 1 a 5 ★ y sus socios usan el límite elegido. Las estrellas nunca pisan la demanda fan."],
+      ["shield","El famoso o su equipo valora","Pueden marcar las ideas que más les sirven. Así la IA aprende su criterio sin sustituir los corazones de los fans."],
       ["diamond","Impacto verificado","◆ aparece solo cuando el perfil confirma que la idea se implementó y produjo un resultado medible. Cualquier recompensa acordada va aparte y nunca compra posición."]
     ],
     pro_kicker:"FanRank para equipos",

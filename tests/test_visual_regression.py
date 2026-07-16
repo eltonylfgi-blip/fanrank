@@ -272,10 +272,18 @@ class FanRankVisualRegressionTests(unittest.TestCase):
               const globalRank = box('.global-rank-block');
               const firstIdea = box('#trending .trend-card');
               const trust = box('#stats');
+              const trustElement = document.querySelector('#stats');
+              const trustItems = [...trustElement.querySelectorAll('.trust-stat')];
               const owner = box('#home-owner-verify');
               return {
                 firstIdeaTop: firstIdea.top,
                 trustAfterRank: trust.top >= globalRank.bottom,
+                trustColumns: getComputedStyle(trustElement).gridTemplateColumns.split(' ').filter(Boolean).length,
+                trustItemsInside: trustItems.every(item => {
+                  const itemBox = item.getBoundingClientRect();
+                  return itemBox.left >= trust.left - 1 && itemBox.right <= trust.right + 1;
+                }),
+                teamTrustText: trustItems[2].textContent.trim(),
                 ownerAfterRank: owner.top >= globalRank.bottom,
                 ownerAfterTrust: owner.top >= trust.bottom
               };
@@ -284,6 +292,9 @@ class FanRankVisualRegressionTests(unittest.TestCase):
         )
         self.assertLess(result["firstIdeaTop"], 812)
         self.assertTrue(result["trustAfterRank"])
+        self.assertEqual(2, result["trustColumns"])
+        self.assertTrue(result["trustItemsInside"])
+        self.assertIn("El famoso o su equipo valora ideas", result["teamTrustText"])
         self.assertTrue(result["ownerAfterRank"])
         self.assertTrue(result["ownerAfterTrust"])
         context.close()
