@@ -493,6 +493,45 @@
   .choice b{display:block;color:var(--text)}
   .choice input:disabled + span{opacity:.62}
   .identity-fields{margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)}
+  .quick-composer{overflow:hidden;border:1px solid rgba(99,179,255,.5);border-radius:17px;background:rgba(10,11,18,.58);
+    box-shadow:0 0 0 3px rgba(99,179,255,.04),inset 0 1px 0 rgba(255,255,255,.035);transition:border-color .2s ease,box-shadow .2s ease}
+  .quick-composer:focus-within{border-color:var(--blue);box-shadow:0 0 0 4px rgba(99,179,255,.1),0 16px 42px rgba(0,0,0,.22)}
+  .composer-target-row{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:10px 13px;border-bottom:1px solid var(--line-soft)}
+  .composer-target-row>label,.composer-idea>label{color:var(--text);font-size:.82rem;font-weight:950}
+  .composer-target-field{min-width:0}
+  .composer-target-field .inline-select{min-height:44px;padding:8px 34px 8px 9px;border:0;border-radius:9px;background:rgba(255,255,255,.035);font-weight:800;box-shadow:none}
+  .composer-target-field .inline-select:focus-visible{box-shadow:var(--focus)}
+  .composer-target-value{display:flex;align-items:center;min-height:44px;padding:8px 10px;border-radius:9px;background:rgba(99,179,255,.08);color:var(--blue);font-weight:900}
+  .composer-idea{padding:12px 13px 8px}
+  .composer-idea>label{display:block;margin-bottom:5px}
+  .composer-idea .suggestion-text{width:100%;min-height:124px;padding:4px 0 8px;border:0;border-radius:0;background:transparent;color:var(--text);
+    font:inherit;font-size:1rem;line-height:1.55;outline:0;resize:vertical}
+  .composer-idea .suggestion-text::placeholder{color:#8691aa}
+  .composer-idea .helper{margin-top:0}
+  .composer-media{border-top:1px solid var(--line-soft);transition:background .18s ease}
+  .composer-media.dragging{background:rgba(99,179,255,.08)}
+  .composer-media>summary{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:54px;padding:10px 13px;cursor:pointer;list-style:none}
+  .composer-media>summary::-webkit-details-marker{display:none}
+  .composer-media>summary:after{content:"+";display:grid;place-items:center;width:30px;height:30px;flex:0 0 auto;border:1px solid var(--line);border-radius:9px;color:var(--blue);font-size:1.1rem;font-weight:900}
+  .composer-media[open]>summary:after{content:"\2212"}
+  .composer-media>summary:focus-visible{box-shadow:var(--focus)}
+  .composer-media-copy{min-width:0}
+  .composer-media-copy b{display:block;font-size:.78rem}.composer-media-copy span{display:block;margin-top:2px;color:var(--muted);font-size:.7rem;line-height:1.4}
+  .composer-media-content{padding:0 13px 12px}
+  .composer-media-content>.secondary-btn{width:100%}
+  .quick-submit{margin-top:12px}
+  .submit-privacy-note{display:flex;align-items:center;justify-content:center;gap:6px;margin:0 0 7px;color:var(--muted);font-size:.71rem;text-align:center}
+  .submit-privacy-note svg{width:14px;height:14px;flex:0 0 auto;color:var(--green)}
+  .advanced-options{margin-top:12px;border:1px solid var(--line-soft);border-radius:14px;background:rgba(10,11,18,.32)}
+  .advanced-options>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:54px;padding:11px 13px;cursor:pointer;list-style:none}
+  .advanced-options>summary::-webkit-details-marker{display:none}
+  .advanced-options>summary b{display:block;font-size:.84rem}.advanced-options>summary span{display:block;margin-top:2px;color:var(--muted);font-size:.7rem;font-weight:500}
+  .advanced-options>summary:after{content:"+";display:grid;place-items:center;width:30px;height:30px;flex:0 0 auto;border:1px solid var(--line);border-radius:9px;color:var(--blue);font-size:1.15rem;font-weight:900}
+  .advanced-options[open]>summary:after{content:"\2212"}
+  .advanced-options>summary:focus-visible{box-shadow:var(--focus)}
+  .advanced-content{padding:0 13px 13px;border-top:1px solid var(--line-soft)}
+  .advanced-content>.field,.advanced-content>.category-picker{margin-top:13px}
+  .advanced-content .privacy-box,.advanced-content .milestone-box{margin-top:13px}
   .suggestion-text{min-height:136px;resize:vertical}
   .check-row{display:flex;align-items:flex-start;gap:9px;margin-top:8px;color:var(--muted);font-size:.76rem}
   .check-row input{width:18px;height:18px;flex:0 0 auto;margin:1px 0 0;accent-color:var(--green)}
@@ -535,7 +574,8 @@
   .media-name{display:block;margin-top:6px;overflow:hidden;color:var(--muted);font-size:.67rem;text-overflow:ellipsis;white-space:nowrap}
   .media-remove{position:absolute;right:3px;top:3px;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:11px;background:rgba(10,11,18,.92);color:var(--text);font-weight:900}
   .media-status{min-height:20px;margin-top:6px;color:var(--muted);font-size:.72rem}.media-status.err{color:var(--red)}
-  .evidence-link-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)}
+  .evidence-link-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--line-soft)}
+  .evidence-link-form .field-label{grid-column:1/-1;color:var(--muted);font-size:.72rem;font-weight:850}
   .evidence-link-form input{min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
   .evidence-link-form button{min-height:44px}
   .evidence-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
@@ -575,7 +615,7 @@
     background:rgba(85,229,154,.06);color:var(--green);font-size:.8rem}
   .receipt b{display:block;color:var(--text);font-size:.88rem}.receipt span{display:block;margin-top:3px}
   .receipt-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  .submit-bar{position:sticky;bottom:-24px;z-index:4;margin:18px 0 0;padding:14px 0 calc(14px + env(safe-area-inset-bottom));
+  .submit-bar{position:sticky;bottom:-24px;z-index:4;margin:12px 0 0;padding:12px 0 calc(12px + env(safe-area-inset-bottom));
     border-top:1px solid var(--line);background:linear-gradient(to bottom,rgba(21,25,37,.94),#151925 32%);backdrop-filter:blur(14px)}
   .submit-bar .primary-btn{width:100%;min-height:50px;font-size:.98rem;box-shadow:0 11px 32px rgba(255,185,31,.16)}
   .activity-user{margin:8px 0 15px;color:var(--muted);font-size:.8rem;word-break:break-word}
@@ -698,6 +738,10 @@
       color:var(--yellow-ink);font-weight:950;box-shadow:0 14px 42px rgba(0,0,0,.5)}
     body.profile-live.mobile-cta-ready .mobile-suggest,body.home-live.mobile-cta-ready .mobile-suggest{display:block}
     body.suggest-dialog-open .mobile-suggest{display:none!important}
+    .composer-target-row{grid-template-columns:1fr;gap:4px;padding:10px 12px}
+    .composer-target-field .inline-select,.composer-target-value{width:100%}
+    .composer-idea{padding-left:12px;padding-right:12px}
+    .composer-media>summary,.composer-media-content{padding-left:12px;padding-right:12px}
     .media-list,.evidence-links{grid-template-columns:1fr 1fr}
     .evidence-link-form{grid-template-columns:1fr}
     .evidence-link-form button{width:100%}
@@ -705,7 +749,7 @@
     .choice-row{grid-template-columns:1fr}
     .milestone-options,.share-actions{grid-template-columns:1fr}
     .share-actions .primary-btn{grid-column:auto}
-    .submit-bar{bottom:-18px;margin:16px 0 0;padding:12px 0 calc(12px + env(safe-area-inset-bottom))}
+    .submit-bar{bottom:-18px;margin:10px 0 0;padding:10px 0 calc(10px + env(safe-area-inset-bottom))}
   }
   @media (prefers-reduced-motion:reduce){
     html{scroll-behavior:auto}
@@ -1019,126 +1063,139 @@
     <button class="dialog-close" id="suggest-close" type="button" aria-label="Close">×</button>
     <h2 id="submit-title"></h2>
     <p class="dialog-intro" id="submit-intro"></p>
-    <div class="suggest-target-context hidden" id="submit-target-context"></div>
     <form id="submit-form" novalidate>
-      <div class="form-grid">
-        <div class="field full hidden" id="submit-target-field">
+      <section class="quick-composer" id="quick-composer" aria-labelledby="composer-label">
+        <h3 class="sr-only" id="composer-label"></h3>
+        <div class="composer-target-row">
           <label id="submit-target-label" for="submit-target"></label>
-          <select class="inline-select" id="submit-target" required></select>
-          <span class="helper" id="submit-target-help"></span>
+          <div class="composer-target-value hidden" id="submit-target-context"></div>
+          <div class="composer-target-field hidden" id="submit-target-field">
+            <select class="inline-select" id="submit-target" required></select>
+            <span class="sr-only" id="submit-target-help"></span>
+          </div>
         </div>
-        <div class="field full hidden" id="submit-topic-field">
-          <label id="submit-topic-label" for="submit-topic"></label>
-          <select class="inline-select" id="submit-topic"></select>
-          <span class="helper" id="submit-topic-help"></span>
-        </div>
-        <div class="field full">
+        <div class="composer-idea">
           <label id="submit-idea-label" for="submit-idea"></label>
           <textarea class="suggestion-text" id="submit-idea" maxlength="1000" autocomplete="off" required></textarea>
           <span class="helper" id="submit-idea-help"></span>
         </div>
+        <details class="composer-media" id="media-box">
+          <summary aria-describedby="media-help">
+            <span class="composer-media-copy"><b id="media-title"></b><span id="media-help"></span></span>
+          </summary>
+          <div class="composer-media-content">
+            <button class="secondary-btn" id="media-pick" type="button"></button>
+            <input class="sr-only" id="submit-files" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+            <div class="evidence-link-form">
+              <label class="field-label" id="evidence-link-label" for="evidence-link-input"></label>
+              <input id="evidence-link-input" type="url" maxlength="2048" inputmode="url" autocomplete="url">
+              <button class="secondary-btn" id="evidence-link-add" type="button"></button>
+            </div>
+            <div class="evidence-links hidden" id="evidence-links"></div>
+            <div class="media-list hidden" id="media-list"></div>
+            <div class="media-status" id="media-status" role="status" aria-live="polite"></div>
+          </div>
+        </details>
+      </section>
+      <input id="submit-details" type="hidden">
+      <div class="submit-bar quick-submit">
+        <div class="submit-privacy-note" id="submit-privacy-note"></div>
+        <button class="primary-btn" id="submit-send" type="submit"></button>
       </div>
-      <fieldset class="category-picker">
-        <legend id="category-legend"></legend>
-        <div class="category-options">
-          <label class="category-option"><input name="submit-category" type="radio" value="auto" checked><span id="category-auto"></span></label>
-          <label class="category-option"><input name="submit-category" type="radio" value="bug"><span id="category-bug"></span></label>
-          <label class="category-option"><input name="submit-category" type="radio" value="idea"><span id="category-idea"></span></label>
-          <label class="category-option"><input name="submit-category" type="radio" value="accessibility"><span id="category-accessibility"></span></label>
-          <label class="category-option"><input name="submit-category" type="radio" value="other"><span id="category-other"></span></label>
-        </div>
-        <span class="helper" id="category-help"></span>
-      </fieldset>
+      <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
+      <div class="receipt hidden" id="submit-receipt"></div>
+      <div class="auth-nudge" id="auth-nudge">
+        <span id="auth-nudge-copy"></span>
+        <button class="secondary-btn" id="suggest-sign-in" type="button"></button>
+      </div>
       <section class="similar-wrap hidden" id="similar-wrap" aria-live="polite">
         <div class="similar-head" id="similar-head"></div>
         <div class="similar-list" id="similar-ideas"></div>
         <span class="helper" id="similar-help"></span>
       </section>
-      <input id="submit-details" type="hidden">
-      <section class="media-box" id="media-box" aria-labelledby="media-title" aria-describedby="media-help">
-        <div class="media-head">
-          <div><b id="media-title"></b><span id="media-help"></span></div>
-          <button class="secondary-btn" id="media-pick" type="button"></button>
-        </div>
-        <input class="sr-only" id="submit-files" type="file" accept="image/png,image/jpeg,image/webp" multiple>
-        <div class="evidence-link-form">
-          <label class="field-label" id="evidence-link-label" for="evidence-link-input"></label>
-          <input id="evidence-link-input" type="url" maxlength="2048" inputmode="url" autocomplete="url">
-          <button class="secondary-btn" id="evidence-link-add" type="button"></button>
-        </div>
-        <div class="evidence-links hidden" id="evidence-links"></div>
-        <div class="media-list hidden" id="media-list"></div>
-        <div class="media-status" id="media-status" role="status" aria-live="polite"></div>
-      </section>
-      <section class="privacy-box" aria-labelledby="privacy-title">
-        <div class="privacy-title"><span id="privacy-title"></span><span class="private-badge" id="privacy-badge"></span></div>
-        <div class="choice-row">
-          <label class="choice">
-            <input id="attribution-anonymous" name="attribution" type="radio" value="anonymous" checked>
-            <span><b id="anonymous-title"></b><span id="anonymous-copy"></span></span>
-          </label>
-          <label class="choice" id="account-choice">
-            <input id="attribution-account" name="attribution" type="radio" value="account">
-            <span><b id="account-title"></b><span id="account-copy"></span></span>
-          </label>
-          <label class="choice" id="contact-choice">
-            <input id="attribution-contact" name="attribution" type="radio" value="contact">
-            <span><b id="contact-mode-title"></b><span id="contact-mode-copy"></span></span>
-          </label>
-        </div>
-        <div class="identity-fields hidden" id="contact-identity-fields">
-        <div class="form-grid">
-          <div class="field">
-            <label id="submit-name-label" for="submit-name"></label>
-            <input id="submit-name" maxlength="80" autocomplete="name">
-          </div>
-          <div class="field">
-            <label id="submit-contact-label" for="submit-contact"></label>
-            <input id="submit-contact" maxlength="180" autocomplete="email" inputmode="email">
-            <span class="helper" id="submit-contact-help"></span>
-          </div>
-        </div>
-        <label class="check-row">
-          <input id="submit-allow-contact" type="checkbox">
-          <span id="submit-consent-copy"></span>
-        </label>
-        </div>
-        <label class="check-row training-consent hidden" id="training-consent-row">
-          <input id="submit-training-consent" type="checkbox">
-          <span id="training-consent-copy"></span>
-        </label>
-      </section>
-      <section class="milestone-box" aria-labelledby="alert-title">
-        <label class="alert-toggle">
-          <input id="submit-alert-optin" type="checkbox" aria-controls="submit-alert-fields" aria-expanded="false">
-          <span><b id="alert-title"></b><span id="alert-copy"></span></span>
-        </label>
-        <div class="alert-fields hidden" id="submit-alert-fields">
-          <div class="field">
-            <label id="alert-email-label" for="submit-alert-email"></label>
-            <input id="submit-alert-email" type="email" maxlength="254" autocomplete="email" inputmode="email">
+      <details class="advanced-options" id="submit-advanced">
+        <summary><span><b id="advanced-title"></b><span id="advanced-copy"></span></span></summary>
+        <div class="advanced-content">
+          <div class="field full hidden" id="submit-topic-field">
+            <label id="submit-topic-label" for="submit-topic"></label>
+            <select class="inline-select" id="submit-topic"></select>
+            <span class="helper" id="submit-topic-help"></span>
           </div>
           <fieldset class="category-picker">
-            <legend id="alert-milestones-label"></legend>
-            <div class="milestone-options">
-              <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="published" checked><span id="alert-published"></span></label>
-              <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="hearts_100" checked><span id="alert-hearts"></span></label>
-              <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="above_average" checked><span id="alert-average"></span></label>
-              <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="ai_90" checked><span id="alert-ai"></span></label>
-              <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="official_star" checked><span id="alert-star"></span></label>
+            <legend id="category-legend"></legend>
+            <div class="category-options">
+              <label class="category-option"><input name="submit-category" type="radio" value="auto" checked><span id="category-auto"></span></label>
+              <label class="category-option"><input name="submit-category" type="radio" value="bug"><span id="category-bug"></span></label>
+              <label class="category-option"><input name="submit-category" type="radio" value="idea"><span id="category-idea"></span></label>
+              <label class="category-option"><input name="submit-category" type="radio" value="accessibility"><span id="category-accessibility"></span></label>
+              <label class="category-option"><input name="submit-category" type="radio" value="other"><span id="category-other"></span></label>
             </div>
+            <span class="helper" id="category-help"></span>
           </fieldset>
-          <span class="beta-note" id="alert-beta-note"></span>
+          <section class="privacy-box" aria-labelledby="privacy-title">
+            <div class="privacy-title"><span id="privacy-title"></span><span class="private-badge" id="privacy-badge"></span></div>
+            <div class="choice-row">
+              <label class="choice">
+                <input id="attribution-anonymous" name="attribution" type="radio" value="anonymous" checked>
+                <span><b id="anonymous-title"></b><span id="anonymous-copy"></span></span>
+              </label>
+              <label class="choice" id="account-choice">
+                <input id="attribution-account" name="attribution" type="radio" value="account">
+                <span><b id="account-title"></b><span id="account-copy"></span></span>
+              </label>
+              <label class="choice" id="contact-choice">
+                <input id="attribution-contact" name="attribution" type="radio" value="contact">
+                <span><b id="contact-mode-title"></b><span id="contact-mode-copy"></span></span>
+              </label>
+            </div>
+            <div class="identity-fields hidden" id="contact-identity-fields">
+              <div class="form-grid">
+                <div class="field">
+                  <label id="submit-name-label" for="submit-name"></label>
+                  <input id="submit-name" maxlength="80" autocomplete="name">
+                </div>
+                <div class="field">
+                  <label id="submit-contact-label" for="submit-contact"></label>
+                  <input id="submit-contact" maxlength="180" autocomplete="email" inputmode="email">
+                  <span class="helper" id="submit-contact-help"></span>
+                </div>
+              </div>
+              <label class="check-row">
+                <input id="submit-allow-contact" type="checkbox">
+                <span id="submit-consent-copy"></span>
+              </label>
+            </div>
+            <label class="check-row training-consent hidden" id="training-consent-row">
+              <input id="submit-training-consent" type="checkbox">
+              <span id="training-consent-copy"></span>
+            </label>
+          </section>
+          <section class="milestone-box" aria-labelledby="alert-title">
+            <label class="alert-toggle">
+              <input id="submit-alert-optin" type="checkbox" aria-controls="submit-alert-fields" aria-expanded="false">
+              <span><b id="alert-title"></b><span id="alert-copy"></span></span>
+            </label>
+            <div class="alert-fields hidden" id="submit-alert-fields">
+              <div class="field">
+                <label id="alert-email-label" for="submit-alert-email"></label>
+                <input id="submit-alert-email" type="email" maxlength="254" autocomplete="email" inputmode="email">
+              </div>
+              <fieldset class="category-picker">
+                <legend id="alert-milestones-label"></legend>
+                <div class="milestone-options">
+                  <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="published" checked><span id="alert-published"></span></label>
+                  <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="hearts_100" checked><span id="alert-hearts"></span></label>
+                  <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="above_average" checked><span id="alert-average"></span></label>
+                  <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="ai_90" checked><span id="alert-ai"></span></label>
+                  <label class="check-row"><input name="submit-alert-milestone" type="checkbox" value="official_star" checked><span id="alert-star"></span></label>
+                </div>
+              </fieldset>
+              <span class="beta-note" id="alert-beta-note"></span>
+            </div>
+          </section>
         </div>
-      </section>
-      <div class="auth-nudge" id="auth-nudge">
-        <span id="auth-nudge-copy"></span>
-        <button class="secondary-btn" id="suggest-sign-in" type="button"></button>
-      </div>
-      <div class="form-status" id="submit-status" role="status" aria-live="polite"></div>
-      <div class="receipt hidden" id="submit-receipt"></div>
+      </details>
       <input class="hp" id="submit-website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="submit-bar"><button class="primary-btn" id="submit-send" type="submit"></button></div>
     </form>
   </div>
 </dialog>
@@ -1570,7 +1627,8 @@ var T = {
     fan_value_privacy:"You choose what is public. Private contact details are never shown.",
     fan_value_cta:"Create my Fan profile ♥",
     fan_value_cta_signed:"Open my Fan profile ♥",
-    submit_target_label:"Who or what is this for? *",
+    composer_label:"Suggestion editor",
+    submit_target_label:"For:",
     submit_target_placeholder:"Choose a profile",
     submit_target_help:"This lets FanRank compare your idea with the right feedback.",
     submit_target_error:"Choose a creator, game, company or platform first.",
@@ -1676,11 +1734,12 @@ var T = {
     suggest_cta_title:"What should improve next?",
     suggest_cta_copy:"Write one sentence. FanRank checks similar ideas before you send it.",
     suggest_open:"Suggest an improvement",
-    submit_title:"Suggest an improvement",
-    submit_intro:"Anonymous by default. Your idea enters a private review queue and is never published automatically.",
+    submit_title:"Make a suggestion",
+    submit_intro:"Just tell us who it is for and what should improve.",
     submit_for:function(name){return "For " + name;},
-    idea_label:"What would you change or add? *",
-    idea_help:"Explain the problem and your proposed improvement in one place. A clear first sentence becomes the title.",
+    idea_label:"Suggestion:",
+    idea_placeholder:"Example: React to this video and explain what you would do differently...",
+    idea_help:"Paste a screenshot here with Ctrl+V. Videos are added as links.",
     category_legend:"What kind of feedback is this?",
     category_auto:"Auto",
     category_bug:"Bug",
@@ -1688,19 +1747,21 @@ var T = {
     category_accessibility:"Accessibility",
     category_other:"Other",
     category_help:"Choose it yourself or leave Auto. Automatic rules never overwrite a category you choose.",
-    media_title:"Add proof or a video link",
-    media_help:"Add up to 3 items total. YouTube links show a safe preview; screenshots stay private during review.",
-    media_pick:"Choose images",
-    media_locked:"Links work anonymously. Sign in only to attach private screenshots.",
+    media_title:"Add an image or link (optional)",
+    media_help:"Paste a screenshot or open this to choose an image. Videos are added as links.",
+    media_pick:"Choose image",
+    media_locked:"Links work anonymously. Sign in only when sending a private screenshot.",
     media_ready:function(n){return n + (n === 1 ? " item ready" : " items ready");},
+    media_ready_login:function(n){return n + (n === 1 ? " item ready. Sign in to send the private screenshot." : " items ready. Sign in to send the private screenshots.");},
+    media_sign_in_required:"Sign in to send private screenshots. Your text draft stays saved here.",
     media_type_error:"Only PNG, JPEG and WebP images are accepted.",
     media_size_error:"Each image must be 5 MB or smaller.",
     media_limit_error:"You can add up to 3 items total.",
     media_uploading:"Sending your private evidence safely...",
     media_remove:"Remove image",
-    evidence_link_label:"YouTube or HTTPS link",
-    evidence_link_placeholder:"Paste a YouTube video or web link",
-    evidence_link_add:"Add link",
+    evidence_link_label:"YouTube or supporting link (optional)",
+    evidence_link_placeholder:"Paste a YouTube or HTTPS link",
+    evidence_link_add:"Attach",
     evidence_link_invalid:"Use a valid HTTPS link. YouTube links must point to one video.",
     evidence_link_duplicate:"That link is already attached.",
     evidence_link_remove:"Remove link",
@@ -1708,6 +1769,9 @@ var T = {
     evidence_link_web:"Supporting link",
     evidence_links_count:function(n){return n + (n === 1 ? " link" : " links");},
     submit_send:"Send suggestion",
+    submit_privacy_note:"Anonymous by default · private review",
+    advanced_title:"Add useful details (optional)",
+    advanced_copy:"Topic, category, contact and achievement alerts.",
     submit_ok:"Suggestion received. Your contact stays private.",
     alert_title:"Save future achievement alerts (beta)",
     alert_copy:"Optional and private: prepare alerts for publication, 100 hearts, above average, AI 9/10 or an official star.",
@@ -1740,7 +1804,7 @@ var T = {
     training_activity:"Allow model-improvement use",
     training_updated:"AI training permission updated.",
     contact_consent_error:"Tick the private-contact permission or remove your contact.",
-    auth_nudge:"Want this suggestion on every device? Sign in first. Your draft stays here.",
+    auth_nudge:"Sign in to save every suggestion and build your Fan profile.",
     sign_in:"Enter",
     account:"My activity",
     auth_title:"Sign in",
@@ -1901,19 +1965,21 @@ var T = {
     category_accessibility:"Accesibilidad",
     category_other:"Otro",
     category_help:"Elige tú o deja Automático. FanRank nunca cambia en silencio una categoría elegida por ti.",
-    media_title:"Añade una prueba o un vídeo",
-    media_help:"Hasta 3 elementos en total. Los enlaces de YouTube muestran una vista previa segura; las capturas siguen privadas durante la revisión.",
-    media_pick:"Elegir imágenes",
-    media_locked:"Los enlaces funcionan en anónimo. Inicia sesión solo para adjuntar capturas privadas.",
+    media_title:"Añadir una imagen o enlace (opcional)",
+    media_help:"Pega una captura o abre esto para elegir una imagen. Los vídeos se añaden como enlace.",
+    media_pick:"Elegir imagen",
+    media_locked:"Los enlaces funcionan en anónimo. Inicia sesión solo al enviar una captura privada.",
     media_ready:function(n){return n + (n === 1 ? " elemento preparado" : " elementos preparados");},
+    media_ready_login:function(n){return n + (n === 1 ? " elemento preparado. Inicia sesión para enviar la captura privada." : " elementos preparados. Inicia sesión para enviar las capturas privadas.");},
+    media_sign_in_required:"Inicia sesión para enviar capturas privadas. Tu borrador de texto queda guardado aquí.",
     media_type_error:"Solo se aceptan imágenes PNG, JPEG y WebP.",
     media_size_error:"Cada imagen debe ocupar 5 MB o menos.",
     media_limit_error:"Puedes añadir hasta 3 elementos en total.",
     media_uploading:"Enviando tus pruebas privadas de forma segura...",
     media_remove:"Quitar imagen",
-    evidence_link_label:"Enlace de YouTube o HTTPS",
-    evidence_link_placeholder:"Pega un vídeo de YouTube o un enlace web",
-    evidence_link_add:"Añadir enlace",
+    evidence_link_label:"Enlace de YouTube o apoyo (opcional)",
+    evidence_link_placeholder:"Pega un enlace de YouTube o HTTPS",
+    evidence_link_add:"Adjuntar",
     evidence_link_invalid:"Usa un enlace HTTPS válido. Si es YouTube, debe apuntar a un vídeo concreto.",
     evidence_link_duplicate:"Ese enlace ya está adjunto.",
     evidence_link_remove:"Quitar enlace",
@@ -2022,7 +2088,8 @@ var T = {
     fan_value_privacy:"Tú eliges qué es público. Tus datos de contacto privados nunca se muestran.",
     fan_value_cta:"Crear mi perfil Fan ♥",
     fan_value_cta_signed:"Abrir mi perfil Fan ♥",
-    submit_target_label:"¿Para quién o qué es? *",
+    composer_label:"Editor de sugerencias",
+    submit_target_label:"Para:",
     submit_target_placeholder:"Elige un perfil",
     submit_target_help:"Así FanRank compara tu idea con el feedback correcto.",
     submit_target_error:"Elige primero un creador, videojuego, empresa o plataforma.",
@@ -2128,12 +2195,16 @@ var T = {
     suggest_cta_title:"¿Qué debería mejorar ahora?",
     suggest_cta_copy:"Escribe una frase. FanRank busca ideas parecidas antes de enviarla.",
     suggest_open:"Proponer una mejora",
-    submit_title:"Propón una mejora",
-    submit_intro:"Anónima por defecto. Entra en revisión privada y nunca se publica automáticamente.",
+    submit_title:"Haz una sugerencia",
+    submit_intro:"Solo dinos para quién es y qué debería mejorar.",
     submit_for:function(name){return "Para " + name;},
-    idea_label:"¿Qué cambiarías o añadirías? *",
-    idea_help:"Cuenta el problema y tu mejora en un solo sitio. Una primera frase clara se convertirá en el título.",
+    idea_label:"Sugerencia:",
+    idea_placeholder:"Ejemplo: Reacciona a este vídeo y cuenta qué harías diferente...",
+    idea_help:"Pega aquí una captura con Ctrl+V. Los vídeos se añaden por enlace.",
     submit_send:"Enviar sugerencia",
+    submit_privacy_note:"Anónima por defecto · revisión privada",
+    advanced_title:"Añadir detalles útiles (opcional)",
+    advanced_copy:"Tema, categoría, contacto y avisos de logros.",
     submit_ok:"Sugerencia recibida. Tu contacto sigue siendo privado.",
     alert_title:"Prepara avisos de logros futuros (beta)",
     alert_copy:"Opcional y privado: prepara avisos por publicación, 100 corazones, superar la media, IA 9/10 o una estrella oficial.",
@@ -2161,7 +2232,7 @@ var T = {
     contact_mode_copy:"Di quién eres para que FanRank pueda contactarte si hace falta aclarar la idea o surge una oportunidad.",
     consent_copy:"FanRank puede contactarme en privado sobre esta sugerencia. Mi contacto nunca será público.",
     contact_consent_error:"Marca el permiso de contacto privado o borra el contacto.",
-    auth_nudge:"¿Quieres verla desde cualquier dispositivo? Inicia sesión antes. Tu borrador se conserva.",
+    auth_nudge:"Inicia sesión para guardar todas tus sugerencias y crear tu perfil Fan.",
     sign_in:"Entrar",
     account:"Mi actividad",
     auth_title:"Inicia sesión",
@@ -2515,12 +2586,14 @@ function evidenceCount(){
 function updateEvidenceStatus(){
   byId("media-box").classList.toggle("locked",!session && !pendingLinks.length);
   byId("training-consent-row").classList.toggle("hidden",!session);
-  if(evidenceCount()){setMediaStatus(tx("media_ready",evidenceCount()),"");}
+  if(pendingMedia.length && !session){setMediaStatus(tx("media_ready_login",evidenceCount()),"");}
+  else if(evidenceCount()){setMediaStatus(tx("media_ready",evidenceCount()),"");}
   else if(!session){setMediaStatus(tx("media_locked"),"");}
   else{setMediaStatus("","");}
 }
 function renderPendingMedia(){
   var list = byId("media-list");
+  if(pendingMedia.length){byId("media-box").open = true;}
   list.classList.toggle("hidden",pendingMedia.length === 0);
   list.innerHTML = pendingMedia.map(function(item,index){
     return '<article class="media-item"><div class="media-preview"><img src="' + esc(item.url) + '" alt=""></div>' +
@@ -2580,6 +2653,7 @@ function evidenceLinkPills(values){
 }
 function renderPendingLinks(){
   var list = byId("evidence-links");
+  if(pendingLinks.length){byId("media-box").open = true;}
   list.classList.toggle("hidden",pendingLinks.length === 0);
   list.innerHTML = pendingLinks.map(function(item,index){
     var visual = item.thumbnailUrl
@@ -2624,7 +2698,6 @@ function clearPendingLinks(){
   renderPendingLinks();
 }
 function addMediaFiles(files){
-  if(!session){openAuth("suggest");return;}
   var allowed = ["image/png","image/jpeg","image/webp"];
   var next = Array.from(files || []);
   if(evidenceCount() + next.length > 3){setMediaStatus(tx("media_limit_error"),"err");return;}
@@ -2638,6 +2711,7 @@ function addMediaFiles(files){
     if(!duplicate){pendingMedia.push({file:file,url:URL.createObjectURL(file)});}
   });
   renderPendingMedia();
+  saveDraft();
 }
 function updateAccountUI(){
   var text = byId("account-btn-text");
@@ -2881,7 +2955,7 @@ async function openSuggestion(){
   byId("submit-target-field").classList.toggle("hidden",!!SECTION);
   var context = byId("submit-target-context");
   context.classList.toggle("hidden",!(SECTION && secMeta));
-  context.textContent = SECTION && secMeta ? tx("submit_for",secMeta.name) : "";
+  context.textContent = SECTION && secMeta ? secMeta.name : "";
   if(!SECTION){populateSuggestionTargets();}
   await loadSuggestionTopics();
   restoreDraft();
@@ -3406,11 +3480,13 @@ function applyStaticText(){
   byId("signal-team").innerHTML = tx("signal_team");
   byId("submit-title").textContent = tx("submit_title");
   byId("submit-intro").textContent = tx("submit_intro");
+  byId("composer-label").textContent = tx("composer_label");
   byId("submit-target-label").textContent = tx("submit_target_label");
   byId("submit-target-help").textContent = tx("submit_target_help");
   byId("submit-topic-label").innerHTML = tx("submit_topic_label");
   byId("submit-topic-help").textContent = tx("submit_topic_help");
   byId("submit-idea-label").textContent = tx("idea_label");
+  byId("submit-idea").placeholder = tx("idea_placeholder");
   byId("submit-idea-help").textContent = tx("idea_help");
   byId("category-legend").textContent = tx("category_legend");
   byId("category-auto").textContent = tx("category_auto");
@@ -3447,6 +3523,9 @@ function applyStaticText(){
   byId("share-native").textContent = tx("share_native");
   byId("share-copy-link").textContent = tx("share_copy_link");
   byId("submit-send").textContent = tx("submit_send");
+  byId("submit-privacy-note").innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg><span>' + esc(tx("submit_privacy_note")) + '</span>';
+  byId("advanced-title").textContent = tx("advanced_title");
+  byId("advanced-copy").textContent = tx("advanced_copy");
   byId("similar-head").textContent = tx("similar_head");
   byId("similar-help").textContent = tx("similar_help");
   byId("privacy-title").textContent = tx("privacy_title");
@@ -4550,7 +4629,6 @@ byId("evidence-link-input").addEventListener("keydown",function(event){
   }
 });
 byId("media-pick").addEventListener("click",function(){
-  if(!session){openAuth("suggest");return;}
   byId("submit-files").click();
 });
 byId("submit-files").addEventListener("change",function(event){addMediaFiles(event.target.files);event.target.value = "";});
@@ -4561,7 +4639,7 @@ byId("media-box").addEventListener("drop",function(event){
   byId("media-box").classList.remove("dragging");
   addMediaFiles(event.dataTransfer.files);
 });
-byId("suggest-dialog").addEventListener("paste",function(event){
+byId("quick-composer").addEventListener("paste",function(event){
   var files = Array.from(event.clipboardData && event.clipboardData.files || []).filter(function(file){return file.type.indexOf("image/") === 0;});
   if(files.length){event.preventDefault();addMediaFiles(files);}
 });
@@ -4867,6 +4945,7 @@ byId("submit-form").addEventListener("submit",async function(event){
   var author = identityMode === "contact" ? byId("submit-name").value.trim() : "";
   var allowContact = identityMode === "contact" && byId("submit-allow-contact").checked;
   if(contact && !allowContact){
+    byId("submit-advanced").open = true;
     setStatus("submit-status",tx("contact_consent_error"),"err");
     byId("submit-allow-contact").focus();
     return;
@@ -4874,8 +4953,15 @@ byId("submit-form").addEventListener("submit",async function(event){
   var wantsMilestoneAlert = byId("submit-alert-optin").checked;
   var alertRequest = milestoneAlertRequest();
   if(wantsMilestoneAlert && !alertRequest){
+    byId("submit-advanced").open = true;
     setStatus("submit-status",tx("alert_required"),"err");
     byId("submit-alert-email").focus();
+    return;
+  }
+  if(pendingMedia.length && (!session || !session.access_token)){
+    saveDraft();
+    openAuth("suggest");
+    setStatus("auth-status",tx("media_sign_in_required"),"");
     return;
   }
   if(!validTiming("submit-website","fr_last_submission",30000)){
@@ -4907,7 +4993,7 @@ byId("submit-form").addEventListener("submit",async function(event){
       evidence_links:pendingLinks.map(function(item){return item.canonicalUrl;})
     };
     if(pendingMedia.length){
-      if(!session || !session.access_token){openAuth("suggest");throw new Error("AUTH_REQUIRED");}
+      if(!session || !session.access_token){throw new Error("AUTH_REQUIRED");}
       setMediaStatus(tx("media_uploading"),"");
       var formData = new FormData();
       ["section","title","details","author","contact","language","attribution_mode","receipt_hash","category_requested"].forEach(function(key){
@@ -4944,6 +5030,8 @@ byId("submit-form").addEventListener("submit",async function(event){
     sendEvent("submission",{section:targetSection,value:textParts.title.slice(0,180)});
     setStatus("submit-status",tx("submit_ok") + alertMessage,"ok");
     byId("submit-form").reset();
+    byId("media-box").open = false;
+    byId("submit-advanced").open = false;
     toggleMilestoneAlert();
     suggestionSection = targetSection;
     if(!SECTION){populateSuggestionTargets();}

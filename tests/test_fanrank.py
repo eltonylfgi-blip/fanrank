@@ -153,13 +153,18 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual(1, suggest_dialog.count("<textarea"))
         self.assertIn('<input id="submit-details" type="hidden">', suggest_dialog)
         self.assertLess(
-            suggest_dialog.index('<section class="privacy-box"'),
+            suggest_dialog.index('id="submit-idea"'),
             suggest_dialog.index('id="submit-send"'),
-            "Identity and private contact choices must stay next to the idea and before the single send action.",
+            "The single send action must immediately follow the minimum composer.",
         )
-        self.assertIn('class="submit-bar"', suggest_dialog)
-        self.assertIn("margin:18px 0 0", HTML)
-        self.assertIn("margin:16px 0 0", HTML)
+        self.assertLess(
+            suggest_dialog.index('id="submit-send"'),
+            suggest_dialog.index('id="submit-advanced"'),
+            "Optional metadata must not block the first submission action.",
+        )
+        self.assertIn('class="submit-bar quick-submit"', suggest_dialog)
+        self.assertIn("margin:12px 0 0", HTML)
+        self.assertIn("margin:10px 0 0", HTML)
         self.assertNotIn("margin:18px -24px", HTML)
         self.assertNotIn("margin:16px -18px", HTML)
 
@@ -335,7 +340,7 @@ class StaticAppTests(unittest.TestCase):
     def test_private_media_fan_profiles_and_consent_are_wired_end_to_end(self) -> None:
         html_markers = [
             'accept="image/png,image/jpeg,image/webp"',
-            'byId("suggest-dialog").addEventListener("paste"',
+            'byId("quick-composer").addEventListener("paste"',
             'byId("media-box").addEventListener("drop"',
             'evidenceCount() + next.length > 3',
             'file.size > 5 * 1024 * 1024',
@@ -500,13 +505,24 @@ class StaticAppTests(unittest.TestCase):
 
     def test_composer_target_media_and_accessibility_are_explicit(self) -> None:
         markers = [
+            'class="quick-composer" id="quick-composer"',
             'id="submit-target-context"',
-            'tx("submit_for",secMeta.name)',
+            'id="submit-target-label" for="submit-target"',
+            'id="submit-idea-label" for="submit-idea"',
+            '<details class="composer-media" id="media-box">',
             '<label class="field-label" id="evidence-link-label" for="evidence-link-input">',
             'byId("evidence-link-label").textContent = tx("evidence_link_label")',
             'byId("logo").setAttribute("aria-label",tx(teamMode ? "logo_team_label" : "logo_public_label"))',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
+        composer = extract(r'<section class="quick-composer"[\s\S]*?>([\s\S]*?)</details>\s*</section>')
+        self.assertLess(composer.index('id="submit-target"'), composer.index('id="submit-idea"'))
+        self.assertLess(composer.index('id="submit-idea"'), composer.index('id="media-box"'))
+        self.assertNotIn('<details class="composer-media" id="media-box" open>', HTML)
+        dialog = extract(r'<dialog id="suggest-dialog"[\s\S]*?>([\s\S]*?)</dialog>')
+        self.assertLess(dialog.index('id="submit-privacy-note"'), dialog.index('id="submit-send"'))
+        self.assertIn('media_title:"Añadir una imagen o enlace (opcional)"', HTML)
+        self.assertIn('idea_help:"Pega aquí una captura con Ctrl+V. Los vídeos se añaden por enlace."', HTML)
         self.assertRegex(HTML, r"[.]category-option span\{[^}]*min-height:44px")
         self.assertRegex(HTML, r"[.]media-remove\{[^}]*width:44px;height:44px")
 
@@ -705,7 +721,8 @@ class StaticAppTests(unittest.TestCase):
             'alert_beta_note:"',
         )
         self.assertEqual([], [marker for marker in ui_markers if marker not in HTML])
-        self.assertLess(HTML.index('id="submit-alert-optin"'), HTML.index('id="submit-send"'))
+        self.assertLess(HTML.index('id="submit-send"'), HTML.index('id="submit-alert-optin"'))
+        self.assertLess(HTML.index('id="submit-advanced"'), HTML.index('id="submit-alert-optin"'))
         self.assertIn('alert_title:"Prepara avisos de logros futuros (beta)"', HTML)
         self.assertIn("todavía no se envían correos", HTML)
         self.assertNotIn('alert_title:"Avísame', HTML)
