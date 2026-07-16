@@ -59,7 +59,7 @@
   .skip-link{position:fixed;left:12px;top:-80px;z-index:100;background:var(--text);color:var(--bg);
     padding:10px 14px;border-radius:10px;font-weight:800}
   .skip-link:focus{top:12px}
-  .top-actions{position:fixed;top:12px;right:12px;z-index:30;display:flex;gap:8px}
+  .top-actions{position:fixed;top:12px;right:12px;z-index:30;display:flex;gap:8px;transition:transform .2s var(--ease),gap .2s var(--ease)}
   .top-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:7px 11px;
     border-radius:999px;border:1px solid var(--line);background:rgba(21,25,38,.92);color:var(--text);
     font-size:.78rem;font-weight:850;box-shadow:0 8px 30px rgba(0,0,0,.22);backdrop-filter:blur(12px)}
@@ -67,6 +67,9 @@
   .top-btn svg{width:17px;height:17px}
   .top-btn .lang-flag{display:block;width:31px;height:20px;border:1px solid rgba(255,255,255,.48);border-radius:3px;
     box-shadow:0 1px 5px rgba(0,0,0,.34);overflow:hidden;flex:0 0 auto}
+  .top-actions.compact{top:8px;gap:6px}.top-actions.compact .top-btn{width:44px;min-width:44px;padding:7px}
+  .top-actions.compact #account-btn-text,.top-actions.compact #lang-code{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .top-actions.compact .top-btn .lang-flag{width:28px;height:19px}
   .lang-flag .flag-view{display:none}
   .lang-flag[data-flag="gb"] .flag-view-gb,.lang-flag[data-flag="es"] .flag-view-es{display:block}
   :focus-visible{outline:0;box-shadow:var(--focus)!important}
@@ -257,6 +260,43 @@
   .profile-pro{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:12px 0 0;padding:13px 15px;
     border:1px solid rgba(99,179,255,.3);border-radius:14px;background:linear-gradient(110deg,rgba(99,179,255,.07),rgba(185,134,255,.06))}
   .profile-pro b{display:block}.profile-pro span{display:block;color:var(--muted);font-size:.76rem}
+
+  .fan-offers{position:relative;margin-top:30px;padding:22px;border:1px solid rgba(255,209,41,.34);border-radius:22px;scroll-margin-top:66px;
+    background:linear-gradient(145deg,rgba(22,20,30,.98),rgba(14,20,33,.96));box-shadow:0 22px 70px rgba(0,0,0,.25);overflow:hidden}
+  .fan-offers:before{content:"";position:absolute;left:-110px;top:-160px;width:350px;height:350px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle,rgba(255,79,143,.14),transparent 69%)}
+  .fan-offers-head{position:relative;max-width:760px}.fan-offers-kicker{color:var(--pink);font-size:.7rem;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
+  .fan-offers-head h2{margin:5px 0 0;font-size:clamp(1.35rem,3.4vw,2rem);line-height:1.15}.fan-offers-head p{margin:7px 0 0;color:var(--muted);font-size:.88rem}
+  .fan-offers-swipe{display:none;margin-top:9px;color:var(--blue);font-size:.7rem;font-weight:900}
+  .fan-offer-grid{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:17px}
+  .fan-offer-card{display:flex;flex-direction:column;min-width:0;padding:17px;border:1px solid var(--line);border-radius:17px;background:rgba(15,18,29,.9)}
+  .fan-offer-card.founder{border-color:rgba(255,79,143,.48);box-shadow:inset 0 0 30px rgba(255,79,143,.035)}
+  .fan-offer-card.club{border-color:rgba(99,179,255,.46);box-shadow:inset 0 0 30px rgba(99,179,255,.035)}
+  .fan-offer-card.sponsor{border-style:dashed;border-color:rgba(185,134,255,.55);background:linear-gradient(145deg,rgba(26,19,38,.86),rgba(15,18,29,.94))}
+  .fan-offer-top{display:flex;align-items:center;justify-content:space-between;gap:9px}.fan-offer-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;
+    background:rgba(255,79,143,.11);color:var(--pink);font-size:1.1rem;filter:drop-shadow(0 0 9px rgba(255,79,143,.25))}
+  .fan-offer-card.club .fan-offer-icon{background:rgba(99,179,255,.1);color:var(--blue);filter:drop-shadow(0 0 9px rgba(99,179,255,.25))}
+  .fan-offer-card.sponsor .fan-offer-icon{background:rgba(185,134,255,.1);color:var(--purple);filter:drop-shadow(0 0 9px rgba(185,134,255,.25))}
+  .fan-offer-badge{padding:4px 8px;border:1px solid rgba(255,209,41,.28);border-radius:999px;background:rgba(255,209,41,.08);color:var(--yellow);font-size:.62rem;font-weight:950;letter-spacing:.05em}
+  .fan-offer-card h3{margin:12px 0 0;font-size:1.03rem}.fan-offer-price{margin-top:5px;font-size:1.5rem;font-weight:950;letter-spacing:-.04em}
+  .fan-offer-price small{color:var(--muted);font-size:.68rem;font-weight:750;letter-spacing:0}.fan-offer-copy{min-height:58px;margin:8px 0 0;color:var(--muted);font-size:.79rem;line-height:1.45}
+  .fan-offer-guard{margin:10px 0 14px;padding-top:10px;border-top:1px solid var(--line-soft);color:var(--text);font-size:.72rem;font-weight:800;line-height:1.45}
+  .fan-offer-actions{display:grid;gap:7px;margin-top:auto}.fan-offer-action{width:100%;min-height:46px}.fan-offer-action.interested{border-color:rgba(85,229,154,.72)!important;
+    background:rgba(85,229,154,.12)!important;color:var(--green)!important;box-shadow:0 0 0 3px rgba(85,229,154,.06)}
+  .fan-offer-note{display:block;margin-top:7px;color:var(--muted);font-size:.65rem;text-align:center}
+  .fan-offer-contract{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+  .fan-offer-contract span{display:flex;align-items:flex-start;gap:7px;padding:10px 12px;border:1px solid var(--line-soft);border-radius:11px;color:var(--muted);font-size:.72rem;line-height:1.4}
+  .fan-offer-contract b{color:var(--text)}.fan-offer-contract .buys:before{content:"✓";color:var(--green);font-weight:950}.fan-offer-contract .never:before{content:"×";color:var(--pink);font-weight:950}
+  .profile-club{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:13px;margin:12px 0 0;padding:15px;scroll-margin-top:66px;
+    border:1px solid rgba(99,179,255,.42);border-radius:15px;background:linear-gradient(110deg,rgba(99,179,255,.09),rgba(255,79,143,.055));box-shadow:inset 0 0 32px rgba(99,179,255,.025)}
+  .profile-club-icon{display:grid;place-items:center;width:44px;height:44px;border:1px solid rgba(255,79,143,.38);border-radius:13px;background:rgba(255,79,143,.09);color:var(--pink);font-size:1.28rem}
+  .profile-club-kicker{display:block;color:var(--blue);font-size:.63rem;font-weight:950;letter-spacing:.09em;text-transform:uppercase}.profile-club h2{margin:2px 0 0;font-size:1rem}
+  .profile-club p{margin:3px 0 0;color:var(--muted);font-size:.74rem;line-height:1.4}.profile-club-meta{display:block;margin-top:5px;color:var(--text);font-size:.68rem;font-weight:850}
+  .profile-club-action{text-align:right}.profile-club-price{display:block;margin-bottom:5px;color:var(--yellow);font-size:.75rem;font-weight:950}.profile-club-action .secondary-btn{min-height:46px}
+  .receipt-sponsored{display:grid;gap:8px;margin-top:13px;padding:12px;border:1px dashed rgba(185,134,255,.52);border-radius:12px;background:rgba(185,134,255,.055)}
+  .receipt-sponsored-label{justify-self:start;padding:3px 7px;border-radius:999px;background:rgba(185,134,255,.14);color:#d4b8ff;font-size:.6rem;font-weight:950;letter-spacing:.07em}
+  .receipt-sponsored b{font-size:.82rem}.receipt-sponsored>span:not(.receipt-sponsored-label){color:var(--muted);font-size:.72rem;line-height:1.45}.receipt-sponsored .receipt-actions{margin-top:0}
+  .receipt-sponsored small{color:var(--muted);font-size:.63rem;line-height:1.4}
 
   .directory-block{position:relative;margin-top:15px;padding:17px;border:1px solid var(--line-soft);border-radius:22px;
     background:linear-gradient(145deg,rgba(21,25,38,.9),rgba(13,16,25,.78));box-shadow:0 20px 70px rgba(0,0,0,.18)}
@@ -706,6 +746,8 @@
     .wrap{padding-top:18px}
     .how{grid-template-columns:repeat(2,minmax(0,1fr))}
     .pro-head{grid-template-columns:1fr}.pro-pilot-note{max-width:none;text-align:left}.pro-plans{grid-template-columns:1fr}
+    .fan-offer-grid{display:flex;gap:10px;padding:1px 12px 8px 1px;overflow-x:auto;scrollbar-width:thin;scroll-snap-type:x mandatory}
+    .fan-offer-card{flex:0 0 min(370px,calc(100% - 28px));scroll-snap-align:start}.fan-offer-copy{min-height:0}.fan-offers-swipe{display:block}
     .sections{grid-template-columns:repeat(2,minmax(0,1fr))}
     .trending{display:flex;gap:10px;margin-right:-18px;padding-right:18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin}
     .trend-card{flex:0 0 min(360px,82%);min-height:120px;scroll-snap-align:start}
@@ -754,6 +796,8 @@
     .claim-bar{align-items:flex-start;flex-direction:column}
     .profile-topics-head,.topic-manager-head{align-items:stretch;flex-direction:column}.profile-topics-head .secondary-btn{width:100%}.topic-list-item{grid-template-columns:1fr}.topic-list-actions button{flex:1}
     .profile-pro{align-items:flex-start;flex-direction:column}.profile-pro .secondary-btn{width:100%}
+    .fan-offers{padding:17px}.fan-offer-card{padding:18px}.fan-offer-contract{grid-template-columns:1fr}
+    .profile-club{grid-template-columns:auto minmax(0,1fr)}.profile-club-action{grid-column:1/-1;text-align:left}.profile-club-action .secondary-btn{width:100%}.profile-club-price{text-align:center}
     .podium{gap:6px}
     .podium-card{padding:11px 7px}
     .podium-card.first{min-height:135px}.podium-card.second{min-height:116px}.podium-card.third{min-height:105px}
@@ -813,7 +857,7 @@
 <a class="skip-link" id="skip-link" href="#main">Skip to content</a>
 <div class="bgfx"></div>
 <div class="gridfx"></div>
-<div class="top-actions">
+<div class="top-actions" id="top-actions">
   <button class="top-btn" id="account-btn" type="button">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
       <circle cx="12" cy="8" r="4"></circle><path d="M4.8 21a7.2 7.2 0 0 1 14.4 0"></path>
@@ -950,6 +994,20 @@
 
     <div class="how" id="how"></div>
 
+    <section class="fan-offers" id="fan-offers" aria-labelledby="fan-offers-title">
+      <div class="fan-offers-head">
+        <span class="fan-offers-kicker" id="fan-offers-kicker"></span>
+        <h2 id="fan-offers-title"></h2>
+        <p id="fan-offers-intro"></p>
+        <span class="fan-offers-swipe" id="fan-offers-swipe"></span>
+      </div>
+      <div class="fan-offer-grid" id="fan-offer-cards"></div>
+      <div class="fan-offer-contract" id="fan-offers-contract" aria-label="Payment trust contract">
+        <span class="buys" id="fan-offers-buys"></span>
+        <span class="never" id="fan-offers-never"></span>
+      </div>
+    </section>
+
     <section class="pro-block" id="fanrank-pro" aria-labelledby="pro-title">
       <div class="pro-head">
         <div>
@@ -1032,6 +1090,19 @@
     <div class="signal-strip" id="signal-strip" aria-label="Ranking signals">
       <span id="signal-ai"></span><span id="signal-fans"></span><span id="signal-team"></span>
     </div>
+    <section class="profile-club" id="profile-club" aria-labelledby="profile-club-title">
+      <div class="profile-club-icon" aria-hidden="true">♥</div>
+      <div>
+        <span class="profile-club-kicker" id="profile-club-kicker"></span>
+        <h2 id="profile-club-title"></h2>
+        <p id="profile-club-copy"></p>
+        <span class="profile-club-meta" id="profile-club-meta"></span>
+      </div>
+      <div class="profile-club-action">
+        <span class="profile-club-price" id="profile-club-price"></span>
+        <button class="secondary-btn fan-offer-action" id="profile-club-interest" type="button" data-offer-interest="profile_club_499_month" aria-pressed="false"></button>
+      </div>
+    </section>
     <section class="profile-pro hidden" id="profile-pro" aria-labelledby="profile-pro-title">
       <div><b id="profile-pro-title"></b><span id="profile-pro-copy"></span></div>
       <button class="secondary-btn" id="profile-pro-open" type="button"></button>
@@ -1590,6 +1661,7 @@ var directoryExpanded = false;
 var profileQuery = "";
 var ownerSearchMode = false;
 var toastTimer = null;
+var observedOfferPlacements = new Set();
 var formStartedAt = Date.now();
 var ephemeralVisitor = "v_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
 var authClient = null;
@@ -1692,6 +1764,35 @@ var T = {
     fan_value_privacy:"You choose what is public. Private contact details are never shown.",
     fan_value_cta:"Create my Fan profile ♥",
     fan_value_cta_signed:"Open my Fan profile ♥",
+    fan_offers_kicker:"OPTIONAL WAYS TO PARTICIPATE",
+    fan_offers_title:"Support the launch or a profile — without buying the ranking",
+    fan_offers_intro:"Three different future products, each with a clear boundary. Mark interest now; FanRank does not charge anything yet.",
+    fan_offers:[
+      {className:"founder",icon:"♥",badge:"ONE-TIME",name:"Founding Fan",price:"€15",suffix:"one-time payment",copy:"Support FanRank's launch, keep a permanent Founder badge and get five faster AI reviews when the plan opens.",guard:"Less waiting never means a better score or position.",actions:[{id:"fan_founder_15_once",label:"I'm interested for €15",primary:true}]},
+      {className:"club",icon:"◎",badge:"PER PROFILE",name:"Profile Club",price:"€4.99",suffix:"/ month",copy:"Follow one chosen profile, receive its new topics and join idea rounds that the verified profile decides to open.",guard:"A subscription opens a channel; it never buys position, response or approval.",actions:[{id:"profile_club_499_month",label:"I want a Profile Club",primary:false}]},
+      {className:"sponsor",icon:"↗",badge:"PAID AD",name:"Transparent idea boost",price:"From €3",suffix:"future test",copy:"Show an approved idea in a clearly separate sponsored space, either at launch or periodically.",guard:"It never changes the AI score or organic position.",actions:[{id:"idea_sponsor_concept_interest",label:"I'm interested in transparent promotion",primary:false}]}
+    ],
+    fan_offers_buys:"<b>Payment may buy:</b> access, alerts, less waiting or a separate sponsored space.",
+    fan_offers_never:"<b>It never buys:</b> organic rank, AI score, hearts, stars or a guaranteed answer.",
+    fan_offers_contract_label:"Payment trust contract",
+    offer_interest_note:"Interest test · Nothing is charged yet.",
+    fan_offers_swipe:"Swipe to compare all 3 →",
+    offer_interested:function(label){return "✓ Interest saved: " + label;},
+    offer_interest_saved:"Interest saved on this device and counted pseudonymously. Nothing has been charged.",
+    offer_interest_already:"Your interest was already saved and counted pseudonymously. Nothing has been charged.",
+    profile_club_kicker:"PROFILE CLUB",
+    profile_club_title:function(name){return "Club of " + name;},
+    profile_club_copy:"Receive new topics and participate in the idea rounds this profile chooses to open.",
+    profile_club_verified:"The verified profile must activate its benefits before subscriptions open.",
+    profile_club_unverified:"Interest only: this club cannot open until the profile is verified.",
+    profile_club_price:"€4.99 / month · future",
+    profile_club_cta:"I'm interested in this Club",
+    receipt_sponsor_label:"PAID AD · FUTURE TEST",
+    receipt_sponsor_title:"Would you use transparent promotion for this idea?",
+    receipt_sponsor_copy:"It would appear in a separate sponsored space after review, never inside the organic Top.",
+    receipt_sponsor_launch:"Launch · €3 / 24 h",
+    receipt_sponsor_periodic:"Periodic · €10 / month",
+    receipt_sponsor_guard:"No charge now. It would not change AI score, hearts, stars or organic position.",
     composer_label:"Suggestion editor",
     submit_target_label:"For:",
     submit_target_placeholder:"Choose a profile",
@@ -1713,14 +1814,14 @@ var T = {
     pro_kicker:"FanRank for teams",
     pro_title:"From noisy feedback to the next decision",
     pro_intro:"FanRank groups duplicates, ranks opportunities and turns the strongest evidence into implementation briefs your team can accept, reject or investigate.",
-    pro_pilot_note:"Founding pilot · €199 for 14 days · interest only, no charge yet",
+    pro_pilot_note:"Team pilot · €199 for 14 days · interest only, no charge yet",
     pro_guard:"<b>Trust rule:</b> paying never changes organic rank, AI score, fan votes or official stars.",
     pro_plans:[
       {id:"signal",name:"Signal",price:"€149",suffix:"/ month",limit:"1 profile · 1,000 valid contributions / month",features:["Weekly differential digest","2 traceable implementation briefs / month","Duplicates, evidence and key risks"]},
       {id:"decision",name:"Decision",price:"€449",suffix:"/ month",limit:"3 profiles · 5,000 valid contributions / month",badge:"Recommended",features:["Weekly digest for each profile","8 implementation briefs / month","Investigate, implement, not now or reject"]},
       {id:"portfolio",name:"Portfolio",price:"€999",suffix:"/ month",limit:"10 profiles · 20,000 valid contributions / month",features:["20 implementation briefs / month","Cross-profile evidence and change detection","Executive summary and implementation review"]}
     ],
-    pro_plan_cta:"Request founding pilot",
+    pro_plan_cta:"Request team pilot",
     profile_pro_title:"FanRank Pro for this team",
     profile_pro_copy:"Get the top opportunities as implementation briefs. Participation and ranking remain independent of payment.",
     profile_pro_open:"Explore the pilot",
@@ -2159,6 +2260,35 @@ var T = {
     fan_value_privacy:"Tú eliges qué es público. Tus datos de contacto privados nunca se muestran.",
     fan_value_cta:"Crear mi perfil Fan ♥",
     fan_value_cta_signed:"Abrir mi perfil Fan ♥",
+    fan_offers_kicker:"FORMAS OPCIONALES DE PARTICIPAR",
+    fan_offers_title:"Apoya el lanzamiento o un perfil sin comprar el ranking",
+    fan_offers_intro:"Tres productos futuros distintos y con límites claros. Marca tu interés ahora: FanRank todavía no cobra nada.",
+    fan_offers:[
+      {className:"founder",icon:"♥",badge:"PAGO ÚNICO",name:"Fan fundador",price:"15 €",suffix:"pago único",copy:"Apoya el lanzamiento de FanRank, conserva una insignia Fundador y recibe cinco revisiones IA más rápidas cuando se active el plan.",guard:"No compra posición, nota IA, corazones, estrellas ni respuesta garantizada.",actions:[{id:"fan_founder_15_once",label:"Me interesa por 15 €",primary:true}]},
+      {className:"club",icon:"◎",badge:"POR PERFIL",name:"Club de un perfil",price:"4,99 €",suffix:"/ mes",copy:"Sigue un perfil concreto, recibe sus nuevos temas y participa en las rondas de ideas que decida abrir el perfil verificado.",guard:"La suscripción abre un canal; no compra posición, respuesta ni aprobación.",actions:[{id:"profile_club_499_month",label:"Quiero un Club de perfil",primary:false}]},
+      {className:"sponsor",icon:"↗",badge:"ANUNCIO PAGADO",name:"Impulso transparente",price:"Desde 3 €",suffix:"prueba futura",copy:"Muestra una idea aprobada en un espacio patrocinado claramente separado, solo al lanzarla o de forma periódica.",guard:"No cambia la nota IA ni la posición orgánica.",actions:[{id:"idea_sponsor_concept_interest",label:"Me interesa la promoción transparente",primary:false}]}
+    ],
+    fan_offers_buys:"<b>El pago sí puede comprar:</b> acceso, alertas, menos espera o un espacio patrocinado separado.",
+    fan_offers_never:"<b>El pago nunca compra:</b> ranking orgánico, nota IA, corazones, estrellas ni respuesta garantizada.",
+    fan_offers_contract_label:"Contrato de confianza del pago",
+    offer_interest_note:"Prueba de interés · Todavía no se cobra.",
+    fan_offers_swipe:"Desliza para comparar las 3 →",
+    offer_interested:function(label){return "✓ Interés guardado: " + label;},
+    offer_interest_saved:"Interés guardado en este dispositivo y contado de forma seudónima. No se ha cobrado nada.",
+    offer_interest_already:"Tu interés ya estaba guardado y contado de forma seudónima. No se ha cobrado nada.",
+    profile_club_kicker:"CLUB DEL PERFIL",
+    profile_club_title:function(name){return "Club de " + name;},
+    profile_club_copy:"Recibe sus nuevos temas y participa en las rondas de ideas que este perfil decida abrir.",
+    profile_club_verified:"El perfil verificado deberá activar sus ventajas antes de abrir suscripciones.",
+    profile_club_unverified:"Solo interés: el Club no puede abrir hasta que el perfil esté verificado.",
+    profile_club_price:"4,99 €/mes · futuro",
+    profile_club_cta:"Me interesa este Club",
+    receipt_sponsor_label:"ANUNCIO PAGADO · PRUEBA FUTURA",
+    receipt_sponsor_title:"¿Usarías promoción transparente para esta idea?",
+    receipt_sponsor_copy:"Aparecería, tras revisión, en un espacio patrocinado separado; nunca dentro del Top orgánico.",
+    receipt_sponsor_launch:"Lanzamiento · 3 €/24 h",
+    receipt_sponsor_periodic:"Periódico · 10 €/mes",
+    receipt_sponsor_guard:"Ahora no cobra. No cambiaría nota IA, corazones, estrellas ni posición orgánica.",
     composer_label:"Editor de sugerencias",
     submit_target_label:"Para:",
     submit_target_placeholder:"Elige un perfil",
@@ -2180,14 +2310,14 @@ var T = {
     pro_kicker:"FanRank para equipos",
     pro_title:"Del ruido del feedback a la siguiente decisión",
     pro_intro:"FanRank agrupa duplicados, ordena oportunidades y convierte la evidencia más fuerte en briefs de implementación que el equipo puede aceptar, descartar o investigar.",
-    pro_pilot_note:"Piloto fundador · 199 € durante 14 días · solo interés, todavía no cobra",
+    pro_pilot_note:"Piloto de equipo · 199 € durante 14 días · solo interés, todavía no cobra",
     pro_guard:"<b>Regla de confianza:</b> pagar nunca cambia el ranking orgánico, la nota IA, los corazones de fans ni las estrellas oficiales.",
     pro_plans:[
       {id:"signal",name:"Signal",price:"149 €",suffix:"/ mes",limit:"1 perfil · 1.000 aportaciones válidas / mes",features:["Digest semanal diferencial","2 briefs de implementación trazables / mes","Duplicados, evidencia y riesgos clave"]},
       {id:"decision",name:"Decision",price:"449 €",suffix:"/ mes",limit:"3 perfiles · 5.000 aportaciones válidas / mes",badge:"Recomendado",features:["Digest semanal por perfil","8 briefs de implementación / mes","Investigar, implementar, no ahora o descartar"]},
       {id:"portfolio",name:"Portfolio",price:"999 €",suffix:"/ mes",limit:"10 perfiles · 20.000 aportaciones válidas / mes",features:["20 briefs de implementación / mes","Evidencia cruzada y detección de cambios","Resumen ejecutivo y revisión de implementación"]}
     ],
-    pro_plan_cta:"Solicitar piloto fundador",
+    pro_plan_cta:"Solicitar piloto de equipo",
     profile_pro_title:"FanRank Pro para este equipo",
     profile_pro_copy:"Recibe las mejores oportunidades como briefs de implementación. Participar y ordenar siguen siendo independientes del pago.",
     profile_pro_open:"Explorar el piloto",
@@ -2578,6 +2708,43 @@ function showToast(message,type){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){toast.className = "toast";},3600);
 }
+function offerInterestKey(offerId,button){
+  var explicitContext = button && button.dataset.offerContext ? button.dataset.offerContext : "";
+  var context = explicitContext || (offerId === "profile_club_499_month" ? (SECTION || "any") : "global");
+  return "fr_offer_interest:" + offerId + ":" + context;
+}
+function hasOfferInterest(offerId,button){
+  try{return localStorage.getItem(offerInterestKey(offerId,button)) === "1";}catch(error){return false;}
+}
+function updateOfferButton(button){
+  if(!button){return;}
+  var active = hasOfferInterest(button.dataset.offerInterest,button);
+  button.classList.toggle("interested",active);
+  button.setAttribute("aria-pressed",String(active));
+  button.textContent = active ? tx("offer_interested",button.dataset.offerLabel || "") : (button.dataset.offerLabel || button.textContent);
+}
+function recordOfferInterest(offerId,button){
+  var alreadySaved = hasOfferInterest(offerId,button);
+  if(!alreadySaved){
+    try{localStorage.setItem(offerInterestKey(offerId,button),"1");}catch(error){}
+    var eventName = offerId.indexOf("idea_sponsor_") === 0 ? "promotion_interest" : "pro_interest";
+    sendEvent(eventName,{section:SECTION || suggestionSection || null,value:offerId});
+  }
+  document.querySelectorAll('[data-offer-interest="' + offerId + '"]').forEach(updateOfferButton);
+  updateOfferButton(button);
+  showToast(tx(alreadySaved ? "offer_interest_already" : "offer_interest_saved"),"ok");
+}
+function observeOfferPlacement(node,eventName,value){
+  var key = eventName + ":" + value + ":" + (SECTION || "home");
+  if(!node || observedOfferPlacements.has(key) || !("IntersectionObserver" in window)){return;}
+  observedOfferPlacements.add(key);
+  var observer = new IntersectionObserver(function(entries){
+    if(!entries.some(function(entry){return entry.isIntersecting && entry.intersectionRatio >= .45;})){return;}
+    sendEvent(eventName,{section:SECTION || suggestionSection || null,value:value});
+    observer.disconnect();
+  },{threshold:[.45]});
+  observer.observe(node);
+}
 function setStatus(id,message,type){
   var node = byId(id);
   node.textContent = message || "";
@@ -2925,11 +3092,23 @@ function submissionTextParts(value){
 }
 function renderSubmissionReceipt(){
   var receipt = byId("submit-receipt");
+  var sponsorContext = "submission_" + Date.now().toString(36);
   receipt.innerHTML = '<b>' + esc(tx("receipt_profile_title")) + '</b><span>' + esc(tx("receipt_profile_copy")) +
     '</span><div class="receipt-actions"><button class="secondary-btn" id="receipt-profile" type="button">' +
-    esc(tx("receipt_profile_button")) + '</button></div>';
+    esc(tx("receipt_profile_button")) + '</button></div><section class="receipt-sponsored"><span class="receipt-sponsored-label">' +
+    esc(tx("receipt_sponsor_label")) + '</span><b>' + esc(tx("receipt_sponsor_title")) + '</b><span>' +
+    esc(tx("receipt_sponsor_copy")) + '</span><div class="receipt-actions"><button class="secondary-btn fan-offer-action" type="button" data-offer-interest="idea_sponsor_launch_interest" data-offer-context="' + esc(sponsorContext) + '" data-offer-label="' +
+    esc(tx("receipt_sponsor_launch")) + '" aria-pressed="false">' + esc(tx("receipt_sponsor_launch")) +
+    '</button><button class="secondary-btn fan-offer-action" type="button" data-offer-interest="idea_sponsor_periodic_interest" data-offer-context="' + esc(sponsorContext) + '" data-offer-label="' +
+    esc(tx("receipt_sponsor_periodic")) + '" aria-pressed="false">' + esc(tx("receipt_sponsor_periodic")) +
+    '</button></div><small>' + esc(tx("receipt_sponsor_guard")) + '</small></section>';
   receipt.classList.remove("hidden");
   byId("receipt-profile").addEventListener("click",function(){session ? openActivity() : openAuth("activity");});
+  receipt.querySelectorAll("[data-offer-interest]").forEach(function(button){
+    updateOfferButton(button);
+    button.addEventListener("click",function(){recordOfferInterest(button.dataset.offerInterest,button);});
+  });
+  observeOfferPlacement(receipt.querySelector(".receipt-sponsored"),"promotion_interest","offer_seen:receipt_sponsor");
 }
 function randomReceipt(){
   var bytes = new Uint8Array(32);
@@ -3522,6 +3701,14 @@ function applyStaticText(){
   byId("fan-value-points").innerHTML = tx("fan_value_points").map(function(point){return '<span class="fan-value-point">' + esc(point) + '</span>';}).join("");
   byId("fan-value-privacy").textContent = tx("fan_value_privacy");
   byId("home-profile-cta").textContent = tx("fan_value_cta");
+  byId("fan-offers-kicker").textContent = tx("fan_offers_kicker");
+  byId("fan-offers-title").textContent = tx("fan_offers_title");
+  byId("fan-offers-intro").textContent = tx("fan_offers_intro");
+  byId("fan-offers-swipe").textContent = tx("fan_offers_swipe");
+  byId("fan-offers-buys").innerHTML = tx("fan_offers_buys");
+  byId("fan-offers-never").innerHTML = tx("fan_offers_never");
+  byId("fan-offers-contract").setAttribute("aria-label",tx("fan_offers_contract_label"));
+  renderFanOffers();
   byId("pro-kicker").textContent = tx("pro_kicker");
   byId("pro-title").textContent = tx("pro_title");
   byId("pro-intro").textContent = tx("pro_intro");
@@ -3530,6 +3717,7 @@ function applyStaticText(){
   byId("profile-pro-title").textContent = tx("profile_pro_title");
   byId("profile-pro-copy").textContent = tx("profile_pro_copy");
   byId("profile-pro-open").textContent = tx("profile_pro_open");
+  if(secMeta){renderProfileClub();}
   byId("request-title").textContent = tx("request_title");
   byId("request-intro").textContent = tx("request_intro");
   byId("request-target-label").textContent = tx("target_label");
@@ -3769,6 +3957,24 @@ function renderHow(){
     return '<article class="step' + (step[0] === "diamond" ? ' step-diamond' : '') + '"><div class="step-icon">' + icon(step[0]) + '</div><div class="step-title">' +
       esc(step[1]) + '</div><div class="step-desc">' + esc(step[2]) + '</div></article>';
   }).join("");
+}
+function renderFanOffers(){
+  byId("fan-offer-cards").innerHTML = tx("fan_offers").map(function(offer){
+    var actions = offer.actions.map(function(action){
+      return '<button class="fan-offer-action ' + (action.primary ? 'primary-btn' : 'secondary-btn') + '" type="button" data-offer-interest="' +
+        esc(action.id) + '" data-offer-label="' + esc(action.label) + '" aria-pressed="false">' + esc(action.label) + '</button>';
+    }).join("");
+    return '<article class="fan-offer-card ' + esc(offer.className) + '"><div class="fan-offer-top"><span class="fan-offer-icon" aria-hidden="true">' +
+      esc(offer.icon) + '</span><span class="fan-offer-badge">' + esc(offer.badge) + '</span></div><h3>' + esc(offer.name) +
+      '</h3><div class="fan-offer-price">' + esc(offer.price) + ' <small>' + esc(offer.suffix) + '</small></div><p class="fan-offer-copy">' +
+      esc(offer.copy) + '</p><div class="fan-offer-guard">' + esc(offer.guard) + '</div><div class="fan-offer-actions">' + actions +
+      '</div><span class="fan-offer-note">' + esc(tx("offer_interest_note")) + '</span></article>';
+  }).join("");
+  byId("fan-offer-cards").querySelectorAll("[data-offer-interest]").forEach(function(button){
+    updateOfferButton(button);
+    button.addEventListener("click",function(){recordOfferInterest(button.dataset.offerInterest,button);});
+  });
+  observeOfferPlacement(byId("fan-offers"),"pro_interest","offer_seen:fan_offers");
 }
 function renderProPlans(){
   byId("pro-plans").innerHTML = tx("pro_plans").map(function(plan){
@@ -4300,6 +4506,7 @@ function renderProfile(){
   renderProfileTags();
   renderProfileStats();
   renderProfileTopics();
+  renderProfileClub();
   renderPodium();
   renderIdeas();
   if(window.FanRankOwnerStudio){window.FanRankOwnerStudio.renderProfileEnhancements();}
@@ -4358,6 +4565,18 @@ function loadSection(){
       setTimeout(openClaimPanel,0);
     }
   }
+}
+function renderProfileClub(){
+  if(!secMeta){return;}
+  byId("profile-club-kicker").textContent = tx("profile_club_kicker");
+  byId("profile-club-title").textContent = tx("profile_club_title",secMeta.name);
+  byId("profile-club-copy").textContent = tx("profile_club_copy");
+  byId("profile-club-meta").textContent = tx(secMeta.verification_status === "verified" ? "profile_club_verified" : "profile_club_unverified");
+  byId("profile-club-price").textContent = tx("profile_club_price");
+  var button = byId("profile-club-interest");
+  button.dataset.offerLabel = tx("profile_club_cta");
+  updateOfferButton(button);
+  observeOfferPlacement(byId("profile-club"),"pro_interest","offer_seen:profile_club");
 }
 
 async function vote(id,button){
@@ -4664,6 +4883,11 @@ byId("suggest-close").addEventListener("click",closeSuggestion);
 byId("suggest-sign-in").addEventListener("click",function(){openAuth("suggest");});
 byId("account-btn").addEventListener("click",function(){session ? openActivity() : openAuth();});
 byId("profile-pro-open").addEventListener("click",function(){openPro("decision");});
+byId("profile-club-interest").addEventListener("click",function(){recordOfferInterest("profile_club_499_month",byId("profile-club-interest"));});
+function updateTopActions(){byId("top-actions").classList.toggle("compact",window.scrollY > 80);}
+window.addEventListener("scroll",updateTopActions,{passive:true});
+window.addEventListener("load",updateTopActions,{once:true});
+requestAnimationFrame(updateTopActions);
 byId("auth-close").addEventListener("click",function(){closeDialog("auth-dialog");});
 byId("auth-dialog").addEventListener("close",function(){byId("auth-password").value = "";});
 byId("suggest-dialog").addEventListener("close",function(){document.body.classList.remove("suggest-dialog-open");});

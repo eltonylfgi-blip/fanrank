@@ -1014,6 +1014,46 @@ class StaticAppTests(unittest.TestCase):
         self.assertNotIn('data-promote-idea=', HTML)
         self.assertNotIn('openPromotion("idea"', OWNER_JS)
 
+    def test_fan_offers_measure_interest_without_selling_organic_position(self) -> None:
+        offer_markers = [
+            'id="fan-offers"',
+            'id="profile-club"',
+            'fan_founder_15_once',
+            'profile_club_499_month',
+            'idea_sponsor_concept_interest',
+            'idea_sponsor_launch_interest',
+            'idea_sponsor_periodic_interest',
+            'offer_seen:fan_offers',
+            'offer_seen:profile_club',
+            'offer_seen:receipt_sponsor',
+            'Fan fundador',
+            '15 €',
+            'pago único',
+            'ANUNCIO PAGADO',
+            'Todavía no se cobra',
+            'profile_club_cta:"Me interesa este Club"',
+            'fan_offers_contract_label:"Contrato de confianza del pago"',
+            'byId("fan-offers-contract").setAttribute("aria-label",tx("fan_offers_contract_label"))',
+            'function recordOfferInterest(offerId,button)',
+            'function offerInterestKey(offerId,button)',
+            'function observeOfferPlacement(node,eventName,value)',
+            'new IntersectionObserver',
+            'data-offer-context="',
+            'sendEvent(eventName,{section:SECTION || suggestionSection || null,value:offerId})',
+        ]
+        self.assertEqual([], [marker for marker in offer_markers if marker not in HTML])
+        trust_markers = [
+            'No compra posición, nota IA, corazones, estrellas ni respuesta garantizada.',
+            'La suscripción abre un canal; no compra posición, respuesta ni aprobación.',
+            'No cambia la nota IA ni la posición orgánica.',
+        ]
+        self.assertEqual([], [marker for marker in trust_markers if marker not in HTML])
+        self.assertNotIn('data-promote-idea=', HTML)
+        self.assertNotIn('openPromotion("idea"', OWNER_JS)
+        for function_name in ("rankScore", "officialTeamScore", "sortedIdeas"):
+            body = extract(rf"function {function_name}\([^)]*\)\{{([\s\S]*?)\n\}}")
+            self.assertNotRegex(body, r"(?i)offer|sponsor|paid|payment|interest")
+
     def test_team_signal_is_limited_and_not_a_public_identity_leak(self) -> None:
         rank_body = extract(r"function rankScore\(item\)\{([\s\S]*?)\n\}")
         self.assertIn("Math.min(Number(item.web_votes || 0) * 2,20)", rank_body)

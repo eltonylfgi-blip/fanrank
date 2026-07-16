@@ -160,8 +160,10 @@
       "status": "active",
       "estado": "PROPUESTA",
       "must": [
-        "Pagar no cambia nota IA, aprobación, publicación, corazones, estrellas, exposición de una idea ni ranking orgánico.",
+        "Pagar no cambia nota IA, aprobación, publicación, corazones, estrellas, exposición orgánica de una idea ni ranking orgánico.",
         "La IA prioritaria, si se activa, solo compra menor tiempo de espera y nunca una nota mejor.",
+        "Una suscripción a un perfil compra acceso, alertas o experiencias definidas; nunca respuesta, aprobación ni ventaja orgánica.",
+        "Un impulso de pago solo puede aparecer en un módulo separado y rotulado como publicidad o patrocinado, con su origen excluido del ranking orgánico; mientras esa separación no esté probada, solo se registra interés y no se cobra.",
         "El impacto económico se guarda separado del ranking y solo se publica con evidencia y permiso."
       ],
       "origen": {
@@ -173,13 +175,14 @@
         "tipo": "mixta",
         "perfil": "fanrank_static",
         "checklist": [
-          "Revisar cualquier ruta nueva de pago o plan y demostrar que no modifica ranking, señales orgánicas ni exposición."
+          "Revisar cualquier ruta nueva de pago o plan y demostrar que no modifica ranking, señales ni exposición orgánica.",
+          "Comprobar que todo espacio patrocinado se distingue sin ambigüedad, vive fuera del ranking y no admite cobro hasta excluir del ranking el apoyo de origen pagado."
         ]
       },
       "ultimo_check": {
         "fecha": "2026-07-16",
         "veredicto": "REQUIERE-OJO",
-        "detalle": "Parte automática superada (1 comando(s)); faltan 1 check(s) semánticos."
+        "detalle": "Parte automática superada (1 comando(s)); faltan 2 check(s) semánticos."
       }
     },
     {
@@ -319,6 +322,33 @@
         "fecha": "2026-07-16",
         "veredicto": "REQUIERE-OJO",
         "detalle": "Sin prueba automatizable; faltan 1 check(s) semánticos."
+      }
+    },
+    {
+      "id": "FR-CAND-002",
+      "name": "Impulso transparente de ideas",
+      "status": "research_required",
+      "estado": "PROPUESTA",
+      "safe_now": "Medir interés por un escaparate separado y mostrar una maqueta inequívocamente rotulada como patrocinada, sin cobrar ni distribuir ideas.",
+      "not_yet": "Checkout, impresiones pagadas, votos desde campañas o promoción individual mientras el origen pagado no esté separado y excluido del ranking orgánico.",
+      "unlock_when": "Al menos cinco clics únicos seudónimos de interés y un 5 % de conversión sobre impresiones visibles en 72 horas, comprensión correcta en cuatro de cada cinco pruebas y soporte técnico verificado para excluir paid_origin_support del ranking; esos clics validan demanda inicial, no intención de pago cualificada.",
+      "guard": "Solo la persona autora puede impulsar una idea aprobada; el módulo es separado, lleva etiqueta ANUNCIO PAGADO, tiene límites anti-spam y jamás altera el Top, la nota IA, corazones o estrellas orgánicas.",
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-refinado-con-auditoria-de-integridad"
+      },
+      "como_verificar": {
+        "tipo": "mixta",
+        "perfil": "fanrank_static",
+        "checklist": [
+          "Mantener el cobro y la distribución bloqueados hasta cumplir unlock_when y demostrar separación visual, contable y algorítmica."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Parte automática superada (1 comando(s)); faltan 1 check(s) semánticos."
       }
     }
   ]

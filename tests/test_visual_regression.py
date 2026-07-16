@@ -299,6 +299,104 @@ class FanRankVisualRegressionTests(unittest.TestCase):
         self.assertTrue(result["ownerAfterTrust"])
         context.close()
 
+    def test_fan_offers_are_clear_touchable_and_separate_from_organic_rank(self) -> None:
+        for width, height in ((320, 812), (375, 812), (768, 900), (1440, 1000)):
+            with self.subTest(viewport=f"{width}x{height}"):
+                context = self.browser.new_context(
+                    viewport={"width": width, "height": height},
+                    locale="es-ES",
+                )
+                page = context.new_page()
+                page.goto(
+                    self.base_url + "?lang=es&qa=1&local=fan-offers#fan-offers",
+                    wait_until="domcontentloaded",
+                )
+                page.locator("#fan-offer-cards .fan-offer-card").first.wait_for(
+                    state="visible"
+                )
+                result = page.evaluate(
+                    """
+                    () => {
+                      const section = document.querySelector('#fan-offers');
+                      const rail = section.querySelector('#fan-offer-cards');
+                      const cards = [...section.querySelectorAll('.fan-offer-card')];
+                      const buttons = [...section.querySelectorAll('[data-offer-interest]')];
+                      const heading = section.querySelector('h2').getBoundingClientRect();
+                      const topActions = document.querySelector('.top-actions');
+                      const topActionsBox = topActions.getBoundingClientRect();
+                      return {
+                        cardCount: cards.length,
+                        buttonCount: buttons.length,
+                        minButtonHeight: Math.min(...buttons.map(button => button.getBoundingClientRect().height)),
+                        founderText: cards[0].textContent.replace(/\\s+/g, ' ').trim(),
+                        clubText: cards[1].textContent.replace(/\\s+/g, ' ').trim(),
+                        sponsorText: cards[2].textContent.replace(/\\s+/g, ' ').trim(),
+                        contractText: section.querySelector('.fan-offer-contract').textContent.replace(/\\s+/g, ' ').trim(),
+                        sectionHeight: section.getBoundingClientRect().height,
+                        railScrollable: rail.scrollWidth > rail.clientWidth + 2,
+                        topActionsPosition: getComputedStyle(document.querySelector('.top-actions')).position,
+                        topActionsCompact: topActions.classList.contains('compact'),
+                        topActionsOverlapHeading: topActionsBox.bottom > heading.top && topActionsBox.top < heading.bottom && topActionsBox.right > heading.left && topActionsBox.left < heading.right,
+                        noOverflow: document.documentElement.scrollWidth === innerWidth
+                      };
+                    }
+                    """
+                )
+                self.assertEqual(3, result["cardCount"])
+                self.assertEqual(3, result["buttonCount"])
+                self.assertGreaterEqual(result["minButtonHeight"], 44)
+                self.assertIn("15 €", result["founderText"])
+                self.assertIn("pago único", result["founderText"])
+                self.assertIn("La suscripción abre un canal", result["clubText"])
+                self.assertIn("ANUNCIO PAGADO", result["sponsorText"])
+                self.assertIn("nunca compra", result["contractText"])
+                self.assertLess(result["sectionHeight"], 900)
+                self.assertEqual(width <= 900, result["railScrollable"])
+                self.assertEqual("fixed", result["topActionsPosition"])
+                self.assertTrue(result["topActionsCompact"])
+                self.assertFalse(result["topActionsOverlapHeading"])
+                self.assertTrue(result["noOverflow"])
+                founder = page.locator('[data-offer-interest="fan_founder_15_once"]')
+                founder.click()
+                self.assertEqual("true", founder.get_attribute("aria-pressed"))
+                self.assertIn("Interés guardado", founder.text_content())
+                context.close()
+
+        context = self.browser.new_context(
+            viewport={"width": 375, "height": 812},
+            locale="es-ES",
+        )
+        page = context.new_page()
+        for slug, expected_state in (
+            ("orslok", "no puede abrir hasta que el perfil esté verificado"),
+            ("fanrank", "deberá activar sus ventajas"),
+        ):
+            with self.subTest(profile=slug):
+                page.goto(
+                    self.base_url + f"?s={slug}&lang=es&qa=1&local=profile-club",
+                    wait_until="domcontentloaded",
+                )
+                page.locator("#profile-club").wait_for(state="visible")
+                profile_result = page.evaluate(
+                    """
+                    () => {
+                      const club = document.querySelector('#profile-club');
+                      const button = club.querySelector('#profile-club-interest');
+                      return {
+                        title: club.querySelector('#profile-club-title').textContent.trim(),
+                        meta: club.querySelector('#profile-club-meta').textContent.trim(),
+                        buttonHeight: button.getBoundingClientRect().height,
+                        noOverflow: document.documentElement.scrollWidth === innerWidth
+                      };
+                    }
+                    """
+                )
+                self.assertTrue(profile_result["title"].startswith("Club de "))
+                self.assertIn(expected_state, profile_result["meta"])
+                self.assertGreaterEqual(profile_result["buttonHeight"], 44)
+                self.assertTrue(profile_result["noOverflow"])
+        context.close()
+
     def test_supported_home_vote_is_unmistakable_and_top_numbers_are_prominent(self) -> None:
         context = self.browser.new_context(
             viewport={"width": 375, "height": 812},
