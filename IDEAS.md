@@ -259,6 +259,18 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 - Guardas: ningún bot, post automático, voto/idea falsa, etiqueta automática, pago, ranking, canvas ni marca nueva. El humano decide si publica el intent.
 - Selector ≤72 h desde 2026-07-16 14:05 CEST: el de FR-2026-07-15-007 (`idea_share ≥ 1` y ≥10 `page_view` referidos), desglosando `intent_x`/`intent_whatsapp`; si no hay exposición, no confundir falta de distribución con fallo del mecanismo.
 
+### FR-2026-07-16-014 — precios fundador invertidos (5 € fan / 15 € o libre entidad) + test de marca FAN$
+
+- Estado: `in_progress_codex_exec` — despachada a sesión Codex exec el 2026-07-16 ~15:00 (encargo en `..\ENCARGO_CODEX_2026-07-16_fanrank-precios-fundador.md`); la rutina `fanrank-mejora` NO debe implementarla en paralelo. Petición explícita de Tony (16-jul, chat, aprox. literal: "mejor al revés: 5 euros para usuario normal fundador porque son los 500 primeros, y 15 para las empresas o famosos, o que puedan donar lo que quieran").
+- Decisión que cambia: qué etiqueta de precio maximiza clics de interés GENUINOS por lado (fan vs entidad) — línea base actual ~0 clics, cualquier señal ya informa.
+- Cambio mínimo:
+  1. `Fan fundador`: 15 € → **5 € pago único**, limitado a los **primeros 500**, con promesa de insignia NUMERADA ("Fundador #N de 500") — la investigación 16-jul respalda que el número bajo convierte escasez en estatus; nada de contadores fingidos.
+  2. Lado entidad: el Piloto 199 € SIGUE siendo LA señal B2B (no se toca). Se añade, como módulo separado y opcional, "Apoyo de entidad — 15 € o aportación libre", también interés-sin-cobro.
+  3. TODO sigue en modo "Prueba de interés · Todavía no se cobra" (FR-INV-005 intacta; cobrar de verdad sigue bloqueado por unlock_when + Stripe/identidad = Tony).
+- Test de marca FAN$ (el $ dentro de FANS, deseo reiterado de Tony 2×): FR-INV-001 exige test ANTES de renombrar, así que no se discute: SE MIDE. Gate: con ≥100 visitantes reales acumulados, probar 2 variantes del artefacto compartido (`FanRank ♥` vs `FAN$RANKS`) midiendo (a) confianza — "¿crees que pagar mejora la posición de una idea?" debe seguir <10 % sí — y (b) participación (CTR/votos por variante). Hasta pasar ese test: marca pública = FanRank ♥. El "Rango S" de Tony puede probarse ANTES como INSIGNIA de las ideas top (estética gamer S-tier, no toca la marca ni promete dinero).
+- Prueba que falle antes/pase después: test estático que exige el nuevo precio/tope 500 en la oferta fan y el módulo de entidad separado con su etiqueta interés-sin-cobro.
+- Selector ≤72 h tras publicar: clics de interés por oferta con las etiquetas nuevas (offer_seen/clics únicos seudónimos ya instrumentados), anotando la fecha del cambio de etiqueta para no mezclar con la línea base.
+
 ## Rutina `fanrank-mejora`
 
 - Una única cola: este archivo. El estado privado solo guarda lock, hashes, IDs procesados y el experimento activo.
@@ -271,6 +283,9 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 
 ## Backlog no ránkeado
 
+- Tarjeta canvas descargable por perfil (PNG 1080×1920, piel "papeleta/setlist", nombre enorme, top-3 con barras, #1 truncada, URL impresa en la imagen; logo con corazón intacto). Detrás de los stubs: el PNG no arregla lo que ven los crawlers. Variante posterior: tarjeta de estatus del fan ("Mi idea es #N de M" / "Fundador #N") — la investigación 16-jul la señala como el share de mayor conversión (identidad del que comparte, no del producto).
+- Umbrales estilo LEGO Ideas (una idea necesita N apoyos en X días para seguir listada; con dueño verificado pasa a "en revisión") + métrica de salud pública "ideas con respuesta del dueño" — los tablones de marca muertos (Starbucks/Dell) murieron de ideas sin responder y podredumbre de duplicados.
+- Leaderboard de rivalidad entre fandoms ("qué fandom mueve más su tablón") — BLOQUEADO hasta tener anti-abuso (rate-limit por IP/fingerprint + pesos de voto): es el canal gratuito más potente encontrado Y garantiza boteo que rompería FR-INV-005.
 - Detección semántica de duplicados antes de enviar, con explicación y opción de votar la existente.
 - Resumen semanal para equipos: 5 cambios con mayor beneficio esperado y evidencia enlazada.
 - Estado público de una idea: recibido, estudiando, planificado, lanzado; el contacto del autor sigue privado.
