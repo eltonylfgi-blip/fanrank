@@ -21,7 +21,8 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 - Enlaces HTTPS de apoyo y miniatura segura para vídeos concretos de YouTube, sin iframe ni subida de MP4.
 - Telemetría separada de QA mediante `?qa=1` y contrato SQL alineado con los eventos emitidos.
 - Bandeja privada de sugerencias y pruebas para `owner/admin` de un perfil verificado; el contacto solo aparece con consentimiento.
-- Evidencia actual: 26/26 pruebas estáticas y 32/32 al incluir límites live; la comprobación visual local pasó en 320/375/768/1440 px y el CTA principal quedó dentro de 320×667. Esto demuestra mecanismo, no beneficio de mercado.
+- Especificación Android para Gemini con checkpoints compilables, repositorios fake/real separados y guardas de ranking, pagos, Auth y multimedia nativa. Es un prompt probado, no una app construida.
+- Evidencia actual: 27/27 pruebas estáticas y 33/33 al incluir límites live; la comprobación visual pasó en 320/375/768/1440 px y el CTA principal quedó dentro de 320×667. Esto demuestra mecanismo, no beneficio de mercado.
 
 ## Experimento activo (máximo 72 horas)
 
@@ -174,12 +175,13 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 
 ### FR-2026-07-15-005 — logo corazón + podio + trofeo
 
-- Estado: `validated_mechanism`; segunda corrección preparada tras rechazo visual explícito de Tony. Beneficio y aceptación final siguen pendientes.
+- Estado: `validated_mechanism`; tercera corrección publicada en `3098a9d` tras un defecto visual explícito de Tony. Beneficio y aceptación final siguen pendientes.
 - Fuentes: corrección explícita de Tony + geometría DOM + crítica adversaria de ChatGPT con evidencia anonimizada.
 - Decisión que cambia: si la marca comunica fans + ranking + ganador sin explicación.
 - Score: 76.
 - Cambio mínimo: corazón carmesí detrás de `FAN`, `R-A-N` en 2-1-3, `K` legible y trofeo a la derecha.
-- Prueba directa: el solape corazón/FAN bajó de 50,7 % a 42 %, el trofeo pasó a 96,8 % de la altura de la K, el podio queda separado de las letras y no hay overflow a 320/375/768/1440 px.
+- Defecto reproducido: el pseudo-elemento de brillo empezaba 38 % a la izquierda y recorría 710 % del logo, pintando una banda blanca rectangular fuera de la marca en móvil.
+- Prueba directa: producción ya no contiene `.logo:after` ni `logoShine`; conserva `heartBeat` y `starBloom`; a 375 px el logo ocupa x=55,2–305,1 dentro de un ancho útil de 360 px, el trofeo mide 29,9 px y `scrollWidth=clientWidth=360`. El revisor visual externo devolvió literalmente `{"estado":"OK","problemas":[]}`.
 - Selector: reconocimiento inmediato por Tony; la geometría ya pasa, pero no sustituye su juicio de marca.
 - Deadline: revisión visual y decisión dentro de 72 horas desde el despliegue.
 
