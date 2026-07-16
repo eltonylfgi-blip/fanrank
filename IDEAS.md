@@ -248,6 +248,17 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 - Prueba directa local: computed style no transparente, podio mínimo 12/16/12 px, trofeo ≥1,25× la altura visible de `RANK`, cero overflow en 320/375/768/1440 y prueba que lee el contrato de invariantes.
 - Selector ≤72 h: ≥80 % de cinco personas entiende que `◆` significa resultado confirmado y ninguna cree que se compra; las próximas tres ediciones deben preservar las reglas sin que Tony las repita.
 
+### FR-2026-07-16-013 — el share lleva el top real y un clic directo a X (distribución)
+
+- Estado: `validated_mechanism`; publicado en producción en `563928f` el 2026-07-16 14:05 CEST. Beneficio externo pendiente: esta implementación sirve al selector ya abierto de FR-2026-07-15-007, no abre otro experimento.
+- Decisión que cambia: un share de perfil ya puede producir una exposición externa atribuible: incluye el top-3 público real, ofrece intents humanos de X/WhatsApp y aterriza en un receptor con OG propio del perfil.
+- Cambio entregado, en el orden exigido: (1) top-3 ES/EN ≤255 caracteres con tercera idea elidida y fallback para <3 ideas; (2) intents X/WhatsApp con `ref=x|whatsapp` y eventos `intent_x|intent_whatsapp`; (3) head español unificado y `social-card.png?v=2`; (4) solo después de publicar 1–3 en `f22743e`, 11 stubs `/p/<slug>/` con canonical/OG propios y redirect que conserva `idea`, `ref`, `lang` y `qa`.
+- Mantenimiento: al crear un perfil nuevo, ejecutar `python tools/generate_profile_stubs.py` y confirmar el nuevo `p/<slug>/index.html` antes de publicar.
+- Evidencia cruda: `python tests/test_fanrank.py` → `Ran 37 tests in 0.796s` / `OK`; `python tests/test_visual_regression.py` → `Ran 10 tests in 18.025s` / `OK`; `[MEASURE] cold_anonymous_vote_seconds=1.515 viewport=320 intercepted_writes=1`; `[MEASURE] share_dialog_viewport=320 scroll_width=320 text_chars=209`; verificador rector → `[RESULTADO] CUMPLIDA=1 REQUIERE-OJO=10 INCUMPLIDA=0`.
+- Producción: Pages build `1098497332` → `built`, commit `563928f07f1a4eaac6ddac03eb0639914fdcea40`; `curl` de 11/11 stubs → HTTP 200, `canonical_ok=true`, `keys_ok=true`, `redirect_ok=true`, `noscript_ok=true`, `image_v2=true` y `og_url` propio. La previsualización interactiva en metatags.io queda pendiente porque la política del navegador bloqueó esa URL; no anunciar como validada por un debugger externo hasta completar ese único check.
+- Guardas: ningún bot, post automático, voto/idea falsa, etiqueta automática, pago, ranking, canvas ni marca nueva. El humano decide si publica el intent.
+- Selector ≤72 h desde 2026-07-16 14:05 CEST: el de FR-2026-07-15-007 (`idea_share ≥ 1` y ≥10 `page_view` referidos), desglosando `intent_x`/`intent_whatsapp`; si no hay exposición, no confundir falta de distribución con fallo del mecanismo.
+
 ## Rutina `fanrank-mejora`
 
 - Una única cola: este archivo. El estado privado solo guarda lock, hashes, IDs procesados y el experimento activo.
