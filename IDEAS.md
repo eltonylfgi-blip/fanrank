@@ -17,6 +17,8 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 - Temas por perfil para agrupar y filtrar ideas: Normal 5, Pro 20, Business 100 y Plus 200 activos; el cupo se aplica en servidor y ningún plan altera ranking o visibilidad.
 - Descubrimiento directo por etiquetas visibles (`Influencer`, `Streamer`, `YouTuber`, `TikToker`) y tipo explícito `Creador de contenido`.
 - Ranking de perfil legible y separable: `Equilibrado`, `Solo IA`, `Apoyo original`, `Fans ♥` y, cuando corresponde, `Equipo ★`.
+- Contrato local versionado: `PRODUCT_INVARIANTS.json` conserva preferencias duraderas y `AGENTS.md` obliga a leerlas y probarlas antes de cada edición.
+- Gramática de confianza: `♥` apoyo fan, `★` contexto oficial y `◆` resultado real verificado; ninguna señal comprada altera el ranking.
 
 ## Publicado y validado técnicamente (beneficio todavía pendiente)
 
@@ -235,6 +237,16 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 - Prueba directa: migraciones live aplicadas, Edge Function activa con `topic_id`, 30/30 pruebas estáticas y 36/36 con fronteras live; anon no puede escribir ni usar RPC de gestión. Una transacción live aceptó exactamente cinco temas Normal, rechazó el sexto y el rollback dejó `rollback_residue=0`.
 - Guarda de reclamo: resultados verificados ya no reciben `claim=1`; el deep link manual se limpia sin abrir Auth/formulario y un trigger live rechazó el claim incluso mediante escritura privilegiada (`verified_claim_rejected=true`, rollback sin residuo).
 - Selector externo ≤72 h desde tener tráfico elegible: `owner_cta_open / page_view ≥ 10 %` con al menos 30 visitas, al menos una solicitud de perfil iniciada y caída de `suggest_open / page_view` menor de 10 % frente a la línea base. Sin 30 visitas se clasifica como falta de exposición, no fracaso de CTA.
+
+### FR-2026-07-16-012 — identidad opaca + impacto verificado + memoria de producto
+
+- Estado: `validated_mechanism`; aceptación visual y beneficio externo pendientes.
+- Fuentes: corrección explícita de Tony + defecto reproducido en CSS/Android + comparación oficial Canny/Productboard + red-team de monetización.
+- Decisión que cambia: conservar `FanRank` como marca confiable y separar el valor económico del orden público de ideas.
+- Cambio mínimo: relleno opaco real en `FAN` y `RANK`, trofeo/podio mayores, `◆ Impacto verificado` explicado y contrato versionado de nueve invariantes activas.
+- Guarda: no usar `FanRank$`, porcentajes automáticos ni recompensas retroactivas. Una recompensa solo puede aparecer tras acuerdo previo, atribución y pago verificables; jamás pesa en el ranking.
+- Prueba directa local: computed style no transparente, podio mínimo 12/16/12 px, trofeo ≥1,25× la altura visible de `RANK`, cero overflow en 320/375/768/1440 y prueba que lee el contrato de invariantes.
+- Selector ≤72 h: ≥80 % de cinco personas entiende que `◆` significa resultado confirmado y ninguna cree que se compra; las próximas tres ediciones deben preservar las reglas sin que Tony las repita.
 
 ## Rutina `fanrank-mejora`
 

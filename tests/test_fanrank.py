@@ -28,6 +28,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 HTML = INDEX.read_text(encoding="utf-8")
+INVARIANTS_PATH = ROOT / "PRODUCT_INVARIANTS.json"
+INVARIANTS = json.loads(INVARIANTS_PATH.read_text(encoding="utf-8"))
+LOCAL_AGENT_CONTRACT = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 SOCIAL_CARD = ROOT / "social-card.png"
 OWNER_JS_PATH = ROOT / "owner-studio.js"
 OWNER_CSS_PATH = ROOT / "owner-studio.css"
@@ -122,6 +125,33 @@ class StructureParser(HTMLParser):
 
 
 class StaticAppTests(unittest.TestCase):
+    def test_durable_product_invariants_are_wired_into_code_and_agent_workflow(self) -> None:
+        active_ids = {
+            rule["id"] for rule in INVARIANTS["rules"] if rule["status"] == "active"
+        }
+        self.assertEqual(1, INVARIANTS["schema_version"])
+        self.assertEqual("FanRank", INVARIANTS["product"])
+        self.assertTrue(
+            {
+                "FR-INV-001",
+                "FR-INV-002",
+                "FR-INV-003",
+                "FR-INV-004",
+                "FR-INV-005",
+                "FR-INV-007",
+                "FR-INV-009",
+            }.issubset(active_ids)
+        )
+        self.assertIn("PRODUCT_INVARIANTS.json", LOCAL_AGENT_CONTRACT)
+        self.assertIn("tests/test_visual_regression.py", LOCAL_AGENT_CONTRACT)
+        self.assertNotRegex(
+            HTML,
+            r"[.]logo-fan,[.]rank-text\{[^}]*color:transparent",
+        )
+        self.assertIn('diamond:', HTML)
+        self.assertIn('["◆","Impacto real verificado","impact"]', HTML)
+        self.assertIn('["◆","Verified real-world impact","impact"]', HTML)
+
     def test_android_gemini_handoff_preserves_product_and_backend_boundaries(self) -> None:
         markers = [
             "## INICIO DEL PROMPT",
@@ -1090,8 +1120,8 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
         self.assertRegex(HTML, r"[.]logo-art\{[^}]*max-width:calc\(100vw - 24px\)[^}]*overflow:visible")
         self.assertRegex(HTML, r"[.]logo-fan,[.]rank-text\{[^}]*overflow:visible")
-        self.assertRegex(HTML, r"[.]rank-podium\{[^}]*top:[.]88em")
-        self.assertRegex(HTML, r"[.]rank-trophy\{[^}]*width:[.]96em;height:[.]96em")
+        self.assertRegex(HTML, r"[.]rank-podium\{[^}]*top:[.]84em")
+        self.assertRegex(HTML, r"[.]rank-trophy\{[^}]*width:1[.]12em;height:1[.]12em")
         self.assertRegex(
             HTML,
             r"@media \(max-width:560px\)\{[\s\S]*?[.]logo-art\{[^}]*--logo-size:clamp\(48px,13[.]6vw,54px\)",
@@ -1099,7 +1129,7 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual(1, HTML.count('<span class="rank-text">RANK</span>'))
         self.assertNotIn('class="rank-letter', HTML)
         self.assertNotIn('class="rank-place', HTML)
-        self.assertIn('viewBox="5 4 70 78"', HTML)
+        self.assertIn('viewBox="7 5 66 78"', HTML)
         self.assertLess(HTML.index('id="home-suggest"'), HTML.index('id="directory-filters"'))
 
         sorted_ideas = extract(r"function sortedIdeas\(source\)\{([\s\S]*?)\n\}")

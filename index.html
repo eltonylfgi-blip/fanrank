@@ -89,10 +89,10 @@
     transform:rotateX(var(--tilt-x)) rotateY(var(--tilt-y));transform-style:preserve-3d;transition:transform .18s ease,filter .22s ease}
   .logo-fan,.rank-text{display:inline-block;padding-inline:.06em;margin-inline:-.06em;overflow:visible;
     font-family:Impact,"Arial Black",system-ui,sans-serif;font-weight:900;font-style:italic;line-height:.78;letter-spacing:-.075em;
-    color:transparent;-webkit-background-clip:text;background-clip:text;background-size:220% 100%;background-position:0 50%;
-    -webkit-text-stroke:.011em rgba(255,247,190,.85);transition:background-position .65s ease,filter .22s ease}
-  .logo-fan{position:relative;z-index:2;margin-right:-.1em;background-image:linear-gradient(145deg,#fffbd1 0%,#ffe664 18%,#ffc21b 43%,#ff9200 72%,#ff5c00 100%);
-    text-shadow:0 .018em 0 rgba(255,255,255,.5),0 .035em 0 #713200,0 0 .07em rgba(255,172,0,.9),0 0 .19em rgba(255,126,0,.38)}
+    color:var(--logo-fill);-webkit-text-fill-color:var(--logo-fill);opacity:1;
+    -webkit-text-stroke:.011em rgba(255,247,190,.92);transition:filter .22s ease,text-shadow .22s ease}
+  .logo-fan{--logo-fill:#ffc52a;position:relative;z-index:2;margin-right:-.1em;
+    text-shadow:0 .016em 0 #fff4ad,0 .038em 0 #8d4100,0 .075em 0 #4c2100,0 0 .08em rgba(255,185,0,.96),0 0 .21em rgba(255,94,0,.46)}
   .brand-mark{position:absolute;z-index:1;left:.1em;top:-.04em;display:inline-flex;width:1.18em;height:1.06em;
     transform:rotate(-10deg);filter:drop-shadow(0 0 8px rgba(255,23,79,.82)) drop-shadow(0 0 24px rgba(255,23,79,.42));
     transition:filter .24s ease}
@@ -106,19 +106,19 @@
   body.team-mode .brand-mark-heart{display:none}
   body.team-mode .brand-mark-team{display:block}
   body.team-mode .brand-mark{filter:drop-shadow(0 0 10px rgba(255,209,41,.72)) drop-shadow(0 0 26px rgba(255,209,41,.32))}
-  .logo-rank{position:relative;display:inline-block;margin-left:-.015em;padding-bottom:.3em;overflow:visible}
-  .rank-text{background-image:linear-gradient(130deg,#fff8b0 0%,#ffd548 25%,#79efff 53%,#2d9cff 76%,#865cff 100%);
-    text-shadow:0 .018em rgba(255,255,255,.65),0 .035em #133d78,0 0 .08em rgba(38,179,255,.95),0 0 .2em rgba(80,77,255,.38)}
-  .rank-podium{position:absolute;z-index:3;left:0;right:23%;top:.88em;height:.23em;overflow:visible;pointer-events:none}
-  .podium-step{position:absolute;top:.35em;display:grid;place-items:center;width:34%;height:1.35em;border:1px solid rgba(255,255,255,.7);
-    border-radius:.25em;transform:translateX(-50%);color:#161616;font-family:system-ui,sans-serif;font-size:clamp(7px,.13em,11px);font-style:normal;
+  .logo-rank{position:relative;display:inline-block;margin-left:-.015em;padding-bottom:.42em;overflow:visible}
+  .rank-text{--logo-fill:#7bdcff;
+    text-shadow:0 .016em 0 #e9ffff,0 .038em 0 #1769a4,0 .075em 0 #0a315e,0 0 .085em rgba(38,198,255,.98),0 0 .22em rgba(86,82,255,.46)}
+  .rank-podium{position:absolute;z-index:3;left:-.02em;right:14%;top:.84em;height:.25em;overflow:visible;pointer-events:none}
+  .podium-step{position:absolute;top:.35em;display:grid;place-items:center;width:36%;height:1.5em;border:1px solid rgba(255,255,255,.82);
+    border-radius:.25em;transform:translateX(-50%);color:#161616;font-family:system-ui,sans-serif;font-size:clamp(8px,.16em,13px);font-style:normal;
     font-weight:950;letter-spacing:0;line-height:1;text-shadow:0 .08em rgba(255,255,255,.6);
-    box-shadow:inset 0 .16em .22em rgba(255,255,255,.55),0 .13em 0 #241300,0 .3em .6em rgba(255,191,0,.24)}
+    box-shadow:inset 0 .16em .22em rgba(255,255,255,.64),0 .13em 0 #241300,0 .3em .7em rgba(255,191,0,.34)}
   .podium-step.step-2{left:17%;background:linear-gradient(180deg,#fff,#bfc7d1 48%,#6e7784)}
-  .podium-step.step-1{left:50%;top:0;width:36%;height:1.7em;background:linear-gradient(180deg,#fff8a4,#ffc61c 46%,#d98700);
-    box-shadow:inset 0 .18em .24em rgba(255,255,255,.68),0 .13em 0 #5b3200,0 .34em .72em rgba(255,189,0,.45)}
+  .podium-step.step-1{left:50%;top:0;width:38%;height:2em;background:linear-gradient(180deg,#fffbd1,#ffd52b 42%,#e58a00);
+    box-shadow:inset 0 .18em .24em rgba(255,255,255,.78),0 .13em 0 #5b3200,0 .38em .86em rgba(255,189,0,.58)}
   .podium-step.step-3{left:83%;background:linear-gradient(180deg,#ffc58c,#ce6d24 52%,#74300d)}
-  .rank-trophy{position:relative;z-index:2;flex:0 0 auto;width:.96em;height:.96em;margin-top:-.015em;margin-left:.045em;overflow:visible;
+  .rank-trophy{position:relative;z-index:2;flex:0 0 auto;width:1.12em;height:1.12em;margin-top:-.075em;margin-left:.01em;overflow:visible;
     transform-box:fill-box;transform-origin:center bottom;transform:rotateZ(-9deg) rotateY(-14deg);
     filter:drop-shadow(0 0 .035em rgba(255,255,190,.9)) drop-shadow(0 0 .11em rgba(255,180,0,.9)) drop-shadow(0 0 .22em rgba(255,111,0,.38));
     animation:trophyFloat 4.4s ease-in-out infinite;transition:transform .32s var(--ease),filter .25s ease}
@@ -134,7 +134,7 @@
     filter:drop-shadow(0 0 13px rgba(255,23,79,.96)) drop-shadow(0 0 36px rgba(255,23,79,.58))}
   .logo:hover .brand-mark-heart:not(.emblem-shine),.logo:focus-visible .brand-mark-heart:not(.emblem-shine),.logo.celestial .brand-mark-heart:not(.emblem-shine){animation-duration:1.8s}
   .logo:hover .logo-fan,.logo:focus-visible .logo-fan,.logo.celestial .logo-fan,
-  .logo:hover .rank-text,.logo:focus-visible .rank-text,.logo.celestial .rank-text{background-position:100% 50%;filter:brightness(1.1) saturate(1.12)}
+  .logo:hover .rank-text,.logo:focus-visible .rank-text,.logo.celestial .rank-text{filter:brightness(1.12) saturate(1.16)}
   .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateY(-.045em) rotateZ(-15deg) rotateY(-23deg) scale(1.065);
     filter:drop-shadow(0 0 .045em rgba(255,255,210,1)) drop-shadow(0 0 .15em rgba(255,190,0,1)) drop-shadow(0 0 .3em rgba(255,92,0,.5))}
   .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
@@ -217,11 +217,13 @@
   .section-head{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:24px 0 11px}
   .section-head h2{margin:0;font-size:clamp(1.18rem,3vw,1.48rem)}
   .section-head p{margin:3px 0 0;color:var(--muted);font-size:.88rem}
-  .how{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:30px 0 0}
+  .how{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:30px 0 0}
   .step{padding:17px;border:1px solid var(--line-soft);border-radius:var(--radius);background:rgba(21,25,38,.72)}
   .step-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:var(--surface-2);
     color:var(--blue)}
   .step-icon svg{width:21px;height:21px}
+  .step.step-diamond{border-color:rgba(72,210,255,.34);background:linear-gradient(145deg,rgba(22,43,61,.88),rgba(21,25,38,.76));box-shadow:inset 0 0 24px rgba(72,210,255,.04)}
+  .step.step-diamond .step-icon{border:1px solid rgba(72,210,255,.38);background:rgba(72,210,255,.1);color:#58dcff;filter:drop-shadow(0 0 8px rgba(72,210,255,.28))}
   .step-title{margin-top:11px;font-weight:900}
   .step-desc{margin-top:4px;color:var(--muted);font-size:.8rem}
 
@@ -350,6 +352,7 @@
     background:rgba(21,25,38,.72);color:var(--muted);font-size:.7rem;font-weight:850}
   .trust-stat b{color:var(--text)}
   .trust-stat .trust-icon{color:var(--yellow);font-size:.85rem}
+  .trust-stat.impact .trust-icon{color:#58dcff;filter:drop-shadow(0 0 7px rgba(72,210,255,.62))}
 
   .panel{margin-top:30px;padding:21px;border:1px solid var(--line);border-radius:var(--radius);
     background:linear-gradient(135deg,rgba(255,209,41,.055),rgba(185,134,255,.055))}
@@ -678,7 +681,7 @@
 
   @media (max-width:900px){
     .wrap{padding-top:18px}
-    .how{grid-template-columns:1fr}
+    .how{grid-template-columns:repeat(2,minmax(0,1fr))}
     .pro-head{grid-template-columns:1fr}.pro-pilot-note{max-width:none;text-align:left}.pro-plans{grid-template-columns:1fr}
     .sections{grid-template-columns:repeat(2,minmax(0,1fr))}
     .trending{display:flex;gap:10px;margin-right:-18px;padding-right:18px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin}
@@ -722,6 +725,7 @@
     .pro-list{gap:10px;font-size:.87rem}
     .pro-card .secondary-btn,.pro-card .primary-btn{min-height:48px}
     .fan-value{grid-template-columns:1fr;padding:18px;text-align:center}.fan-value-emblem{margin:0 auto}.fan-value-points{justify-content:center}
+    .how{grid-template-columns:1fr}
     .form-grid{grid-template-columns:1fr;gap:18px}
     .field.full{grid-column:auto}
     .claim-bar{align-items:flex-start;flex-direction:column}
@@ -831,7 +835,7 @@
                   <span class="podium-step step-3">3</span>
                 </span>
               </span>
-              <svg class="rank-trophy" viewBox="5 4 70 78" focusable="false">
+              <svg class="rank-trophy" viewBox="7 5 66 78" focusable="false">
                 <defs>
                   <linearGradient id="cupGold" x1="10" y1="5" x2="68" y2="80" gradientUnits="userSpaceOnUse"><stop stop-color="#fff8b5"></stop><stop offset=".22" stop-color="#ffd538"></stop><stop offset=".56" stop-color="#ff9f00"></stop><stop offset=".8" stop-color="#fff078"></stop><stop offset="1" stop-color="#d66a00"></stop></linearGradient>
                 </defs>
@@ -1608,7 +1612,7 @@ var T = {
     stats_profiles:"profiles",
     stats_ideas:"ranked ideas",
     stats_votes:"fan votes",
-    home_trust:[["♥","Anonymous if you want"],["✦","AI groups and ranks"],["★","Official stars · outside the ranking"]],
+    home_trust:[["♥","Anonymous if you want"],["✦","AI groups and ranks"],["★","Official stars · outside the ranking"],["◆","Verified real-world impact","impact"]],
     home_suggest:"Suggest something now",
     home_suggest_note:"Anonymous by default · about 30 seconds",
     owner_verify_kicker:"FOR CREATORS AND COMPANIES",
@@ -1669,7 +1673,8 @@ var T = {
     how:[
       ["light","Fans submit","Ideas enter one private review queue instead of disappearing across comments."],
       ["spark","AI helps rank","Approved ideas are scored for impact, feasibility and clarity — with a reason."],
-      ["shield","Teams add official context","Verified owners rate 1–5 ★ and partners use the owner's limit. Stars stay separate and never override fan demand."]
+      ["shield","Teams add official context","Verified owners rate 1–5 ★ and partners use the owner's limit. Stars stay separate and never override fan demand."],
+      ["diamond","Verified impact","◆ appears only after the profile confirms implementation and a measurable result. Any agreed reward stays separate and never buys rank."]
     ],
     pro_kicker:"FanRank for teams",
     pro_title:"From noisy feedback to the next decision",
@@ -2071,7 +2076,7 @@ var T = {
     stats_profiles:"perfiles",
     stats_ideas:"ideas ordenadas",
     stats_votes:"votos de fans",
-    home_trust:[["♥","Anónimo si quieres"],["✦","La IA agrupa y ordena"],["★","Estrellas oficiales · fuera del ranking"]],
+    home_trust:[["♥","Anónimo si quieres"],["✦","La IA agrupa y ordena"],["★","Estrellas oficiales · fuera del ranking"],["◆","Impacto real verificado","impact"]],
     home_suggest:"Dejar una sugerencia ahora",
     home_suggest_note:"Anónima por defecto · unos 30 segundos",
     owner_verify_kicker:"PARA CREADORES Y EMPRESAS",
@@ -2132,7 +2137,8 @@ var T = {
     how:[
       ["light","Los fans proponen","Las ideas entran en una cola privada en vez de perderse entre comentarios."],
       ["spark","La IA ayuda a ordenar","Las aprobadas reciben nota por impacto, viabilidad y claridad — con un motivo."],
-      ["shield","El equipo aporta contexto oficial","El dueño verificado valora de 1 a 5 ★ y sus socios usan el límite elegido. Las estrellas nunca pisan la demanda fan."]
+      ["shield","El equipo aporta contexto oficial","El dueño verificado valora de 1 a 5 ★ y sus socios usan el límite elegido. Las estrellas nunca pisan la demanda fan."],
+      ["diamond","Impacto verificado","◆ aparece solo cuando el perfil confirma que la idea se implementó y produjo un resultado medible. Cualquier recompensa acordada va aparte y nunca compra posición."]
     ],
     pro_kicker:"FanRank para equipos",
     pro_title:"Del ruido del feedback a la siguiente decisión",
@@ -2461,6 +2467,7 @@ function icon(name){
     light:'<path d="M9 18h6M10 22h4M8.3 14.5A6 6 0 1 1 15.7 14.5c-.8.7-1.2 1.5-1.2 2.5h-5c0-1-.4-1.8-1.2-2.5Z"></path>',
     spark:'<path d="m12 3 1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3Z"></path><path d="m18 15 .9 2.1L21 18l-2.1.9L18 21l-.9-2.1L15 18l2.1-.9L18 15Z"></path>',
     shield:'<path d="M12 3 4.5 6v5.4c0 4.7 3.2 8.4 7.5 9.6 4.3-1.2 7.5-4.9 7.5-9.6V6L12 3Z"></path><path d="m9 12 2 2 4-4"></path>',
+    diamond:'<path d="M7.2 4h9.6L21 9.2 12 21 3 9.2 7.2 4Z"></path><path d="m3.4 9.2 17.2 0M7.2 4l2.1 5.2L12 21l2.7-11.8L16.8 4"></path>',
     share:'<circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path>',
     crown:'<path d="m4 8 4 3 4-6 4 6 4-3-2 10H6L4 8Z"></path><path d="M6 21h12"></path>',
     heart:'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"></path>'
@@ -3722,7 +3729,7 @@ function applyResolvedLanguage(){
 
 function renderHow(){
   byId("how").innerHTML = tx("how").map(function(step){
-    return '<article class="step"><div class="step-icon">' + icon(step[0]) + '</div><div class="step-title">' +
+    return '<article class="step' + (step[0] === "diamond" ? ' step-diamond' : '') + '"><div class="step-icon">' + icon(step[0]) + '</div><div class="step-title">' +
       esc(step[1]) + '</div><div class="step-desc">' + esc(step[2]) + '</div></article>';
   }).join("");
 }
@@ -3741,7 +3748,7 @@ function renderProPlans(){
 }
 function renderHomeStats(){
   byId("stats").innerHTML = tx("home_trust").map(function(item){
-    return '<span class="trust-stat"><span class="trust-icon" aria-hidden="true">' + esc(item[0]) + '</span><b>' + esc(item[1]) + '</b></span>';
+    return '<span class="trust-stat' + (item[2] ? ' ' + esc(item[2]) : '') + '"><span class="trust-icon" aria-hidden="true">' + esc(item[0]) + '</span><b>' + esc(item[1]) + '</b></span>';
   }).join("");
 }
 function directoryScore(item,mode){

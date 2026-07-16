@@ -65,7 +65,7 @@ class FanRankVisualRegressionTests(unittest.TestCase):
             cls.thread.join(timeout=2)
 
     def test_logo_is_continuous_visible_and_inside_the_viewport(self) -> None:
-        for width, height in ((375, 812), (768, 900), (1440, 1000)):
+        for width, height in ((320, 812), (375, 812), (768, 900), (1440, 1000)):
             with self.subTest(viewport=f"{width}x{height}"):
                 context = self.browser.new_context(
                     viewport={"width": width, "height": height},
@@ -94,10 +94,13 @@ class FanRankVisualRegressionTests(unittest.TestCase):
                         range.selectNodeContents(step);
                         const textBox = range.getBoundingClientRect();
                         return {
+                          isFirst: step.classList.contains('step-1'),
                           height: stepBox.height,
                           textInside: textBox.top >= stepBox.top - 1 && textBox.bottom <= stepBox.bottom + 1
                         };
                       });
+                      const fanStyle = getComputedStyle(document.querySelector('.logo-fan'));
+                      const rankStyle = getComputedStyle(document.querySelector('.rank-text'));
                       return {
                         viewport: innerWidth,
                         scrollWidth: document.documentElement.scrollWidth,
@@ -109,6 +112,10 @@ class FanRankVisualRegressionTests(unittest.TestCase):
                         podiumTop: podium.top,
                         trophyWidth: trophy.width,
                         rankHeight: rank.height,
+                        fanColor: fanStyle.color,
+                        fanFill: fanStyle.webkitTextFillColor,
+                        rankColor: rankStyle.color,
+                        rankFill: rankStyle.webkitTextFillColor,
                         podiumSteps,
                         heartInside: heart.left >= art.left - 2 && heart.right <= art.right + 2,
                         trophyInside: trophy.left >= art.left - 2 && trophy.right <= art.right + 2
@@ -122,13 +129,23 @@ class FanRankVisualRegressionTests(unittest.TestCase):
                 self.assertLessEqual(geometry["logoRight"], geometry["viewport"] - 8)
                 self.assertEqual("RANK", geometry["rankText"])
                 self.assertEqual(1, geometry["rankRects"])
-                self.assertGreaterEqual(geometry["podiumTop"], geometry["rankBottom"] - 4)
+                # The enlarged podium deliberately overlaps the lower edge of R-A-N,
+                # making those letters read as standing on places 2-1-3.
+                self.assertGreaterEqual(geometry["podiumTop"], geometry["rankBottom"] - 9)
                 self.assertLessEqual(geometry["podiumTop"], geometry["rankBottom"] + 8)
                 self.assertGreaterEqual(
-                    geometry["trophyWidth"], geometry["rankHeight"] * 0.82
+                    geometry["trophyWidth"], geometry["rankHeight"] * 1.25
                 )
+                transparent_values = {"transparent", "rgba(0, 0, 0, 0)"}
+                self.assertNotIn(geometry["fanColor"], transparent_values)
+                self.assertNotIn(geometry["fanFill"], transparent_values)
+                self.assertNotIn(geometry["rankColor"], transparent_values)
+                self.assertNotIn(geometry["rankFill"], transparent_values)
                 self.assertTrue(
-                    all(step["height"] >= 8 for step in geometry["podiumSteps"])
+                    all(
+                        step["height"] >= (16 if step["isFirst"] else 12)
+                        for step in geometry["podiumSteps"]
+                    )
                 )
                 self.assertTrue(
                     all(step["textInside"] for step in geometry["podiumSteps"])
