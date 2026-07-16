@@ -438,6 +438,10 @@ class FanRankVisualRegressionTests(unittest.TestCase):
                       const rail = section.querySelector('#fan-offer-cards');
                       const cards = [...section.querySelectorAll('.fan-offer-card')];
                       const buttons = [...section.querySelectorAll('[data-offer-interest]')];
+                      const entity = document.querySelector('#entity-support');
+                      const entityButton = entity.querySelector('#entity-support-interest');
+                      const proPlans = document.querySelector('#pro-plans');
+                      const pilot = document.querySelector('#pro-pilot-note');
                       const heading = section.querySelector('h2').getBoundingClientRect();
                       const topActions = document.querySelector('.top-actions');
                       const topActionsBox = topActions.getBoundingClientRect();
@@ -449,6 +453,11 @@ class FanRankVisualRegressionTests(unittest.TestCase):
                         clubText: cards[1].textContent.replace(/\\s+/g, ' ').trim(),
                         sponsorText: cards[2].textContent.replace(/\\s+/g, ' ').trim(),
                         contractText: section.querySelector('.fan-offer-contract').textContent.replace(/\\s+/g, ' ').trim(),
+                        entityText: entity.textContent.replace(/\\s+/g, ' ').trim(),
+                        entityButtonHeight: entityButton.getBoundingClientRect().height,
+                        entityBetweenPilotAndPlans: entity.previousElementSibling.classList.contains('pro-head') && entity.nextElementSibling === proPlans,
+                        pilotText: pilot.textContent.replace(/\\s+/g, ' ').trim(),
+                        planCount: proPlans.querySelectorAll('.pro-card').length,
                         sectionHeight: section.getBoundingClientRect().height,
                         railScrollable: rail.scrollWidth > rail.clientWidth + 2,
                         topActionsPosition: getComputedStyle(document.querySelector('.top-actions')).position,
@@ -462,21 +471,36 @@ class FanRankVisualRegressionTests(unittest.TestCase):
                 self.assertEqual(3, result["cardCount"])
                 self.assertEqual(3, result["buttonCount"])
                 self.assertGreaterEqual(result["minButtonHeight"], 44)
-                self.assertIn("15 €", result["founderText"])
+                self.assertIn("5 €", result["founderText"])
                 self.assertIn("pago único", result["founderText"])
+                self.assertIn("SOLO 500", result["founderText"])
+                self.assertIn("#N de 500", result["founderText"])
                 self.assertIn("La suscripción abre un canal", result["clubText"])
                 self.assertIn("ANUNCIO PAGADO", result["sponsorText"])
                 self.assertIn("nunca compra", result["contractText"])
+                self.assertIn("Apoyo de entidad", result["entityText"])
+                self.assertIn("15 € o aportación libre", result["entityText"])
+                self.assertIn("Todavía no se cobra", result["entityText"])
+                self.assertIn("Apoyar no compra", result["entityText"])
+                self.assertGreaterEqual(result["entityButtonHeight"], 44)
+                self.assertTrue(result["entityBetweenPilotAndPlans"])
+                self.assertIn("199 €", result["pilotText"])
+                self.assertEqual(3, result["planCount"])
                 self.assertLess(result["sectionHeight"], 900)
                 self.assertEqual(width <= 900, result["railScrollable"])
                 self.assertEqual("fixed", result["topActionsPosition"])
                 self.assertTrue(result["topActionsCompact"])
                 self.assertFalse(result["topActionsOverlapHeading"])
                 self.assertTrue(result["noOverflow"])
-                founder = page.locator('[data-offer-interest="fan_founder_15_once"]')
+                founder = page.locator('[data-offer-interest="fan_founder_5_once"]')
                 founder.click()
                 self.assertEqual("true", founder.get_attribute("aria-pressed"))
                 self.assertIn("Interés guardado", founder.text_content())
+                entity = page.locator('[data-offer-interest="entity_support_15_or_open"]')
+                entity.scroll_into_view_if_needed()
+                entity.click()
+                self.assertEqual("true", entity.get_attribute("aria-pressed"))
+                self.assertIn("Interés guardado", entity.text_content())
                 context.close()
 
         context = self.browser.new_context(

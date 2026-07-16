@@ -1029,7 +1029,7 @@ class StaticAppTests(unittest.TestCase):
         offer_markers = [
             'id="fan-offers"',
             'id="profile-club"',
-            'fan_founder_15_once',
+            'fan_founder_5_once',
             'profile_club_499_month',
             'idea_sponsor_concept_interest',
             'idea_sponsor_launch_interest',
@@ -1038,7 +1038,7 @@ class StaticAppTests(unittest.TestCase):
             'offer_seen:profile_club',
             'offer_seen:receipt_sponsor',
             'Fan fundador',
-            '15 €',
+            '5 €',
             'pago único',
             'ANUNCIO PAGADO',
             'Todavía no se cobra',
@@ -1054,7 +1054,7 @@ class StaticAppTests(unittest.TestCase):
         ]
         self.assertEqual([], [marker for marker in offer_markers if marker not in HTML])
         trust_markers = [
-            'No compra posición, nota IA, corazones, estrellas ni respuesta garantizada.',
+            'No compra posición, nota IA, corazones, estrellas, respuesta ni un número fingido.',
             'La suscripción abre un canal; no compra posición, respuesta ni aprobación.',
             'No cambia la nota IA ni la posición orgánica.',
         ]
@@ -1064,6 +1064,34 @@ class StaticAppTests(unittest.TestCase):
         for function_name in ("rankScore", "officialTeamScore", "sortedIdeas"):
             body = extract(rf"function {function_name}\([^)]*\)\{{([\s\S]*?)\n\}}")
             self.assertNotRegex(body, r"(?i)offer|sponsor|paid|payment|interest")
+
+    def test_founder_price_inversion_and_entity_support_are_interest_only(self) -> None:
+        founder_markers = [
+            'badge:"SOLO 500"',
+            'name:"Fan fundador",price:"5 €",suffix:"pago único"',
+            'recibirás tu número de Fundador: #N de 500',
+            'id:"fan_founder_5_once",label:"Me interesa por 5 €"',
+            'name:"Founding Fan",price:"€5",suffix:"one-time payment"',
+            'Founder number: #N of 500',
+        ]
+        self.assertEqual([], [marker for marker in founder_markers if marker not in HTML])
+        self.assertNotIn("fan_founder_15_once", HTML)
+        entity_markers = [
+            'id="entity-support"',
+            'data-offer-interest="entity_support_15_or_open"',
+            'entity_support_title:"Apoyo de entidad"',
+            'entity_support_price:"15 € o aportación libre"',
+            'entity_support_note:"Prueba de interés · Todavía no se cobra."',
+            'offer_seen:entity_support',
+            'recordOfferInterest("entity_support_15_or_open"',
+        ]
+        self.assertEqual([], [marker for marker in entity_markers if marker not in HTML])
+        self.assertIn(
+            'pro_pilot_note:"Piloto de equipo · 199 € durante 14 días · solo interés, todavía no cobra"',
+            HTML,
+        )
+        self.assertNotIn('id="entity-support-amount"', HTML)
+        self.assertNotRegex(HTML, r"(?i)founder_(count|remaining)|fundadores?\s+restantes")
 
     def test_team_signal_is_limited_and_not_a_public_identity_leak(self) -> None:
         rank_body = extract(r"function rankScore\(item\)\{([\s\S]*?)\n\}")

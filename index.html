@@ -243,6 +243,14 @@
   .pro-head p{max-width:680px;margin:7px 0 0;color:var(--muted);font-size:.88rem}
   .pro-pilot-note{max-width:230px;padding:10px 12px;border:1px solid rgba(255,209,41,.3);border-radius:12px;background:rgba(255,209,41,.06);
     color:var(--yellow);font-size:.73rem;font-weight:850;text-align:right}
+  .entity-support{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) minmax(205px,auto);align-items:center;gap:14px;margin-top:17px;padding:15px;
+    border:1px solid rgba(185,134,255,.46);border-radius:16px;background:linear-gradient(110deg,rgba(185,134,255,.09),rgba(99,179,255,.055));box-shadow:inset 0 0 34px rgba(185,134,255,.025)}
+  .entity-support-icon{display:grid;place-items:center;width:44px;height:44px;border:1px solid rgba(185,134,255,.42);border-radius:13px;background:rgba(185,134,255,.1);color:#d4b8ff;font-size:1.18rem}
+  .entity-support-kicker{display:block;color:#d4b8ff;font-size:.63rem;font-weight:950;letter-spacing:.09em;text-transform:uppercase}
+  .entity-support h3{margin:2px 0 0;font-size:1rem}.entity-support p{margin:4px 0 0;color:var(--muted);font-size:.75rem;line-height:1.45}
+  .entity-support-guard{display:block;margin-top:6px;color:var(--text);font-size:.68rem;font-weight:800;line-height:1.4}
+  .entity-support-action{min-width:205px;text-align:right}.entity-support-price{display:block;margin-bottom:6px;color:var(--yellow);font-size:.9rem;font-weight:950}
+  .entity-support-action .fan-offer-action{min-height:46px}.entity-support-note{display:block;margin-top:6px;color:var(--muted);font-size:.63rem;text-align:center}
   .pro-plans{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:17px}
   .pro-card{display:flex;flex-direction:column;min-width:0;padding:17px;border:1px solid var(--line);border-radius:17px;background:rgba(15,18,29,.9)}
   .pro-card.recommended{border-color:rgba(255,209,41,.62);box-shadow:inset 0 0 0 1px rgba(255,209,41,.1),0 14px 38px rgba(0,0,0,.25)}
@@ -749,6 +757,7 @@
     .wrap{padding-top:18px}
     .how{grid-template-columns:repeat(2,minmax(0,1fr))}
     .pro-head{grid-template-columns:1fr}.pro-pilot-note{max-width:none;text-align:left}.pro-plans{grid-template-columns:1fr}
+    .entity-support{grid-template-columns:auto minmax(0,1fr)}.entity-support-action{grid-column:1/-1;min-width:0;text-align:left}.entity-support-action .fan-offer-action{width:100%}
     .fan-offer-grid{display:flex;gap:10px;padding:1px 12px 8px 1px;overflow-x:auto;scrollbar-width:thin;scroll-snap-type:x mandatory}
     .fan-offer-card{flex:0 0 min(370px,calc(100% - 28px));scroll-snap-align:start}.fan-offer-copy{min-height:0}.fan-offers-swipe{display:block}
     .sections{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -792,6 +801,7 @@
     .pro-limit{min-height:0;margin-top:5px}
     .pro-list{gap:10px;font-size:.87rem}
     .pro-card .secondary-btn,.pro-card .primary-btn{min-height:48px}
+    .entity-support{padding:16px}.entity-support-price{text-align:left}.entity-support-action .fan-offer-action{min-height:48px}
     .fan-value{grid-template-columns:1fr;padding:18px;text-align:center}.fan-value-emblem{margin:0 auto}.fan-value-points{justify-content:center}
     .how{grid-template-columns:1fr}
     .form-grid{grid-template-columns:1fr;gap:18px}
@@ -1020,6 +1030,20 @@
         </div>
         <div class="pro-pilot-note" id="pro-pilot-note"></div>
       </div>
+      <article class="entity-support" id="entity-support" aria-labelledby="entity-support-title">
+        <span class="entity-support-icon" aria-hidden="true">↗</span>
+        <div>
+          <span class="entity-support-kicker" id="entity-support-kicker"></span>
+          <h3 id="entity-support-title"></h3>
+          <p id="entity-support-copy"></p>
+          <span class="entity-support-guard" id="entity-support-guard"></span>
+        </div>
+        <div class="entity-support-action">
+          <strong class="entity-support-price" id="entity-support-price"></strong>
+          <button class="secondary-btn fan-offer-action" id="entity-support-interest" type="button" data-offer-interest="entity_support_15_or_open" aria-pressed="false"></button>
+          <span class="entity-support-note" id="entity-support-note"></span>
+        </div>
+      </article>
       <div class="pro-plans" id="pro-plans"></div>
       <div class="pro-guard" id="pro-guard"></div>
     </section>
@@ -1773,7 +1797,7 @@ var T = {
     fan_offers_title:"Support the launch or a profile — without buying the ranking",
     fan_offers_intro:"Three different future products, each with a clear boundary. Mark interest now; FanRank does not charge anything yet.",
     fan_offers:[
-      {className:"founder",icon:"♥",badge:"ONE-TIME",name:"Founding Fan",price:"€15",suffix:"one-time payment",copy:"Support FanRank's launch, keep a permanent Founder badge and get five faster AI reviews when the plan opens.",guard:"Less waiting never means a better score or position.",actions:[{id:"fan_founder_15_once",label:"I'm interested for €15",primary:true}]},
+      {className:"founder",icon:"♥",badge:"ONLY 500",name:"Founding Fan",price:"€5",suffix:"one-time payment",copy:"Only the first 500. If activated, you'll receive your Founder number: #N of 500.",guard:"It never buys rank, AI score, hearts, stars, an answer or a made-up number.",actions:[{id:"fan_founder_5_once",label:"I'm interested for €5",primary:true}]},
       {className:"club",icon:"◎",badge:"PER PROFILE",name:"Profile Club",price:"€4.99",suffix:"/ month",copy:"Follow one chosen profile, receive its new topics and join idea rounds that the verified profile decides to open.",guard:"A subscription opens a channel; it never buys position, response or approval.",actions:[{id:"profile_club_499_month",label:"I want a Profile Club",primary:false}]},
       {className:"sponsor",icon:"↗",badge:"PAID AD",name:"Transparent idea boost",price:"From €3",suffix:"future test",copy:"Show an approved idea in a clearly separate sponsored space, either at launch or periodically.",guard:"It never changes the AI score or organic position.",actions:[{id:"idea_sponsor_concept_interest",label:"I'm interested in transparent promotion",primary:false}]}
     ],
@@ -1820,6 +1844,13 @@ var T = {
     pro_title:"From noisy feedback to the next decision",
     pro_intro:"FanRank groups duplicates, ranks opportunities and turns the strongest evidence into implementation briefs your team can accept, reject or investigate.",
     pro_pilot_note:"Team pilot · €199 for 14 days · interest only, no charge yet",
+    entity_support_kicker:"OPTIONAL LAUNCH SUPPORT",
+    entity_support_title:"Entity support",
+    entity_support_price:"€15 or any contribution",
+    entity_support_copy:"For companies, creators or public figures that want to support the launch without purchasing the Team pilot.",
+    entity_support_guard:"Support never buys rank, AI score, hearts, stars, an answer or preferential treatment.",
+    entity_support_cta:"I'm interested in supporting the launch",
+    entity_support_note:"Interest test · Nothing is charged yet.",
     pro_guard:"<b>Trust rule:</b> paying never changes organic rank, AI score, fan votes or official stars.",
     pro_plans:[
       {id:"signal",name:"Signal",price:"€149",suffix:"/ month",limit:"1 profile · 1,000 valid contributions / month",features:["Weekly differential digest","2 traceable implementation briefs / month","Duplicates, evidence and key risks"]},
@@ -2269,7 +2300,7 @@ var T = {
     fan_offers_title:"Apoya el lanzamiento o un perfil sin comprar el ranking",
     fan_offers_intro:"Tres productos futuros distintos y con límites claros. Marca tu interés ahora: FanRank todavía no cobra nada.",
     fan_offers:[
-      {className:"founder",icon:"♥",badge:"PAGO ÚNICO",name:"Fan fundador",price:"15 €",suffix:"pago único",copy:"Apoya el lanzamiento de FanRank, conserva una insignia Fundador y recibe cinco revisiones IA más rápidas cuando se active el plan.",guard:"No compra posición, nota IA, corazones, estrellas ni respuesta garantizada.",actions:[{id:"fan_founder_15_once",label:"Me interesa por 15 €",primary:true}]},
+      {className:"founder",icon:"♥",badge:"SOLO 500",name:"Fan fundador",price:"5 €",suffix:"pago único",copy:"Solo los primeros 500. Si se activa, recibirás tu número de Fundador: #N de 500.",guard:"No compra posición, nota IA, corazones, estrellas, respuesta ni un número fingido.",actions:[{id:"fan_founder_5_once",label:"Me interesa por 5 €",primary:true}]},
       {className:"club",icon:"◎",badge:"POR PERFIL",name:"Club de un perfil",price:"4,99 €",suffix:"/ mes",copy:"Sigue un perfil concreto, recibe sus nuevos temas y participa en las rondas de ideas que decida abrir el perfil verificado.",guard:"La suscripción abre un canal; no compra posición, respuesta ni aprobación.",actions:[{id:"profile_club_499_month",label:"Quiero un Club de perfil",primary:false}]},
       {className:"sponsor",icon:"↗",badge:"ANUNCIO PAGADO",name:"Impulso transparente",price:"Desde 3 €",suffix:"prueba futura",copy:"Muestra una idea aprobada en un espacio patrocinado claramente separado, solo al lanzarla o de forma periódica.",guard:"No cambia la nota IA ni la posición orgánica.",actions:[{id:"idea_sponsor_concept_interest",label:"Me interesa la promoción transparente",primary:false}]}
     ],
@@ -2316,6 +2347,13 @@ var T = {
     pro_title:"Del ruido del feedback a la siguiente decisión",
     pro_intro:"FanRank agrupa duplicados, ordena oportunidades y convierte la evidencia más fuerte en briefs de implementación que el equipo puede aceptar, descartar o investigar.",
     pro_pilot_note:"Piloto de equipo · 199 € durante 14 días · solo interés, todavía no cobra",
+    entity_support_kicker:"APOYO OPCIONAL AL LANZAMIENTO",
+    entity_support_title:"Apoyo de entidad",
+    entity_support_price:"15 € o aportación libre",
+    entity_support_copy:"Para empresas, creadores o figuras públicas que quieran apoyar el lanzamiento sin contratar el Piloto de equipo.",
+    entity_support_guard:"Apoyar no compra posición, nota IA, corazones, estrellas, respuesta ni trato preferente.",
+    entity_support_cta:"Me interesa apoyar el lanzamiento",
+    entity_support_note:"Prueba de interés · Todavía no se cobra.",
     pro_guard:"<b>Regla de confianza:</b> pagar nunca cambia el ranking orgánico, la nota IA, los corazones de fans ni las estrellas oficiales.",
     pro_plans:[
       {id:"signal",name:"Signal",price:"149 €",suffix:"/ mes",limit:"1 perfil · 1.000 aportaciones válidas / mes",features:["Digest semanal diferencial","2 briefs de implementación trazables / mes","Duplicados, evidencia y riesgos clave"]},
@@ -3736,6 +3774,16 @@ function applyStaticText(){
   byId("pro-title").textContent = tx("pro_title");
   byId("pro-intro").textContent = tx("pro_intro");
   byId("pro-pilot-note").textContent = tx("pro_pilot_note");
+  byId("entity-support-kicker").textContent = tx("entity_support_kicker");
+  byId("entity-support-title").textContent = tx("entity_support_title");
+  byId("entity-support-price").textContent = tx("entity_support_price");
+  byId("entity-support-copy").textContent = tx("entity_support_copy");
+  byId("entity-support-guard").textContent = tx("entity_support_guard");
+  byId("entity-support-note").textContent = tx("entity_support_note");
+  var entitySupportButton = byId("entity-support-interest");
+  entitySupportButton.dataset.offerLabel = tx("entity_support_cta");
+  updateOfferButton(entitySupportButton);
+  observeOfferPlacement(byId("entity-support"),"pro_interest","offer_seen:entity_support");
   byId("pro-guard").innerHTML = tx("pro_guard");
   byId("profile-pro-title").textContent = tx("profile_pro_title");
   byId("profile-pro-copy").textContent = tx("profile_pro_copy");
@@ -4947,6 +4995,7 @@ byId("suggest-sign-in").addEventListener("click",function(){openAuth("suggest");
 byId("account-btn").addEventListener("click",function(){session ? openActivity() : openAuth();});
 byId("profile-pro-open").addEventListener("click",function(){openPro("decision");});
 byId("profile-club-interest").addEventListener("click",function(){recordOfferInterest("profile_club_499_month",byId("profile-club-interest"));});
+byId("entity-support-interest").addEventListener("click",function(){recordOfferInterest("entity_support_15_or_open",byId("entity-support-interest"));});
 function updateTopActions(){byId("top-actions").classList.toggle("compact",window.scrollY > 80);}
 window.addEventListener("scroll",updateTopActions,{passive:true});
 window.addEventListener("load",updateTopActions,{once:true});
