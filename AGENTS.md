@@ -9,6 +9,7 @@ Antes de modificar producto, interfaz, datos o copy, lee completo `PRODUCT_INVAR
 - Mantén `♥` fans, `★` entidad verificada y `◆` impacto verificado como señales separadas.
 - Ningún pago, recompensa o plan puede alterar directa o indirectamente el ranking orgánico.
 - Verifica como mínimo 320, 375, 768 y 1440 px, foco visible y `prefers-reduced-motion`.
+- Antes de cada commit o publicación ejecuta `git status --short`; si `PRODUCT_INVARIANTS.json` cambió fuera del parche actual, reléelo e integra su ciclo de vida en vez de sobrescribirlo. Dentro de MADRE ejecuta además `python ..\..\INVARIANTES\verificar.py fanrank`.
 - Antes de afirmar que está listo ejecuta `python tests/test_fanrank.py` y `python tests/test_visual_regression.py`, y conserva la salida real.
 
 Las reglas globales de MADRE siguen vigentes; este archivo solo añade el contrato específico de FanRank.

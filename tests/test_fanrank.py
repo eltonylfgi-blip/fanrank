@@ -144,6 +144,8 @@ class StaticAppTests(unittest.TestCase):
         )
         self.assertIn("PRODUCT_INVARIANTS.json", LOCAL_AGENT_CONTRACT)
         self.assertIn("tests/test_visual_regression.py", LOCAL_AGENT_CONTRACT)
+        self.assertIn("git status --short", LOCAL_AGENT_CONTRACT)
+        self.assertIn(r"INVARIANTES\verificar.py fanrank", LOCAL_AGENT_CONTRACT)
         self.assertNotRegex(
             HTML,
             r"[.]logo-fan,[.]rank-text\{[^}]*color:transparent",
