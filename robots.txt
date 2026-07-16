@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://eltonylfgi-blip.github.io/fanrank/sitemap.xml
