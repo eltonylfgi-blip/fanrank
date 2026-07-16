@@ -32,6 +32,8 @@ INVARIANTS_PATH = ROOT / "PRODUCT_INVARIANTS.json"
 INVARIANTS = json.loads(INVARIANTS_PATH.read_text(encoding="utf-8"))
 LOCAL_AGENT_CONTRACT = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 SOCIAL_CARD = ROOT / "social-card.png"
+PROFILE_STUB_GENERATOR = ROOT / "tools" / "generate_profile_stubs.py"
+PROFILE_STUB_ROOT = ROOT / "p"
 OWNER_JS_PATH = ROOT / "owner-studio.js"
 OWNER_CSS_PATH = ROOT / "owner-studio.css"
 OWNER_JS = OWNER_JS_PATH.read_text(encoding="utf-8")
@@ -599,6 +601,8 @@ class StaticAppTests(unittest.TestCase):
             "fanSuggestionUrl",
             "teamInviteUrl",
             "sectionUrl",
+            "profileStubUrl",
+            "appIdeaUrl",
             "ideaUrl",
         )
         functions = "\n".join(extract_js_function(name) for name in function_names)
@@ -609,6 +613,7 @@ class StaticAppTests(unittest.TestCase):
                 'var URL_LANGUAGE="es";',
                 'var SAVED_LANGUAGE=null;',
                 'var SECTION="orslok";',
+                'var APP_URL="https://eltonylfgi-blip.github.io/fanrank/";',
                 'var sections=[{slug:"orslok",default_language:"es"}];',
                 (
                     'var location={origin:"https://eltonylfgi-blip.github.io",pathname:"/fanrank/",'
@@ -619,6 +624,7 @@ class StaticAppTests(unittest.TestCase):
                 (
                     'console.log(JSON.stringify({'
                     'home:homeUrl(),section:sectionUrl("orslok",true),'
+                    'appIdea:appIdeaUrl({section:"orslok",id:17}),'
                     'idea:ideaUrl({section:"orslok",id:17}),fan:fanProfileUrl("tony"),'
                     'fanIdea:fanSuggestionUrl({section:"orslok",idea_id:17}),'
                     'invite:teamInviteUrl("invite-token")'
@@ -645,7 +651,9 @@ class StaticAppTests(unittest.TestCase):
                 self.assertEqual(["1"], urllib.parse.parse_qs(url.query).get("qa"))
         self.assertEqual(["orslok"], urllib.parse.parse_qs(parsed["section"].query).get("s"))
         self.assertEqual(["1"], urllib.parse.parse_qs(parsed["section"].query).get("suggest"))
+        self.assertEqual("/fanrank/", parsed["appIdea"].path)
         self.assertEqual(["17"], urllib.parse.parse_qs(parsed["idea"].query).get("idea"))
+        self.assertEqual("/fanrank/p/orslok/", parsed["idea"].path)
         self.assertEqual(["tony"], urllib.parse.parse_qs(parsed["fan"].query).get("fan"))
         self.assertEqual(["17"], urllib.parse.parse_qs(parsed["fanIdea"].query).get("idea"))
         self.assertEqual("invite=invite-token", parsed["invite"].fragment)
@@ -697,6 +705,7 @@ class StaticAppTests(unittest.TestCase):
                     'var URL_LANGUAGE="' + language + '";',
                     'var SAVED_LANGUAGE=null;',
                     'var SECTION="orslok";',
+                    'var APP_URL="https://eltonylfgi-blip.github.io/fanrank/";',
                     'var sections=[{slug:"orslok",default_language:"es"}];',
                     (
                         'var location={origin:"https://eltonylfgi-blip.github.io",pathname:"/fanrank/",'
@@ -707,13 +716,15 @@ class StaticAppTests(unittest.TestCase):
                         extract_js_function(name)
                         for name in (
                             "normalizeLanguage", "persistentUrl", "profileDefaultLanguage",
-                            "setUrlLanguage", "homeUrl", "sectionUrl", "ideaUrl",
+                            "setUrlLanguage", "homeUrl", "sectionUrl", "profileStubUrl",
+                            "appIdeaUrl", "ideaUrl",
                             "fanProfileUrl", "fanSuggestionUrl", "teamInviteUrl",
                         )
                     ),
                     (
                         'console.log(JSON.stringify(['
-                        'homeUrl(),sectionUrl("orslok",true),ideaUrl({section:"orslok",id:17}),'
+                        'homeUrl(),sectionUrl("orslok",true),appIdeaUrl({section:"orslok",id:17}),'
+                        'ideaUrl({section:"orslok",id:17}),'
                         'fanProfileUrl("tony"),fanSuggestionUrl({section:"orslok",idea_id:17}),'
                         'teamInviteUrl("invite-token")'
                         ']));'
@@ -1317,6 +1328,41 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual(["x"], urllib.parse.parse_qs(urllib.parse.urlsplit(x_query["url"][0]).query).get("ref"))
         self.assertIn("Top real & útil", whatsapp_query["text"][0])
         self.assertEqual(["whatsapp"], urllib.parse.parse_qs(urllib.parse.urlsplit(whatsapp_query["text"][0].split()[-1]).query).get("ref"))
+
+    def test_profile_stubs_have_unique_og_and_safe_query_preserving_redirects(self) -> None:
+        self.assertTrue(PROFILE_STUB_GENERATOR.exists())
+        generator = PROFILE_STUB_GENERATOR.read_text(encoding="utf-8")
+        for marker in (
+            "fr_sections_stats?select=slug,name,default_language",
+            "fr_ranking?select=id,section,title,title_es,ai_score,web_votes,origin_upvotes",
+            "def render_stub(profile: dict, top_ideas: list[dict]) -> str:",
+            'PRESERVED_QUERY_KEYS = ("idea", "ref", "lang", "qa")',
+        ):
+            self.assertIn(marker, generator)
+
+        stubs = sorted(PROFILE_STUB_ROOT.glob("*/index.html"))
+        self.assertGreaterEqual(len(stubs), 10)
+        for stub in stubs:
+            with self.subTest(slug=stub.parent.name):
+                slug = stub.parent.name
+                raw = stub.read_text(encoding="utf-8")
+                canonical = f"https://eltonylfgi-blip.github.io/fanrank/p/{slug}/"
+                self.assertIn(f'<link rel="canonical" href="{canonical}">', raw)
+                self.assertIn(f'<meta property="og:url" content="{canonical}">', raw)
+                self.assertIn('<meta property="og:title" content="Ideas para ', raw)
+                self.assertIn('<meta name="twitter:card" content="summary_large_image">', raw)
+                self.assertIn('social-card.png?v=2', raw)
+                self.assertIn('["idea","ref","lang","qa"]', raw)
+                self.assertIn('location.replace("/fanrank/?" + target.toString())', raw)
+                self.assertIn(f'<noscript><a href="/fanrank/?s={slug}">', raw)
+
+        self.assertIn("function profileStubUrl(slug,language,ideaId)", HTML)
+        self.assertIn("function appIdeaUrl(item,language)", HTML)
+        self.assertIn("return profileStubUrl(item.section,language,item.id);", HTML)
+        self.assertIn("return withReferral(profileStubUrl(SECTION,language,null),\"fan_share\");", HTML)
+        self.assertIn('href="\' + esc(appIdeaUrl(item)) + \'"', HTML)
+        self.assertIn("location.href = appIdeaUrl(matches.ideas[0]);", HTML)
+
 
 def api_request(path: str, method: str = "GET", body: dict | None = None) -> tuple[int, str]:
     data = json.dumps(body).encode("utf-8") if body is not None else None

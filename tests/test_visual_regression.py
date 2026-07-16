@@ -13,6 +13,7 @@ from __future__ import annotations
 import functools
 import http.server
 import threading
+import time
 import unittest
 from pathlib import Path
 
@@ -221,6 +222,122 @@ class FanRankVisualRegressionTests(unittest.TestCase):
                 self.assertGreaterEqual(result["titleWidth"], 240)
                 self.assertLess(result["suggestTop"], 812)
                 context.close()
+
+    def test_share_dialog_fits_320_and_exposes_human_intents(self) -> None:
+        context = self.browser.new_context(
+            viewport={"width": 320, "height": 812},
+            locale="es-ES",
+        )
+        page = context.new_page()
+        page_errors: list[str] = []
+        page.on("pageerror", lambda error: page_errors.append(str(error)))
+        page.goto(
+            self.base_url + "?s=brawl-stars&lang=es&qa=1&local=cold-share",
+            wait_until="domcontentloaded",
+        )
+        page.locator("#profile-share").wait_for(state="visible")
+        page.locator("#profile-share").click()
+        page.locator("#share-dialog[open]").wait_for(state="visible")
+        result = page.evaluate(
+            """
+            () => {
+              const dialog = document.querySelector('#share-dialog');
+              const box = dialog.getBoundingClientRect();
+              const text = document.querySelector('#share-preview').value;
+              const previewLines = text.split('\\n');
+              const sharedUrl = previewLines.pop();
+              const shareText = previewLines.join('\\n');
+              const x = document.querySelector('#share-x');
+              const whatsapp = document.querySelector('#share-whatsapp');
+              return {
+                viewport: innerWidth,
+                scrollWidth: document.documentElement.scrollWidth,
+                dialogLeft: box.left,
+                dialogRight: box.right,
+                shareTextLength: shareText.length,
+                sharedUrl,
+                rankedLines: shareText.split('\\n').filter(line => /^\\d\\) /.test(line)).length,
+                xHref: x.href,
+                whatsappHref: whatsapp.href,
+                xHeight: x.getBoundingClientRect().height,
+                whatsappHeight: whatsapp.getBoundingClientRect().height,
+                xTarget: x.target,
+                whatsappTarget: whatsapp.target,
+                xRel: x.rel,
+                whatsappRel: whatsapp.rel
+              };
+            }
+            """
+        )
+        self.assertEqual([], page_errors)
+        self.assertLessEqual(result["scrollWidth"], result["viewport"])
+        self.assertGreaterEqual(result["dialogLeft"], 0)
+        self.assertLessEqual(result["dialogRight"], result["viewport"])
+        self.assertLessEqual(result["shareTextLength"], 255)
+        self.assertEqual(3, result["rankedLines"])
+        self.assertIn("/fanrank/p/brawl-stars/", result["sharedUrl"])
+        self.assertTrue(result["xHref"].startswith("https://x.com/intent/post?"))
+        self.assertTrue(result["whatsappHref"].startswith("https://wa.me/?text="))
+        self.assertGreaterEqual(result["xHeight"], 44)
+        self.assertGreaterEqual(result["whatsappHeight"], 44)
+        self.assertEqual("_blank", result["xTarget"])
+        self.assertEqual("_blank", result["whatsappTarget"])
+        self.assertIn("noopener", result["xRel"])
+        self.assertIn("noopener", result["whatsappRel"])
+        print(
+            "[MEASURE] share_dialog_viewport=320 "
+            f"scroll_width={result['scrollWidth']} text_chars={result['shareTextLength']}"
+        )
+        context.close()
+
+    def test_anonymous_vote_stays_within_ten_seconds_from_cold_load(self) -> None:
+        context = self.browser.new_context(
+            viewport={"width": 320, "height": 812},
+            locale="es-ES",
+        )
+        page = context.new_page()
+        page_errors: list[str] = []
+        vote_requests: list[dict] = []
+        page.on("pageerror", lambda error: page_errors.append(str(error)))
+
+        def intercept_vote(route) -> None:
+            vote_requests.append(route.request.post_data_json)
+            route.fulfill(status=204, headers={"Content-Length": "0"}, body="")
+
+        page.route("**/rest/v1/fr_votes*", intercept_vote)
+        started = time.perf_counter()
+        page.goto(
+            self.base_url + "?lang=es&qa=1&local=cold-anonymous-vote",
+            wait_until="domcontentloaded",
+        )
+        vote_button = page.locator("[data-home-vote]").first
+        vote_button.wait_for(state="visible")
+        idea_id = vote_button.get_attribute("data-home-vote")
+        self.assertIsNotNone(idea_id)
+        vote_button.click()
+        page.wait_for_function(
+            """
+            ideaId => JSON.parse(localStorage.getItem('fr_myvotes') || '[]')
+              .includes(Number(ideaId))
+            """,
+            arg=idea_id,
+        )
+        elapsed_seconds = time.perf_counter() - started
+        supported = page.locator(f'[data-home-vote="{idea_id}"]')
+        supported.wait_for(state="visible")
+
+        self.assertEqual([], page_errors)
+        self.assertLessEqual(elapsed_seconds, 10)
+        self.assertEqual(1, len(vote_requests))
+        self.assertIsNone(vote_requests[0]["user_id"])
+        self.assertTrue(str(vote_requests[0]["voter"]).startswith("v_"))
+        self.assertTrue(supported.is_disabled())
+        self.assertIn("Apoyada", supported.text_content())
+        print(
+            f"[MEASURE] cold_anonymous_vote_seconds={elapsed_seconds:.3f} "
+            f"viewport=320 intercepted_writes={len(vote_requests)}"
+        )
+        context.close()
 
     def test_verified_profile_does_not_reserve_an_empty_claim_column(self) -> None:
         context = self.browser.new_context(

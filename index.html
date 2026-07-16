@@ -3649,12 +3649,21 @@ function sectionUrl(slug,quickSuggest,quickClaim,language){
   if(quickClaim){url.searchParams.set("claim","1");}
   return url.pathname + url.search;
 }
-function ideaUrl(item,language){
+function appIdeaUrl(item,language){
   var url = persistentUrl(location.origin + location.pathname);
   url.searchParams.set("s",item.section);
   url.searchParams.set("idea",String(item.id));
   setUrlLanguage(url,normalizeLanguage(language) || profileDefaultLanguage(item.section));
   return url.href;
+}
+function profileStubUrl(slug,language,ideaId){
+  var url = persistentUrl(new URL("p/" + encodeURIComponent(slug) + "/",APP_URL));
+  setUrlLanguage(url,normalizeLanguage(language) || profileDefaultLanguage(slug));
+  if(ideaId !== null && ideaId !== undefined){url.searchParams.set("idea",String(ideaId));}
+  return url.href;
+}
+function ideaUrl(item,language){
+  return profileStubUrl(item.section,language,item.id);
 }
 var REFERRAL_SOURCES = {fan_share:true,idea_share:true,reddit:true,discord:true,x:true,whatsapp:true};
 function referralSource(){
@@ -3676,7 +3685,7 @@ function buildShareIntentUrls(payload){
   };
 }
 function profileShareUrl(language){
-  return withReferral(location.origin + sectionUrl(SECTION,false,false,language),"fan_share");
+  return withReferral(profileStubUrl(SECTION,language,null),"fan_share");
 }
 
 function applyStaticText(){
@@ -4121,7 +4130,7 @@ function renderTrending(){
     var meta = sections.find(function(s){return s.slug === item.section;});
     var voted = mine.indexOf(item.id) >= 0;
     var signal = homeRankMode === "fans" ? tx("global_fan_signal",Number(item.web_votes||0)) : tx("global_ai_signal",Math.round(Number(item.ai_score||0)));
-    return '<article class="trend-card rank-' + (index+1) + '"><a class="trend-link" href="' + esc(ideaUrl(item)) + '" data-idea-open="' + item.id + '">' +
+    return '<article class="trend-card rank-' + (index+1) + '"><a class="trend-link" href="' + esc(appIdeaUrl(item)) + '" data-idea-open="' + item.id + '">' +
       '<span class="trend-rank"><span class="trend-rank-label">' + esc(tx("top_label")) + '</span><strong class="trend-rank-number">#' + (index+1) + '</strong></span>' +
       '<span class="trend-title">' + esc(ideaTitle(item)) + '</span>' +
       '<span class="trend-meta">' + esc(meta ? meta.name : item.section) + '</span></a>' +
@@ -4233,7 +4242,7 @@ function renderSearchPanel(query){
       (searchTags ? ' · ' + esc(searchTags) : '') + '</span></span><span class="result-arrow">→</span></a>';
   });
   matches.ideas.forEach(function(item){
-    html += '<a class="search-result" href="' + esc(ideaUrl(item)) + '" data-search-idea="' + item.id + '">' +
+    html += '<a class="search-result" href="' + esc(appIdeaUrl(item)) + '" data-search-idea="' + item.id + '">' +
       '<span class="result-avatar" aria-hidden="true">#</span><span><span class="result-title">' + esc(ideaTitle(item)) +
       '</span><span class="result-meta">' + esc(tx("search_idea")) + ' · ' + esc(item.section) +
       '</span></span><span class="result-arrow">→</span></a>';
@@ -4809,7 +4818,7 @@ byId("search-form").addEventListener("submit",function(event){
     location.href = sectionUrl(matches.sections[0].slug,false,ownerSearchMode);
   }else if(matches.ideas.length){
     sendEvent("idea_open",{section:matches.ideas[0].section,idea_id:matches.ideas[0].id,value:"search_submit"});
-    location.href = ideaUrl(matches.ideas[0]);
+    location.href = appIdeaUrl(matches.ideas[0]);
   }else{
     requestFromSearch(query);
   }
