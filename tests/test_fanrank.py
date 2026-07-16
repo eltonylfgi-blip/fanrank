@@ -47,6 +47,9 @@ EVIDENCE_MIGRATION = ROOT / "supabase" / "migrations" / "20260715190000_fanrank_
 EVIDENCE_SQL = EVIDENCE_MIGRATION.read_text(encoding="utf-8")
 TEAM_INBOX_MIGRATION = ROOT / "supabase" / "migrations" / "20260715193000_fanrank_v11_team_submission_inbox.sql"
 TEAM_INBOX_SQL = TEAM_INBOX_MIGRATION.read_text(encoding="utf-8")
+TOPICS_MIGRATION = ROOT / "supabase" / "migrations" / "20260716034000_fanrank_v12_profile_topics.sql"
+CLAIM_INTEGRITY_MIGRATION = ROOT / "supabase" / "migrations" / "20260716043000_fanrank_v14_claim_integrity.sql"
+CLAIM_INTEGRITY_SQL = CLAIM_INTEGRITY_MIGRATION.read_text(encoding="utf-8")
 MEDIA_INTAKE_PATH = ROOT / "supabase" / "functions" / "fanrank-feedback-intake" / "index.ts"
 MEDIA_INTAKE = MEDIA_INTAKE_PATH.read_text(encoding="utf-8")
 ANDROID_PROMPT_PATH = ROOT / "docs" / "FANRANK_ANDROID_GEMINI_PROMPT.md"
@@ -582,6 +585,103 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual(["17"], urllib.parse.parse_qs(parsed["fanIdea"].query).get("idea"))
         self.assertEqual("invite=invite-token", parsed["invite"].fragment)
 
+    def test_owner_verification_cta_is_honest_secondary_and_measurable(self) -> None:
+        markers = [
+            'id="home-owner-verify"',
+            'owner_verify_kicker:"FOR CREATORS AND COMPANIES"',
+            'owner_verify_kicker:"\u00a1VERIF\u00cdCATE YA COMO FAMOSO O EMPRESA!"',
+            'owner_verify_title:"Verify your profile and turn it into your feedback hub"',
+            'owner_verify_title:"Verifica tu perfil y convi\u00e9rtelo en tu centro de feedback"',
+            'owner_verify_copy:"Personal\u00edzalo, crea temas y pide ideas a tu audiencia."',
+            'owner_verify_action:"Request verification"',
+            'owner_verify_action:"Solicitar verificaci\u00f3n"',
+            'sendEvent("owner_cta_open"',
+            'params.get("claim") === "1"',
+            'searchParams.set("claim","1")',
+        ]
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
+        self.assertLess(HTML.index('id="home-suggest"'), HTML.index('id="home-owner-verify"'))
+        self.assertLess(HTML.index('id="home-owner-verify"'), HTML.index('class="global-rank-block"'))
+        self.assertRegex(HTML, r"[.]owner-verify-cta\{[^}]*background:transparent")
+        self.assertRegex(HTML, r"[.]owner-verify-cta\{[^}]*min-height:48px")
+
+    def test_verified_profiles_reject_new_or_duplicate_claims(self) -> None:
+        client_markers = [
+            'item.verification_status !== "verified"',
+            'if(secMeta.verification_status === "verified")',
+            'if(!secMeta || secMeta.verification_status === "verified")',
+            'claim_already_verified:"This profile is already verified.',
+            'claim_already_verified:"Este perfil ya est\u00e1 verificado.',
+        ]
+        self.assertEqual([], [marker for marker in client_markers if marker not in HTML])
+        self.assertGreaterEqual(HTML.count('secMeta.verification_status === "verified"'), 3)
+
+        normalized = re.sub(r"\s+", " ", CLAIM_INTEGRITY_SQL.lower()).strip()
+        server_markers = [
+            "create unique index if not exists fr_claims_one_pending_per_user_section_idx",
+            "where status = 'pending'",
+            "create or replace function fanrank_private.fr_validate_pending_claim_target()",
+            "verification_status is distinct from 'verified'",
+            "create trigger fr_claims_validate_pending_target",
+            "drop policy if exists fr_claims_authenticated_insert",
+            "user_id = (select auth.uid())",
+        ]
+        self.assertEqual([], [marker for marker in server_markers if marker not in normalized])
+
+    def test_profile_topics_have_server_caps_safe_management_and_real_ui(self) -> None:
+        sql = TOPICS_MIGRATION.read_text(encoding="utf-8")
+        normalized = re.sub(r"\s+", " ", sql.lower()).strip()
+        sql_markers = [
+            "create table public.fr_profile_topics",
+            "topic_tier in ('normal', 'pro', 'business', 'plus')",
+            "when 'normal' then 5",
+            "when 'pro' then 20",
+            "when 'business' then 100",
+            "when 'plus' then 200",
+            "alter table public.fr_profile_topics enable row level security",
+            "with (security_invoker = true)",
+            "create or replace function public.fr_upsert_profile_topic",
+            "create or replace function public.fr_archive_profile_topic",
+            "create or replace function public.fr_set_idea_topic",
+            "set search_path = ''",
+            "for update",
+            "status = 'active'",
+            "verified profile owner or administrator required",
+            "grant execute on function public.fr_upsert_profile_topic",
+            "to authenticated",
+            "topic_id bigint",
+            "references public.fr_profile_topics(id)",
+            "add column if not exists topic_id",
+        ]
+        self.assertEqual([], [marker for marker in sql_markers if marker not in normalized])
+        self.assertNotRegex(
+            normalized,
+            r"grant execute on function public[.]fr_(upsert_profile_topic|archive_profile_topic|set_idea_topic)[^;]*anon",
+        )
+        self.assertNotIn("checkout", normalized)
+        self.assertNotIn("stripe", normalized)
+
+        html_markers = [
+            'id="profile-topics"',
+            'id="topic-manager"',
+            'id="submit-topic-field"',
+            'function loadProfileTopics()',
+            'function renderProfileTopics()',
+            'callRpc("fr_upsert_profile_topic"',
+            'callRpc("fr_archive_profile_topic"',
+            'callRpc("fr_set_idea_topic"',
+            'topic_id:currentSuggestionTopic()',
+            'formData.append("topic_id"',
+            'topic_limit',
+            'topic_active_count',
+        ]
+        self.assertEqual([], [marker for marker in html_markers if marker not in HTML])
+        intake_markers = [
+            'const topicId = optionalPositiveIntegerField(form, "topic_id")',
+            "topic_id: topicId",
+        ]
+        self.assertEqual([], [marker for marker in intake_markers if marker not in MEDIA_INTAKE])
+
     def test_mobile_suggestion_cta_never_competes_with_inline_cta(self) -> None:
         markers = [
             "body.profile-live.mobile-cta-ready .mobile-suggest",
@@ -596,9 +696,10 @@ class StaticAppTests(unittest.TestCase):
 
     def test_every_emitted_event_is_allowed_and_qa_is_excluded(self) -> None:
         emitted = set(re.findall(r'sendEvent\("([a-z0-9_]+)"', HTML + "\n" + OWNER_JS))
+        event_sql = EVIDENCE_SQL + "\n" + (TOPICS_MIGRATION.read_text(encoding="utf-8") if TOPICS_MIGRATION.exists() else "")
         blocks = re.findall(
             r"add constraint fr_events_event_check\s+check \(event in \((.*?)\)\);",
-            EVIDENCE_SQL,
+            event_sql,
             re.DOTALL | re.IGNORECASE,
         )
         self.assertTrue(blocks)
@@ -792,7 +893,17 @@ class StaticAppTests(unittest.TestCase):
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
         self.assertRegex(HTML, r"[.]logo-art\{[^}]*max-width:calc\(100vw - 32px\)")
-        self.assertRegex(HTML, r"[.]rank-trophy\{[^}]*width:[.]74em;height:[.]74em")
+        self.assertRegex(
+            HTML,
+            r"[.]rank-letter,[.]rank-k\{[^}]*padding-inline:[.]06em;margin-inline:-[.]06em",
+        )
+        self.assertRegex(HTML, r"[.]logo-art\{[^}]*padding:[.]18em [.]72em [.]55em")
+        self.assertRegex(HTML, r"[.]podium-step\{[^}]*bottom:-2[.]85em")
+        self.assertRegex(HTML, r"[.]rank-trophy\{[^}]*width:[.]86em;height:[.]86em")
+        self.assertRegex(
+            HTML,
+            r"@media \(max-width:560px\)\{[\s\S]*?[.]logo-art\{[^}]*padding:[.]18em [.]72em [.]55em",
+        )
         self.assertLess(HTML.index('id="home-suggest"'), HTML.index('id="directory-filters"'))
 
         sorted_ideas = extract(r"function sortedIdeas\(source\)\{([\s\S]*?)\n\}")
@@ -863,7 +974,7 @@ def api_request(path: str, method: str = "GET", body: dict | None = None) -> tup
 class LiveBoundaryTests(unittest.TestCase):
     def test_public_directory_and_rankings_are_readable(self) -> None:
         status, raw = api_request(
-            "fr_sections_stats?select=slug,name,kind,tags,featured_rank,ideas,recent_ideas,fan_votes,verification_status,team_member_star_cap"
+            "fr_sections_stats?select=slug,name,kind,tags,featured_rank,ideas,recent_ideas,fan_votes,verification_status,team_member_star_cap,topic_tier,topic_limit,topic_active_count"
         )
         self.assertEqual(200, status, raw)
         sections = json.loads(raw)
@@ -882,10 +993,13 @@ class LiveBoundaryTests(unittest.TestCase):
         self.assertEqual("verified", by_slug["fanrank"]["verification_status"])
         self.assertEqual(1, by_slug["fanrank"]["featured_rank"])
         self.assertEqual(1, by_slug["fanrank"]["team_member_star_cap"])
+        self.assertEqual("normal", by_slug["fanrank"]["topic_tier"])
+        self.assertEqual(5, by_slug["fanrank"]["topic_limit"])
+        self.assertEqual(0, by_slug["fanrank"]["topic_active_count"])
 
         query = urllib.parse.urlencode(
             {
-                "select": "id,section,title,ai_score,web_votes,team_interest_count,owner_pick,owner_star_value,team_star_support_count",
+                "select": "id,section,title,ai_score,web_votes,team_interest_count,owner_pick,owner_star_value,team_star_support_count,topic_id,topic_title,topic_status",
                 "section": "eq.brawl-stars",
             }
         )
@@ -897,6 +1011,14 @@ class LiveBoundaryTests(unittest.TestCase):
         self.assertTrue(all(row["owner_pick"] is False for row in ideas))
         self.assertTrue(all(row["owner_star_value"] == 0 for row in ideas))
         self.assertTrue(all(row["team_star_support_count"] == 0 for row in ideas))
+        self.assertTrue(all(row["topic_id"] is None for row in ideas))
+
+        status, raw = api_request("fr_profile_topics_public?select=id,section,title,description,status,sort_order")
+        self.assertEqual(200, status, raw)
+        self.assertEqual([], json.loads(raw))
+
+        status, raw = api_request("fr_profile_topics?select=created_by")
+        self.assertIn(status, (401, 403), raw)
 
     def test_private_queues_cannot_be_read_anonymously(self) -> None:
         for table in (
@@ -947,6 +1069,15 @@ class LiveBoundaryTests(unittest.TestCase):
                     "goal": "This direct write must be rejected",
                 },
             ),
+            (
+                "fr_profile_topics",
+                {
+                    "section": "fanrank",
+                    "title": "Anonymous topic",
+                    "created_by": "00000000-0000-0000-0000-000000000000",
+                    "updated_by": "00000000-0000-0000-0000-000000000000",
+                },
+            ),
         ]
         for table, body in probes:
             with self.subTest(table=table):
@@ -966,6 +1097,18 @@ class LiveBoundaryTests(unittest.TestCase):
             ("fr_my_team_stars", {"p_section": "brawl-stars"}),
             ("fr_set_team_star_cap", {"p_section": "fanrank", "p_cap": 3}),
             ("fr_team_submission_inbox", {"p_section": "fanrank", "p_limit": 1}),
+            (
+                "fr_upsert_profile_topic",
+                {
+                    "p_section": "fanrank",
+                    "p_topic_id": None,
+                    "p_title": "Anonymous topic",
+                    "p_description": "Must be rejected",
+                    "p_sort_order": 100,
+                },
+            ),
+            ("fr_archive_profile_topic", {"p_section": "fanrank", "p_topic_id": 1}),
+            ("fr_set_idea_topic", {"p_idea_id": 1, "p_topic_id": None}),
             (
                 "fr_create_profile_invite",
                 {"p_section": "brawl-stars", "p_email": "nobody@example.com", "p_role": "contributor"},

@@ -37,7 +37,7 @@
     --radius:18px;--ease:cubic-bezier(.2,.7,.2,1);
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
+  html{scroll-behavior:smooth;overflow-x:hidden}
   body{
     margin:0;min-height:100dvh;background:var(--bg);color:var(--text);
     font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -79,7 +79,7 @@
   .logo{position:relative;display:inline-flex;align-items:center;text-decoration:none;isolation:isolate;
     filter:drop-shadow(0 10px 34px rgba(0,0,0,.38));transition:filter .3s ease}
   .logo-float{display:inline-flex;animation:logoFloatIdle 5.6s cubic-bezier(.45,0,.55,1) infinite}
-  .logo-art{position:relative;display:inline-flex;align-items:flex-end;max-width:calc(100vw - 32px);padding:.18em .72em .43em;
+  .logo-art{position:relative;display:inline-flex;align-items:flex-end;max-width:calc(100vw - 32px);padding:.18em .72em .55em;
     font-size:clamp(2.7rem,7.1vw,4.75rem);font-weight:950;line-height:.84;transform-origin:50% 72%;
     transition:transform .24s var(--ease),filter .24s ease}
   .logo-word{position:relative;z-index:2;display:inline-flex;align-items:flex-end;letter-spacing:-.078em;white-space:nowrap}
@@ -103,18 +103,19 @@
   body.team-mode .brand-mark{filter:drop-shadow(0 0 10px rgba(255,209,41,.72)) drop-shadow(0 0 26px rgba(255,209,41,.32))}
   .logo-rank{position:relative;display:inline-flex;align-items:flex-end;margin-left:.015em;padding:0 .01em .17em 0;font-style:italic}
   .rank-place{position:relative;z-index:2;display:inline-flex;align-items:flex-end}
+  .rank-letter,.rank-k{padding-inline:.06em;margin-inline:-.06em}
   .rank-letter{position:relative;z-index:2}
   .rank-r{transform:translateY(.04em)}
   .rank-a{transform:translateY(-.05em)}
   .rank-n{transform:translateY(.06em)}
   .rank-k{position:relative;z-index:2;transform:translateY(.06em)}
-  .podium-step{position:absolute;left:51%;bottom:-1.8em;z-index:1;display:grid;place-items:center;width:4em;height:1.12em;
+  .podium-step{position:absolute;left:51%;bottom:-2.85em;z-index:1;display:grid;place-items:center;width:4em;height:1.12em;
     transform:translateX(-50%);border:1px solid rgba(255,255,255,.25);border-radius:.28em .28em .12em .12em;
     color:#0b0d14;font-size:.18em;font-style:normal;font-weight:950;letter-spacing:0;line-height:1}
   .rank-r .podium-step{background:linear-gradient(180deg,#f4f7ff,#9ba8c2)}
   .rank-a .podium-step{height:1.58em;background:linear-gradient(180deg,#fff09a,var(--yellow));box-shadow:0 0 14px rgba(255,209,41,.42)}
   .rank-n .podium-step{background:linear-gradient(180deg,#ffc28b,#c27649)}
-  .rank-trophy{position:relative;z-index:3;flex:0 0 auto;width:.74em;height:.74em;margin-left:.09em;transform:translateY(-.07em) rotate(6deg);overflow:visible;
+  .rank-trophy{position:relative;z-index:3;flex:0 0 auto;width:.86em;height:.86em;margin-left:.12em;transform:translateY(-.03em) rotate(5deg);overflow:visible;
     color:var(--yellow);filter:drop-shadow(0 0 8px rgba(255,209,41,.72)) drop-shadow(0 0 18px rgba(255,174,32,.3));transition:transform .28s var(--ease),filter .28s ease}
   .logo:before{content:"";position:absolute;inset:-18px -28px;z-index:-1;border-radius:999px;opacity:0;
     background:radial-gradient(circle,rgba(255,255,255,.45) 0 2%,transparent 3%),
@@ -176,13 +177,23 @@
   .search-empty b{display:block;color:var(--text);margin-bottom:3px}
   .search-empty button{margin-top:10px}
 
-  .hero-action-row{display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;margin:11px auto 0}
+  .hero-action-row{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center;gap:8px;margin:11px auto 0}
+  .fan-action-primary{display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap}
   .hero-suggest{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 18px;border:1px solid rgba(255,114,198,.62);
     border-radius:13px;background:linear-gradient(115deg,rgba(255,114,198,.17),rgba(185,134,255,.12));color:#ffd9ee;font-weight:950;
     box-shadow:0 10px 32px rgba(255,114,198,.08);transition:transform .18s var(--ease),border-color .18s ease,background .18s ease}
   .hero-suggest span:first-child{color:var(--pink);font-size:1.08rem;filter:drop-shadow(0 0 8px rgba(255,114,198,.55))}
   .hero-suggest:hover{transform:translateY(-2px);border-color:var(--pink);background:linear-gradient(115deg,rgba(255,114,198,.24),rgba(185,134,255,.17))}
   .hero-action-note{color:var(--muted);font-size:.75rem}
+  .owner-verify-cta{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:3px 14px;width:min(660px,100%);min-height:48px;
+    padding:9px 12px;border:1px solid rgba(255,209,41,.26);border-radius:13px;background:transparent;color:var(--muted);text-align:left;
+    transition:border-color .18s ease,background .18s ease,transform .18s var(--ease)}
+  .owner-verify-cta:hover{transform:translateY(-1px);border-color:rgba(255,209,41,.62);background:rgba(255,209,41,.055)}
+  .owner-verify-copy{display:grid;gap:1px;min-width:0}
+  .owner-verify-kicker{color:var(--yellow);font-size:.62rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+  .owner-verify-title{color:var(--text);font-size:.79rem;font-weight:900;line-height:1.25}
+  .owner-verify-detail{font-size:.7rem;line-height:1.3}
+  .owner-verify-action{color:var(--blue);font-size:.75rem;font-weight:900;text-decoration:underline;text-underline-offset:.18em;white-space:nowrap}
   body.profile-live .hero-action-row{display:none}
 
   .crumb{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 0;
@@ -278,6 +289,20 @@
     border-radius:999px;background:var(--bg-soft);color:var(--muted);font-size:.7rem}
   .chip.hot{color:var(--yellow)}
   .chip.category{border-color:rgba(99,179,255,.26);color:var(--blue)}
+  .profile-topics{margin:14px 0;padding:14px;border:1px solid rgba(99,179,255,.24);border-radius:15px;background:rgba(99,179,255,.035)}
+  .profile-topics-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .profile-topics-head h2{margin:0;font-size:.94rem}.profile-topics-head p{margin:2px 0 0;color:var(--muted);font-size:.72rem}
+  .topic-filters{display:flex;gap:7px;margin-top:11px;overflow-x:auto;scrollbar-width:thin}
+  .topic-filter{flex:0 0 auto;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg-soft);color:var(--muted);font-size:.74rem;font-weight:850}
+  .topic-filter:hover{border-color:var(--blue);color:var(--text)}.topic-filter.active{border-color:var(--blue);background:rgba(99,179,255,.13);color:var(--blue)}
+  .topic-manager{margin:14px 0;padding:14px;border:1px solid rgba(99,179,255,.28);border-radius:14px;background:rgba(99,179,255,.035)}
+  .topic-manager-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.topic-manager-head b{display:block}.topic-manager-head span{display:block;color:var(--muted);font-size:.72rem}
+  .topic-quota{flex:0 0 auto;padding:6px 9px;border:1px solid rgba(255,209,41,.32);border-radius:999px;color:var(--yellow);font-size:.7rem;font-weight:900}
+  .topic-plan-note{margin:9px 0 0;color:var(--muted);font-size:.68rem}
+  .topic-list{display:flex;flex-direction:column;gap:7px;margin-top:11px}.topic-list-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:10px;border:1px solid var(--line-soft);border-radius:11px;background:var(--bg-soft)}
+  .topic-list-item b{display:block;font-size:.8rem}.topic-list-item span{display:block;color:var(--muted);font-size:.68rem}.topic-list-actions{display:flex;align-items:center;gap:6px}
+  .topic-list-actions button{min-height:44px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--text);font-size:.7rem;font-weight:850}
+  .topic-chip{border-color:rgba(185,134,255,.3);color:#d8bfff}
 
   .global-rank-block{position:relative;margin-top:20px;padding:18px;border:1px solid rgba(99,179,255,.28);border-radius:22px;
     background:linear-gradient(145deg,rgba(15,20,34,.96),rgba(24,18,38,.9));box-shadow:0 20px 70px rgba(0,0,0,.22);overflow:hidden}
@@ -611,11 +636,12 @@
     .top-btn{padding-inline:10px}
     header{padding-top:52px}
     .brand-lockup{padding:8px 4px 0}
-    .logo-art{font-size:clamp(2.05rem,9.8vw,3.1rem);padding:.18em .72em .43em}
+    .logo-art{font-size:clamp(2.05rem,11.5vw,3.1rem);padding:.18em .72em .55em}
     .eyebrow{margin-right:5%;padding:4px 8px}
     .search-shell{grid-template-columns:21px minmax(0,1fr) auto;gap:7px;padding:6px 7px 6px 13px}
     .search-btn{padding-inline:12px}
-    .hero-action-row{align-items:stretch;flex-direction:column}.hero-suggest{width:100%}.hero-action-note{text-align:center}
+    .hero-action-row{align-items:stretch}.fan-action-primary{display:grid;width:100%;gap:6px}.hero-suggest{width:100%}.hero-action-note{text-align:center}
+    .owner-verify-cta{grid-template-columns:1fr;text-align:center}.owner-verify-action{white-space:normal}
     .global-rank-block{padding:15px;border-radius:19px}
     .directory-block{margin-inline:0;padding:15px;border-radius:19px}
     .directory-block .section-head{align-items:flex-start}
@@ -637,6 +663,7 @@
     .form-grid{grid-template-columns:1fr;gap:18px}
     .field.full{grid-column:auto}
     .claim-bar{align-items:flex-start;flex-direction:column}
+    .profile-topics-head,.topic-manager-head{align-items:stretch;flex-direction:column}.profile-topics-head .secondary-btn{width:100%}.topic-list-item{grid-template-columns:1fr}.topic-list-actions button{flex:1}
     .profile-pro{align-items:flex-start;flex-direction:column}.profile-pro .secondary-btn{width:100%}
     .podium{gap:6px}
     .podium-card{padding:11px 7px}
@@ -745,8 +772,18 @@
       </div>
       <div class="search-panel hidden" id="search-panel" aria-live="polite"></div>
       <div class="hero-action-row" id="hero-actions">
-        <button class="hero-suggest" id="home-suggest" type="button"><span aria-hidden="true">♥</span><span id="home-suggest-text"></span></button>
-        <span class="hero-action-note" id="home-suggest-note"></span>
+        <div class="fan-action-primary">
+          <button class="hero-suggest" id="home-suggest" type="button"><span aria-hidden="true">♥</span><span id="home-suggest-text"></span></button>
+          <span class="hero-action-note" id="home-suggest-note"></span>
+        </div>
+        <button class="owner-verify-cta" id="home-owner-verify" type="button">
+          <span class="owner-verify-copy">
+            <span class="owner-verify-kicker" id="owner-verify-kicker"></span>
+            <span class="owner-verify-title" id="owner-verify-title"></span>
+            <span class="owner-verify-detail" id="owner-verify-copy"></span>
+          </span>
+          <span class="owner-verify-action" id="owner-verify-action"></span>
+        </button>
       </div>
     </form>
 
@@ -860,6 +897,13 @@
         <span id="claim-open-text"></span>
       </button>
     </div>
+    <section class="profile-topics hidden" id="profile-topics" aria-labelledby="profile-topics-title">
+      <div class="profile-topics-head">
+        <div><h2 id="profile-topics-title"></h2><p id="profile-topics-copy"></p></div>
+        <button class="secondary-btn hidden" id="topic-manager-open" type="button"></button>
+      </div>
+      <div class="topic-filters" id="topic-filters" role="toolbar"></div>
+    </section>
     <div class="signal-strip" id="signal-strip" aria-label="Ranking signals">
       <span id="signal-ai"></span><span id="signal-fans"></span><span id="signal-team"></span>
     </div>
@@ -963,6 +1007,11 @@
           <label id="submit-target-label" for="submit-target"></label>
           <select class="inline-select" id="submit-target" required></select>
           <span class="helper" id="submit-target-help"></span>
+        </div>
+        <div class="field full hidden" id="submit-topic-field">
+          <label id="submit-topic-label" for="submit-topic"></label>
+          <select class="inline-select" id="submit-topic"></select>
+          <span class="helper" id="submit-topic-help"></span>
         </div>
         <div class="field full">
           <label id="submit-idea-label" for="submit-idea"></label>
@@ -1227,6 +1276,32 @@
         <select class="inline-select" id="team-star-cap"><option value="1">1 â˜…</option><option value="3">3 â˜…</option></select>
       </label>
     </section>
+    <section class="topic-manager" id="topic-manager" aria-labelledby="topic-manager-title">
+      <div class="topic-manager-head">
+        <div><b id="topic-manager-title"></b><span id="topic-manager-copy"></span></div>
+        <span class="topic-quota" id="topic-quota"></span>
+      </div>
+      <p class="topic-plan-note" id="topic-plan-note"></p>
+      <form id="topic-form" novalidate>
+        <input id="topic-edit-id" type="hidden">
+        <div class="form-grid">
+          <div class="field">
+            <label id="topic-title-label" for="topic-title"></label>
+            <input id="topic-title" minlength="2" maxlength="80" required>
+          </div>
+          <div class="field">
+            <label id="topic-description-label" for="topic-description"></label>
+            <input id="topic-description" maxlength="500">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="primary-btn" id="topic-save" type="submit"></button>
+          <button class="secondary-btn hidden" id="topic-edit-cancel" type="button"></button>
+        </div>
+        <div class="form-status" id="topic-status" role="status" aria-live="polite"></div>
+      </form>
+      <div class="topic-list" id="topic-list"></div>
+    </section>
     <form id="team-invite-form" novalidate>
       <div class="form-grid">
         <div class="field">
@@ -1298,6 +1373,7 @@ var TELEMETRY_DISABLED = params.get("qa") === "1";
 var SECTION = params.get("s");
 var FAN_HANDLE = String(params.get("fan") || "").trim().toLowerCase();
 var QUICK_SUGGEST = params.get("suggest") === "1";
+var QUICK_CLAIM = params.get("claim") === "1";
 var QUICK_PRO = params.get("pro") === "1";
 var PRO_PLAN_PARAM = ["signal","decision","portfolio"].indexOf(params.get("plan")) >= 0 ? params.get("plan") : "decision";
 var DEEP_IDEA = parseInt(params.get("idea") || "0", 10) || null;
@@ -1315,6 +1391,7 @@ var homeRankMode = "ai";
 var suggestionSection = SECTION || "";
 var directoryExpanded = false;
 var profileQuery = "";
+var ownerSearchMode = false;
 var toastTimer = null;
 var formStartedAt = Date.now();
 var ephemeralVisitor = "v_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -1331,6 +1408,9 @@ var pendingProPlan = PRO_PLAN_PARAM;
 var recoveryHandled = false;
 var pendingMedia = [];
 var pendingLinks = [];
+var profileTopics = [];
+var suggestionTopics = [];
+var profileTopicFilter = null;
 var currentFanProfile = null;
 var mobileCtaObserver = null;
 try{
@@ -1367,6 +1447,11 @@ var T = {
     home_trust:[["♥","Anonymous if you want"],["✦","AI groups and ranks"],["★","Verified teams add stars"]],
     home_suggest:"Suggest something now",
     home_suggest_note:"Anonymous by default · about 30 seconds",
+    owner_verify_kicker:"FOR CREATORS AND COMPANIES",
+    owner_verify_title:"Verify your profile and turn it into your feedback hub",
+    owner_verify_copy:"Customize it, create topics, and ask your audience for ideas.",
+    owner_verify_action:"Request verification",
+    owner_verify_search:"Search for your creator, company or project profile",
     loading:"Loading live rankings…",
     profiles_title:"Choose who to improve",
     profiles_subtitle:"Open a profile or send a suggestion in one tap.",
@@ -1409,6 +1494,9 @@ var T = {
     submit_target_placeholder:"Choose a profile",
     submit_target_help:"This lets FanRank compare your idea with the right feedback.",
     submit_target_error:"Choose a creator, game, company or platform first.",
+    submit_topic_label:"Topic <span class='optional'>(optional)</span>",
+    submit_topic_none:"No specific topic",
+    submit_topic_help:"Choose one when the verified team has organized the feedback into topics.",
     top_label:"TOP IDEA",
     source_votes:"support at source",
     source_votes_help:"Support received on the original post; these are not FanRank hearts.",
@@ -1624,6 +1712,30 @@ var T = {
     team_star_cap_copy:"Choose whether admins and contributors can give up to 1 or 3 stars. Only the owner can change it.",
     team_star_cap_label:"Maximum stars per partner",
     team_star_cap_saved:"Partner star limit saved.",
+    profile_topics_title:"Topics requested by this profile",
+    profile_topics_copy:"Filter the ranking or send your idea directly to one topic.",
+    topic_all:"All ideas",
+    topic_manage:"Manage topics",
+    topic_filter_label:"Filter ideas by topic",
+    topic_manager_title:"Feedback topics",
+    topic_manager_copy:"Create focused spaces for the ideas you want from your audience.",
+    topic_quota:function(count,limit,tier){return String(tier || "normal").toUpperCase() + " · " + count + "/" + limit + " active";},
+    topic_plan_note:"Capacity: Normal 5 · Pro 20 · Business 100 · Plus 200 active topics. Plans never change rank or visibility; upgrades are not sold here yet.",
+    topic_title_label:"Topic name *",
+    topic_description_label:"What should the audience contribute?",
+    topic_save:"Create topic",
+    topic_update:"Save changes",
+    topic_edit_cancel:"Cancel edit",
+    topic_edit:"Edit",
+    topic_archive:"Archive",
+    topic_archive_confirm:"Archive this topic? Existing ideas keep their history and one active slot is freed.",
+    topic_empty:"No active topics yet.",
+    topic_saved:"Topic saved.",
+    topic_archived:"Topic archived. One active slot is now free.",
+    topic_limit_reached:"The active-topic limit has been reached. Archive one to create another.",
+    topic_assignment_label:"Official topic",
+    topic_unassigned:"No topic",
+    topic_assigned:"Idea topic saved.",
     team_email_label:"Teammate email *",
     team_role_label:"Permission",
     team_role_contributor:"Contributor · can rate up to the chosen limit",
@@ -1664,6 +1776,7 @@ var T = {
     claim_send:"Send verification request",
     claim_cancel:"Cancel",
     claim_ok:"Claim received. Nothing changes publicly until it is verified.",
+    claim_already_verified:"This profile is already verified. Its team can manage it from FanRank ★.",
     receipt_profile_title:"Turn this idea into your Fan portfolio",
     receipt_profile_copy:"Create a FanRank ♥ profile to keep your best suggestions, impact and team recognition in one shareable place.",
     receipt_profile_button:"Create my Fan profile",
@@ -1763,6 +1876,11 @@ var T = {
     home_trust:[["♥","Anónimo si quieres"],["✦","La IA agrupa y ordena"],["★","Equipos verificados dan estrellas"]],
     home_suggest:"Dejar una sugerencia ahora",
     home_suggest_note:"Anónima por defecto · unos 30 segundos",
+    owner_verify_kicker:"¡VERIFÍCATE YA COMO FAMOSO O EMPRESA!",
+    owner_verify_title:"Verifica tu perfil y conviértelo en tu centro de feedback",
+    owner_verify_copy:"Personalízalo, crea temas y pide ideas a tu audiencia.",
+    owner_verify_action:"Solicitar verificación",
+    owner_verify_search:"Busca el perfil de tu creador, empresa o proyecto",
     loading:"Cargando rankings vivos…",
     profiles_title:"Elige a quién mejorar",
     profiles_subtitle:"Abre un perfil o manda una sugerencia con un toque.",
@@ -1805,6 +1923,9 @@ var T = {
     submit_target_placeholder:"Elige un perfil",
     submit_target_help:"Así FanRank compara tu idea con el feedback correcto.",
     submit_target_error:"Elige primero un creador, videojuego, empresa o plataforma.",
+    submit_topic_label:"Tema <span class='optional'>(opcional)</span>",
+    submit_topic_none:"Sin tema concreto",
+    submit_topic_help:"Elígelo cuando el equipo verificado haya organizado el feedback por temas.",
     top_label:"IDEA TOP",
     source_votes:"apoyo en la fuente",
     source_votes_help:"Apoyo recibido en la publicación original; no son corazones de FanRank.",
@@ -1954,6 +2075,30 @@ var T = {
     team_star_cap_copy:"Elige si administradores y colaboradores pueden dar hasta 1 o 3 estrellas. Solo lo cambia el dueño.",
     team_star_cap_label:"Máximo de estrellas por socio",
     team_star_cap_saved:"Límite de estrellas guardado.",
+    profile_topics_title:"Temas que pide este perfil",
+    profile_topics_copy:"Filtra el ranking o envía tu idea directamente a un tema.",
+    topic_all:"Todas las ideas",
+    topic_manage:"Gestionar temas",
+    topic_filter_label:"Filtrar ideas por tema",
+    topic_manager_title:"Temas de feedback",
+    topic_manager_copy:"Crea espacios claros para las ideas que quieres pedir a tu audiencia.",
+    topic_quota:function(count,limit,tier){return String(tier || "normal").toUpperCase() + " · " + count + "/" + limit + " activos";},
+    topic_plan_note:"Capacidad: Normal 5 · Pro 20 · Business 100 · Plus 200 temas activos. Los planes nunca cambian el ranking ni la visibilidad; todavía no se compran aquí.",
+    topic_title_label:"Nombre del tema *",
+    topic_description_label:"¿Qué debería aportar la audiencia?",
+    topic_save:"Crear tema",
+    topic_update:"Guardar cambios",
+    topic_edit_cancel:"Cancelar edición",
+    topic_edit:"Editar",
+    topic_archive:"Archivar",
+    topic_archive_confirm:"¿Archivar este tema? Las ideas conservan su historial y se libera un espacio activo.",
+    topic_empty:"Todavía no hay temas activos.",
+    topic_saved:"Tema guardado.",
+    topic_archived:"Tema archivado. Ya hay un espacio activo libre.",
+    topic_limit_reached:"Has alcanzado el límite de temas activos. Archiva uno para crear otro.",
+    topic_assignment_label:"Tema oficial",
+    topic_unassigned:"Sin tema",
+    topic_assigned:"Tema de la idea guardado.",
     team_email_label:"Correo del miembro *",
     team_role_label:"Permiso",
     team_role_contributor:"Colaborador · valora hasta el límite elegido",
@@ -1994,6 +2139,7 @@ var T = {
     claim_send:"Enviar solicitud de verificación",
     claim_cancel:"Cancelar",
     claim_ok:"Solicitud recibida. Nada cambia públicamente hasta verificarla.",
+    claim_already_verified:"Este perfil ya está verificado. Su equipo puede gestionarlo desde FanRank ★.",
     receipt_profile_title:"Convierte esta idea en tu portfolio Fan",
     receipt_profile_copy:"Crea un perfil FanRank ♥ para reunir tus mejores sugerencias, impacto y reconocimiento de equipos en un enlace.",
     receipt_profile_button:"Crear mi perfil Fan",
@@ -2397,6 +2543,46 @@ function populateSuggestionTargets(){
   }).join("");
   if(sections.some(function(item){return item.slug === suggestionSection;})){select.value = suggestionSection;}
 }
+function currentSuggestionTopic(){
+  var select = byId("submit-topic");
+  var value = select && select.value ? Number(select.value) : null;
+  return Number.isSafeInteger(value) && value > 0 ? value : null;
+}
+function populateSuggestionTopics(rows){
+  suggestionTopics = Array.isArray(rows) ? rows.filter(function(topic){return topic.status === "active";}) : [];
+  var field = byId("submit-topic-field");
+  var select = byId("submit-topic");
+  if(!select || !field){return;}
+  var selected = Number(select.value || 0);
+  select.innerHTML = '<option value="">' + esc(tx("submit_topic_none")) + '</option>' + suggestionTopics.map(function(topic){
+    return '<option value="' + Number(topic.id) + '">' + esc(topic.title) + '</option>';
+  }).join("");
+  if(suggestionTopics.some(function(topic){return Number(topic.id) === selected;})){select.value = String(selected);}
+  field.classList.toggle("hidden",suggestionTopics.length === 0);
+}
+async function loadSuggestionTopics(){
+  var target = currentSuggestionSection();
+  if(!target){populateSuggestionTopics([]);return;}
+  if(SECTION && target === SECTION){populateSuggestionTopics(profileTopics);return;}
+  try{
+    var rows = await api("fr_profile_topics_public?select=id,section,title,description,status,sort_order&section=eq." +
+      encodeURIComponent(target) + "&status=eq.active&order=sort_order.asc,id.asc");
+    populateSuggestionTopics(rows || []);
+  }catch(error){populateSuggestionTopics([]);}
+}
+async function loadProfileTopics(){
+  var previousFilter = profileTopicFilter;
+  profileTopics = [];
+  if(!SECTION){return;}
+  try{
+    profileTopics = await api("fr_profile_topics_public?select=id,section,title,description,status,sort_order&section=eq." +
+      encodeURIComponent(SECTION) + "&status=eq.active&order=sort_order.asc,id.asc");
+    profileTopicFilter = previousFilter && profileTopics.some(function(topic){return Number(topic.id) === Number(previousFilter);})
+      ? previousFilter
+      : null;
+  }catch(error){profileTopics = [];profileTopicFilter = null;}
+  suggestionTopics = profileTopics.slice();
+}
 function saveDraft(){
   var targetSection = currentSuggestionSection();
   var draft = {
@@ -2408,6 +2594,7 @@ function saveDraft(){
     attribution:suggestionAttribution(),
     category:(document.querySelector('input[name="submit-category"]:checked') || {}).value || "auto",
     trainingConsent:byId("submit-training-consent").checked,
+    topicId:currentSuggestionTopic(),
     links:pendingLinks.map(function(item){return item.canonicalUrl;})
   };
   try{
@@ -2433,6 +2620,9 @@ function restoreDraft(){
     var category = document.querySelector('input[name="submit-category"][value="' + String(draft.category || "auto").replace(/[^a-z_]/g,"") + '"]');
     if(category){category.checked = true;}
     byId("submit-training-consent").checked = !!(session && draft.trainingConsent);
+    if(draft.topicId && suggestionTopics.some(function(topic){return Number(topic.id) === Number(draft.topicId);})){
+      byId("submit-topic").value = String(draft.topicId);
+    }
     if(session && draft.attribution === "account"){byId("attribution-account").checked = true;}
     else if(draft.attribution === "contact"){byId("attribution-contact").checked = true;}
     pendingLinks = Array.isArray(draft.links) ? draft.links.slice(0,3).map(normalizeEvidenceLink).filter(Boolean) : [];
@@ -2529,13 +2719,14 @@ function setupMobileCta(){
     document.body.classList.toggle("mobile-cta-ready",rect.bottom < 0 || rect.top > window.innerHeight);
   }
 }
-function openSuggestion(){
+async function openSuggestion(){
   formStartedAt = Date.now();
   byId("submit-target-field").classList.toggle("hidden",!!SECTION);
   var context = byId("submit-target-context");
   context.classList.toggle("hidden",!(SECTION && secMeta));
   context.textContent = SECTION && secMeta ? tx("submit_for",secMeta.name) : "";
   if(!SECTION){populateSuggestionTargets();}
+  await loadSuggestionTopics();
   restoreDraft();
   renderSimilarIdeas();
   renderPendingMedia();
@@ -2623,7 +2814,7 @@ async function initAuth(){
     setTimeout(async function(){
       await loadMembership();
       updateAccountUI();
-      if(SECTION && secMeta){renderIdeas();}
+      if(SECTION && secMeta){renderProfile();}
       if(event === "PASSWORD_RECOVERY"){
         sendEvent("auth_recovery_requested",{section:SECTION || null,value:"link_verified"});
         await openPasswordRecovery();
@@ -2819,7 +3010,8 @@ function renderTeamSubmissions(rows){
     var contact = row.can_contact && (row.author || row.contact) ? '<div class="team-submission-contact"><b>' +
       esc(tx("team_submission_contact")) + ':</b> ' + esc([row.author,row.contact].filter(Boolean).join(" · ")) + '</div>' : "";
     return '<article class="activity-item"><b>' + esc(row.title) + '</b><div class="activity-meta"><span class="status-pill received">' +
-      esc(statusText(row.status)) + '</span><span>' + esc(category) + '</span></div>' +
+      esc(statusText(row.status)) + '</span><span>' + esc(category) + '</span>' +
+      (row.topic_title ? '<span class="chip topic-chip"># ' + esc(row.topic_title) + '</span>' : "") + '</div>' +
       (row.details ? '<div class="team-submission-copy">' + esc(row.details) + '</div>' : "") +
       evidenceLinkPills(row.evidence_links) + contact + '</article>';
   }).join("");
@@ -2844,13 +3036,37 @@ async function loadTeam(){
     byId("team-list").innerHTML = '<div class="empty-state">' + esc(tx("generic_error")) + '</div>';
   }
 }
+async function refreshProfileTopics(activeCount){
+  await loadProfileTopics();
+  if(secMeta){secMeta.topic_active_count = Number.isFinite(Number(activeCount)) ? Number(activeCount) : profileTopics.length;}
+  populateSuggestionTopics(profileTopics);
+  renderProfile();
+  renderTopicManager();
+}
+async function archiveProfileTopic(topicId,button){
+  if(!canManageTeam() || !window.confirm(tx("topic_archive_confirm"))){return;}
+  setBusy(button,true);
+  try{
+    var result = await callRpc("fr_archive_profile_topic",{p_section:SECTION,p_topic_id:topicId});
+    var returned = Array.isArray(result) ? result[0] : result;
+    if(Number(profileTopicFilter) === Number(topicId)){profileTopicFilter = null;}
+    resetTopicForm();
+    await refreshProfileTopics(returned && returned.active_count);
+    sendEvent("topic_archived",{section:SECTION,value:String(topicId)});
+    setStatus("topic-status",tx("topic_archived"),"ok");
+  }catch(error){
+    button.disabled = false;
+    setStatus("topic-status",tx("generic_error"),"err");
+  }
+}
 async function openTeam(){
   if(!canManageTeam()){return;}
   byId("invite-result").classList.add("hidden");
   setStatus("team-status","","");
   updateTeamRoleControl();
   openDialog("team-dialog");
-  await Promise.all([loadTeam(),loadTeamSubmissions()]);
+  await Promise.all([loadTeam(),loadTeamSubmissions(),loadProfileTopics()]);
+  renderTopicManager();
 }
 async function setTeamStarCap(select){
   if(!(membership && membership.role === "owner")){return;}
@@ -2918,11 +3134,12 @@ function withLanguage(url){
   if(LANG === "es"){target.searchParams.set("lang","es");}
   return target.pathname + target.search + target.hash;
 }
-function sectionUrl(slug,quickSuggest){
+function sectionUrl(slug,quickSuggest,quickClaim){
   var url = persistentUrl(location.pathname);
   url.searchParams.set("s",slug);
   if(LANG === "es"){url.searchParams.set("lang","es");}
   if(quickSuggest){url.searchParams.set("suggest","1");}
+  if(quickClaim){url.searchParams.set("claim","1");}
   return url.pathname + url.search;
 }
 function ideaUrl(item){
@@ -2963,6 +3180,10 @@ function applyStaticText(){
   byId("search-btn").textContent = tx("search_button");
   byId("home-suggest-text").textContent = tx("home_suggest");
   byId("home-suggest-note").textContent = tx("home_suggest_note");
+  byId("owner-verify-kicker").textContent = tx("owner_verify_kicker");
+  byId("owner-verify-title").textContent = tx("owner_verify_title");
+  byId("owner-verify-copy").textContent = tx("owner_verify_copy");
+  byId("owner-verify-action").textContent = tx("owner_verify_action");
   byId("loading-text").textContent = tx("loading");
   byId("profiles-title").textContent = tx("profiles_title");
   byId("profiles-subtitle").textContent = tx("profiles_subtitle");
@@ -2998,6 +3219,10 @@ function applyStaticText(){
   byId("claim-bar-title").textContent = tx("claim_bar_title");
   byId("claim-bar-copy").textContent = tx("claim_bar_copy");
   byId("claim-open-text").textContent = tx("claim_open");
+  byId("profile-topics-title").textContent = tx("profile_topics_title");
+  byId("profile-topics-copy").textContent = tx("profile_topics_copy");
+  byId("topic-manager-open").textContent = tx("topic_manage");
+  byId("topic-filters").setAttribute("aria-label",tx("topic_filter_label"));
   byId("filter-label").textContent = tx("filter_label");
   byId("idea-filter").placeholder = tx("filter_placeholder");
   byId("tab-balanced").textContent = tx("tab_balanced");
@@ -3017,6 +3242,8 @@ function applyStaticText(){
   byId("submit-intro").textContent = tx("submit_intro");
   byId("submit-target-label").textContent = tx("submit_target_label");
   byId("submit-target-help").textContent = tx("submit_target_help");
+  byId("submit-topic-label").innerHTML = tx("submit_topic_label");
+  byId("submit-topic-help").textContent = tx("submit_topic_help");
   byId("submit-idea-label").textContent = tx("idea_label");
   byId("submit-idea-help").textContent = tx("idea_help");
   byId("category-legend").textContent = tx("category_legend");
@@ -3124,6 +3351,13 @@ function applyStaticText(){
   byId("team-star-cap-title").textContent = tx("team_star_cap_title");
   byId("team-star-cap-copy").textContent = tx("team_star_cap_copy");
   byId("team-star-cap-label").textContent = tx("team_star_cap_label");
+  byId("topic-manager-title").textContent = tx("topic_manager_title");
+  byId("topic-manager-copy").textContent = tx("topic_manager_copy");
+  byId("topic-plan-note").textContent = tx("topic_plan_note");
+  byId("topic-title-label").textContent = tx("topic_title_label");
+  byId("topic-description-label").textContent = tx("topic_description_label");
+  byId("topic-save").textContent = tx("topic_save");
+  byId("topic-edit-cancel").textContent = tx("topic_edit_cancel");
   byId("team-email-label").textContent = tx("team_email_label");
   byId("team-role-label").textContent = tx("team_role_label");
   byId("team-role-contributor").textContent = tx("team_role_contributor");
@@ -3408,7 +3642,8 @@ function renderSearchPanel(query){
   var html = "";
   matches.sections.forEach(function(item){
     var searchTags = sectionTags(item).slice(0,2).map(tagLabel).join(" · ");
-    html += '<a class="search-result" href="' + esc(sectionUrl(item.slug)) + '" data-search-profile="' + esc(item.slug) + '">' +
+    var canRequestClaim = ownerSearchMode && item.verification_status !== "verified";
+    html += '<a class="search-result" href="' + esc(sectionUrl(item.slug,false,canRequestClaim)) + '" data-search-profile="' + esc(item.slug) + '">' +
       sectionAvatar(item,"result-avatar") +
       '<span><span class="result-title">' + esc(item.name) + '</span><span class="result-meta">' + esc(kindLabel(item.kind)) +
       (searchTags ? ' · ' + esc(searchTags) : '') + '</span></span><span class="result-arrow">→</span></a>';
@@ -3478,6 +3713,15 @@ function teamStarControlHtml(item){
   return '<label class="team-star-control"><span class="team-star-label">' + esc(tx("team_star_label")) +
     '</span><select data-team-star="' + item.id + '" aria-label="' + esc(tx("team_star_label")) + '">' + options + '</select></label>';
 }
+function topicAssignmentControlHtml(item){
+  if(!canManageTeam() || !profileTopics.length){return "";}
+  var options = '<option value="">' + esc(tx("topic_unassigned")) + '</option>' + profileTopics.map(function(topic){
+    return '<option value="' + Number(topic.id) + '" ' + (Number(item.topic_id) === Number(topic.id) ? "selected" : "") + '>' +
+      esc(topic.title) + '</option>';
+  }).join("");
+  return '<label class="team-star-control"><span class="team-star-label">' + esc(tx("topic_assignment_label")) +
+    '</span><select data-idea-topic="' + item.id + '" aria-label="' + esc(tx("topic_assignment_label")) + '">' + options + '</select></label>';
+}
 function sortedIdeas(source){
   var list = (source || ideas).slice();
   if(sortMode === "balanced"){
@@ -3517,8 +3761,84 @@ function renderProfileTags(){
   html += sectionTags(secMeta).map(function(tag){return '<span class="chip">' + esc(tagLabel(tag)) + '</span>';}).join("");
   byId("profile-tags").innerHTML = html;
 }
+function resetTopicForm(){
+  byId("topic-edit-id").value = "";
+  byId("topic-title").value = "";
+  byId("topic-description").value = "";
+  delete byId("topic-save").dataset.label;
+  byId("topic-save").textContent = tx("topic_save");
+  byId("topic-edit-cancel").classList.add("hidden");
+  setStatus("topic-status","","");
+}
+function renderTopicManager(){
+  var manager = byId("topic-manager");
+  if(!manager){return;}
+  manager.classList.toggle("hidden",!canManageTeam());
+  if(!canManageTeam() || !secMeta){return;}
+  var count = profileTopics.length;
+  var limit = Number(secMeta.topic_limit || 5);
+  var tier = String(secMeta.topic_tier || "normal");
+  byId("topic-quota").textContent = tx("topic_quota",count,limit,tier);
+  var editing = !!byId("topic-edit-id").value;
+  byId("topic-save").disabled = !editing && count >= limit;
+  if(!profileTopics.length){
+    byId("topic-list").innerHTML = '<div class="empty-state">' + esc(tx("topic_empty")) + '</div>';
+    return;
+  }
+  byId("topic-list").innerHTML = profileTopics.map(function(topic){
+    return '<article class="topic-list-item"><div><b>' + esc(topic.title) + '</b><span>' + esc(topic.description || "") +
+      '</span></div><div class="topic-list-actions"><button type="button" data-topic-edit="' + Number(topic.id) + '">' +
+      esc(tx("topic_edit")) + '</button><button type="button" data-topic-archive="' + Number(topic.id) + '">' +
+      esc(tx("topic_archive")) + '</button></div></article>';
+  }).join("");
+  document.querySelectorAll("[data-topic-edit]").forEach(function(button){
+    button.addEventListener("click",function(){
+      var topic = profileTopics.find(function(item){return Number(item.id) === Number(button.dataset.topicEdit);});
+      if(!topic){return;}
+      byId("topic-edit-id").value = String(topic.id);
+      byId("topic-title").value = topic.title;
+      byId("topic-description").value = topic.description || "";
+      byId("topic-save").textContent = tx("topic_update");
+      byId("topic-save").disabled = false;
+      byId("topic-edit-cancel").classList.remove("hidden");
+      byId("topic-title").focus();
+    });
+  });
+  document.querySelectorAll("[data-topic-archive]").forEach(function(button){
+    button.addEventListener("click",function(){archiveProfileTopic(Number(button.dataset.topicArchive),button);});
+  });
+}
+function renderProfileTopics(){
+  var wrap = byId("profile-topics");
+  if(!wrap){return;}
+  var show = profileTopics.length > 0 || canManageTeam();
+  wrap.classList.toggle("hidden",!show);
+  byId("topic-manager-open").classList.toggle("hidden",!canManageTeam());
+  if(!show){return;}
+  if(profileTopicFilter && !profileTopics.some(function(topic){return Number(topic.id) === Number(profileTopicFilter);})){
+    profileTopicFilter = null;
+  }
+  var html = '<button class="topic-filter ' + (!profileTopicFilter ? "active" : "") + '" type="button" data-topic-filter="0" aria-pressed="' +
+    (!profileTopicFilter ? "true" : "false") + '">' + esc(tx("topic_all")) + '</button>';
+  html += profileTopics.map(function(topic){
+    var active = Number(profileTopicFilter) === Number(topic.id);
+    var count = ideas.filter(function(item){return Number(item.topic_id) === Number(topic.id);}).length;
+    return '<button class="topic-filter ' + (active ? "active" : "") + '" type="button" data-topic-filter="' + Number(topic.id) +
+      '" aria-pressed="' + (active ? "true" : "false") + '">' + esc(topic.title) + ' · ' + count + '</button>';
+  }).join("");
+  byId("topic-filters").innerHTML = html;
+  document.querySelectorAll("[data-topic-filter]").forEach(function(button){
+    button.addEventListener("click",function(){
+      var value = Number(button.dataset.topicFilter || 0);
+      profileTopicFilter = value > 0 ? value : null;
+      sendEvent("topic_filter",{section:SECTION,value:value > 0 ? String(value) : "all"});
+      renderProfile();
+    });
+  });
+  renderTopicManager();
+}
 function renderPodium(){
-  var top = sortedIdeas(ideas).slice(0,3);
+  var top = filteredIdeas().slice(0,3);
   byId("podium").classList.toggle("hidden",!top.length);
   var positions = [
     {item:top[1],rank:2,cls:"second"},
@@ -3543,9 +3863,12 @@ function renderPodium(){
 }
 function filteredIdeas(){
   var needle = normalize(profileQuery);
-  var source = needle ? ideas.filter(function(item){
-    return normalize(ideaTitle(item) + " " + ideaReason(item)).indexOf(needle) >= 0;
+  var topicSource = profileTopicFilter ? ideas.filter(function(item){
+    return Number(item.topic_id) === Number(profileTopicFilter);
   }) : ideas;
+  var source = needle ? topicSource.filter(function(item){
+    return normalize(ideaTitle(item) + " " + ideaReason(item)).indexOf(needle) >= 0;
+  }) : topicSource;
   return sortedIdeas(source);
 }
 function renderIdeas(){
@@ -3577,6 +3900,7 @@ function renderIdeas(){
       '<span class="chip" title="' + esc(tx("source_votes_help")) + '" aria-label="' +
       esc(fmt(item.origin_upvotes) + " " + tx("source_votes") + ". " + tx("source_votes_help")) + '">' +
       fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' +
+      (item.topic_title ? '<span class="chip topic-chip"># ' + esc(item.topic_title) + '</span>' : "") +
       (source ? '<a class="chip source-link" href="' + esc(source) + '" target="_blank" rel="noopener noreferrer">' +
       esc(tx("source")) + ' ↗</a>' : "") + '</div></div><div class="idea-actions">' +
       '<button class="icon-btn" type="button" data-share="' + item.id + '" aria-label="' + esc(tx("share")) +
@@ -3584,7 +3908,7 @@ function renderIdeas(){
       '<button class="vote-btn ' + (voted ? "voted" : "") + '" type="button" data-vote="' + item.id + '" ' +
       (voted ? "disabled" : "") + '><span class="vote-heart" aria-hidden="true">♥</span><span class="vote-count">' + Number(item.web_votes||0) +
       '</span><span class="vote-label">' + esc(voted ? tx("voted") : tx("vote")) + '</span></button>' +
-      teamStarControlHtml(item) +
+      teamStarControlHtml(item) + topicAssignmentControlHtml(item) +
       '</div></article>';
   }).join("");
   requestAnimationFrame(function(){
@@ -3599,10 +3923,14 @@ function renderIdeas(){
   document.querySelectorAll("[data-team-star]").forEach(function(select){
     select.addEventListener("change",function(){setTeamStar(Number(select.dataset.teamStar),select);});
   });
+  document.querySelectorAll("[data-idea-topic]").forEach(function(select){
+    select.addEventListener("change",function(){setIdeaTopic(Number(select.dataset.ideaTopic),select);});
+  });
 }
 function renderProfile(){
   renderProfileTags();
   renderProfileStats();
+  renderProfileTopics();
   renderPodium();
   renderIdeas();
   if(window.FanRankOwnerStudio){window.FanRankOwnerStudio.renderProfileEnhancements();}
@@ -3647,6 +3975,18 @@ function loadSection(){
     cleanUrl.searchParams.delete("suggest");
     history.replaceState(null,"",cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
     setTimeout(openSuggestion,0);
+  }
+  if(QUICK_CLAIM){
+    QUICK_CLAIM = false;
+    var cleanClaimUrl = new URL(location.href);
+    cleanClaimUrl.searchParams.delete("claim");
+    history.replaceState(null,"",cleanClaimUrl.pathname + cleanClaimUrl.search + cleanClaimUrl.hash);
+    if(secMeta.verification_status === "verified"){
+      showToast(tx("claim_already_verified"),"");
+    }else{
+      sendEvent("owner_cta_open",{section:SECTION,value:"profile"});
+      setTimeout(openClaimPanel,0);
+    }
   }
 }
 
@@ -3701,6 +4041,26 @@ async function setTeamStar(id,select){
     renderProfile();
     sendEvent("team_star",{section:SECTION,idea_id:id,value:String(value)});
     showToast(tx("team_star_saved"),"ok");
+  }catch(error){
+    select.disabled = false;
+    showToast(tx("generic_error"),"err");
+  }
+}
+async function setIdeaTopic(id,select){
+  if(!canManageTeam()){return;}
+  var topicId = select.value ? Number(select.value) : null;
+  select.disabled = true;
+  try{
+    var result = await callRpc("fr_set_idea_topic",{p_idea_id:id,p_topic_id:topicId});
+    var returned = Array.isArray(result) ? result[0] : result;
+    var item = ideas.find(function(row){return row.id === id;});
+    var topic = topicId ? profileTopics.find(function(row){return Number(row.id) === topicId;}) : null;
+    if(item){item.topic_id = topicId;item.topic_title = returned && returned.topic_title || (topic && topic.title) || null;}
+    var globalItem = allIdeas.find(function(row){return row.id === id;});
+    if(globalItem && item){globalItem.topic_id = item.topic_id;globalItem.topic_title = item.topic_title;}
+    sendEvent("topic_assigned",{section:SECTION,idea_id:id,value:topicId ? String(topicId) : "none"});
+    renderProfile();
+    showToast(tx("topic_assigned"),"ok");
   }catch(error){
     select.disabled = false;
     showToast(tx("generic_error"),"err");
@@ -3768,7 +4128,7 @@ byId("search-form").addEventListener("submit",function(event){
   sendEvent("search",{value:query});
   if(matches.sections.length){
     sendEvent("profile_open",{section:matches.sections[0].slug,value:"search_submit"});
-    location.href = sectionUrl(matches.sections[0].slug);
+    location.href = sectionUrl(matches.sections[0].slug,false,ownerSearchMode);
   }else if(matches.ideas.length){
     sendEvent("idea_open",{section:matches.ideas[0].section,idea_id:matches.ideas[0].id,value:"search_submit"});
     location.href = ideaUrl(matches.ideas[0]);
@@ -3832,6 +4192,10 @@ byId("idea-filter").addEventListener("input",function(event){
 });
 
 function openClaimPanel(){
+  if(!secMeta || secMeta.verification_status === "verified"){
+    showToast(tx("claim_already_verified"),"");
+    return;
+  }
   if(!session){openAuth("claim");return;}
   byId("claim-panel").classList.remove("hidden");
   byId("claim-panel").scrollIntoView({behavior:REDUCED ? "auto" : "smooth",block:"start"});
@@ -3845,6 +4209,15 @@ byId("claim-cancel").addEventListener("click",function(){
 byId("profile-share").addEventListener("click",shareProfile);
 byId("suggest-open").addEventListener("click",openSuggestion);
 byId("home-suggest").addEventListener("click",openSuggestion);
+byId("home-owner-verify").addEventListener("click",function(){
+  ownerSearchMode = true;
+  byId("home-owner-verify").setAttribute("aria-pressed","true");
+  byId("search-label").textContent = tx("owner_verify_search");
+  byId("global-search").placeholder = tx("owner_verify_search");
+  sendEvent("owner_cta_open",{value:"home"});
+  renderSearchPanel(byId("global-search").value);
+  byId("global-search").focus();
+});
 byId("mobile-suggest").addEventListener("click",openSuggestion);
 byId("home-profile-cta").addEventListener("click",function(){session ? openActivity() : openAuth("activity");});
 byId("suggest-close").addEventListener("click",closeSuggestion);
@@ -3869,14 +4242,43 @@ byId("activity-list").addEventListener("change",async function(event){
 });
 byId("pro-close").addEventListener("click",function(){closeDialog("pro-dialog");});
 byId("team-open").addEventListener("click",openTeam);
+byId("topic-manager-open").addEventListener("click",openTeam);
 byId("team-close").addEventListener("click",function(){closeDialog("team-dialog");});
+byId("topic-edit-cancel").addEventListener("click",function(){resetTopicForm();renderTopicManager();});
+byId("topic-form").addEventListener("submit",async function(event){
+  event.preventDefault();
+  if(!canManageTeam()){return;}
+  var title = byId("topic-title").value.trim();
+  var description = byId("topic-description").value.trim();
+  var topicId = Number(byId("topic-edit-id").value || 0) || null;
+  if(title.length < 2){setStatus("topic-status",tx("required_error"),"err");byId("topic-title").focus();return;}
+  var limit = Number(secMeta && secMeta.topic_limit || 5);
+  if(!topicId && profileTopics.length >= limit){setStatus("topic-status",tx("topic_limit_reached"),"err");return;}
+  var button = byId("topic-save");
+  setBusy(button,true);
+  setStatus("topic-status","","");
+  try{
+    var result = await callRpc("fr_upsert_profile_topic",{
+      p_section:SECTION,p_topic_id:topicId,p_title:title,p_description:description,p_sort_order:100
+    });
+    var returned = Array.isArray(result) ? result[0] : result;
+    resetTopicForm();
+    await refreshProfileTopics(returned && returned.active_count);
+    if(!topicId){sendEvent("topic_created",{section:SECTION,value:String(returned && returned.id || "created")});}
+    setStatus("topic-status",tx("topic_saved"),"ok");
+  }catch(error){
+    setStatus("topic-status",error && (error.status === 409 || error.status === 422) ? tx("topic_limit_reached") : tx("generic_error"),"err");
+  }finally{setBusy(button,false);renderTopicManager();}
+});
 byId("invite-close").addEventListener("click",function(){closeDialog("invite-dialog");});
 byId("submit-idea").addEventListener("input",function(){saveDraft();renderSimilarIdeas();});
-byId("submit-target").addEventListener("change",function(event){
+byId("submit-target").addEventListener("change",async function(event){
   suggestionSection = event.target.value;
+  await loadSuggestionTopics();
   saveDraft();
   renderSimilarIdeas();
 });
+byId("submit-topic").addEventListener("change",saveDraft);
 ["submit-name","submit-contact","submit-allow-contact","submit-training-consent","attribution-anonymous","attribution-account","attribution-contact"].forEach(function(id){
   byId(id).addEventListener("input",saveDraft);
   byId(id).addEventListener("change",function(){toggleSuggestionIdentity();saveDraft();});
@@ -4074,7 +4476,7 @@ byId("invite-accept").addEventListener("click",async function(){
     clearPendingInvite();
     await loadMembership();
     updateAccountUI();
-    if(SECTION){renderIdeas();}
+    if(SECTION){renderProfile();}
     closeDialog("invite-dialog");
     showToast(tx("invite_accepted"),"ok");
   }catch(error){setStatus("invite-status",tx("invite_invalid"),"err");}
@@ -4147,7 +4549,7 @@ byId("logout-btn").addEventListener("click",async function(){
   closeDialog("activity-dialog");
   sendEvent("auth_signed_out",{section:SECTION || null});
   showToast(tx("signed_out"),"ok");
-  if(SECTION){renderIdeas();}
+  if(SECTION){renderProfile();}
 });
 
 byId("request-form").addEventListener("submit",async function(event){
@@ -4241,6 +4643,7 @@ byId("submit-form").addEventListener("submit",async function(event){
       attribution_mode:attribution,
       allow_contact:!!contact && allowContact,
       receipt_hash:receiptHash,
+      topic_id:currentSuggestionTopic(),
       category_requested:categoryRequested,
       ai_training_consent:!!(session && byId("submit-training-consent").checked),
       evidence_links:pendingLinks.map(function(item){return item.canonicalUrl;})
@@ -4254,6 +4657,7 @@ byId("submit-form").addEventListener("submit",async function(event){
       });
       formData.append("allow_contact",String(submissionPayload.allow_contact));
       formData.append("ai_training_consent",String(submissionPayload.ai_training_consent));
+      formData.append("topic_id",submissionPayload.topic_id == null ? "" : String(submissionPayload.topic_id));
       formData.append("website",byId("submit-website").value || "");
       pendingLinks.forEach(function(item){formData.append("links",item.canonicalUrl);});
       pendingMedia.forEach(function(item){formData.append("files",item.file,item.file.name || "capture");});
@@ -4290,6 +4694,10 @@ byId("submit-form").addEventListener("submit",async function(event){
 
 byId("claim-form").addEventListener("submit",async function(event){
   event.preventDefault();
+  if(!secMeta || secMeta.verification_status === "verified"){
+    setStatus("claim-status",tx("claim_already_verified"),"err");
+    return;
+  }
   if(!session){openAuth("claim");return;}
   var name = byId("claim-name").value.trim();
   var role = byId("claim-role").value.trim();
@@ -4339,6 +4747,7 @@ async function boot(){
   try{
     await initAuth();
     await loadDirectory();
+    if(SECTION){await loadProfileTopics();}
     if(FAN_HANDLE){await loadPublicFanProfile();}
     else if(SECTION){loadSection();}
     else{loadHome();}

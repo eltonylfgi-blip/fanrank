@@ -13,6 +13,8 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 - Solicitudes de promoción limitadas a perfiles: una idea concreta no puede comprar impresiones, votos indirectos, nota IA ni posición orgánica.
 - Oferta FanRank Pro visible y cola privada de interés: precios por aportaciones válidas analizadas, no por riqueza, empleados ni asientos.
 - Marca dual coherente: `FanRank ♥` para fans y público; `FanRank ★` únicamente dentro de un equipo verificado.
+- CTA secundario de verificación desde portada que conserva `♥ Hacer una sugerencia` como acción principal y lleva a buscar/reclamar el perfil correcto.
+- Temas por perfil para agrupar y filtrar ideas: Normal 5, Pro 20, Business 100 y Plus 200 activos; el cupo se aplica en servidor y ningún plan altera ranking o visibilidad.
 - Descubrimiento directo por etiquetas visibles (`Influencer`, `Streamer`, `YouTuber`, `TikToker`) y tipo explícito `Creador de contenido`.
 - Ranking de perfil legible y separable: `Equilibrado`, `Solo IA`, `Apoyo original`, `Fans ♥` y, cuando corresponde, `Equipo ★`.
 
@@ -22,7 +24,7 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 - Telemetría separada de QA mediante `?qa=1` y contrato SQL alineado con los eventos emitidos.
 - Bandeja privada de sugerencias y pruebas para `owner/admin` de un perfil verificado; el contacto solo aparece con consentimiento.
 - Especificación Android para Gemini con checkpoints compilables, repositorios fake/real separados y guardas de ranking, pagos, Auth y multimedia nativa. Es un prompt probado, no una app construida.
-- Evidencia actual: 27/27 pruebas estáticas y 33/33 al incluir límites live; la comprobación visual pasó en 320/375/768/1440 px y el CTA principal quedó dentro de 320×667. Esto demuestra mecanismo, no beneficio de mercado.
+- Evidencia actual: 30/30 pruebas estáticas y 36/36 al incluir límites live; la comprobación visual del logo, CTA fan y CTA de verificación pasa en 320 y 375 px sin recortar el conjunto. Esto demuestra mecanismo, no beneficio de mercado.
 
 ## Experimento activo (máximo 72 horas)
 
@@ -35,7 +37,7 @@ Este archivo es la única cola de ideas del repositorio. Una idea solo sube de p
 - Cambio único: tarjeta FanRank 1200×630 reproducible, `canonical`, Open Graph completo y `summary_large_image`. No cambia compositor, datos, Auth, ranking ni RLS.
 - Selector técnico inmediato: HTML publicado referencia la imagen absoluta, la imagen responde 200 como PNG y mide exactamente 1200×630.
 - Selector externo ≤72 h: `idea_share >= 1` y al menos 10 `page_view` con referencia `fan_share`/`idea_share`; éxito de activación si al menos 2 de esos visitantes hacen `suggest_open` o `vote`. Menos de 5 visitas referidas indica fallo de exposición/canal, no del compositor.
-- Condición de parada: no iniciar otra mejora mientras el reloj siga abierto. Un test verde prueba el mecanismo; solo tráfico referido y acción posterior pueden probar efecto.
+- Condición de parada: no iniciar otra mejora autónoma mientras el reloj siga abierto. Un test verde prueba el mecanismo; solo tráfico referido y acción posterior pueden probar efecto.
 - Hipótesis distinta para el siguiente pulso si la exposición sigue en cero: colocar un único enlace directo a Orslok en una superficie propia con referencia medible; no volver a retocar la tarjeta.
 
 ### Gate previo — telemetría confiable
@@ -175,13 +177,13 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 
 ### FR-2026-07-15-005 — logo corazón + podio + trofeo
 
-- Estado: `validated_mechanism`; tercera corrección publicada en `3098a9d` tras un defecto visual explícito de Tony. Beneficio y aceptación final siguen pendientes.
+- Estado: `validated_mechanism`; cuarta corrección preparada tras otro recorte visual explícito de Tony. Beneficio y aceptación final siguen pendientes.
 - Fuentes: corrección explícita de Tony + geometría DOM + crítica adversaria de ChatGPT con evidencia anonimizada.
 - Decisión que cambia: si la marca comunica fans + ranking + ganador sin explicación.
 - Score: 76.
 - Cambio mínimo: corazón carmesí detrás de `FAN`, `R-A-N` en 2-1-3, `K` legible y trofeo a la derecha.
-- Defecto reproducido: el pseudo-elemento de brillo empezaba 38 % a la izquierda y recorría 710 % del logo, pintando una banda blanca rectangular fuera de la marca en móvil.
-- Prueba directa: producción ya no contiene `.logo:after` ni `logoShine`; conserva `heartBeat` y `starBloom`; a 375 px el logo ocupa x=55,2–305,1 dentro de un ancho útil de 360 px, el trofeo mide 29,9 px y `scrollWidth=clientWidth=360`. El revisor visual externo devolvió literalmente `{"estado":"OK","problemas":[]}`.
+- Defecto reproducido: además del barrido antiguo, el texto inclinado con `background-clip:text` se cortaba dentro de cada letra y la regla móvil reducía el margen de seguridad. El ancho total podía pasar aunque el contenido interno siguiera recortado.
+- Prueba directa local: padding compensado por letra, margen exterior móvil y captura real tras recarga. A 320 px el conjunto ocupa x=24,7–280,9 con trofeo x=221,4–255,7 dentro de 306 px útiles; a 375 px ocupa x=30,2–330,0 dentro de 360 px útiles. Corazón, `FANRANK`, podio, trofeo y etiqueta son visibles.
 - Selector: reconocimiento inmediato por Tony; la geometría ya pasa, pero no sustituye su juicio de marca.
 - Deadline: revisión visual y decisión dentro de 72 horas desde el despliegue.
 
@@ -222,6 +224,17 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 - Score: 94.
 - Cambio mínimo: cinco asientos votantes no-owner, `star_cap` individual 1/3 y RPC privada de auditoría; sin alterar ranking orgánico.
 - Selector: test de aceptación concurrente impide el sexto asiento y owner/admin ve autor/valor/fecha de cada estrella; anon y contributors no pueden leer esa auditoría.
+
+### FR-2026-07-16-011 — verificación visible + temas de audiencia
+
+- Estado: `validated_mechanism`; beneficio externo pendiente y sin checkout.
+- Fuentes: petición explícita de Tony + captura móvil real + crítica externa de ChatGPT con evidencia directa anonimizada.
+- Decisión que cambia: si una entidad entiende el valor de reclamar su perfil sin reducir la conversión de fans, y si puede transformar una pregunta amplia en colecciones de feedback accionables.
+- Cambio mínimo: CTA secundario `Solicitar verificación`, búsqueda en modo reclamo, temas públicos/privados gestionables por owner/admin y asignación desde compositor/bandeja.
+- Guardas: cupos atómicos por perfil (`5/20/100/200` activos), RLS, funciones con comprobación de sesión y membresía verificada, temas archivados solo históricos y cero efecto sobre ranking/visibilidad.
+- Prueba directa: migraciones live aplicadas, Edge Function activa con `topic_id`, 30/30 pruebas estáticas y 36/36 con fronteras live; anon no puede escribir ni usar RPC de gestión. Una transacción live aceptó exactamente cinco temas Normal, rechazó el sexto y el rollback dejó `rollback_residue=0`.
+- Guarda de reclamo: resultados verificados ya no reciben `claim=1`; el deep link manual se limpia sin abrir Auth/formulario y un trigger live rechazó el claim incluso mediante escritura privilegiada (`verified_claim_rejected=true`, rollback sin residuo).
+- Selector externo ≤72 h desde tener tráfico elegible: `owner_cta_open / page_view ≥ 10 %` con al menos 30 visitas, al menos una solicitud de perfil iniciada y caída de `suggest_open / page_view` menor de 10 % frente a la línea base. Sin 30 visitas se clasifica como falta de exposición, no fracaso de CTA.
 
 ## Rutina `fanrank-mejora`
 

@@ -64,6 +64,15 @@ function boolField(form: FormData, name: string): boolean {
   return String(form.get(name) || "false") === "true";
 }
 
+function optionalPositiveIntegerField(form: FormData, name: string): number | null {
+  const raw = String(form.get(name) || "").trim();
+  if (!raw) return null;
+  if (!/^\d+$/.test(raw)) throw new IntakeError(400, `${name} no es válido.`);
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value <= 0) throw new IntakeError(400, `${name} no es válido.`);
+  return value;
+}
+
 function normalizeEvidenceLink(value: string): string | null {
   const raw = value.trim();
   if (!raw || raw.length > 2048) return null;
@@ -194,6 +203,7 @@ Deno.serve(async (request) => {
     const attributionMode = attributionRaw === "account" ? "account" : "anonymous";
     const allowContact = boolField(form, "allow_contact");
     const aiTrainingConsent = boolField(form, "ai_training_consent");
+    const topicId = optionalPositiveIntegerField(form, "topic_id");
     const receiptHash = textField(form, "receipt_hash", 64, true);
     if (!/^[0-9a-f]{64}$/.test(receiptHash)) throw new IntakeError(400, "El recibo no es válido.");
     if (title.length < 3) throw new IntakeError(400, "La sugerencia es demasiado corta.");
@@ -264,6 +274,7 @@ Deno.serve(async (request) => {
         attribution_mode: attributionMode,
         allow_contact: Boolean(contact) && allowContact,
         receipt_hash: receiptHash,
+        topic_id: topicId,
         category_requested: categoryRequested,
         ai_training_consent: aiTrainingConsent,
         attachment_count: prepared.length,

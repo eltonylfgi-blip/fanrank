@@ -50,7 +50,8 @@ La app debe funcionar en español e inglés desde el primer commit mediante recu
 3. Puntuar con estrellas oficiales: propietario de 1 a 5; cada miembro no propietario con tope individual 1 o 3 elegido por el propietario.
 4. Invitar o revocar miembros según su rol, con un máximo inicial de cinco asientos no-owner con capacidad de puntuar.
 5. Ordenar su bandeja por señal equilibrada, IA, fans y equipo sin modificar el ranking público.
-6. Definir en el futuro una rúbrica estructurada de criterio, pública o privada, primero en modo sombra.
+6. Crear, editar y archivar temas para agrupar las ideas que pide a su audiencia; cada idea puede pertenecer como máximo a un tema.
+7. Definir en el futuro una rúbrica estructurada de criterio, pública o privada, primero en modo sombra.
 
 ### 3. Semántica de marca obligatoria
 
@@ -95,6 +96,7 @@ El buscador ofrece resultados mientras se escribe, historial local borrable y es
 - Acción principal arriba: `♥ Sugerir a {nombre}`.
 - Acción secundaria visible pero discreta: `¿Eres {nombre} o parte de su equipo? Reclama este perfil`.
 - Tabs de ranking con descripción accesible: `Equilibrado`, `Solo IA`, `Apoyo original`, `Fans ♥` y `Equipo ★` cuando corresponda.
+- Temas públicos en chips accesibles que filtran el ranking sin perder el orden elegido. Un tema archivado conserva su etiqueta en ideas históricas, pero no acepta nuevas sugerencias.
 - Cada idea muestra título, resumen, categoría, evidencia, señal que explica su posición y acciones de apoyar/compartir.
 - Una estrella oficial nunca se presenta como si fuera un corazón ni como garantía de número 1.
 
@@ -106,8 +108,9 @@ Debe sentirse como un único flujo corto, no como dos formularios separados.
 2. Destinatario: preseleccionado si se abrió desde un perfil; si no, se elige después de escribir.
 3. Categoría opcional elegible: sugerencia, bug, contenido, accesibilidad, seguridad, rendimiento u otra. Si se omite, mostrar `FanRank la propondrá automáticamente`, siempre editable antes de publicar.
 4. Contexto opcional progresivo: explicación, enlace y adjunto.
-5. Identidad en el mismo panel: anónima públicamente por defecto; cuenta fan; o nombre privado y contacto privado con consentimiento explícito.
-6. Resumen final y envío. Guardar borrador automáticamente.
+5. Tema opcional, ofrecido solo cuando el perfil seleccionado tiene temas activos. No inventes temas desde el cliente.
+6. Identidad en el mismo panel: anónima públicamente por defecto; cuenta fan; o nombre privado y contacto privado con consentimiento explícito.
+7. Resumen final y envío. Guardar borrador automáticamente.
 
 Admite:
 
@@ -155,6 +158,7 @@ Guardas no negociables:
 5. El criterio de una entidad será una rúbrica estructurada, versionada, con máximo ocho dimensiones y pesos validados; no un prompt libre con herramientas o red.
 6. Una rúbrica privada solo ordena la bandeja privada. Una pública debe ser explicable. Ambas empiezan en shadow mode y registran versión de rúbrica/modelo, hash de entrada, fecha y resultado JSON estricto.
 7. No implementes cobros, Play Billing, Stripe, workers IA ni notificaciones comerciales en el MVP. Crea interfaces y feature flags apagadas.
+8. Los temas son una capacidad de organización, nunca una compra de visibilidad: `Normal=5`, `Pro=20`, `Business=100` y `Plus=200` temas activos por perfil. El servidor calcula el límite, cuenta solo los activos y lo aplica de forma atómica incluso con dos dispositivos a la vez. El cliente muestra el uso, pero jamás decide el permiso ni el cupo.
 
 ### 6. Arquitectura Android obligatoria
 
@@ -215,6 +219,7 @@ interface SuggestionRepository
 interface FanProfileRepository
 interface SessionRepository
 interface TeamRepository
+interface TopicRepository
 interface AttachmentRepository
 interface AnalyticsRepository
 interface FeatureFlagRepository
@@ -236,6 +241,7 @@ El backend existente usa Supabase Auth, Postgres, RLS, Storage y Edge Functions.
 - Recibo privado: `fr_submission_status`.
 - Perfil fan: `fr_my_fan_profile`, `fr_upsert_my_fan_profile`, `fr_public_fan_profile`.
 - Equipos: `fr_profile_team`, `fr_set_team_star`, `fr_my_team_stars`, `fr_set_team_star_cap`, `fr_create_profile_invite`, `fr_team_submission_inbox`.
+- Temas: `fr_profile_topics_public`, los campos `topic_id`/`topic_title` de ranking y bandeja, y los RPC `fr_upsert_profile_topic`, `fr_archive_profile_topic`, `fr_set_idea_topic`.
 - Consentimiento multimedia/IA: `fr_set_submission_ai_consent` y el registro de adjuntos existente.
 
 No asumas firmas, campos ni permisos solo por estos nombres. Define DTO e interfaces desde un `BackendContract` versionado y marca cada endpoint `Unverified`, `VerifiedRead`, `VerifiedWrite` o `Disabled` hasta que una prueba contra el entorno real confirme firma, RLS y respuesta.
@@ -298,9 +304,10 @@ Entrega un MVP totalmente navegable con repositorios fake:
 1. Descubrir con buscador, filtros y rankings globales.
 2. Perfil de Orslok y al menos otro destino.
 3. Compositor suggestion-first con borrador, destinatario, categoría, identidad y adjunto local simulado.
-4. Actividad y perfil fan de ejemplo.
-5. Tema público `♥`, modo de equipo `★` solo mediante una feature flag de demo claramente etiquetada.
-6. Estados loading, empty, error, offline y success.
+4. Temas fake en perfiles y compositor, con filtro público y un gestor demo en modo equipo que represente los cuatro cupos sin fingir una compra.
+5. Actividad y perfil fan de ejemplo.
+6. Tema visual público `♥`, modo de equipo `★` solo mediante una feature flag de demo claramente etiquetada.
+7. Estados loading, empty, error, offline y success.
 
 Ejecútalo en checkpoints que siempre deben dejar el proyecto compilable:
 
@@ -331,6 +338,8 @@ Funcionales:
 - Abrir desde un perfil preselecciona correctamente el destinatario.
 - Un borrador sobrevive cierre y reapertura.
 - Filtros combinables funcionan con fixtures multi-etiqueta.
+- Filtrar por tema no cambia la pestaña de ranking; archivar un tema lo elimina del compositor pero conserva la etiqueta histórica.
+- Dos altas simultáneas simuladas nunca superan el cupo del plan; el cliente trata el límite del servidor como fuente de verdad.
 - Cambiar tabs modifica el orden y explica la señal elegida.
 - El modo público nunca muestra acciones privadas del equipo.
 
