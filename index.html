@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,24 +8,26 @@
 <meta name="google-site-verification" content="5uThiVaSxdxA5o83idlyHK6U72X6fTjAfAU_7tkQLkc">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <link id="favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%230a0b12'/%3E%3Cpath d='M50 89C43 82 17 64 11 48C5 31 14 14 31 12C40 11 47 16 50 23C54 16 61 11 70 12C87 14 96 31 89 48C83 64 57 82 50 89Z' fill='%23ff174f'/%3E%3Cpath d='M28 26C34 21 40 22 44 27' fill='none' stroke='%23fff' stroke-width='5' stroke-linecap='round' opacity='.82'/%3E%3C/svg%3E">
-<title>FanRank — the best ideas, ranked</title>
-<meta name="description" content="Suggest and vote on useful ideas for creators, games, companies, platforms and AI. FanRank turns fan feedback into clear, ranked opportunities.">
+<title>FanRank &mdash; las mejores ideas, ordenadas</title>
+<meta name="description" content="Vota lo que tu creador, juego o empresa favorita deber&#237;a mejorar &mdash; o deja tu idea en 10 segundos. Gratis, sin registro.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="FanRank">
-<meta property="og:title" content="FanRank - the best ideas, ranked">
-<meta property="og:description" content="Vote on the improvements fans want most, or send one private suggestion in seconds.">
+<meta property="og:title" content="FanRank &mdash; las mejores ideas, ordenadas">
+<meta property="og:description" content="Vota lo que tu creador, juego o empresa favorita deber&#237;a mejorar &mdash; o deja tu idea en 10 segundos. Gratis, sin registro.">
 <meta property="og:url" content="https://eltonylfgi-blip.github.io/fanrank/">
-<meta property="og:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png">
-<meta property="og:image:secure_url" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png?v=2">
+<meta property="og:image:secure_url" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png?v=2">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="FanRank: las mejores ideas, ordenadas, con corazón, podio y trofeo.">
+<meta property="og:image:alt" content="FanRank: las mejores ideas, ordenadas, con coraz&#243;n, podio y trofeo.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="FanRank - the best ideas, ranked">
-<meta name="twitter:description" content="Vote on the improvements fans want most, or send one private suggestion in seconds.">
-<meta name="twitter:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png">
-<meta name="twitter:image:alt" content="FanRank: las mejores ideas, ordenadas, con corazón, podio y trofeo.">
+<meta name="twitter:title" content="FanRank &mdash; las mejores ideas, ordenadas">
+<meta name="twitter:description" content="Vota lo que tu creador, juego o empresa favorita deber&#237;a mejorar &mdash; o deja tu idea en 10 segundos. Gratis, sin registro.">
+<meta name="twitter:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png?v=2">
+<meta name="twitter:image:alt" content="FanRank: las mejores ideas, ordenadas, con coraz&#243;n, podio y trofeo.">
 <style>
   :root{
     color-scheme:dark;
@@ -622,6 +624,7 @@
     background:var(--bg);color:var(--text);resize:vertical;line-height:1.55}
   .share-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
   .share-actions .primary-btn{grid-column:1/-1}
+  .share-actions a.secondary-btn{display:flex;align-items:center;justify-content:center;text-decoration:none}
   .category-picker{min-width:0;margin:13px 0 0;padding:0;border:0}
   .category-picker legend{margin-bottom:7px;color:var(--text);font-size:.8rem;font-weight:850}
   .category-options{display:flex;max-width:100%;gap:7px;overflow-x:auto;padding:2px 2px 5px;scroll-snap-type:x proximity;
@@ -1346,6 +1349,8 @@
     <textarea class="share-preview" id="share-preview" readonly></textarea>
     <div class="share-actions">
       <button class="primary-btn" id="share-copy-all" type="button"></button>
+      <a class="secondary-btn" id="share-x" href="https://x.com/intent/post" target="_blank" rel="noopener">X</a>
+      <a class="secondary-btn" id="share-whatsapp" href="https://wa.me/" target="_blank" rel="noopener">WhatsApp</a>
       <button class="secondary-btn" id="share-native" type="button"></button>
       <button class="secondary-btn" id="share-copy-link" type="button"></button>
     </div>
@@ -3661,6 +3666,15 @@ function withReferral(url,source){
   target.searchParams.set("ref",source);
   return target.toString();
 }
+function buildShareIntentUrls(payload){
+  var xUrl = withReferral(payload.url,"x");
+  var whatsappUrl = withReferral(payload.url,"whatsapp");
+  var xParams = new URLSearchParams({text:payload.text,url:xUrl});
+  return {
+    x:"https://x.com/intent/post?" + xParams.toString(),
+    whatsapp:"https://wa.me/?text=" + encodeURIComponent(payload.text + " " + whatsappUrl)
+  };
+}
 function profileShareUrl(language){
   return withReferral(location.origin + sectionUrl(SECTION,false,false,language),"fan_share");
 }
@@ -4655,6 +4669,43 @@ async function setIdeaTopic(id,select){
     showToast(tx("generic_error"),"err");
   }
 }
+function localizedIdeaTitle(item,language){
+  return language === "es" ? (item.title_es || item.title || "") : (item.title || item.title_es || "");
+}
+function truncateShareTitle(value,maxLength,forceEllipsis){
+  var text = String(value || "").replace(/\s+/g," ").trim();
+  var needsEllipsis = Boolean(forceEllipsis) || text.length > maxLength;
+  var textBudget = Math.max(1,maxLength - (needsEllipsis ? 1 : 0));
+  if(text.length > textBudget){
+    var wordSafe = text.slice(0,textBudget).replace(/\s+\S*$/," ").trim();
+    text = wordSafe || text.slice(0,textBudget).trim();
+  }
+  return needsEllipsis ? text.replace(/[.\u2026]+$/g,"") + "\u2026" : text;
+}
+function buildProfileShareText(name,language,sourceIdeas){
+  var spanish = language === "es";
+  var safeName = truncateShareTitle(name,40,false);
+  var topThree = sortedIdeas(sourceIdeas || ideas).slice(0,3);
+  if(topThree.length < 3){
+    return spanish
+      ? "\u00bfQu\u00e9 deber\u00eda hacer " + safeName + "? Deja tu idea en 10s:"
+      : "What should " + safeName + " do next? Add your idea in 10s:";
+  }
+  var intro = spanish
+    ? "Lo que los fans m\u00e1s piden a " + safeName + " ahora mismo:"
+    : "What " + safeName + " fans want most right now:";
+  var footer = spanish ? "\u00bfFalta la tuya? Vota:" : "Missing yours? Vote:";
+  var fixedLength = intro.length + footer.length + 4 + 9;
+  var titleBudget = Math.min(45,Math.max(12,Math.floor((255-fixedLength)/3)));
+  var lines = topThree.map(function(idea,index){
+    return (index+1) + ") " + truncateShareTitle(
+      localizedIdeaTitle(idea,language),
+      titleBudget,
+      index === 2
+    );
+  });
+  return intro + "\n" + lines.join("\n") + "\n" + footer;
+}
 function buildSharePayload(kind,item,language){
   var selectedLanguage = normalizeLanguage(language) || LANG;
   var spanish = selectedLanguage === "es";
@@ -4675,18 +4726,19 @@ function buildSharePayload(kind,item,language){
       : "See " + name + "’s FanRank ♥ profile: their most useful ideas, measured impact and signals from verified teams.";
   }else{
     url = profileShareUrl(selectedLanguage);
-    text = spanish
-      ? "¿Qué debería mejorar " + name + "? 💡 Deja una idea concreta o vota las mejores de su comunidad. FanRank agrupa y ordena las más útiles para que lleguen arriba."
-      : "What should " + name + " improve next? 💡 Add one concrete idea or vote for the community’s best suggestions. FanRank groups and ranks the most useful so they rise to the top.";
+    text = buildProfileShareText(name,selectedLanguage,ideas);
   }
   return {title:title,text:text,url:url,copyText:text + "\n" + url,language:selectedLanguage};
 }
 function renderShareDialog(){
   if(!shareContext){return;}
   var payload = buildSharePayload(shareContext.kind,shareContext.item,shareLanguage);
+  var intents = buildShareIntentUrls(payload);
   byId("share-language-es").setAttribute("aria-pressed",String(shareLanguage === "es"));
   byId("share-language-en").setAttribute("aria-pressed",String(shareLanguage === "en"));
   byId("share-preview").value = payload.copyText;
+  byId("share-x").href = intents.x;
+  byId("share-whatsapp").href = intents.whatsapp;
   setStatus("share-status","","");
 }
 function openShareDialog(kind,item){
@@ -4836,6 +4888,8 @@ byId("profile-share").addEventListener("click",shareProfile);
 byId("share-close").addEventListener("click",function(){closeDialog("share-dialog");});
 byId("share-language-es").addEventListener("click",function(){shareLanguage = "es";renderShareDialog();});
 byId("share-language-en").addEventListener("click",function(){shareLanguage = "en";renderShareDialog();});
+byId("share-x").addEventListener("click",function(){recordShareAction("intent_x");});
+byId("share-whatsapp").addEventListener("click",function(){recordShareAction("intent_whatsapp");});
 byId("share-copy-all").addEventListener("click",async function(){
   if(!shareContext){return;}
   try{

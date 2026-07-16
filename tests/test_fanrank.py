@@ -1208,12 +1208,19 @@ class StaticAppTests(unittest.TestCase):
     def test_profile_sharing_has_a_clean_measurable_referral_loop(self) -> None:
         markers = [
             '<link rel="canonical" href="https://eltonylfgi-blip.github.io/fanrank/">',
-            '<meta property="og:title"',
-            '<meta property="og:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png">',
+            '<title>FanRank &mdash; las mejores ideas, ordenadas</title>',
+            '<meta name="description" content="Vota lo que tu creador, juego o empresa favorita deber&#237;a mejorar &mdash; o deja tu idea en 10 segundos. Gratis, sin registro.">',
+            '<meta property="og:title" content="FanRank &mdash; las mejores ideas, ordenadas">',
+            '<meta property="og:description" content="Vota lo que tu creador, juego o empresa favorita deber&#237;a mejorar &mdash; o deja tu idea en 10 segundos. Gratis, sin registro.">',
+            '<meta property="og:locale" content="es_ES">',
+            '<meta property="og:locale:alternate" content="en_US">',
+            '<meta property="og:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png?v=2">',
             '<meta property="og:image:width" content="1200">',
             '<meta property="og:image:height" content="630">',
             '<meta name="twitter:card" content="summary_large_image">',
-            '<meta name="twitter:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png">',
+            '<meta name="twitter:title" content="FanRank &mdash; las mejores ideas, ordenadas">',
+            '<meta name="twitter:description" content="Vota lo que tu creador, juego o empresa favorita deber&#237;a mejorar &mdash; o deja tu idea en 10 segundos. Gratis, sin registro.">',
+            '<meta name="twitter:image" content="https://eltonylfgi-blip.github.io/fanrank/social-card.png?v=2">',
             'id="profile-share"',
             'id="profile-share-text"',
             "function referralSource()",
@@ -1234,6 +1241,82 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual((1200, 630), struct.unpack(">II", card[16:24]))
         self.assertGreater(len(card), 50_000)
 
+    def test_profile_share_payload_uses_the_loaded_top_three_with_a_255_char_budget(self) -> None:
+        functions = "\n".join(
+            extract_js_function(name)
+            for name in (
+                "rankScore",
+                "officialTeamScore",
+                "sortedIdeas",
+                "localizedIdeaTitle",
+                "truncateShareTitle",
+                "buildProfileShareText",
+            )
+        )
+        node_program = "\n".join(
+            [
+                'var sortMode="balanced";',
+                'var ideas=[];',
+                functions,
+                'var fixture=[',
+                '{id:2,title:"Second long request that should remain useful for fans",title_es:"Segunda petición larga que debe seguir siendo útil",ai_score:80,web_votes:1,origin_upvotes:0},',
+                '{id:3,title:"Third curiosity request that deliberately leaves a gap",title_es:"Tercera petición que deja deliberadamente curiosidad",ai_score:70,web_votes:1,origin_upvotes:0},',
+                '{id:1,title:"First request",title_es:"Primera petición",ai_score:95,web_votes:8,origin_upvotes:0}',
+                '];',
+                'console.log(JSON.stringify({',
+                'es:buildProfileShareText("Orslok","es",fixture),',
+                'en:buildProfileShareText("Orslok","en",fixture),',
+                'fallbackEs:buildProfileShareText("Orslok","es",fixture.slice(0,2)),',
+                'fallbackEn:buildProfileShareText("Orslok","en",fixture.slice(0,2))',
+                '}));',
+            ]
+        )
+        result = subprocess.run(
+            ["node", "-e", node_program], cwd=ROOT, capture_output=True,
+            text=True, encoding="utf-8", check=False, timeout=10,
+        )
+        self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+        payload = json.loads(result.stdout)
+        self.assertLessEqual(len(payload["es"]), 255)
+        self.assertLessEqual(len(payload["en"]), 255)
+        self.assertIn("Lo que los fans más piden a Orslok ahora mismo:", payload["es"])
+        self.assertIn("1) Primera petición", payload["es"])
+        self.assertRegex(payload["es"], r"(?m)^3\) .+…$")
+        self.assertIn("What Orslok fans want most right now:", payload["en"])
+        self.assertIn("¿Qué debería hacer Orslok? Deja tu idea en 10s:", payload["fallbackEs"])
+        self.assertIn("What should Orslok do next? Add your idea in 10s:", payload["fallbackEn"])
+
+    def test_share_dialog_exposes_human_x_and_whatsapp_intents(self) -> None:
+        markers = (
+            'id="share-x"',
+            'id="share-whatsapp"',
+            'target="_blank" rel="noopener"',
+            "function buildShareIntentUrls(payload)",
+            'recordShareAction("intent_x")',
+            'recordShareAction("intent_whatsapp")',
+        )
+        self.assertEqual([], [marker for marker in markers if marker not in HTML])
+
+        node_program = "\n".join(
+            [
+                'var location={origin:"https://eltonylfgi-blip.github.io"};',
+                extract_js_function("withReferral"),
+                extract_js_function("buildShareIntentUrls"),
+                'console.log(JSON.stringify(buildShareIntentUrls({text:"Top real & útil",url:"https://eltonylfgi-blip.github.io/fanrank/p/orslok/?lang=es&ref=fan_share"})));',
+            ]
+        )
+        result = subprocess.run(
+            ["node", "-e", node_program], cwd=ROOT, capture_output=True,
+            text=True, encoding="utf-8", check=False, timeout=10,
+        )
+        self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+        intents = json.loads(result.stdout)
+        x_query = urllib.parse.parse_qs(urllib.parse.urlsplit(intents["x"]).query)
+        whatsapp_query = urllib.parse.parse_qs(urllib.parse.urlsplit(intents["whatsapp"]).query)
+        self.assertEqual(["Top real & útil"], x_query.get("text"))
+        self.assertEqual(["x"], urllib.parse.parse_qs(urllib.parse.urlsplit(x_query["url"][0]).query).get("ref"))
+        self.assertIn("Top real & útil", whatsapp_query["text"][0])
+        self.assertEqual(["whatsapp"], urllib.parse.parse_qs(urllib.parse.urlsplit(whatsapp_query["text"][0].split()[-1]).query).get("ref"))
 
 def api_request(path: str, method: str = "GET", body: dict | None = None) -> tuple[int, str]:
     data = json.dumps(body).encode("utf-8") if body is not None else None
