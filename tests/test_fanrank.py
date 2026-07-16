@@ -50,8 +50,14 @@ TEAM_INBOX_SQL = TEAM_INBOX_MIGRATION.read_text(encoding="utf-8")
 TOPICS_MIGRATION = ROOT / "supabase" / "migrations" / "20260716034000_fanrank_v12_profile_topics.sql"
 CLAIM_INTEGRITY_MIGRATION = ROOT / "supabase" / "migrations" / "20260716043000_fanrank_v14_claim_integrity.sql"
 CLAIM_INTEGRITY_SQL = CLAIM_INTEGRITY_MIGRATION.read_text(encoding="utf-8")
+ALERTS_MIGRATION = ROOT / "supabase" / "migrations" / "20260716051732_fanrank_v16_localized_share_alerts.sql"
+ALERTS_SQL = ALERTS_MIGRATION.read_text(encoding="utf-8") if ALERTS_MIGRATION.exists() else ""
+ALERTS_INDEX_MIGRATION = ROOT / "supabase" / "migrations" / "20260716054800_fanrank_v16_milestone_fk_indexes.sql"
+ALERTS_INDEX_SQL = ALERTS_INDEX_MIGRATION.read_text(encoding="utf-8") if ALERTS_INDEX_MIGRATION.exists() else ""
 MEDIA_INTAKE_PATH = ROOT / "supabase" / "functions" / "fanrank-feedback-intake" / "index.ts"
 MEDIA_INTAKE = MEDIA_INTAKE_PATH.read_text(encoding="utf-8")
+ALERTS_INTAKE_PATH = ROOT / "supabase" / "functions" / "fanrank-milestone-alerts" / "index.ts"
+ALERTS_INTAKE = ALERTS_INTAKE_PATH.read_text(encoding="utf-8") if ALERTS_INTAKE_PATH.exists() else ""
 ANDROID_PROMPT_PATH = ROOT / "docs" / "FANRANK_ANDROID_GEMINI_PROMPT.md"
 ANDROID_PROMPT = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
 
@@ -531,7 +537,10 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn('byId("logo").href = homeUrl();', HTML)
         self.assertIn('byId("fan-public-back").href = homeUrl();', HTML)
         function_names = (
+            "normalizeLanguage",
             "persistentUrl",
+            "profileDefaultLanguage",
+            "setUrlLanguage",
             "homeUrl",
             "fanProfileUrl",
             "fanSuggestionUrl",
@@ -544,7 +553,10 @@ class StaticAppTests(unittest.TestCase):
             [
                 'var TELEMETRY_DISABLED=true;',
                 'var LANG="es";',
+                'var URL_LANGUAGE="es";',
+                'var SAVED_LANGUAGE=null;',
                 'var SECTION="orslok";',
+                'var sections=[{slug:"orslok",default_language:"es"}];',
                 (
                     'var location={origin:"https://eltonylfgi-blip.github.io",pathname:"/fanrank/",'
                     'search:"?s=orslok&lang=es&qa=1",'
@@ -584,6 +596,157 @@ class StaticAppTests(unittest.TestCase):
         self.assertEqual(["tony"], urllib.parse.parse_qs(parsed["fan"].query).get("fan"))
         self.assertEqual(["17"], urllib.parse.parse_qs(parsed["fanIdea"].query).get("idea"))
         self.assertEqual("invite=invite-token", parsed["invite"].fragment)
+
+    def test_language_resolution_and_share_links_are_explicit(self) -> None:
+        for marker in (
+            "function normalizeLanguage(value)",
+            "function resolveLanguage(urlLanguage,savedLanguage,profileLanguage,browserLanguage)",
+            "function profileDefaultLanguage(slug)",
+            "function setUrlLanguage(url,language)",
+            "function buildSharePayload(kind,item,language)",
+            'id="share-dialog"',
+            'id="share-language-es"',
+            'id="share-language-en"',
+            'id="share-copy-all"',
+            'id="share-native"',
+            'id="share-copy-link"',
+        ):
+            self.assertIn(marker, HTML)
+
+        functions = "\n".join(
+            extract_js_function(name)
+            for name in ("normalizeLanguage", "resolveLanguage")
+        )
+        node_program = "\n".join(
+            [
+                functions,
+                "console.log(JSON.stringify([",
+                'resolveLanguage("en","es","es","es"),',
+                'resolveLanguage(null,"en","es","es"),',
+                'resolveLanguage(null,null,"es","en"),',
+                'resolveLanguage(null,null,"auto","es"),',
+                'resolveLanguage(null,null,null,"fr")',
+                "]));",
+            ]
+        )
+        result = subprocess.run(
+            ["node", "-e", node_program], cwd=ROOT, capture_output=True,
+            text=True, check=False, timeout=10,
+        )
+        self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+        self.assertEqual(["en", "en", "es", "es", "en"], json.loads(result.stdout))
+
+        for language in ("es", "en"):
+            node_program = "\n".join(
+                [
+                    "var TELEMETRY_DISABLED=true;",
+                    f'var LANG="{language}";',
+                    'var URL_LANGUAGE="' + language + '";',
+                    'var SAVED_LANGUAGE=null;',
+                    'var SECTION="orslok";',
+                    'var sections=[{slug:"orslok",default_language:"es"}];',
+                    (
+                        'var location={origin:"https://eltonylfgi-blip.github.io",pathname:"/fanrank/",'
+                        'search:"?s=orslok&lang=' + language + '&qa=1",'
+                        'href:"https://eltonylfgi-blip.github.io/fanrank/?s=orslok&lang=' + language + '&qa=1"};'
+                    ),
+                    "\n".join(
+                        extract_js_function(name)
+                        for name in (
+                            "normalizeLanguage", "persistentUrl", "profileDefaultLanguage",
+                            "setUrlLanguage", "homeUrl", "sectionUrl", "ideaUrl",
+                            "fanProfileUrl", "fanSuggestionUrl", "teamInviteUrl",
+                        )
+                    ),
+                    (
+                        'console.log(JSON.stringify(['
+                        'homeUrl(),sectionUrl("orslok",true),ideaUrl({section:"orslok",id:17}),'
+                        'fanProfileUrl("tony"),fanSuggestionUrl({section:"orslok",idea_id:17}),'
+                        'teamInviteUrl("invite-token")'
+                        ']));'
+                    ),
+                ]
+            )
+            result = subprocess.run(
+                ["node", "-e", node_program], cwd=ROOT, capture_output=True,
+                text=True, check=False, timeout=10,
+            )
+            self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+            for raw_url in json.loads(result.stdout):
+                parsed_url = urllib.parse.urlsplit(
+                    urllib.parse.urljoin("https://eltonylfgi-blip.github.io", raw_url)
+                )
+                query = urllib.parse.parse_qs(parsed_url.query)
+                self.assertEqual([language], query.get("lang"), raw_url)
+                self.assertEqual(["1"], query.get("qa"), raw_url)
+
+        mobile_cta = extract_js_function("setupMobileCta")
+        self.assertIn('byId("suggest-open")', mobile_cta)
+        self.assertIn('byId("home-suggest")', mobile_cta)
+        self.assertIn("threshold:.5", mobile_cta)
+        self.assertNotIn('document.querySelector(".suggest-cta")', mobile_cta)
+        self.assertRegex(HTML, r"[.]top-btn [.]lang-flag\{[^}]*width:31px;[^}]*height:20px")
+        self.assertIn(".dialog-card{width:100%;max-width:100%", HTML)
+        self.assertNotIn(".dialog-card{width:100vw", HTML)
+
+    def test_milestone_alert_preferences_are_private_idempotent_and_honest(self) -> None:
+        ui_markers = (
+            'id="submit-alert-optin"',
+            'id="submit-alert-fields"',
+            'id="submit-alert-email" type="email"',
+            'name="submit-alert-milestone"',
+            'value="hearts_100"',
+            'value="above_average"',
+            'value="ai_90"',
+            'value="official_star"',
+            '"/functions/v1/fanrank-milestone-alerts"',
+            "function milestoneAlertRequest()",
+            "function subscribeMilestoneAlerts(receipt,request)",
+            'alert_beta_note:"',
+        )
+        self.assertEqual([], [marker for marker in ui_markers if marker not in HTML])
+        self.assertLess(HTML.index('id="submit-alert-optin"'), HTML.index('id="submit-send"'))
+        self.assertIn('alert_title:"Prepara avisos de logros futuros (beta)"', HTML)
+        self.assertIn("todavía no se envían correos", HTML)
+        self.assertNotIn('alert_title:"Avísame', HTML)
+
+        sql_markers = (
+            "add column default_language text not null default 'auto'",
+            "create table fanrank_private.fr_milestone_subscriptions",
+            "create table fanrank_private.fr_milestone_outbox",
+            "alter table fanrank_private.fr_milestone_subscriptions force row level security",
+            "alter table fanrank_private.fr_milestone_outbox force row level security",
+            "unique (subscription_id, idea_id, milestone)",
+            "create or replace function public.fr_register_milestone_subscription",
+            "grant execute on function public.fr_register_milestone_subscription(text, text, text[], text) to service_role",
+            "status text not null default 'blocked_provider'",
+            "section_row.default_language",
+            "'hearts_100'",
+            "'above_average'",
+            "'ai_90'",
+            "'official_star'",
+        )
+        self.assertEqual([], [marker for marker in sql_markers if marker not in ALERTS_SQL.lower()])
+        self.assertNotRegex(
+            ALERTS_SQL.lower(),
+            r"grant\s+(?:select|insert|update|delete|all).*fr_milestone_(?:subscriptions|outbox).*\b(?:anon|authenticated)\b",
+        )
+        for index_name in (
+            "fr_milestone_subscriptions_user_idx",
+            "fr_milestone_outbox_idea_idx",
+        ):
+            self.assertIn(index_name, ALERTS_INDEX_SQL)
+
+        edge_markers = (
+            'const DEFAULT_ORIGINS = ["https://eltonylfgi-blip.github.io"]',
+            'admin.rpc("fr_register_milestone_subscription"',
+            'receipt: string',
+            'email: string',
+            'delivery: "pending_provider"',
+            'Cache-Control": "no-store"',
+        )
+        self.assertEqual([], [marker for marker in edge_markers if marker not in ALERTS_INTAKE])
+        self.assertNotIn("console.log", ALERTS_INTAKE)
 
     def test_owner_verification_cta_is_honest_secondary_and_measurable(self) -> None:
         markers = [
@@ -688,7 +851,7 @@ class StaticAppTests(unittest.TestCase):
             "body.home-live.mobile-cta-ready .mobile-suggest",
             "body.suggest-dialog-open .mobile-suggest",
             "new IntersectionObserver",
-            'document.body.classList.toggle("mobile-cta-ready",!entries[0].isIntersecting)',
+            'document.body.classList.toggle("mobile-cta-ready",entries[0].intersectionRatio < .5)',
             'document.body.classList.add("suggest-dialog-open")',
             'document.body.classList.remove("suggest-dialog-open")',
         ]
@@ -696,7 +859,7 @@ class StaticAppTests(unittest.TestCase):
 
     def test_every_emitted_event_is_allowed_and_qa_is_excluded(self) -> None:
         emitted = set(re.findall(r'sendEvent\("([a-z0-9_]+)"', HTML + "\n" + OWNER_JS))
-        event_sql = EVIDENCE_SQL + "\n" + (TOPICS_MIGRATION.read_text(encoding="utf-8") if TOPICS_MIGRATION.exists() else "")
+        event_sql = EVIDENCE_SQL + "\n" + (TOPICS_MIGRATION.read_text(encoding="utf-8") if TOPICS_MIGRATION.exists() else "") + "\n" + ALERTS_SQL
         blocks = re.findall(
             r"add constraint fr_events_event_check\s+check \(event in \((.*?)\)\);",
             event_sql,
@@ -939,9 +1102,11 @@ class StaticAppTests(unittest.TestCase):
             "function referralSource()",
             "var REFERRAL_SOURCES = {fan_share:true,idea_share:true,reddit:true,discord:true,x:true,whatsapp:true};",
             "function withReferral(url,source)",
-            "function profileShareUrl()",
-            'withReferral(ideaUrl(item),"idea_share")',
-            'sendEvent("idea_share",{section:SECTION,value:"profile"})',
+            "function profileShareUrl(language)",
+            "function buildSharePayload(kind,item,language)",
+            'withReferral(ideaUrl(item,selectedLanguage),"idea_share")',
+            'recordShareAction("copy_all")',
+            'recordShareAction("copy_link")',
             'sendEvent("page_view",{section:SECTION || null,value:referralSource()})',
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
@@ -974,7 +1139,7 @@ def api_request(path: str, method: str = "GET", body: dict | None = None) -> tup
 class LiveBoundaryTests(unittest.TestCase):
     def test_public_directory_and_rankings_are_readable(self) -> None:
         status, raw = api_request(
-            "fr_sections_stats?select=slug,name,kind,tags,featured_rank,ideas,recent_ideas,fan_votes,verification_status,team_member_star_cap,topic_tier,topic_limit,topic_active_count"
+            "fr_sections_stats?select=slug,name,kind,tags,featured_rank,ideas,recent_ideas,fan_votes,verification_status,team_member_star_cap,topic_tier,topic_limit,topic_active_count,default_language"
         )
         self.assertEqual(200, status, raw)
         sections = json.loads(raw)
@@ -996,6 +1161,11 @@ class LiveBoundaryTests(unittest.TestCase):
         self.assertEqual("normal", by_slug["fanrank"]["topic_tier"])
         self.assertEqual(5, by_slug["fanrank"]["topic_limit"])
         self.assertEqual(0, by_slug["fanrank"]["topic_active_count"])
+        self.assertEqual("es", by_slug["rubius"]["default_language"])
+        self.assertEqual("es", by_slug["orslok"]["default_language"])
+        self.assertEqual("es", by_slug["ibai"]["default_language"])
+        self.assertEqual("auto", by_slug["discord"]["default_language"])
+        self.assertEqual("auto", by_slug["chatgpt"]["default_language"])
 
         query = urllib.parse.urlencode(
             {
@@ -1149,6 +1319,15 @@ class LiveBoundaryTests(unittest.TestCase):
                 },
             ),
             ("fr_set_submission_ai_consent", {"p_submission_id": 1, "p_consent": True}),
+            (
+                "fr_register_milestone_subscription",
+                {
+                    "p_receipt_hash": "0" * 64,
+                    "p_email": "probe@example.invalid",
+                    "p_milestones": ["hearts_100"],
+                    "p_language": "es",
+                },
+            ),
         ):
             with self.subTest(rpc=rpc):
                 status, raw = api_request(f"rpc/{rpc}", method="POST", body=body)
@@ -1198,6 +1377,35 @@ class LiveBoundaryTests(unittest.TestCase):
             status = error.code
             raw = error.read().decode("utf-8")
         self.assertIn(status, (401, 403), raw)
+
+    def test_milestone_alert_intake_rejects_invalid_receipts_without_auth_or_writes(self) -> None:
+        request = urllib.request.Request(
+            f"{SB_URL}/functions/v1/fanrank-milestone-alerts",
+            data=json.dumps(
+                {
+                    "receipt": "too-short",
+                    "email": "probe@example.invalid",
+                    "milestones": ["hearts_100"],
+                    "language": "es",
+                    "website": "",
+                }
+            ).encode("utf-8"),
+            headers={
+                "apikey": SB_KEY,
+                "Origin": "https://eltonylfgi-blip.github.io",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=20) as response:
+                status = response.status
+                raw = response.read().decode("utf-8")
+        except urllib.error.HTTPError as error:
+            status = error.code
+            raw = error.read().decode("utf-8")
+        self.assertEqual(400, status, raw)
+        self.assertIn("Recibo", raw)
 
 
 def main() -> int:
