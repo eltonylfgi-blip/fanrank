@@ -59,6 +59,8 @@ ALERTS_MIGRATION = ROOT / "supabase" / "migrations" / "20260716051732_fanrank_v1
 ALERTS_SQL = ALERTS_MIGRATION.read_text(encoding="utf-8") if ALERTS_MIGRATION.exists() else ""
 ALERTS_INDEX_MIGRATION = ROOT / "supabase" / "migrations" / "20260716054800_fanrank_v16_milestone_fk_indexes.sql"
 ALERTS_INDEX_SQL = ALERTS_INDEX_MIGRATION.read_text(encoding="utf-8") if ALERTS_INDEX_MIGRATION.exists() else ""
+DUEL_EVENTS_MIGRATION = ROOT / "supabase" / "migrations" / "20260716222500_fanrank_v19_duel_events.sql"
+DUEL_EVENTS_SQL = DUEL_EVENTS_MIGRATION.read_text(encoding="utf-8") if DUEL_EVENTS_MIGRATION.exists() else ""
 MEDIA_INTAKE_PATH = ROOT / "supabase" / "functions" / "fanrank-feedback-intake" / "index.ts"
 MEDIA_INTAKE = MEDIA_INTAKE_PATH.read_text(encoding="utf-8")
 ALERTS_INTAKE_PATH = ROOT / "supabase" / "functions" / "fanrank-milestone-alerts" / "index.ts"
@@ -930,7 +932,7 @@ class StaticAppTests(unittest.TestCase):
 
     def test_every_emitted_event_is_allowed_and_qa_is_excluded(self) -> None:
         emitted = set(re.findall(r'sendEvent\("([a-z0-9_]+)"', HTML + "\n" + OWNER_JS))
-        event_sql = EVIDENCE_SQL + "\n" + (TOPICS_MIGRATION.read_text(encoding="utf-8") if TOPICS_MIGRATION.exists() else "") + "\n" + ALERTS_SQL
+        event_sql = EVIDENCE_SQL + "\n" + (TOPICS_MIGRATION.read_text(encoding="utf-8") if TOPICS_MIGRATION.exists() else "") + "\n" + ALERTS_SQL + "\n" + DUEL_EVENTS_SQL
         blocks = re.findall(
             r"add constraint fr_events_event_check\s+check \(event in \((.*?)\)\);",
             event_sql,
@@ -1410,6 +1412,59 @@ def api_request(path: str, method: str = "GET", body: dict | None = None) -> tup
         return error.code, error.read().decode("utf-8")
 
 
+class V18UsabilityTests(unittest.TestCase):
+    """v18 'nadie entra en vano': teaser del top en directorio, wow al votar,
+    skeleton de carga y preconnect. Protege el pedido de Tony del 16-jul."""
+
+    def test_preconnect_to_supabase(self) -> None:
+        self.assertIn('rel="preconnect" href="https://kopegamcjozrvmxruwdn.supabase.co"', HTML)
+
+    def test_directory_top_idea_teaser(self) -> None:
+        self.assertIn("topIdeaBySection", HTML)
+        self.assertIn('class="sec-top"', HTML)
+        self.assertRegex(HTML, r"[.]sec-top\{[^}]*text-overflow:ellipsis")
+
+    def test_vote_wow_and_first_vote_nudge(self) -> None:
+        self.assertIn("heart-burst", HTML)
+        self.assertIn("fr_vote_nudge", HTML)
+        self.assertEqual(2, HTML.count("vote_nudge:"), "vote_nudge debe existir en EN y ES")
+
+    def test_loading_skeleton_with_reduced_motion(self) -> None:
+        self.assertIn('class="skeleton-grid" aria-hidden="true"', HTML)
+        self.assertIn("skeletonShimmer", HTML)
+        self.assertRegex(
+            HTML,
+            r"@media \(prefers-reduced-motion:reduce\)\{[.]skeleton-card,[.]heart-burst\{animation:none\}\}",
+        )
+
+
+class V19EngagementTests(unittest.TestCase):
+    """v19: Duelo de ideas (votos reales por parejas) + arranque instantáneo con caché."""
+
+    def test_duel_overlay_markup(self) -> None:
+        self.assertIn('id="duel-overlay"', HTML)
+        self.assertIn('id="duel-a"', HTML)
+        self.assertIn('id="duel-b"', HTML)
+        self.assertIn('class="duel-vs"', HTML)
+
+    def test_duel_uses_real_votes_and_telemetry(self) -> None:
+        self.assertIn("vote(id,card);", HTML)
+        self.assertIn('sendEvent("duel_pick"', HTML)
+        self.assertIn('sendEvent("duel_open"', HTML)
+
+    def test_duel_i18n_in_both_languages(self) -> None:
+        self.assertEqual(2, HTML.count("duel_button:"), "duel_button debe existir en EN y ES")
+        self.assertEqual(2, HTML.count("duel_empty:"), "duel_empty debe existir en EN y ES")
+
+    def test_home_cache_stale_while_revalidate(self) -> None:
+        self.assertIn("fr_home_cache_v1", HTML)
+        self.assertIn("writeHomeCache", HTML)
+        self.assertIn("readHomeCache", HTML)
+
+    def test_duel_respects_reduced_motion(self) -> None:
+        self.assertRegex(HTML, r"@media \(prefers-reduced-motion:reduce\)\{[.]duel-launch,[.]duel-card\{transition:none\}\}")
+
+
 class LiveBoundaryTests(unittest.TestCase):
     def test_public_directory_and_rankings_are_readable(self) -> None:
         status, raw = api_request(
@@ -1686,7 +1741,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--live", action="store_true", help="also check the live Supabase boundary")
     args, remaining = parser.parse_known_args()
-    selected = [StaticAppTests]
+    selected = [StaticAppTests, V18UsabilityTests, V19EngagementTests]
     if args.live:
         selected.append(LiveBoundaryTests)
     suite = unittest.TestSuite()

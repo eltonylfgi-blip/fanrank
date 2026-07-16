@@ -275,6 +275,39 @@ Puntuación 0–100: valor para fan/entidad (25) + evidencia independiente (25) 
 - Pulso agregado inicial 2026-07-16 14:51 CEST: consulta read-only a `fr_events` desde el corte para `page_view` y los cuatro valores de impresión/clic → `[]`; HECHO = todavía no hubo exposición observable, no “fallo de precio”.
 - Observación autónoma: dueña `fanrank-mejora` (`ACTIVE`, diaria 14:20 CEST, clon privado); sensor = agregado `count(*)` + `count(distinct visitor)` en `fr_events` desde el corte, sin leer visitantes individuales. Pasadas 17/18-jul = solo medir porque FR-2026-07-15-007 sigue activo; decisión 19-jul 14:20 CEST (<72 h): con exposición insuficiente, `inconclusive` y cero cambio; con ≥5 clics únicos y CTR ≥5 %, registrar demanda inicial, nunca habilitar cobro; no abrir segunda variante sin señal independiente.
 
+### FR-2026-07-16-015 — escaparate famoso + ideas semilla + hook del logo Fan$Rank$ (pedido explícito de Tony)
+
+- Origen: petición directa de Tony 16-jul ~21:00 (chat Cowork, aprox. literal: "el cuaderno madre no aporta nada... no pongas en el hero el cuaderno de madre pon alguno más famoso aunque sí pueda aparecer con la lupa pero no prioridad... FanRank incluye alguna idea"). NO es mejora autónoma: no rompe la condición de parada de FR-2026-07-15-007 (la tarjeta social y el compositor quedan intactos).
+- Cambio: (1) `familiar` sin `cuaderno-madre` (sigue con lupa; `featured_rank=900`) y con 7 perfiles famosos nuevos: Minecraft, Fortnite, YouTube, TikTok, Instagram, Spotify, Twitch (migración v17, kinds/tags/taglines EN+ES). (2) 25 ideas semilla honestas: 4 en el perfil FanRank + 3 por perfil nuevo; peticiones REALES y conocidas de cada comunidad, `web_votes=0`, `origin_upvotes=0`, sin `source_url` inventada — la nota IA es la única jerarquía (FR-INV-005 intacta). (3) Stubs regenerados (18) + sitemap con 7 URLs nuevas. (4) Hook del logo: si existe `assets/logo-art.png` (el arte Fan$Rank$ que aprobó Tony), sustituye visualmente al logo CSS con fallback automático; falta que Tony suelte el PNG (instrucciones en `assets/PON_AQUI_EL_LOGO.txt`). La marca escrita sigue `FanRank` hasta el test FAN$ de FR-2026-07-16-014.
+- Decisión que cambia: si un escaparate reconocible (perfiles famosos con contenido) convierte más visitantes en `profile_open`/`suggest_open` que el actual con perfiles internos arriba.
+- Selector ≤72 h tras publicar: `profile_open` sobre los 7 perfiles nuevos ≥ 1 con cualquier exposición referida; comparar ratio `page_view→profile_open` contra la línea base (41/75). Sin exposición nueva, `inconclusive` (distribución, no mecanismo).
+- Estado: `mechanism_built`; commit local hecho, PUSH PENDIENTE (la sesión Cowork no tiene credenciales git; encargado al loop por buzón). Evidencia de pruebas en el commit.
+
+### FR-2026-07-16-016 — v18 "nadie entra en vano": usabilidad para todo el que entra (pedido explícito de Tony)
+
+- Origen: Tony 16-jul ~21:40 ("haz su siguiente actualización, mejórala brutalmente respecto a usabilidad y beneficio de todo el mundo que entra"). Tony-directed: no rompe la condición de parada de FR-2026-07-15-007; tarjeta social y compositor intactos.
+- Antes de construir se comprobó qué YA existía (regla RECORDAR): "pedir perfil que falta" desde la búsqueda ya estaba implementado (`requestFromSearch` + `#request-panel`) → NO se duplicó.
+- Cambios (4, todos reversibles, solo presentación + contenido; ranking/pagos intactos):
+  1. **Cero perfiles vacíos**: 21 ideas semilla honestas en los 7 perfiles que quedaban a 0 (rubius, ibai, roblox, discord, x-twitter, chatgpt, claude; migración v18, mismo patrón de integridad que v17; para personas: solo formato/contenido respetuoso). Ahora 18/18 perfiles con contenido, 91 ideas aprobadas.
+  2. **Teaser del top en cada tarjeta del directorio** (`sec-top`): la idea nº1 del perfil visible desde la portada — comunica qué es FanRank antes del primer clic; usa `allIdeas` ya cargado (0 requests extra).
+  3. **Momento wow al votar**: heart-burst en el botón (respetando `prefers-reduced-motion`) + nudge una-sola-vez tras el primer voto ("¿Tienes una idea mejor? Suéltala en 30 segundos") → empuja el funnel voto→sugerencia.
+  4. **Carga percibida**: skeleton shimmer en el directorio (antes: spinner solo) + `preconnect`/`dns-prefetch` a Supabase (recorta el primer render en móvil).
+- Pruebas: clase nueva `V18UsabilityTests` (4 tests) registrada en el runner; los stubs se regeneraron con el contenido nuevo (18 stubs, 91 ideas).
+- Decisión que cambia: si portada-con-contenido + teaser + wow suben la activación del visitante.
+- Selector ≤72 h tras publicar: ratio `page_view→profile_open` y `page_view→vote|suggest_open` frente a la línea base (75/41/11); `vote_nudge` se mide indirecto: `suggest_open` con `value:"after_vote"` no existe aún, así que vale el delta bruto de `suggest_open`. Sin exposición nueva, `inconclusive`.
+- Estado: `mechanism_built`; push pendiente (mismo carril que v17).
+
+### FR-2026-07-16-017 — v19 "Duelo de ideas" + arranque instantáneo (pedido de Tony: "mejora brutal, no pares")
+
+- Origen: Tony 16-jul ~22:20 ("no pares o sube otra versión nueva hasta que haya una mejora brutal"). Tony-directed; tarjeta social intacta.
+- Cambio 1 — **Duelo de ideas (⚔️)**: botón junto a los rankings (portada y perfil) que abre un versus de dos ideas; tocas la que prefieres y ESE toque es un voto real (`vote()` de siempre, RLS de unicidad intacta, sin señal nueva de ranking). Rachas de 5 con celebración y CTA "Soltar MI idea" (`openSuggestion()`), saltar pareja, cierre con Escape/fondo, `prefers-reduced-motion` respetado. Por qué es la palanca de activación: convierte al visitante pasivo en votante en serie (el patrón "this-or-that" de las apps de swipe aplicado con votos honestos).
+- Cambio 2 — **Arranque instantáneo en visitas repetidas**: caché local del directorio+ideas (24 h, `fr_home_cache_v1`) con stale-while-revalidate — se pinta al instante y se refresca solo. Primera visita: skeleton v18.
+- Telemetría: `duel_open` / `duel_pick` añadidos al contrato de eventos (migración v19 APLICADA en producción + espejo local).
+- Pruebas: `V19EngagementTests` (5 tests) registrada en el runner.
+- Decisión que cambia: si el duelo multiplica votos/visitante y arrastra sugerencias.
+- Selector ≤72 h tras publicar: `duel_open ≥ 1` y ratio votos/visitante frente a línea base (1 voto / 13 visitantes); si `duel_pick ≥ 5` por visitante medio, el duelo se convierte en la acción principal de perfil; `suggest_open` tras duelo = funnel confirmado. Sin exposición, `inconclusive`.
+- Estado: `mechanism_built`; sale en el mismo push que v17+v18.
+
 ## Rutina `fanrank-mejora`
 
 - Una única cola: este archivo. El estado privado solo guarda lock, hashes, IDs procesados y el experimento activo.

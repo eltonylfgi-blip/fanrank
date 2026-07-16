@@ -1,0 +1,21 @@
+CÓMO ACTIVAR EL LOGO NUEVO (el de FAN$RANK$ con corazones, corona y trofeo)
+============================================================================
+
+La web ya está preparada: en cuanto exista el fichero, el logo nuevo
+aparece solo (y si no existe, se queda el logo actual — no rompe nada).
+
+TU PARTE (2 pasos):
+1) Guarda la imagen del chat en tu PC (clic derecho sobre la imagen → Guardar imagen como...).
+2) Ponla EN ESTA MISMA CARPETA con el nombre EXACTO:  logo-art.png
+
+Ruta completa de esta carpeta (por si la necesitas):
+C:\Users\anton\OneDrive\Escritorio\todo\CHAT GPT\Bot\PROYECTO MADRE\TEST_SUGERENCIAS\fanrank\assets\
+
+Cuando esté el fichero, cualquier sesión de Claude/Codex hace commit+push
+y queda publicado. Si lo sueltas y avisas con "logo listo" en cualquier chat, se sube.
+
+Nota honesta: el arte dice FAN$RANK$ (con dólares). La marca ESCRITA del
+producto sigue siendo "FanRank" hasta pasar el test de marca FAN$ que ya
+está en cola (FR-2026-07-16-014, necesita ~100 visitantes). El logo-imagen
+aprobado por Tony el 16-jul convive con ese test: si el test dice que el $
+resta confianza, se revierte con git (reversible).

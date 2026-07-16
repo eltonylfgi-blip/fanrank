@@ -46,7 +46,8 @@
       "must": [
         "La marca pública sigue siendo FanRank, con corazón rojo detrás de FAN.",
         "La estrella sustituye al corazón únicamente dentro de un equipo verificado.",
-        "No renombrar a FanRank$ sin un test de marca con usuarios que demuestre más confianza y participación."
+        "No renombrar a FanRank$ sin un test de marca con usuarios que demuestre más confianza y participación.",
+        "Arte de logo Fan$Rank$ (corazones + FAN$RANK$ + corona + trofeo + podio) aprobado por Tony como IMAGEN de logo (assets/logo-art.png; cita 16-jul: 'mira la imagen del chat te gusta? a mi si de logo'); la marca ESCRITA sigue FanRank hasta pasar el test FAN$ en cola (FR-2026-07-16-014); si el test muestra pérdida de confianza, se revierte."
       ],
       "origen": {
         "fecha": "2026-07-16",
@@ -293,6 +294,66 @@
         "fecha": "2026-07-16",
         "veredicto": "REQUIERE-OJO",
         "detalle": "Sin prueba automatizable; faltan 1 check(s) semánticos."
+      }
+    },
+    {
+      "id": "FR-INV-010",
+      "name": "Perfiles no reclamados: sin respaldo implícito (P0 legal)",
+      "status": "active",
+      "estado": "PROPUESTA",
+      "must": [
+        "Un perfil no reclamado nunca muestra insignia de verificación ni afirma colaboración, respaldo o testimonio de la persona o entidad.",
+        "El avatar de un perfil no reclamado es tipográfico o genérico; nunca una fotografía sin licencia comprobada (refuerza FR-INV-008).",
+        "Toda página de perfil no reclamado lleva noindex y un aviso visible de 'perfil no reclamado' que explica su procedencia.",
+        "Existe una vía de retirada inmediata visible; una solicitud verificada de la persona o entidad retira el perfil sin fricción.",
+        "No aparece publicidad ni contenido patrocinado junto a la identidad de un perfil no reclamado.",
+        "Que un dato sea públicamente accesible no es base jurídica automática para cualquier uso: no se tratan datos personales sensibles ni se usa la identidad para material que aparente asociación comercial."
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "propuesta-desde-investigacion-legal-AEPD-BOE-del-chat-GPT-de-Tony-'Exito-y-proteccion-idea'-(digest-buzon-16-jul);-pendiente-de-confirmacion-de-Tony"
+      },
+      "como_verificar": {
+        "tipo": "checklist_semantica",
+        "perfil": null,
+        "checklist": [
+          "Antes de publicar cualquier perfil de figura o entidad real: comprobar sin insignia, avatar tipográfico, noindex, aviso de no reclamado, vía de retirada visible y cero publicidad junto a la identidad.",
+          "El detalle operativo vive en docs/product/PROFILE_PROVENANCE_AND_CLAIM.md; toda página nueva de perfil se contrasta contra ese documento."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Regla recién propuesta desde la investigación legal; sin prueba automatizable aún; requiere revisión antes del primer perfil real publicado."
+      }
+    },
+    {
+      "id": "FR-INV-011",
+      "name": "El escaparate destaca lo famoso",
+      "status": "active",
+      "estado": "PROPUESTA",
+      "must": [
+        "La portada (directorio destacado) prioriza perfiles que el público ya reconoce; los perfiles internos o experimentales (p.ej. cuaderno-madre) nunca ocupan el top del destacado.",
+        "Todo perfil despriorizado sigue alcanzable con la búsqueda (lupa) y conserva su página; despriorizar no es borrar.",
+        "Los perfiles nuevos del escaparate nacen con al menos 3 ideas semilla honestas: sin votos falsos, sin fuentes inventadas y con nota IA explicada."
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": "el cuaderno madre no aporta nada [...] no pongas en el hero el cuaderno de madre pon alguno mas famoso aunque si que pueda aparecer con la lupa pero no prioridad",
+        "tipo": "feedback-explicito-de-Tony-cita-literal-chat-cowork"
+      },
+      "como_verificar": {
+        "tipo": "mixta",
+        "perfil": "fanrank_static",
+        "checklist": [
+          "Abrir la portada como visitante: el primer bloque del directorio solo muestra perfiles reconocibles; cuaderno-madre no aparece en el top pero la lupa lo encuentra."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Implementada (lista familiar sin cuaderno-madre, featured_rank=900, 7 perfiles famosos nuevos con 3 ideas semilla cada uno); falta el ojo humano en portada."
       }
     }
   ],
