@@ -119,9 +119,6 @@
       radial-gradient(circle at 20% 80%,rgba(255,209,41,.55) 0 2%,transparent 3%),
       radial-gradient(circle at 82% 18%,rgba(99,179,255,.62) 0 2%,transparent 3%);
     background-size:46px 46px,58px 58px,64px 64px;pointer-events:none}
-  .logo:after{content:"";position:absolute;top:-35%;bottom:-35%;left:-38%;width:22%;z-index:4;opacity:0;
-    transform:translateX(0) skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);
-    mix-blend-mode:screen;pointer-events:none}
   .logo:hover,.logo:focus-visible,.logo.celestial{filter:drop-shadow(0 0 14px rgba(255,255,255,.52)) drop-shadow(0 0 30px rgba(99,179,255,.48))}
   .logo:hover .logo-float,.logo:focus-visible .logo-float,.logo.celestial .logo-float{animation:logoFloatActive 2.8s ease-in-out infinite}
   .logo:hover .logo-art,.logo:focus-visible .logo-art,.logo.celestial .logo-art{transform:translateY(-2px) scale(1.025)}
@@ -133,13 +130,11 @@
   .logo:hover .rank-k,.logo:focus-visible .rank-k,.logo.celestial .rank-k{filter:drop-shadow(0 0 9px rgba(255,255,255,.44));animation:logoGradientFlow 1.9s linear infinite}
   .logo:hover .rank-trophy,.logo:focus-visible .rank-trophy,.logo.celestial .rank-trophy{transform:translateY(-.13em) rotate(11deg) scale(1.08);filter:drop-shadow(0 0 12px rgba(255,209,41,.95))}
   .logo:hover:before,.logo:focus-visible:before,.logo.celestial:before{animation:starBloom .95s var(--ease) both}
-  .logo:hover:after,.logo:focus-visible:after,.logo.celestial:after{animation:logoShine .8s var(--ease) both}
   .logo:hover + .eyebrow,.logo:focus-visible + .eyebrow,.logo.celestial + .eyebrow{animation:tagPop .82s var(--ease) both}
   @keyframes logoFloatIdle{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-5px,0)}}
   @keyframes logoFloatActive{0%,100%{transform:translate3d(0,-2px,0)}50%{transform:translate3d(0,-8px,0)}}
   @keyframes heartBeat{0%,38%,58%,100%{transform:scale(1)}42%{transform:scale(1.075)}47%{transform:scale(.99)}52%{transform:scale(1.04)}}
   @keyframes logoGradientFlow{to{background-position:-240% 0}}
-  @keyframes logoShine{0%{transform:translateX(0) skewX(-18deg);opacity:0}22%{opacity:1}100%{transform:translateX(710%) skewX(-18deg);opacity:0}}
   @keyframes starBloom{0%{opacity:0;transform:scale(.75) rotate(-4deg)}45%{opacity:.95}100%{opacity:0;transform:scale(1.22) rotate(6deg)}}
   @keyframes tagPop{35%{transform:rotate(-4deg) translateY(-4px) scale(1.08)}100%{transform:rotate(-7deg) translateY(0) scale(1)}}
   .tag{max-width:760px;margin:9px auto 0;color:var(--muted);font-size:clamp(.92rem,2vw,1.08rem);font-weight:500;line-height:1.4}

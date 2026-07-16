@@ -49,6 +49,8 @@ TEAM_INBOX_MIGRATION = ROOT / "supabase" / "migrations" / "20260715193000_fanran
 TEAM_INBOX_SQL = TEAM_INBOX_MIGRATION.read_text(encoding="utf-8")
 MEDIA_INTAKE_PATH = ROOT / "supabase" / "functions" / "fanrank-feedback-intake" / "index.ts"
 MEDIA_INTAKE = MEDIA_INTAKE_PATH.read_text(encoding="utf-8")
+ANDROID_PROMPT_PATH = ROOT / "docs" / "FANRANK_ANDROID_GEMINI_PROMPT.md"
+ANDROID_PROMPT = ANDROID_PROMPT_PATH.read_text(encoding="utf-8")
 
 
 def extract(pattern: str) -> str:
@@ -111,6 +113,27 @@ class StructureParser(HTMLParser):
 
 
 class StaticAppTests(unittest.TestCase):
+    def test_android_gemini_handoff_preserves_product_and_backend_boundaries(self) -> None:
+        markers = [
+            "## INICIO DEL PROMPT",
+            "FanRank ♥",
+            "FanRank ★",
+            "organicScore = aiScore + min(fanHearts * 2, 20)",
+            "FeatureFlag.NativeMediaUpload = false",
+            "fr_sections_stats",
+            "fr_ranking",
+            "`ScreenViewed` → `page_view`",
+            "ServerEventName",
+            "No implementes cobros",
+            "**1A · Esqueleto:**",
+            "implementa **solo la Fase 1**",
+            "## FIN DEL PROMPT",
+        ]
+        for marker in markers:
+            self.assertIn(marker, ANDROID_PROMPT)
+        self.assertNotIn("service_role=", ANDROID_PROMPT.lower())
+        self.assertNotIn("supabase_anon_key=ey", ANDROID_PROMPT.lower())
+
     def test_utf8_and_mobile_document(self) -> None:
         self.assertIn('<meta charset="UTF-8">', HTML)
         self.assertIn('name="viewport"', HTML)
@@ -777,16 +800,19 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn('return Number(b.ai_score)-Number(a.ai_score)', sorted_ideas)
         self.assertIn('return Number(b.web_votes)-Number(a.web_votes)', sorted_ideas)
 
-    def test_celestial_logo_respects_user_control(self) -> None:
+    def test_celestial_logo_respects_user_control_without_a_rectangular_shine_slab(self) -> None:
         markers = [
-            "logoShine",
             "starBloom",
+            "logoGradientFlow",
             "document.addEventListener(\"pointerdown\",armCelestialAudio",
             "byId(\"logo\").addEventListener(\"pointerenter\"",
             "if(REDUCED || !audioArmed",
             "chimePlayed",
         ]
         self.assertEqual([], [marker for marker in markers if marker not in HTML])
+        self.assertNotIn(".logo:after{", HTML)
+        self.assertNotIn("@keyframes logoShine", HTML)
+        self.assertNotIn(".logo:hover:after", HTML)
 
     def test_profile_sharing_has_a_clean_measurable_referral_loop(self) -> None:
         markers = [
