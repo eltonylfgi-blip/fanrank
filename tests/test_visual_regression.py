@@ -299,6 +299,118 @@ class FanRankVisualRegressionTests(unittest.TestCase):
         self.assertTrue(result["ownerAfterTrust"])
         context.close()
 
+    def test_supported_home_vote_is_unmistakable_and_top_numbers_are_prominent(self) -> None:
+        context = self.browser.new_context(
+            viewport={"width": 375, "height": 812},
+            locale="es-ES",
+        )
+        page = context.new_page()
+        url = self.base_url + "?lang=es&qa=1&local=vote-state"
+        page.goto(url, wait_until="domcontentloaded")
+        first_vote = page.locator("[data-home-vote]").first
+        first_vote.wait_for(state="visible")
+        idea_id = first_vote.get_attribute("data-home-vote")
+        self.assertIsNotNone(idea_id)
+        page.evaluate(
+            "ideaId => localStorage.setItem('fr_myvotes', JSON.stringify([Number(ideaId)]))",
+            idea_id,
+        )
+        page.reload(wait_until="domcontentloaded")
+        supported = page.locator(f'[data-home-vote="{idea_id}"]')
+        supported.wait_for(state="visible")
+        result = supported.evaluate(
+            """
+            button => {
+              const style = getComputedStyle(button);
+              const rgb = value => (value.match(/[0-9.]+/g) || []).slice(0,3).map(Number);
+              const luminance = color => {
+                const values = rgb(color).map(value => {
+                  const channel = value / 255;
+                  return channel <= .03928 ? channel / 12.92 : Math.pow((channel + .055) / 1.055, 2.4);
+                });
+                return .2126 * values[0] + .7152 * values[1] + .0722 * values[2];
+              };
+              const lighter = Math.max(luminance(style.color), luminance(style.backgroundColor));
+              const darker = Math.min(luminance(style.color), luminance(style.backgroundColor));
+              const cards = [...document.querySelectorAll('#trending .trend-card')];
+              return {
+                active: button.classList.contains('voted'),
+                disabled: button.disabled,
+                opacity: Number(style.opacity),
+                contrast: (lighter + .05) / (darker + .05),
+                text: button.textContent.replace(/\\s+/g, ' ').trim(),
+                ariaLabel: button.getAttribute('aria-label'),
+                rankClasses: cards.map(card => [...card.classList].find(name => name.startsWith('rank-'))),
+                rankSizes: cards.map(card => parseFloat(getComputedStyle(card.querySelector('.trend-rank-number')).fontSize)),
+                noOverflow: document.documentElement.scrollWidth === innerWidth
+              };
+            }
+            """
+        )
+        self.assertTrue(result["active"])
+        self.assertTrue(result["disabled"])
+        self.assertEqual(1, result["opacity"])
+        self.assertGreaterEqual(result["contrast"], 4.5)
+        self.assertIn("✓", result["text"])
+        self.assertIn("Apoyada", result["text"])
+        self.assertTrue(result["ariaLabel"].startswith("Idea apoyada:"))
+        self.assertEqual(["rank-1", "rank-2", "rank-3"], result["rankClasses"])
+        self.assertTrue(all(size >= 28 for size in result["rankSizes"]))
+        self.assertTrue(result["noOverflow"])
+        context.close()
+
+    def test_profile_ranking_keeps_top_three_prominent_and_rest_compact(self) -> None:
+        context = self.browser.new_context(
+            viewport={"width": 375, "height": 812},
+            locale="es-ES",
+        )
+        page = context.new_page()
+        page.goto(
+            self.base_url + "?s=brawl-stars&lang=es&qa=1&local=rank-density",
+            wait_until="domcontentloaded",
+        )
+        page.locator("#ideas-list .idea-card").nth(3).wait_for(state="visible")
+        result = page.evaluate(
+            """
+            () => {
+              const cards = [...document.querySelectorAll('#ideas-list .idea-card')];
+              const top = cards.slice(0,3);
+              const compact = cards[3];
+              const detail = compact.querySelector('.idea-more');
+              const summary = detail.querySelector('summary');
+              const vote = compact.querySelector('.vote-btn');
+              const meanTopHeight = top.reduce((sum, card) => sum + card.getBoundingClientRect().height, 0) / top.length;
+              return {
+                topRankSizes: top.map(card => parseFloat(getComputedStyle(card.querySelector('.rank')).fontSize)),
+                topClasses: top.map(card => card.className),
+                compactClass: compact.classList.contains('compact'),
+                compactHeight: compact.getBoundingClientRect().height,
+                meanTopHeight,
+                detailCollapsed: !detail.open,
+                summaryHeight: summary.getBoundingClientRect().height,
+                voteWidth: vote.getBoundingClientRect().width,
+                voteHeight: vote.getBoundingClientRect().height,
+                noOverflow: document.documentElement.scrollWidth === innerWidth
+              };
+            }
+            """
+        )
+        self.assertTrue(all(size >= 30 for size in result["topRankSizes"]))
+        self.assertTrue(all(f"top{index}" in result["topClasses"][index - 1] for index in (1,2,3)))
+        self.assertTrue(result["compactClass"])
+        self.assertLessEqual(result["compactHeight"], 165)
+        self.assertLess(result["compactHeight"], result["meanTopHeight"] * 0.72)
+        self.assertTrue(result["detailCollapsed"])
+        self.assertGreaterEqual(result["summaryHeight"], 44)
+        self.assertGreaterEqual(result["voteWidth"], 44)
+        self.assertGreaterEqual(result["voteHeight"], 44)
+        self.assertTrue(result["noOverflow"])
+        compact_summary = page.locator("#ideas-list .idea-card.compact .idea-more summary").first
+        compact_summary.focus()
+        page.keyboard.press("Enter")
+        self.assertTrue(page.locator("#ideas-list .idea-card.compact .idea-more").first.evaluate("details => details.open"))
+        context.close()
+
     def test_reduced_motion_disables_brand_animation(self) -> None:
         context = self.browser.new_context(
             viewport={"width": 375, "height": 812},

@@ -325,8 +325,16 @@
     border-radius:16px;background:linear-gradient(145deg,rgba(27,32,48,.96),rgba(17,20,31,.96));
     transition:transform .18s var(--ease),border-color .18s ease}
   .trend-card:hover{transform:translateY(-2px);border-color:var(--blue)}
+  .trend-card.rank-1{border-color:rgba(255,215,0,.52);box-shadow:inset 0 1px 0 rgba(255,238,125,.08),0 12px 35px rgba(255,194,20,.07)}
+  .trend-card.rank-2{border-color:rgba(203,211,227,.4)}
+  .trend-card.rank-3{border-color:rgba(223,159,105,.42)}
   .trend-link{display:flex;flex:1;flex-direction:column;color:inherit;text-decoration:none}
-  .trend-rank{color:var(--yellow);font-size:.73rem;font-weight:950;letter-spacing:.08em}
+  .trend-rank{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
+  .trend-rank-label{color:var(--muted);font-size:.66rem;font-weight:950;letter-spacing:.09em;text-transform:uppercase}
+  .trend-rank-number{color:var(--yellow);font-size:clamp(1.75rem,4vw,2.1rem);font-weight:950;line-height:.86;font-variant-numeric:tabular-nums}
+  .rank-1 .trend-rank-number{color:var(--gold);text-shadow:0 0 18px rgba(255,215,0,.28)}
+  .rank-2 .trend-rank-number{color:var(--silver)}
+  .rank-3 .trend-rank-number{color:var(--bronze)}
   .trend-title{margin-top:10px;font-weight:850;line-height:1.35}
   .trend-meta{margin-top:auto;padding-top:12px;color:var(--muted);font-size:.75rem}
   .trend-actions{display:flex;align-items:center;justify-content:space-between;gap:9px;margin-top:12px;padding-top:11px;border-top:1px solid var(--line-soft)}
@@ -334,7 +342,10 @@
   .home-vote{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:42px;padding:8px 11px;border:1px solid rgba(255,114,198,.38);
     border-radius:11px;background:rgba(255,114,198,.08);color:#ffd9ee;font-size:.76rem;font-weight:950}
   .home-vote:hover{border-color:var(--pink);background:rgba(255,114,198,.15)}
-  .home-vote[disabled]{opacity:.7;cursor:default}
+  .home-vote[disabled]:not(.voted){opacity:.7;cursor:default}
+  .home-vote.voted[disabled]{border-color:#ff92c5;background:#b30d55;color:#fff;opacity:1;cursor:default;
+    box-shadow:0 0 0 2px rgba(255,114,198,.2),0 9px 24px rgba(179,13,85,.34)}
+  .home-vote.voted .vote-confirm{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#fff;color:#8c0a43;font-size:.68rem}
 
   .fan-value{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:17px;margin-top:18px;padding:19px 20px;
     border:1px solid rgba(255,114,198,.3);border-radius:20px;background:linear-gradient(120deg,rgba(255,114,198,.07),rgba(99,179,255,.055))}
@@ -429,10 +440,12 @@
   .idea-card:hover{transform:translateY(-1px);border-color:#44506d;box-shadow:0 9px 30px rgba(0,0,0,.22)}
   .idea-card.top1{border-color:rgba(255,215,0,.48)}.idea-card.top2{border-color:rgba(203,211,227,.37)}
   .idea-card.top3{border-color:rgba(223,159,105,.37)}
+  .idea-card.top1,.idea-card.top2,.idea-card.top3{grid-template-columns:56px minmax(0,1fr) auto;padding:17px}
   .idea-card.team-pick{border-color:rgba(255,215,0,.75);background:linear-gradient(135deg,rgba(255,215,0,.055),var(--surface))}
   .idea-card.deep-focus{animation:deepPulse 1.1s var(--ease) 2}
   @keyframes deepPulse{50%{box-shadow:0 0 0 4px rgba(99,179,255,.28),0 12px 40px rgba(0,0,0,.3);border-color:var(--blue)}}
   .rank{font-size:1.25rem;font-weight:950;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+  .idea-card.top1 .rank,.idea-card.top2 .rank,.idea-card.top3 .rank{font-size:2.15rem;line-height:1;text-shadow:0 0 20px currentColor}
   .top1 .rank{color:var(--gold)}.top2 .rank{color:var(--silver)}.top3 .rank{color:var(--bronze)}
   .idea-main{min-width:0}
   .team-badge{display:inline-flex;align-items:center;gap:5px;margin-bottom:7px;padding:3px 9px;
@@ -462,6 +475,16 @@
   .icon-btn{display:grid;place-items:center;padding:0;color:var(--muted)}
   .icon-btn:hover{border-color:var(--blue);color:var(--blue)}
   .icon-btn svg{width:19px;height:19px}
+  .idea-card.compact{grid-template-columns:30px minmax(0,1fr) auto;gap:9px;padding:10px 11px;border-radius:13px}
+  .idea-card.compact .rank{font-size:.88rem;text-shadow:none}
+  .idea-card.compact .idea-title{display:-webkit-box;overflow:hidden;font-size:.88rem;line-height:1.32;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+  .idea-card.compact .score-row{margin-top:5px}.idea-card.compact .score-track{display:none}
+  .idea-card.compact .score-label{min-width:0;text-align:left;font-size:.68rem}
+  .idea-card.compact .idea-actions{align-self:center}
+  .idea-more{grid-column:2/-1;margin-top:-3px;border-top:1px solid var(--line-soft)}
+  .idea-more>summary{display:flex;align-items:center;justify-content:space-between;min-height:44px;color:var(--blue);font-size:.72rem;font-weight:850;cursor:pointer;list-style:none}
+  .idea-more>summary::-webkit-details-marker{display:none}.idea-more>summary:after{content:"+";font-size:1rem}.idea-more[open]>summary:after{content:"−"}
+  .idea-more-body{padding:0 0 8px}.idea-more-body .reason{margin-top:0}.idea-more-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
   .empty-state{padding:36px 18px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center}
   .loading{padding:42px 10px;color:var(--muted);text-align:center}
   .spinner{display:inline-block;width:22px;height:22px;margin-bottom:9px;border:3px solid var(--line);
@@ -737,6 +760,12 @@
     .idea-card{grid-template-columns:30px minmax(0,1fr);gap:10px;padding:13px}
     .idea-actions{grid-column:2;justify-content:flex-end}
     .rank{font-size:1.05rem}
+    .idea-card.top1,.idea-card.top2,.idea-card.top3{grid-template-columns:44px minmax(0,1fr);gap:10px;padding:15px 13px}
+    .idea-card.top1 .rank,.idea-card.top2 .rank,.idea-card.top3 .rank{font-size:2rem}
+    .idea-card.compact{grid-template-columns:24px minmax(0,1fr) auto;gap:8px;padding:9px 10px}
+    .idea-card.compact .idea-actions{grid-column:3;grid-row:1;justify-content:flex-end}
+    .idea-card.compact .vote-btn{min-width:46px;min-height:46px;padding-inline:8px}
+    .idea-card.compact .idea-more{grid-column:2/-1}
     .reason{font-size:.76rem}
     .stats{gap:6px;flex-wrap:nowrap}.stat{min-width:0;flex:1 1 0;padding-inline:5px}.stat .l{font-size:.58rem}
     body.home-live #stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -1652,7 +1681,10 @@ var T = {
     global_fan_signal:function(n){return n + (n === 1 ? " heart" : " hearts");},
     home_vote:"Support",
     home_voted:"Supported",
+    home_vote_aria:function(title){return "Support idea: " + title;},
+    home_voted_aria:function(title){return "Idea supported: " + title;},
     home_vote_saved:"Your support now counts in the community ranking.",
+    idea_more:"More details and actions",
     fan_value_kicker:"YOUR FANRANK ♥ PROFILE",
     fan_value_title:"Let your best ideas speak for you",
     fan_value_text:"Keep your suggestions, show which ones AI and teams value, and build a useful public portfolio for testing, UX or product opportunities.",
@@ -2116,7 +2148,10 @@ var T = {
     global_fan_signal:function(n){return n + (n === 1 ? " corazón" : " corazones");},
     home_vote:"Apoyar",
     home_voted:"Apoyada",
+    home_vote_aria:function(title){return "Apoyar idea: " + title;},
+    home_voted_aria:function(title){return "Idea apoyada: " + title;},
     home_vote_saved:"Tu apoyo ya cuenta en el ranking de la comunidad.",
+    idea_more:"Detalles y acciones",
     fan_value_kicker:"TU PERFIL FANRANK ♥",
     fan_value_title:"Que tus buenas ideas hablen por ti",
     fan_value_text:"Guarda tus sugerencias, enseña cuáles valora la IA o reconoce un equipo y crea un portfolio útil para oportunidades de testing, UX o producto.",
@@ -3866,12 +3901,14 @@ function renderTrending(){
     var meta = sections.find(function(s){return s.slug === item.section;});
     var voted = mine.indexOf(item.id) >= 0;
     var signal = homeRankMode === "fans" ? tx("global_fan_signal",Number(item.web_votes||0)) : tx("global_ai_signal",Math.round(Number(item.ai_score||0)));
-    return '<article class="trend-card"><a class="trend-link" href="' + esc(ideaUrl(item)) + '" data-idea-open="' + item.id + '">' +
-      '<span class="trend-rank">' + esc(tx("top_label")) + ' · #' + (index+1) + '</span>' +
+    return '<article class="trend-card rank-' + (index+1) + '"><a class="trend-link" href="' + esc(ideaUrl(item)) + '" data-idea-open="' + item.id + '">' +
+      '<span class="trend-rank"><span class="trend-rank-label">' + esc(tx("top_label")) + '</span><strong class="trend-rank-number">#' + (index+1) + '</strong></span>' +
       '<span class="trend-title">' + esc(ideaTitle(item)) + '</span>' +
       '<span class="trend-meta">' + esc(meta ? meta.name : item.section) + '</span></a>' +
-      '<div class="trend-actions"><span class="trend-signal">' + esc(signal) + '</span><button class="home-vote" type="button" data-home-vote="' +
-      item.id + '" ' + (voted ? 'disabled' : '') + '><span aria-hidden="true">♥</span>' + esc(voted ? tx("home_voted") : tx("home_vote")) + '</button></div></article>';
+      '<div class="trend-actions"><span class="trend-signal">' + esc(signal) + '</span><button class="home-vote ' + (voted ? "voted" : "") + '" type="button" data-home-vote="' +
+      item.id + '" aria-label="' + esc(voted ? tx("home_voted_aria",ideaTitle(item)) : tx("home_vote_aria",ideaTitle(item))) + '" ' +
+      (voted ? 'disabled' : '') + '><span aria-hidden="true">♥</span>' + (voted ? '<span class="vote-confirm" aria-hidden="true">✓</span>' : '') +
+      esc(voted ? tx("home_voted") : tx("home_vote")) + '</button></div></article>';
   }).join("");
   document.querySelectorAll("[data-idea-open]").forEach(function(link){
     link.addEventListener("click",function(){
@@ -4216,27 +4253,32 @@ function renderIdeas(){
     var score = Number(item.ai_score||0);
     var source = safeUrl(item.source_url);
     var rankClass = index === 0 ? "top1" : index === 1 ? "top2" : index === 2 ? "top3" : "";
+    var compact = index > 2;
     var voted = mine.indexOf(item.id) >= 0;
-    return '<article class="idea-card ' + rankClass + '" id="idea-' + item.id + '">' +
+    var reasonHtml = '<div class="reason">' + esc(ideaReason(item)) + '</div>';
+    var metaHtml = '<div class="idea-meta"><span class="chip" title="' + esc(tx("source_votes_help")) + '" aria-label="' +
+      esc(fmt(item.origin_upvotes) + " " + tx("source_votes") + ". " + tx("source_votes_help")) + '">' +
+      fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' +
+      (item.topic_title ? '<span class="chip topic-chip"># ' + esc(item.topic_title) + '</span>' : "") +
+      (source ? '<a class="chip source-link" href="' + esc(source) + '" target="_blank" rel="noopener noreferrer">' +
+      esc(tx("source")) + ' ↗</a>' : "") + '</div>';
+    var shareButton = '<button class="icon-btn" type="button" data-share="' + item.id + '" aria-label="' + esc(tx("share")) +
+      '" title="' + esc(tx("share")) + '">' + icon("share") + '</button>';
+    var voteButton = '<button class="vote-btn ' + (voted ? "voted" : "") + '" type="button" data-vote="' + item.id + '" ' +
+      (voted ? "disabled" : "") + '><span class="vote-heart" aria-hidden="true">♥</span><span class="vote-count">' + Number(item.web_votes||0) +
+      '</span><span class="vote-label">' + esc(voted ? tx("voted") : tx("vote")) + '</span></button>';
+    var teamControls = teamStarControlHtml(item) + topicAssignmentControlHtml(item);
+    var secondaryHtml = compact ? "" : reasonHtml + metaHtml;
+    var detailsHtml = compact ? '<details class="idea-more"><summary>' + esc(tx("idea_more")) + '</summary><div class="idea-more-body">' +
+      reasonHtml + metaHtml + '<div class="idea-more-actions">' + shareButton + teamControls + '</div></div></details>' : "";
+    var actionsHtml = compact ? voteButton : shareButton + voteButton + teamControls;
+    return '<article class="idea-card ' + rankClass + (compact ? " compact" : "") + '" id="idea-' + item.id + '">' +
       '<div class="rank">' + (index+1) + '</div><div class="idea-main">' +
       teamRatingHtml(item) +
       '<div class="idea-title">' + esc(ideaTitle(item)) + '</div><div class="score-row"><div class="score-track">' +
       '<div class="score-fill" data-score="' + score + '"></div></div><div class="score-label">' +
       esc(tx("ai_score")) + " " + score + '</div></div>' +
-      '<div class="reason">' + esc(ideaReason(item)) + '</div><div class="idea-meta">' +
-      '<span class="chip" title="' + esc(tx("source_votes_help")) + '" aria-label="' +
-      esc(fmt(item.origin_upvotes) + " " + tx("source_votes") + ". " + tx("source_votes_help")) + '">' +
-      fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' +
-      (item.topic_title ? '<span class="chip topic-chip"># ' + esc(item.topic_title) + '</span>' : "") +
-      (source ? '<a class="chip source-link" href="' + esc(source) + '" target="_blank" rel="noopener noreferrer">' +
-      esc(tx("source")) + ' ↗</a>' : "") + '</div></div><div class="idea-actions">' +
-      '<button class="icon-btn" type="button" data-share="' + item.id + '" aria-label="' + esc(tx("share")) +
-      '" title="' + esc(tx("share")) + '">' + icon("share") + '</button>' +
-      '<button class="vote-btn ' + (voted ? "voted" : "") + '" type="button" data-vote="' + item.id + '" ' +
-      (voted ? "disabled" : "") + '><span class="vote-heart" aria-hidden="true">♥</span><span class="vote-count">' + Number(item.web_votes||0) +
-      '</span><span class="vote-label">' + esc(voted ? tx("voted") : tx("vote")) + '</span></button>' +
-      teamStarControlHtml(item) + topicAssignmentControlHtml(item) +
-      '</div></article>';
+      secondaryHtml + '</div><div class="idea-actions">' + actionsHtml + '</div>' + detailsHtml + '</article>';
   }).join("");
   requestAnimationFrame(function(){
     document.querySelectorAll(".score-fill").forEach(function(fill){fill.style.width = fill.dataset.score + "%";});

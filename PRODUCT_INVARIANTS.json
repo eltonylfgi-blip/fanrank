@@ -103,7 +103,9 @@
       "must": [
         "Buscar, sugerir y votar son las acciones principales y aparecen antes del directorio y de la venta a equipos.",
         "Enviar una sugerencia es anónimo por defecto, rápido y usable sin registro.",
-        "Crear una cuenta se ofrece como beneficio para guardar historial, logros y contacto privado, nunca como bloqueo."
+        "Crear una cuenta se ofrece como beneficio para guardar historial, logros y contacto privado, nunca como bloqueo.",
+        "El apoyo confirmado se distingue de forma inequívoca mediante color marcado, texto e icono; nunca parece un botón deshabilitado.",
+        "Las ideas #1, #2 y #3 reciben jerarquía visual clara; desde la #4 la lista usa una presentación compacta sin perder acceso a los detalles."
       ],
       "origen": {
         "fecha": "2026-07-16",

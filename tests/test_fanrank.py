@@ -1075,6 +1075,11 @@ class StaticAppTests(unittest.TestCase):
             'function activateHomeRank(tab,focusTab)',
             '["ArrowLeft","ArrowRight","Home","End"]',
             'data-home-vote="',
+            '.home-vote.voted[disabled]',
+            'trend-rank-number',
+            'var compact = index > 2;',
+            'idea_more:"More details and actions"',
+            'idea_more:"Detalles y acciones"',
             'id="fan-value-title"',
             'id="home-profile-cta"',
             'id="directory-more"',
@@ -1098,6 +1103,9 @@ class StaticAppTests(unittest.TestCase):
         self.assertIn('if(SECTION){renderProfile();renderSimilarIdeas();}else{renderTrending();renderSimilarIdeas();}', HTML)
         render_sections = extract(r"function renderSections\(\)\{([\s\S]*?)\n\}\nfunction trendingIdeas")
         render_trending = extract(r"function renderTrending\(\)\{([\s\S]*?)\n\}\nfunction loadHome")
+        self.assertIn('class="trend-card rank-\' + (index+1) + \'"', render_trending)
+        self.assertIn('class="home-vote \' + (voted ? "voted" : "") + \'"', render_trending)
+        self.assertIn('aria-label="\' + esc(voted ? tx("home_voted_aria",ideaTitle(item)) : tx("home_vote_aria",ideaTitle(item)))', render_trending)
         self.assertIn('moreButton.classList.toggle("hidden"', render_sections)
         self.assertNotIn("moreButton", render_trending)
 
