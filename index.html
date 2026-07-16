@@ -1068,7 +1068,7 @@
         <h3 class="sr-only" id="composer-label"></h3>
         <div class="composer-target-row">
           <label id="submit-target-label" for="submit-target"></label>
-          <div class="composer-target-value hidden" id="submit-target-context"></div>
+          <div class="composer-target-value hidden" id="submit-target-context" role="group" aria-labelledby="submit-target-label"></div>
           <div class="composer-target-field hidden" id="submit-target-field">
             <select class="inline-select" id="submit-target" required></select>
             <span class="sr-only" id="submit-target-help"></span>
@@ -1770,6 +1770,8 @@ var T = {
     evidence_links_count:function(n){return n + (n === 1 ? " link" : " links");},
     submit_send:"Send suggestion",
     submit_privacy_note:"Anonymous by default · private review",
+    submit_privacy_account:"Public with your Fan profile",
+    submit_privacy_contact:"Private name and contact · private review",
     advanced_title:"Add useful details (optional)",
     advanced_copy:"Topic, category, contact and achievement alerts.",
     submit_ok:"Suggestion received. Your contact stays private.",
@@ -2203,6 +2205,8 @@ var T = {
     idea_help:"Pega aquí una captura con Ctrl+V. Los vídeos se añaden por enlace.",
     submit_send:"Enviar sugerencia",
     submit_privacy_note:"Anónima por defecto · revisión privada",
+    submit_privacy_account:"Pública con tu perfil Fan",
+    submit_privacy_contact:"Nombre y contacto privados · revisión privada",
     advanced_title:"Añadir detalles útiles (opcional)",
     advanced_copy:"Tema, categoría, contacto y avisos de logros.",
     submit_ok:"Sugerencia recibida. Tu contacto sigue siendo privado.",
@@ -2569,11 +2573,17 @@ function suggestionAttribution(){
   var selected = document.querySelector('input[name="attribution"]:checked');
   return selected ? selected.value : "anonymous";
 }
+function updateSubmitPrivacyNote(){
+  var mode = suggestionAttribution();
+  var key = mode === "account" ? "submit_privacy_account" : (mode === "contact" ? "submit_privacy_contact" : "submit_privacy_note");
+  byId("submit-privacy-note").innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg><span>' + esc(tx(key)) + '</span>';
+}
 function toggleSuggestionIdentity(){
   var accountInput = byId("attribution-account");
   accountInput.disabled = !session;
   if(!session && accountInput.checked){byId("attribution-anonymous").checked = true;}
   byId("contact-identity-fields").classList.toggle("hidden",suggestionAttribution() !== "contact");
+  updateSubmitPrivacyNote();
 }
 function setMediaStatus(message,type){
   var node = byId("media-status");
@@ -2956,6 +2966,8 @@ async function openSuggestion(){
   var context = byId("submit-target-context");
   context.classList.toggle("hidden",!(SECTION && secMeta));
   context.textContent = SECTION && secMeta ? secMeta.name : "";
+  if(SECTION){byId("submit-target-label").removeAttribute("for");}
+  else{byId("submit-target-label").setAttribute("for","submit-target");}
   if(!SECTION){populateSuggestionTargets();}
   await loadSuggestionTopics();
   restoreDraft();
@@ -3523,7 +3535,7 @@ function applyStaticText(){
   byId("share-native").textContent = tx("share_native");
   byId("share-copy-link").textContent = tx("share_copy_link");
   byId("submit-send").textContent = tx("submit_send");
-  byId("submit-privacy-note").innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg><span>' + esc(tx("submit_privacy_note")) + '</span>';
+  updateSubmitPrivacyNote();
   byId("advanced-title").textContent = tx("advanced_title");
   byId("advanced-copy").textContent = tx("advanced_copy");
   byId("similar-head").textContent = tx("similar_head");

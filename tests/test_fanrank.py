@@ -507,6 +507,7 @@ class StaticAppTests(unittest.TestCase):
         markers = [
             'class="quick-composer" id="quick-composer"',
             'id="submit-target-context"',
+            'id="submit-target-context" role="group" aria-labelledby="submit-target-label"',
             'id="submit-target-label" for="submit-target"',
             'id="submit-idea-label" for="submit-idea"',
             '<details class="composer-media" id="media-box">',
@@ -523,6 +524,10 @@ class StaticAppTests(unittest.TestCase):
         self.assertLess(dialog.index('id="submit-privacy-note"'), dialog.index('id="submit-send"'))
         self.assertIn('media_title:"Añadir una imagen o enlace (opcional)"', HTML)
         self.assertIn('idea_help:"Pega aquí una captura con Ctrl+V. Los vídeos se añaden por enlace."', HTML)
+        self.assertIn('submit_privacy_account:"Pública con tu perfil Fan"', HTML)
+        self.assertIn('submit_privacy_contact:"Nombre y contacto privados · revisión privada"', HTML)
+        self.assertIn('var key = mode === "account" ? "submit_privacy_account"', HTML)
+        self.assertIn('byId("submit-target-label").removeAttribute("for")', HTML)
         self.assertRegex(HTML, r"[.]category-option span\{[^}]*min-height:44px")
         self.assertRegex(HTML, r"[.]media-remove\{[^}]*width:44px;height:44px")
 
