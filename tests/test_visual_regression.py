@@ -141,9 +141,13 @@ class FanRankVisualRegressionTests(unittest.TestCase):
                 self.assertNotIn(geometry["fanFill"], transparent_values)
                 self.assertNotIn(geometry["rankColor"], transparent_values)
                 self.assertNotIn(geometry["rankFill"], transparent_values)
+                # Edge occasionally reports a 12px CSS box as 11.9999847px after
+                # sub-pixel layout. Keep the visual minimum without a float-equality flake.
+                layout_epsilon = 0.01
                 self.assertTrue(
                     all(
-                        step["height"] >= (16 if step["isFirst"] else 12)
+                        step["height"] + layout_epsilon
+                        >= (16 if step["isFirst"] else 12)
                         for step in geometry["podiumSteps"]
                     )
                 )

@@ -1,100 +1,294 @@
 {
   "schema_version": 1,
+  "lifecycle_schema_version": 1,
+  "asset_id": "fanrank",
   "product": "FanRank",
+  "topic": "fanrank",
   "updated_at": "2026-07-16",
   "purpose": "Contrato duradero de producto y diseño extraído del feedback explícito de Tony. Se lee antes de cada cambio y se protege con pruebas.",
+  "verification_profiles": {
+    "fanrank_static": {
+      "comandos": [
+        {
+          "nombre": "Contrato y estructura de FanRank",
+          "argv": [
+            "python",
+            "tests/test_fanrank.py"
+          ]
+        }
+      ]
+    },
+    "fanrank_full": {
+      "comandos": [
+        {
+          "nombre": "Contrato y estructura de FanRank",
+          "argv": [
+            "python",
+            "tests/test_fanrank.py"
+          ]
+        },
+        {
+          "nombre": "Regresión visual de FanRank",
+          "argv": [
+            "python",
+            "tests/test_visual_regression.py"
+          ]
+        }
+      ]
+    }
+  },
   "rules": [
     {
       "id": "FR-INV-001",
       "name": "Marca dual, una sola identidad",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "La marca pública sigue siendo FanRank, con corazón rojo detrás de FAN.",
         "La estrella sustituye al corazón únicamente dentro de un equipo verificado.",
         "No renombrar a FanRank$ sin un test de marca con usuarios que demuestre más confianza y participación."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "mixta",
+        "perfil": "fanrank_full",
+        "checklist": [
+          "Confirmar visualmente que corazón, FAN y RANK se perciben como una sola identidad y que la estrella solo aparece en contexto verificado."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Parte automática superada (2 comando(s)); faltan 1 check(s) semánticos."
+      }
     },
     {
       "id": "FR-INV-002",
       "name": "Logo reconocible y nunca recortado",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "FANRANK usa relleno visual opaco; el fondo nunca se ve a través de las letras.",
         "Corazón, palabra completa, podio 2-1-3 y trofeo grande se leen como un único logo.",
         "La flotación, el latido y el brillo son suaves, responden al hover y respetan prefers-reduced-motion.",
         "El conjunto permanece dentro del viewport desde 320 px."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "mixta",
+        "perfil": "fanrank_full",
+        "checklist": [
+          "Revisar las capturas de 320, 375, 768 y 1440 px y confirmar que el logo se reconoce como un conjunto, no solo que cabe geométricamente."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Parte automática superada (2 comando(s)); faltan 1 check(s) semánticos."
+      }
     },
     {
       "id": "FR-INV-003",
       "name": "La acción del fan va primero",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "Buscar, sugerir y votar son las acciones principales y aparecen antes del directorio y de la venta a equipos.",
         "Enviar una sugerencia es anónimo por defecto, rápido y usable sin registro.",
         "Crear una cuenta se ofrece como beneficio para guardar historial, logros y contacto privado, nunca como bloqueo."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "mixta",
+        "perfil": "fanrank_full",
+        "checklist": [
+          "Recorrer como visitante anónimo la búsqueda, sugerencia y voto; ninguna debe quedar detrás de registro o venta."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Parte automática superada (2 comando(s)); faltan 1 check(s) semánticos."
+      }
     },
     {
       "id": "FR-INV-004",
       "name": "Señales separadas y explicables",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "El corazón representa apoyo orgánico de fans.",
         "La estrella representa contexto o prioridad de una entidad verificada y no altera el ranking orgánico.",
         "El diamante azul representa únicamente un resultado real confirmado después de implementar una idea.",
         "Cada señal explica quién la otorgó, qué significa y qué no significa."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "mixta",
+        "perfil": "fanrank_static",
+        "checklist": [
+          "Comprobar en la interfaz que corazón, estrella y diamante mantienen significado y explicación distintos."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Parte automática superada (1 comando(s)); faltan 1 check(s) semánticos."
+      }
     },
     {
       "id": "FR-INV-005",
       "name": "El dinero nunca compra posición",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "Pagar no cambia nota IA, aprobación, publicación, corazones, estrellas, exposición de una idea ni ranking orgánico.",
         "La IA prioritaria, si se activa, solo compra menor tiempo de espera y nunca una nota mejor.",
         "El impacto económico se guarda separado del ranking y solo se publica con evidencia y permiso."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "mixta",
+        "perfil": "fanrank_static",
+        "checklist": [
+          "Revisar cualquier ruta nueva de pago o plan y demostrar que no modifica ranking, señales orgánicas ni exposición."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Parte automática superada (1 comando(s)); faltan 1 check(s) semánticos."
+      }
     },
     {
       "id": "FR-INV-006",
       "name": "Valor inmediato para perfiles reclamados",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "Todo perfil permite solicitar verificación con un recorrido corto.",
         "Propietarios y equipos pueden organizar temas, definir una rúbrica privada o pública y valorar con límites de rol.",
         "El criterio privado solo ordena la bandeja privada; nunca reescribe la clasificación pública."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "mixta",
+        "perfil": "fanrank_static",
+        "checklist": [
+          "Recorrer solicitud de verificación, organización de temas y criterio privado; comprobar que la clasificación pública no cambia."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Parte automática superada (1 comando(s)); faltan 1 check(s) semánticos."
+      }
     },
     {
       "id": "FR-INV-007",
       "name": "Mobile-first y accesible",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "No existe scroll horizontal en 320, 375, 768 ni 1440 px.",
         "Controles táctiles importantes miden al menos 44 px y tienen foco visible.",
         "El efecto wow nunca reduce contraste, legibilidad, rendimiento ni acceso con movimiento reducido."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "automatizable",
+        "perfil": "fanrank_full",
+        "checklist": []
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "CUMPLIDA",
+        "detalle": "2 comando(s) superados; no queda checklist semántica."
+      }
     },
     {
       "id": "FR-INV-008",
       "name": "Perfiles visuales con derechos",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "Las fotos vienen de press kits oficiales, licencias comprobadas, dominio público, generación propia o subida autorizada.",
         "Google Imágenes sirve para descubrir una fuente, nunca como licencia ni URL final.",
         "Cada imagen conserva fuente, crédito, base de uso y opción de sustitución."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "checklist_semantica",
+        "perfil": null,
+        "checklist": [
+          "Para cada imagen nueva, comprobar fuente, crédito, base de uso y sustitución; una búsqueda de Google no cuenta como licencia."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Sin prueba automatizable; faltan 1 check(s) semánticos."
+      }
     },
     {
       "id": "FR-INV-009",
       "name": "Cada corrección se vuelve cobertura",
       "status": "active",
+      "estado": "PROPUESTA",
       "must": [
         "El feedback nuevo se fusiona aquí cuando expresa una preferencia duradera.",
         "Una corrección visual repetible añade o endurece una prueba antes de publicarse.",
         "No se elimina ni debilita una regla activa sin feedback explícito posterior y un selector medible."
-      ]
+      ],
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "feedback-explicito-de-Tony-consolidado-sin-cita-literal"
+      },
+      "como_verificar": {
+        "tipo": "checklist_semantica",
+        "perfil": null,
+        "checklist": [
+          "Comparar el feedback duradero nuevo con este fichero y comprobar que toda corrección repetible añadió o endureció una prueba."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Sin prueba automatizable; faltan 1 check(s) semánticos."
+      }
     }
   ],
   "candidates": [
@@ -102,10 +296,28 @@
       "id": "FR-CAND-001",
       "name": "FanRank Impact y recompensas acordadas",
       "status": "research_required",
+      "estado": "PROPUESTA",
       "safe_now": "Mostrar Impacto verificado con diamante azul cuando una entidad confirme implementación, resultado, fecha y evidencia.",
       "not_yet": "Porcentajes automáticos, promesas retroactivas, pagos o símbolos de dinero sin contrato, atribución, impuestos, fraude y disputas resueltos.",
       "unlock_when": "Dos entidades verificadas acepten publicar una recompensa previa y exista un flujo contractual y de pago probado.",
-      "guard": "La recompensa y el impacto jamás alteran el ranking orgánico."
+      "guard": "La recompensa y el impacto jamás alteran el ranking orgánico.",
+      "origen": {
+        "fecha": "2026-07-16",
+        "cita": null,
+        "tipo": "candidato-derivado-sin-cita-literal-de-Tony"
+      },
+      "como_verificar": {
+        "tipo": "checklist_semantica",
+        "perfil": null,
+        "checklist": [
+          "Mantener el candidato bloqueado hasta que se cumpla unlock_when y comprobar que cualquier recompensa queda separada del ranking."
+        ]
+      },
+      "ultimo_check": {
+        "fecha": "2026-07-16",
+        "veredicto": "REQUIERE-OJO",
+        "detalle": "Sin prueba automatizable; faltan 1 check(s) semánticos."
+      }
     }
   ]
 }
