@@ -298,34 +298,40 @@
     },
     {
       "id": "FR-INV-010",
-      "name": "Perfiles no reclamados: sin respaldo implícito (P0 legal)",
+      "name": "Perfiles no reclamados: sin respaldo implícito (P0 legal). Indexable SOLO con aviso",
       "status": "active",
-      "estado": "PROPUESTA",
+      "estado": "CONFIRMADA-POR-TONY",
       "must": [
         "Un perfil no reclamado nunca muestra insignia de verificación ni afirma colaboración, respaldo o testimonio de la persona o entidad.",
         "El avatar de un perfil no reclamado es tipográfico o genérico; nunca una fotografía sin licencia comprobada (refuerza FR-INV-008).",
-        "Toda página de perfil no reclamado lleva noindex y un aviso visible de 'perfil no reclamado' que explica su procedencia.",
+        "Un perfil no reclamado SÍ es indexable, siempre que muestre aviso de no-afiliación visible y vía de retirada de 1 tap; sin aviso, noindex automático.",
+        "El aviso es OBLIGATORIO y SIN EXCEPCIONES en toda página de perfil, reclamada o no: 'no afiliado / patrocinado / respaldado; las ideas las escriben y las votan sus fans'. Reclamar el perfil solo cambia el titular de la frase (reclamar != patrocinar), nunca la quita.",
+        "El acople va en ESTE sentido y no en el contrario: el noindex NO depende del estado 'reclamado / no reclamado', depende de si la página lleva puesto el aviso + la vía de retirada. Con aviso => indexable; sin aviso => noindex automático. Así un perfil nuevo al que se le olvide el aviso cae solo del lado seguro en vez de irse a Google desnudo.",
+        "Nada anuncia a Google lo que no puede ir a Google: al sitemap solo entran páginas que pasan esa misma puerta (el aviso), nunca un flag de estado.",
+        "El aviso y la vía de retirada no viven dentro de ningún bloque que se esconda al reclamar el perfil (la claim-bar se esconde; el aviso no).",
         "Existe una vía de retirada inmediata visible; una solicitud verificada de la persona o entidad retira el perfil sin fricción.",
+        "Donde haya propiedad intelectual de terceros va su aviso (Supercell y su Política de Contenido de Fans en los juegos de Supercell).",
         "No aparece publicidad ni contenido patrocinado junto a la identidad de un perfil no reclamado.",
         "Que un dato sea públicamente accesible no es base jurídica automática para cualquier uso: no se tratan datos personales sensibles ni se usa la identidad para material que aparente asociación comercial."
       ],
       "origen": {
-        "fecha": "2026-07-16",
-        "cita": null,
-        "tipo": "propuesta-desde-investigacion-legal-AEPD-BOE-del-chat-GPT-de-Tony-'Exito-y-proteccion-idea'-(digest-buzon-16-jul);-pendiente-de-confirmacion-de-Tony"
+        "fecha": "2026-07-17",
+        "cita": "q ? quien se podria enfadar mejro q salgamso en google  y vale si es obligartorio vale\n   conlas empresas grande s como brawl o paltaformas y demas vale",
+        "tipo": "CONFIRMADA-POR-TONY-17-jul-2026-en-chat (decide SALIR EN GOOGLE y da por bueno que el aviso sea OBLIGATORIO y sin excepciones, nombrandolo para empresas grandes tipo Brawl/plataformas). Base legal previa (16-jul, propuesta): investigacion AEPD-BOE del chat GPT de Tony 'Exito-y-proteccion-idea' (digest buzon 16-jul). El 17-jul se INVIERTE el acople: el noindex deja de colgar del estado de reclamado y pasa a colgar del aviso; el 'nunca insinuar respaldo' sigue intacto."
       },
       "como_verificar": {
-        "tipo": "checklist_semantica",
-        "perfil": null,
+        "tipo": "mixta",
+        "perfil": "fanrank_static",
         "checklist": [
-          "Antes de publicar cualquier perfil de figura o entidad real: comprobar sin insignia, avatar tipográfico, noindex, aviso de no reclamado, vía de retirada visible y cero publicidad junto a la identidad.",
-          "El detalle operativo vive en docs/product/PROFILE_PROVENANCE_AND_CLAIM.md; toda página nueva de perfil se contrasta contra ese documento."
+          "Antes de publicar cualquier perfil de figura o entidad real: comprobar sin insignia, avatar tipográfico, aviso de no-afiliación, vía de retirada visible y cero publicidad junto a la identidad. El noindex YA NO se comprueba a mano: lo decide el aviso (si falta el aviso, la página se va sola a noindex).",
+          "El detalle operativo vive en docs/product/PROFILE_PROVENANCE_AND_CLAIM.md; toda página nueva de perfil se contrasta contra ese documento.",
+          "La parte automática la cubre tests/test_fanrank.py (UnclaimedProfileSafetyTests): test_no_indexable_page_can_ever_lack_the_notice recorre TODA página publicada de p/ y top/ y falla si una página indexable (sin noindex) no lleva aviso de no-afiliación + vía de retirada; test_sitemaps_only_advertise_pages_that_carry_the_notice aplica la misma puerta a los sitemaps; test_app_indexability_hangs_on_the_notice_not_on_the_claim la aplica a la app. Los selftests de tools/build_top_pages.py (14/14) y tools/generate_profile_stubs.py (8/8) prueban el caso clave: si el aviso desaparece, la página sale con noindex y fuera del sitemap. El ojo humano sigue juzgando avatar, ausencia de insignia y que no haya publicidad junto a la identidad."
         ]
       },
       "ultimo_check": {
-        "fecha": "2026-07-16",
-        "veredicto": "REQUIERE-OJO",
-        "detalle": "Regla recién propuesta desde la investigación legal; sin prueba automatizable aún; requiere revisión antes del primer perfil real publicado."
+        "fecha": "2026-07-17",
+        "veredicto": "OK",
+        "detalle": "Confirmada por Tony (cita en origen) e invertido el acople el 17-jul. Verificado: 63/63 en tests/test_fanrank.py + selftests 14/14 y 8/8, con red-team ejecutado (se borra el aviso de una página indexable => 3 tests fallan con 'pagina INDEXABLE sin aviso de no-afiliacion: prohibido'). Las 20 páginas publicadas (18 en p/ + 2 en top/) llevan aviso + vía de retirada y ninguna lleva noindex. Límite honesto: el test mide la PRESENCIA del aviso, no que su redacción sea legalmente suficiente; eso lo juzga un humano."
       }
     },
     {

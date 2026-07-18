@@ -21,6 +21,7 @@ import html
 import json
 import re
 import sys
+import urllib.parse
 import urllib.request
 from datetime import date
 from pathlib import Path
@@ -31,7 +32,71 @@ TOP_ROOT = ROOT / "top"
 PUBLIC_APP_URL = "https://eltonylfgi-blip.github.io/fanrank/"
 MIN_IDEAS = 10
 
-SECTIONS_PATH = "fr_sections_stats?select=slug,name,default_language&order=featured_rank.asc"
+SECTIONS_PATH = ("fr_sections_stats?select=slug,name,default_language,verification_status"
+                 "&order=featured_rank.asc")
+
+# FR-INV-010 (P0 legal, Tony 17-jul-2026): el ACOPLE VA AL REVES.
+# La indexabilidad NO depende de "reclamado / no reclamado": depende de que la pagina
+# LLEVE PUESTO el aviso de no-afiliacion + la via de retirada. Sin aviso => noindex
+# automatico; con aviso => indexable. Asi un perfil nuevo al que se le olvide el aviso
+# cae solo del lado seguro, en vez de irse a Google desnudo.
+NOINDEX_META = '\n  <meta name="robots" content="noindex,follow">'
+NON_AFFILIATION_MARK = "no est&aacute; afiliado, patrocinado ni respaldado"
+REMOVAL_MARK = "mailto:"
+REMOVAL_EMAIL = "eltonylfgi@gmail.com"
+IP_NOTICES = {"brawl-stars": "supercell", "clash-royale": "supercell",
+              "clash-of-clans": "supercell", "squad-busters": "supercell",
+              "hay-day": "supercell", "boom-beach": "supercell"}
+IP_NOTICE_TEXT = {"supercell": (
+    "Este material no es oficial y no est&aacute; respaldado por Supercell. Para m&aacute;s "
+    "informaci&oacute;n, consulta la Pol&iacute;tica de Contenido de Fans de Supercell: "
+    '<a href="https://supercell.com/en/fan-content-policy/" rel="noopener noreferrer">'
+    "www.supercell.com/fan-content-policy</a>")}
+
+
+def is_claimed(section):
+    return str(section.get("verification_status") or "") == "verified"
+
+
+def removal_mailto(name, slug):
+    body = (f"Hola:\n\nSoy {name}, o su representante autorizado, y pido que se retire este "
+            f"perfil de FanRank.\n\nPerfil: {PUBLIC_APP_URL}top/{slug}/\n\nMi nombre: \n"
+            "Mi relacion o cargo: \n\n(Lo retiramos sin pedir nada a cambio.)\n")
+    query = urllib.parse.urlencode({"subject": f"FanRank - retirad el perfil de {name}",
+                                    "body": body})
+    return html.escape(f"mailto:{REMOVAL_EMAIL}?{query}", quote=True)
+
+
+def legal_block(section):
+    """Aviso OBLIGATORIO de toda pagina de perfil, este reclamada o no.
+
+    Reclamar solo cambia el TITULAR de la frase (reclamar != patrocinar): el aviso de
+    no-afiliacion y la via de retirada de 1 tap van SIEMPRE. Es lo que hace indexable
+    la pagina (ver page_is_indexable), asi que no puede "olvidarse" sin perder Google.
+    """
+    slug = str(section.get("slug") or "")
+    name = html.escape(" ".join(str(section.get("name") or slug).split()))
+    if is_claimed(section):
+        head = (f'<p><strong>Perfil reclamado por su titular.</strong> FanRank '
+                f'{NON_AFFILIATION_MARK} por las personas y marcas que aparecen '
+                f'aqu&iacute;. Las ideas las escriben y las votan sus fans; no son '
+                f'declaraciones de {name}.</p>')
+    else:
+        head = (f'<p><strong>Perfil no reclamado.</strong> FanRank '
+                f'{NON_AFFILIATION_MARK} por {name}. Las ideas las escriben y las votan '
+                f'sus fans a partir de informaci&oacute;n p&uacute;blica; no son '
+                f'declaraciones de {name}.</p>')
+    block = (head + f'<p><a href="{removal_mailto(name, slug)}">&iquest;Eres {name} o '
+             f'su representante? Pide que lo quitemos</a></p>')
+    holder = IP_NOTICES.get(slug)
+    if holder:
+        block += f"<p>{IP_NOTICE_TEXT[holder]}</p>"
+    return block
+
+
+def page_is_indexable(legal):
+    """UNICA puerta a Google: se juzga el aviso YA RENDERIZADO, no un flag de estado."""
+    return NON_AFFILIATION_MARK in legal and REMOVAL_MARK in legal
 RANKING_PATH = ("fr_ranking?select=id,section,title,title_es,ai_score,web_votes,origin_upvotes"
                 "&limit=500")
 
@@ -93,6 +158,11 @@ def build_page(section, ideas, today):
     for i, idea in enumerate(ideas, 1):
         items.append({"@type": "ListItem", "position": i,
                       "name": idea_title(idea), "url": app_url})
+    # El aviso se construye ANTES que el robots: el robots es su CONSECUENCIA.
+    legal = legal_block(section)
+    robots = "" if page_is_indexable(legal) else NOINDEX_META
+    legal_html = f'<section class="legal">{legal}</section>' if legal else ""
+
     ld = {"@context": "https://schema.org", "@type": "ItemList",
           "name": h1, "url": page_url, "numberOfItems": n,
           "dateModified": today, "itemListElement": items}
@@ -117,7 +187,7 @@ def build_page(section, ideas, today):
   <meta property="og:title" content="{html.escape(h1)}">
   <meta property="og:description" content="{html.escape(desc)}">
   <meta property="og:url" content="{page_url}">
-  <meta property="og:image" content="{PUBLIC_APP_URL}social-card.png?v=2">
+  <meta property="og:image" content="{PUBLIC_APP_URL}social-card.png?v=2">{robots}
   <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
   <style>
     :root {{ color-scheme: dark; }}
@@ -140,6 +210,11 @@ def build_page(section, ideas, today):
     .cta:hover {{ transform:translateY(-1px); box-shadow:0 6px 24px #ff4d6d55; }}
     footer {{ margin-top:26px; color:#7c6fa8; font-size:.8rem; text-align:center; }}
     footer a {{ color:#a99fc4; }}
+    .legal {{ margin:22px 0 0; padding:13px 15px; border:1px solid #2b2340; border-radius:12px;
+             background:#141024; color:#c9c1e0; font-size:.83rem; }}
+    .legal p {{ margin:0 0 8px; }}
+    .legal p:last-child {{ margin:0; }}
+    .legal a {{ color:#8bb8ff; }}
   </style>
 </head>
 <body>
@@ -150,6 +225,7 @@ def build_page(section, ideas, today):
 {chr(10).join(lis)}
     </ol>
     <a class="cta" href="{app_url}">Vota o propone la tuya en FanRank &rarr;</a>
+    {legal_html}
     <footer>Datos en vivo del tabl&oacute;n <a href="{app_url}">FanRank &middot; {html.escape(name)}</a>.
     Los apoyos suman votos web y upvotes de origen de cada idea.</footer>
   </main>
@@ -175,8 +251,10 @@ def build_all(data, out_root, today=None):
         d.mkdir(parents=True, exist_ok=True)
         (d / "index.html").write_text(build_page(section, ideas, today), encoding="utf-8")
         written.append((slug, len(ideas)))
-        urls.append(f"{PUBLIC_APP_URL}top/{slug}/")
-    if urls:
+        # Al sitemap solo lo que de verdad lleva el aviso puesto (misma puerta que el robots).
+        if page_is_indexable(legal_block(section)):
+            urls.append(f"{PUBLIC_APP_URL}top/{slug}/")
+    if True:
         sm = ['<?xml version="1.0" encoding="UTF-8"?>',
               '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
         for u in urls:
@@ -189,6 +267,7 @@ def build_all(data, out_root, today=None):
 
 def selftest():
     import tempfile
+    global legal_block
     ok = True
     data = {"sections": [{"slug": "grande", "name": "Grande"},
                          {"slug": "vacio", "name": "Vacio"}],
@@ -208,8 +287,34 @@ def selftest():
     ok &= ld["@type"] == "ItemList" and ld["numberOfItems"] == 12
     ok &= ld["itemListElement"][0]["position"] == 1
     ok &= "Las 12 ideas" in page and 'lang="es"' in page
+    # FR-INV-010 (Tony 17-jul): 'grande' NO esta reclamado pero LLEVA el aviso puesto
+    # => vuelve a Google y al sitemap. Salir en Google no depende de reclamar.
+    ok &= "Perfil no reclamado" in page and NON_AFFILIATION_MARK in page and "mailto:" in page
+    ok &= "noindex" not in page
     ok &= (out / "sitemap-top.xml").read_text(encoding="utf-8").count("<loc>") == 1
-    print("SELFTEST:", "OK (6/6)" if ok else "FALLO")
+    # Reclamar solo cambia el TITULAR de la frase: aviso y via de retirada SIGUEN.
+    claimed_data = {"sections": [dict(data["sections"][0], verification_status="verified")],
+                    "ideas": data["ideas"]}
+    out2 = Path(tempfile.mkdtemp()) / "top"
+    build_all(claimed_data, out2, today="2026-07-16")
+    claimed_page = (out2 / "grande" / "index.html").read_text(encoding="utf-8")
+    ok &= "Perfil no reclamado" not in claimed_page
+    ok &= NON_AFFILIATION_MARK in claimed_page and "mailto:" in claimed_page
+    ok &= "noindex" not in claimed_page
+    ok &= (out2 / "sitemap-top.xml").read_text(encoding="utf-8").count("<loc>") == 1
+    # EL ACOPLE INVERTIDO, probado: si la pagina se queda SIN aviso, cae SOLA a noindex
+    # y fuera del sitemap. Es imposible publicar en Google un perfil desnudo.
+    real_legal_block = legal_block
+    legal_block = lambda section: ""
+    try:
+        out3 = Path(tempfile.mkdtemp()) / "top"
+        build_all(data, out3, today="2026-07-16")
+        naked = (out3 / "grande" / "index.html").read_text(encoding="utf-8")
+        ok &= '<meta name="robots" content="noindex,follow">' in naked
+        ok &= (out3 / "sitemap-top.xml").read_text(encoding="utf-8").count("<loc>") == 0
+    finally:
+        legal_block = real_legal_block
+    print("SELFTEST:", "OK (14/14)" if ok else "FALLO")
     return 0 if ok else 1
 
 

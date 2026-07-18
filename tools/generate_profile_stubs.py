@@ -10,6 +10,8 @@ from __future__ import annotations
 import html
 import json
 import re
+import sys
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from pathlib import Path
@@ -24,8 +26,84 @@ PRESERVED_QUERY_KEYS = ("idea", "ref", "lang", "qa")
 SLUG_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 SECTIONS_PATH = (
-    "fr_sections_stats?select=slug,name,default_language&order=featured_rank.asc"
+    "fr_sections_stats?select=slug,name,default_language,verification_status"
+    "&order=featured_rank.asc"
 )
+# FR-INV-010 (P0 legal, Tony 17-jul-2026): el ACOPLE VA AL REVES.
+# La indexabilidad NO depende de "reclamado / no reclamado": depende de que la pagina
+# LLEVE PUESTO el aviso de no-afiliacion + la via de retirada. Sin aviso => noindex
+# automatico; con aviso => indexable. Un perfil nuevo al que se le olvide el aviso cae
+# solo del lado seguro, en vez de irse a Google desnudo.
+NOINDEX_META = '\n  <meta name="robots" content="noindex,follow">'
+NON_AFFILIATION_MARK = "no est&aacute; afiliado, patrocinado ni respaldado"
+REMOVAL_MARK = "mailto:"
+REMOVAL_EMAIL = "eltonylfgi@gmail.com"
+# Avisos de propiedad intelectual de terceros (obligatorios para su contenido de fans).
+IP_NOTICES = {
+    "brawl-stars": "supercell",
+    "clash-royale": "supercell",
+    "clash-of-clans": "supercell",
+    "squad-busters": "supercell",
+    "hay-day": "supercell",
+    "boom-beach": "supercell",
+}
+IP_NOTICE_TEXT = {
+    "supercell": (
+        "Este material no es oficial y no est&aacute; respaldado por Supercell. "
+        "Para m&aacute;s informaci&oacute;n, consulta la Pol&iacute;tica de Contenido de Fans de Supercell: "
+        '<a href="https://supercell.com/en/fan-content-policy/" rel="noopener noreferrer">'
+        "www.supercell.com/fan-content-policy</a>"
+    )
+}
+
+
+def is_claimed(profile: dict) -> bool:
+    return str(profile.get("verification_status") or "") == "verified"
+
+
+def removal_mailto(raw_name: str, slug: str) -> str:
+    subject = f"FanRank - retirad el perfil de {raw_name}"
+    body = (
+        f"Hola:\n\nSoy {raw_name}, o su representante autorizado, y pido que se retire "
+        f"este perfil de FanRank.\n\nPerfil: {PUBLIC_APP_URL}p/{slug}/\n\nMi nombre: \n"
+        "Mi relacion o cargo: \n\n(Lo retiramos sin pedir nada a cambio.)\n"
+    )
+    query = urllib.parse.urlencode({"subject": subject, "body": body})
+    return html.escape(f"mailto:{REMOVAL_EMAIL}?{query}", quote=True)
+
+
+def legal_block(profile: dict) -> str:
+    """Aviso OBLIGATORIO de todo stub de perfil, este reclamado o no.
+
+    Reclamar solo cambia el TITULAR de la frase (reclamar != patrocinar): el aviso de
+    no-afiliacion y la via de retirada de 1 tap van SIEMPRE. Es lo que hace indexable
+    la pagina (ver page_is_indexable), asi que no puede "olvidarse" sin perder Google.
+    """
+    slug = str(profile.get("slug") or "")
+    raw_name = " ".join(str(profile.get("name") or slug).split())
+    name = html.escape(raw_name, quote=True)
+    if is_claimed(profile):
+        head = f'''
+    <p><strong>Perfil reclamado por su titular.</strong> FanRank {NON_AFFILIATION_MARK}
+    por las personas y marcas que aparecen aqu&iacute;. Las ideas las escriben y las votan
+    sus fans; no son declaraciones de {name}.</p>'''
+    else:
+        head = f'''
+    <p><strong>Perfil no reclamado.</strong> FanRank {NON_AFFILIATION_MARK} por {name}.
+    Las ideas las escriben y las votan sus fans a partir de informaci&oacute;n
+    p&uacute;blica; no son declaraciones de {name}.</p>'''
+    block = head + f'''
+    <p><a href="{removal_mailto(raw_name, slug)}">&iquest;Eres {name} o su representante? Pide que lo quitemos</a></p>'''
+    ip_holder = IP_NOTICES.get(slug)
+    if ip_holder:
+        block += f'''
+    <p>{IP_NOTICE_TEXT[ip_holder]}</p>'''
+    return block
+
+
+def page_is_indexable(legal: str) -> bool:
+    """UNICA puerta a Google: se juzga el aviso YA RENDERIZADO, no un flag de estado."""
+    return NON_AFFILIATION_MARK in legal and REMOVAL_MARK in legal
 RANKING_PATH = (
     "fr_ranking?select=id,section,title,title_es,ai_score,web_votes,origin_upvotes"
     "&limit=500"
@@ -97,6 +175,9 @@ def render_stub(profile: dict, top_ideas: list[dict]) -> str:
     else:
         description = f"Descubre y vota las mejores ideas para {raw_name} en FanRank."
     escaped_description = html.escape(description, quote=True)
+    # El aviso se construye ANTES que el robots: el robots es su CONSECUENCIA.
+    legal_html = legal_block(profile)
+    robots_meta = "" if page_is_indexable(legal_html) else NOINDEX_META
     preserved_keys = json.dumps(PRESERVED_QUERY_KEYS, separators=(",", ":"))
     slug_js = json.dumps(slug, ensure_ascii=True)
 
@@ -121,7 +202,7 @@ def render_stub(profile: dict, top_ideas: list[dict]) -> str:
   <meta name="twitter:title" content="Ideas para {name} &mdash; votadas por sus fans | FanRank">
   <meta name="twitter:description" content="{escaped_description}">
   <meta name="twitter:image" content="{SOCIAL_IMAGE_URL}">
-  <meta name="twitter:image:alt" content="FanRank, ideas votadas por fans con un coraz&oacute;n violeta">
+  <meta name="twitter:image:alt" content="FanRank, ideas votadas por fans con un coraz&oacute;n violeta">{robots_meta}
   <script>
   (function(){{
     var source = new URLSearchParams(location.search);
@@ -136,13 +217,45 @@ def render_stub(profile: dict, top_ideas: list[dict]) -> str:
 <body>
   <main>
     <h1>Ideas para {name}</h1>
-    <p>{escaped_description}</p>
+    <p>{escaped_description}</p>{legal_html}
     <p>Abriendo FanRank&hellip;</p>
   </main>
   <noscript><a href="/fanrank/?s={slug}">Abrir las ideas para {name} en FanRank</a></noscript>
 </body>
 </html>
 """
+
+
+def selftest() -> int:
+    """Sin red: prueba que la puerta a Google es el AVISO, no el estado de reclamado."""
+    global legal_block
+    ok = True
+    ideas = [{"title_es": "idea top", "ai_score": 90, "web_votes": 3, "origin_upvotes": 10}]
+    libre = {"slug": "orslok", "name": "Orslok"}
+    page = render_stub(libre, ideas)
+    # NO reclamado pero CON aviso => vuelve a Google (Tony 17-jul: "mejor q salgamos en google").
+    ok &= "Perfil no reclamado" in page and NON_AFFILIATION_MARK in page
+    ok &= "mailto:eltonylfgi@gmail.com" in page and "Pide que lo quitemos" in page
+    ok &= "noindex" not in page
+    # Reclamar solo cambia el TITULAR de la frase: aviso y via de retirada SIGUEN.
+    claimed = render_stub(dict(libre, verification_status="verified"), ideas)
+    ok &= "Perfil no reclamado" not in claimed
+    ok &= NON_AFFILIATION_MARK in claimed and "mailto:eltonylfgi@gmail.com" in claimed
+    ok &= "noindex" not in claimed
+    # Aviso de IP de terceros donde toca (Supercell), y sigue siendo indexable.
+    supercell = render_stub({"slug": "brawl-stars", "name": "Brawl Stars"}, ideas)
+    ok &= "respaldado por Supercell" in supercell and "noindex" not in supercell
+    # EL ACOPLE INVERTIDO, probado: sin aviso => noindex automatico. Imposible
+    # publicar en Google un perfil desnudo aunque alguien rompa el generador.
+    real_legal_block = legal_block
+    legal_block = lambda profile: ""
+    try:
+        naked = render_stub(libre, ideas)
+        ok &= '<meta name="robots" content="noindex,follow">' in naked
+    finally:
+        legal_block = real_legal_block
+    print("SELFTEST:", "OK (8/8)" if ok else "FALLO")
+    return 0 if ok else 1
 
 
 def main() -> int:
@@ -170,4 +283,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    if "--selftest" in sys.argv:
+        raise SystemExit(selftest())
     raise SystemExit(main())

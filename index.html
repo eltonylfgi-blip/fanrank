@@ -452,6 +452,17 @@
     border:1px solid rgba(255,209,41,.28);border-radius:15px;background:rgba(255,209,41,.05)}
   .claim-copy b{display:block}
   .claim-copy span{display:block;color:var(--muted);font-size:.8rem}
+  /* FR-INV-010: el aviso vive FUERA de la claim-bar. La claim-bar se esconde al
+     reclamar el perfil; el aviso no se esconde nunca (es la puerta a Google). */
+  .profile-legal{margin:12px 0 0}
+  /* FR-INV-010: el aviso de no-afiliacion se LEE, no se esconde. */
+  .profile-legal .claim-disclaimer{display:block;margin:8px 0 0;color:var(--text);font-size:.84rem;font-weight:600}
+  /* inline-block (no inline-flex): encoge y PARTE el texto -> sin scroll lateral a 320px (FR-INV-007). */
+  .claim-remove{display:inline-block;min-height:44px;padding:11px 0;max-width:100%;
+    color:var(--blue);font-size:.82rem;line-height:1.45;text-decoration:underline}
+  .ip-notice{margin:10px 0 0;padding:11px 14px;border:1px solid rgba(255,255,255,.12);border-radius:13px;
+    background:rgba(255,255,255,.03);color:var(--muted);font-size:.78rem}
+  .ip-notice a{color:var(--blue)}
 
   .suggest-cta{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:18px;margin:14px 0 0;
     padding:18px 19px;border:1px solid rgba(99,179,255,.4);border-radius:18px;
@@ -528,6 +539,8 @@
   .vote-btn.voted{border-color:var(--green);background:rgba(85,229,154,.1);color:var(--green)}
   .vote-count{font-size:.98rem;font-variant-numeric:tabular-nums}
   .vote-label{color:var(--muted);font-size:.57rem;letter-spacing:.07em}
+  .vote-btn.first-vote{border-color:rgba(255,114,198,.5);background:rgba(255,114,198,.08)}
+  .vote-btn.first-vote .vote-label{color:var(--pink)}
   .icon-btn{display:grid;place-items:center;padding:0;color:var(--muted)}
   .icon-btn:hover{border-color:var(--blue);color:var(--blue)}
   .icon-btn svg{width:19px;height:19px}
@@ -1151,6 +1164,11 @@
         <span id="claim-open-text"></span>
       </button>
     </div>
+    <!-- FR-INV-010 (Tony 17-jul): el aviso NO vive dentro de la claim-bar. La claim-bar se
+         esconde cuando el perfil se reclama; el aviso y la via de retirada NO se esconden
+         JAMAS: son lo que hace indexable la pagina (ver profileDisclosureOk). -->
+    <div class="profile-legal" id="profile-legal"><span class="claim-disclaimer" id="claim-disclaimer"></span><a class="claim-remove" id="claim-remove" href="mailto:eltonylfgi@gmail.com"></a></div>
+    <p class="ip-notice hidden" id="ip-notice"></p>
     <section class="profile-topics hidden" id="profile-topics" aria-labelledby="profile-topics-title">
       <div class="profile-topics-head">
         <div><h2 id="profile-topics-title"></h2><p id="profile-topics-copy"></p></div>
@@ -1726,6 +1744,11 @@ var sections = [];
 var allIdeas = [];
 var ideas = [];
 var secMeta = null;
+/* FR-INV-010: via de retirada real + avisos de propiedad intelectual de terceros. */
+var REMOVAL_EMAIL = "eltonylfgi@gmail.com";
+var IP_NOTICES = {"brawl-stars":"supercell","clash-royale":"supercell","clash-of-clans":"supercell",
+  "squad-busters":"supercell","hay-day":"supercell","boom-beach":"supercell"};
+var IP_NOTICE_URLS = {supercell:"https://supercell.com/en/fan-content-policy/"};
 var sortMode = "balanced";
 var directoryMode = "featured";
 var homeRankMode = "ai";
@@ -1941,7 +1964,16 @@ var T = {
     claim_bar_title:"UNVERIFIED FAN PROFILE",
     claim_bar_title_named:function(name){return "Are you " + name + " or part of the team?";},
     claim_bar_copy:"Fan-made, not official. Are you on the team? Claim it to add verified official stars.",
+    claim_disclaimer:"FanRank is not affiliated with, sponsored by or endorsed by the people and brands shown here. The ideas are written and voted by fans.",
+    claim_disclaimer_named:function(name){return "FanRank is not affiliated with, sponsored by or endorsed by " + name + ". The ideas here are written and voted by fans from public information; they are not statements by " + name + ".";},
+    claim_remove_link:"Are you them or their representative? Ask us to remove it",
+    claim_remove_subject:function(name){return "FanRank - please remove the profile of " + name;},
+    claim_remove_body:function(name,url){
+      return "Hello,\n\nI am " + name + ", or their authorised representative, and I ask you to remove this FanRank profile.\n\nProfile: " + url + "\n\nMy name: \nMy role / relationship: \n\n(We remove it without asking for anything in return. Reply to this email and we will confirm.)\n";
+    },
     claim_open:"Claim profile",
+    ip_notice_supercell:"This material is unofficial and is not endorsed by Supercell. For more information see Supercell's Fan Content Policy:",
+    ip_notice_supercell_link:"www.supercell.com/fan-content-policy",
     filter_label:"Search ideas in this profile",
     filter_placeholder:"Search a feature, problem or keyword…",
     tab_balanced:"Balanced",
@@ -1961,6 +1993,8 @@ var T = {
     source:"source",
     vote:"VOTE",
     voted:"VOTED",
+    be_first:"BE FIRST",
+    be_first_long:"Be the first to back it",
     share:"Share idea",
     vote_rank:function(n){return "Vote counted — this idea is now #" + n + " among fans.";},
     already_voted:"Your vote was already counted.",
@@ -2454,7 +2488,16 @@ var T = {
     claim_bar_title:"PERFIL DE FANS NO VERIFICADO",
     claim_bar_title_named:function(name){return "¿Eres " + name + " o formas parte de su equipo?";},
     claim_bar_copy:"Hecho por fans, no es oficial. Si formas parte del equipo, reclámalo para añadir estrellas oficiales verificadas.",
+    claim_disclaimer:"FanRank no está afiliado, patrocinado ni respaldado por las personas y marcas que aparecen aquí. Las ideas las escriben y las votan sus fans.",
+    claim_disclaimer_named:function(name){return "FanRank no está afiliado, patrocinado ni respaldado por " + name + ". Las ideas que ves aquí las escriben y las votan sus fans a partir de información pública; no son declaraciones de " + name + ".";},
+    claim_remove_link:"¿Eres tú o su representante? Pide que lo quitemos",
+    claim_remove_subject:function(name){return "FanRank - retirad el perfil de " + name;},
+    claim_remove_body:function(name,url){
+      return "Hola:\n\nSoy " + name + ", o su representante autorizado, y pido que se retire este perfil de FanRank.\n\nPerfil: " + url + "\n\nMi nombre: \nMi relación o cargo: \n\n(Lo retiramos sin pedir nada a cambio. Responde a este correo y te confirmamos.)\n";
+    },
     claim_open:"Reclamar perfil",
+    ip_notice_supercell:"Este material no es oficial y no está respaldado por Supercell. Para más información, consulta la Política de Contenido de Fans de Supercell:",
+    ip_notice_supercell_link:"www.supercell.com/fan-content-policy",
     filter_label:"Buscar ideas dentro de este perfil",
     filter_placeholder:"Busca una función, problema o palabra…",
     tab_balanced:"Equilibrado",
@@ -2474,6 +2517,8 @@ var T = {
     source:"fuente",
     vote:"VOTAR",
     voted:"VOTADO",
+    be_first:"SÉ EL PRIMERO",
+    be_first_long:"Sé el primero en apoyarla",
     share:"Compartir idea",
     vote_rank:function(n){return "Voto contado — esta idea ya es #" + n + " entre los fans.";},
     already_voted:"Tu voto ya estaba contado.",
@@ -3767,6 +3812,58 @@ function profileStubUrl(slug,language,ideaId){
 function ideaUrl(item,language){
   return profileStubUrl(item.section,language,item.id);
 }
+/* FR-INV-010 (P0 legal, Tony 17-jul-2026): el ACOPLE VA AL REVES.
+   Salir en Google NO depende de reclamar: depende de que la pagina LLEVE PUESTO el
+   aviso de no-afiliacion + la via de retirada. Sin aviso => noindex automatico. */
+function isClaimedProfile(meta){
+  return !!(meta && meta.verification_status === "verified");
+}
+function profileRemovalMailto(name,slug){
+  var url = slug ? profileStubUrl(slug,LANG,null) : APP_URL;
+  return "mailto:" + REMOVAL_EMAIL +
+    "?subject=" + encodeURIComponent(tx("claim_remove_subject",name)) +
+    "&body=" + encodeURIComponent(tx("claim_remove_body",name,url));
+}
+function applyClaimNotice(){
+  var named = secMeta && secMeta.name ? secMeta.name : null;
+  byId("claim-disclaimer").textContent = named ? tx("claim_disclaimer_named",named) : tx("claim_disclaimer");
+  var link = byId("claim-remove");
+  link.textContent = tx("claim_remove_link");
+  link.href = profileRemovalMailto(named || tx("claim_bar_title"),SECTION);
+  applyIpNotice();
+}
+function applyIpNotice(){
+  var holder = IP_NOTICES[SECTION || ""];
+  var node = byId("ip-notice");
+  node.classList.toggle("hidden",!holder);
+  if(!holder){node.textContent = "";return;}
+  node.innerHTML = esc(tx("ip_notice_" + holder)) + ' <a href="' + esc(IP_NOTICE_URLS[holder]) +
+    '" target="_blank" rel="noopener noreferrer">' + esc(tx("ip_notice_" + holder + "_link")) + "</a>";
+}
+/* UNICA puerta a Google: se juzga el aviso YA PINTADO en el DOM, no un flag de estado.
+   Si el aviso o la via de retirada faltan, van vacios o alguien los esconde, la pagina
+   se va SOLA a noindex. Por eso el aviso vive fuera de la claim-bar (que si se esconde). */
+function nodeIsVisible(node){
+  return !!(node && !node.closest(".hidden"));
+}
+function profileDisclosureOk(){
+  var note = byId("claim-disclaimer");
+  var link = byId("claim-remove");
+  var removal = link ? (link.getAttribute("href") || "") : "";
+  return nodeIsVisible(note) && (note.textContent || "").trim().length > 0 &&
+    nodeIsVisible(link) && (link.textContent || "").trim().length > 0 &&
+    removal.indexOf("mailto:") === 0;
+}
+var ROBOTS_INDEXABLE = "index, follow, max-image-preview:large";
+function setRobotsNoindex(noindex){
+  var meta = document.head.querySelector('meta[name="robots"]');
+  if(!meta){
+    meta = document.createElement("meta");
+    meta.setAttribute("name","robots");
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute("content",noindex ? "noindex,follow" : ROBOTS_INDEXABLE);
+}
 var REFERRAL_SOURCES = {fan_share:true,idea_share:true,reddit:true,discord:true,x:true,whatsapp:true};
 function referralSource(){
   var source = (new URLSearchParams(location.search).get("ref") || "").trim().toLowerCase();
@@ -3865,6 +3962,7 @@ function applyStaticText(){
   byId("claim-bar-title").textContent = tx("claim_bar_title");
   byId("claim-bar-copy").textContent = tx("claim_bar_copy");
   byId("claim-open-text").textContent = tx("claim_open");
+  applyClaimNotice();
   byId("profile-topics-title").textContent = tx("profile_topics_title");
   byId("profile-topics-copy").textContent = tx("profile_topics_copy");
   byId("topic-manager-open").textContent = tx("topic_manage");
@@ -4276,7 +4374,9 @@ function renderTrending(){
   byId("trending").innerHTML = top.map(function(item,index){
     var meta = sections.find(function(s){return s.slug === item.section;});
     var voted = mine.indexOf(item.id) >= 0;
-    var signal = homeRankMode === "fans" ? tx("global_fan_signal",Number(item.web_votes||0)) : tx("global_ai_signal",Math.round(Number(item.ai_score||0)));
+    var signal = homeRankMode === "fans"
+      ? (needsFirstVote(item) ? tx("be_first_long") : tx("global_fan_signal",Number(item.web_votes||0)))
+      : tx("global_ai_signal",Math.round(Number(item.ai_score||0)));
     return '<article class="trend-card rank-' + (index+1) + '"><a class="trend-link" href="' + esc(appIdeaUrl(item)) + '" data-idea-open="' + item.id + '">' +
       '<span class="trend-rank"><span class="trend-rank-label">' + esc(tx("top_label")) + '</span><strong class="trend-rank-number">#' + (index+1) + '</strong></span>' +
       '<span class="trend-title">' + esc(ideaTitle(item)) + '</span>' +
@@ -4349,7 +4449,7 @@ function renderSimilarIdeas(){
   byId("similar-ideas").innerHTML = matches.map(function(item){
     var voted = mine.indexOf(item.id) >= 0;
     return '<article class="similar-item"><div><b>' + esc(ideaTitle(item)) + '</b><span>' +
-      Number(item.web_votes || 0) + ' ' + esc(tx("similar_votes")) + '</span></div><button class="similar-vote" type="button" data-sim-vote="' +
+      esc(needsFirstVote(item) ? tx("be_first_long") : Number(item.web_votes || 0) + " " + tx("similar_votes")) + '</span></div><button class="similar-vote" type="button" data-sim-vote="' +
       item.id + '" ' + (voted ? 'disabled' : '') + '>' + esc(voted ? tx("voted") : tx("vote")) + '</button></article>';
   }).join("");
   wrap.classList.remove("hidden");
@@ -4428,6 +4528,11 @@ function requestFromSearch(query){
   setTimeout(function(){byId("request-target").focus();},REDUCED ? 0 : 350);
 }
 
+/* "Matar el cero": con 0 corazones NO mostramos el numero (un tablon de ceros
+   parece muerto y nadie vota). No se inflan votos: solo se pide el primero. */
+function needsFirstVote(item){
+  return Number(item && item.web_votes || 0) === 0;
+}
 function rankScore(item){
   return Number(item.ai_score || 0) + Math.min(Number(item.web_votes || 0) * 2,20);
 }
@@ -4632,17 +4737,20 @@ function renderIdeas(){
     var compact = index > 2;
     var voted = mine.indexOf(item.id) >= 0;
     var reasonHtml = '<div class="reason">' + esc(ideaReason(item)) + '</div>';
-    var metaHtml = '<div class="idea-meta"><span class="chip" title="' + esc(tx("source_votes_help")) + '" aria-label="' +
+    var metaHtml = '<div class="idea-meta">' +
+      (Number(item.origin_upvotes||0) > 0 ? '<span class="chip" title="' + esc(tx("source_votes_help")) + '" aria-label="' +
       esc(fmt(item.origin_upvotes) + " " + tx("source_votes") + ". " + tx("source_votes_help")) + '">' +
-      fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' +
+      fmt(item.origin_upvotes) + ' ' + esc(tx("source_votes")) + '</span>' : "") +
       (item.topic_title ? '<span class="chip topic-chip"># ' + esc(item.topic_title) + '</span>' : "") +
       (source ? '<a class="chip source-link" href="' + esc(source) + '" target="_blank" rel="noopener noreferrer">' +
       esc(tx("source")) + ' ↗</a>' : "") + '</div>';
     var shareButton = '<button class="icon-btn" type="button" data-share="' + item.id + '" aria-label="' + esc(tx("share")) +
       '" title="' + esc(tx("share")) + '">' + icon("share") + '</button>';
-    var voteButton = '<button class="vote-btn ' + (voted ? "voted" : "") + '" type="button" data-vote="' + item.id + '" ' +
-      (voted ? "disabled" : "") + '><span class="vote-heart" aria-hidden="true">♥</span><span class="vote-count">' + Number(item.web_votes||0) +
-      '</span><span class="vote-label">' + esc(voted ? tx("voted") : tx("vote")) + '</span></button>';
+    var firstVote = needsFirstVote(item) && !voted;
+    var voteButton = '<button class="vote-btn ' + (voted ? "voted" : "") + (firstVote ? " first-vote" : "") + '" type="button" data-vote="' + item.id + '" ' +
+      (voted ? "disabled" : "") + '><span class="vote-heart" aria-hidden="true">♥</span>' +
+      (firstVote ? "" : '<span class="vote-count">' + Number(item.web_votes||0) + '</span>') +
+      '<span class="vote-label">' + esc(voted ? tx("voted") : firstVote ? tx("be_first") : tx("vote")) + '</span></button>';
     var teamControls = teamStarControlHtml(item) + topicAssignmentControlHtml(item);
     var secondaryHtml = compact ? "" : reasonHtml + metaHtml;
     var detailsHtml = compact ? '<details class="idea-more"><summary>' + esc(tx("idea_more")) + '</summary><div class="idea-more-body">' +
@@ -4707,7 +4815,10 @@ function loadSection(){
   byId("home-view").classList.add("hidden");
   byId("section-view").before(byId("stats"));
   byId("section-view").classList.remove("hidden");
-  document.querySelector(".claim-bar").classList.toggle("hidden",secMeta.verification_status === "verified");
+  document.querySelector(".claim-bar").classList.toggle("hidden",isClaimedProfile(secMeta));
+  applyClaimNotice();
+  // El aviso se pinta ANTES: el robots es su CONSECUENCIA, no la del estado de reclamado.
+  setRobotsNoindex(!profileDisclosureOk());
   byId("profile-pro").classList.toggle("hidden",secMeta.verification_status !== "verified");
   document.body.classList.remove("home-live");
   document.body.classList.add("profile-live");

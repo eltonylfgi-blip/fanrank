@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://eltonylfgi-blip.github.io/fanrank/sitemap.xml
+Sitemap: https://eltonylfgi-blip.github.io/fanrank/top/sitemap-top.xml

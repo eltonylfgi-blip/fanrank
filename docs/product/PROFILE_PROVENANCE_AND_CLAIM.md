@@ -19,7 +19,14 @@ identidad ni aceptado estar aquí. Es el estado por defecto de todo perfil al na
    (Google Imágenes NO es una licencia — FR-INV-008).
 4. **Aviso visible**: "Perfil no reclamado — creado por fans a partir de información pública.
    ¿Eres tú? Reclámalo o pide su retirada." con enlace funcional.
-5. **noindex** en la página del perfil (meta robots) hasta que se reclame.
+5. **Indexable SÍ, pero solo CON el aviso puesto** (Tony, 17-jul-2026: *"mejro q salgamso en
+   google y vale si es obligartorio vale"*). El `noindex` **ya NO depende de reclamar**: depende
+   de que la página lleve el aviso de no-afiliación **+** la vía de retirada. **Con aviso →
+   indexable; sin aviso → `noindex` automático.** El acople va en ese sentido a propósito: si
+   mañana alguien publica un perfil y se olvida del aviso, cae solo del lado seguro en vez de
+   irse a Google desnudo. Nadie tiene que acordarse de poner `noindex`; hay que acordarse del
+   AVISO, y eso lo caza el test. Mismo criterio para el sitemap: solo se anuncia lo que pasa
+   esa puerta. Ver FR-INV-010 y `tests/test_fanrank.py::UnclaimedProfileSafetyTests`.
 6. **Retirada inmediata**: una solicitud verificada de la persona/entidad retira el perfil sin
    fricción ni negociación. La vía es visible en la propia página.
 7. **Cero publicidad/patrocinio** en la página del perfil no reclamado (nada comercial junto a
@@ -35,7 +42,9 @@ identidad ni aceptado estar aquí. Es el estado por defecto de todo perfil al na
 ## Checklist antes de publicar CUALQUIER perfil real nuevo
 - [ ] ¿Sin insignia ni texto de respaldo?
 - [ ] ¿Avatar tipográfico?
-- [ ] ¿Aviso de no reclamado + reclamar/retirar visible?
-- [ ] ¿noindex presente?
+- [ ] ¿Aviso de no reclamado + reclamar/retirar visible? (esto ES lo que permite indexar)
+- [ ] ¿`noindex`? **No se comprueba a mano**: lo decide el aviso. Si falta el aviso, la página
+      sale con `noindex` sola. Si ves `noindex` en un perfil que debería salir en Google, el bug
+      es que le falta el AVISO — no le quites el `noindex`, ponle el aviso.
 - [ ] ¿Cero ads junto a la identidad?
 - [ ] ¿Todo dato mostrado tiene fuente pública no sensible?

@@ -34,6 +34,8 @@ LOCAL_AGENT_CONTRACT = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 SOCIAL_CARD = ROOT / "social-card.png"
 PROFILE_STUB_GENERATOR = ROOT / "tools" / "generate_profile_stubs.py"
 PROFILE_STUB_ROOT = ROOT / "p"
+TOP_PAGES_GENERATOR = ROOT / "tools" / "build_top_pages.py"
+TOP_ROOT = ROOT / "top"
 OWNER_JS_PATH = ROOT / "owner-studio.js"
 OWNER_CSS_PATH = ROOT / "owner-studio.css"
 OWNER_JS = OWNER_JS_PATH.read_text(encoding="utf-8")
@@ -1109,8 +1111,11 @@ class StaticAppTests(unittest.TestCase):
         public_rating_body = extract(r"function teamRatingHtml\(item\)\{([\s\S]*?)\n\}")
         self.assertNotIn("member_email", public_rating_body)
         self.assertNotIn("selected_by", public_rating_body)
+        # La barra de reclamar sigue escondiendose en un perfil verificado (mismo
+        # comportamiento; ahora via isClaimedProfile, la unica fuente de "reclamado").
+        # OJO: esconder la BARRA ya no esconde el aviso legal -> vive fuera (FR-INV-010).
         self.assertIn(
-            'document.querySelector(".claim-bar").classList.toggle("hidden",secMeta.verification_status === "verified")',
+            'document.querySelector(".claim-bar").classList.toggle("hidden",isClaimedProfile(secMeta))',
             HTML,
         )
 
@@ -1737,11 +1742,352 @@ class LiveBoundaryTests(unittest.TestCase):
         self.assertIn("Recibo", raw)
 
 
+class UnclaimedProfileSafetyTests(unittest.TestCase):
+    """FR-INV-010 (P0 legal, Tony 17-jul-2026): el ACOPLE VA AL REVES.
+
+    Un perfil no reclamado SI sale en Google -- Google es el unico canal que trae
+    gente gratis-- pero SOLO si lleva puesto el aviso de no-afiliacion y la via de
+    retirada. Estos tests fallan si alguien quita el aviso o la via de retirada, y
+    si alguna pagina INDEXABLE se queda sin ellos.
+    """
+
+    # Personas y entidades REALES publicadas hoy sin haber reclamado su perfil.
+    # Reclamar ya no cambia la indexabilidad: solo cambia el titular de la frase.
+    REAL_UNCLAIMED = ("orslok", "ibai", "rubius", "brawl-stars")
+    UNCLAIMED_MARK = "Perfil no reclamado"
+    # La frase que hace indexable una pagina. Aparece TAMBIEN en la variante reclamada:
+    # es la marca universal, no la de "no reclamado".
+    NON_AFFILIATION_MARK = "no est&aacute; afiliado, patrocinado ni respaldado"
+    NOINDEX_META = '<meta name="robots" content="noindex,follow">'
+
+    def _removal_path(self, raw: str) -> bool:
+        return "mailto:eltonylfgi%40gmail.com" in raw or "mailto:eltonylfgi@gmail.com" in raw
+
+    def test_app_profile_shows_a_visible_non_affiliation_notice(self) -> None:
+        self.assertIn('id="claim-disclaimer"', HTML)
+        self.assertIn('<span class="claim-disclaimer" id="claim-disclaimer">', HTML)
+        self.assertIn(
+            'claim_disclaimer:"FanRank no está afiliado, patrocinado ni respaldado por las '
+            'personas y marcas que aparecen aquí.',
+            HTML,
+        )
+        self.assertIn(
+            'claim_disclaimer:"FanRank is not affiliated with, sponsored by or endorsed by '
+            "the people and brands shown here.",
+            HTML,
+        )
+        self.assertEqual(2, HTML.count("claim_disclaimer_named:"), "aviso en EN y ES")
+        self.assertIn(
+            'byId("claim-disclaimer").textContent = named ? tx("claim_disclaimer_named",named) '
+            ': tx("claim_disclaimer");',
+            HTML,
+        )
+        self.assertIn("  applyClaimNotice();", HTML)
+        # Se lee: ni gris de 8px ni escondido en el footer.
+        self.assertRegex(HTML, r"[.]profile-legal [.]claim-disclaimer\{[^}]*color:var\(--text\)")
+        self.assertRegex(HTML, r"[.]profile-legal [.]claim-disclaimer\{[^}]*font-size:[.]84rem")
+
+    def test_the_notice_does_not_live_inside_the_bar_that_gets_hidden(self) -> None:
+        """La claim-bar se ESCONDE al reclamar. El aviso no puede ir dentro de ella:
+        si no, reclamar volveria a apagar el aviso por la puerta de atras."""
+        self.assertIn('<div class="profile-legal" id="profile-legal">', HTML)
+        # El aviso y la retirada cuelgan de profile-legal, NO de claim-copy.
+        self.assertRegex(
+            HTML,
+            r'<div class="profile-legal" id="profile-legal">'
+            r'<span class="claim-disclaimer" id="claim-disclaimer"></span>'
+            r'<a class="claim-remove" id="claim-remove"',
+        )
+        self.assertNotRegex(HTML, r'<div class="claim-copy">[^\n]*id="claim-disclaimer"')
+        self.assertNotRegex(HTML, r'<div class="claim-copy">[^\n]*id="claim-remove"')
+        # Lo que se esconde al reclamar es la BARRA, nunca el aviso.
+        self.assertIn(
+            'document.querySelector(".claim-bar").classList.toggle("hidden",'
+            "isClaimedProfile(secMeta));",
+            HTML,
+        )
+
+    def test_app_profile_offers_a_real_prefilled_removal_path(self) -> None:
+        self.assertIn('<a class="claim-remove" id="claim-remove"', HTML)
+        self.assertIn('var REMOVAL_EMAIL = "eltonylfgi@gmail.com";', HTML)
+        self.assertIn('"mailto:" + REMOVAL_EMAIL +', HTML)
+        # PAN-INV-001: cero friccion. El correo va con asunto Y cuerpo ya escritos.
+        self.assertIn('"?subject=" + encodeURIComponent(tx("claim_remove_subject",name))', HTML)
+        self.assertIn('"&body=" + encodeURIComponent(tx("claim_remove_body",name,url))', HTML)
+        self.assertEqual(2, HTML.count("claim_remove_link:"), "enlace en EN y ES")
+        self.assertEqual(2, HTML.count("claim_remove_subject:"))
+        self.assertEqual(2, HTML.count("claim_remove_body:"))
+        self.assertIn('claim_remove_link:"¿Eres tú o su representante? Pide que lo quitemos"', HTML)
+        self.assertIn(
+            'claim_remove_link:"Are you them or their representative? Ask us to remove it"', HTML
+        )
+        self.assertRegex(HTML, r"[.]claim-remove\{[^}]*min-height:44px")
+
+    def test_removal_mailto_really_builds_a_prefilled_email(self) -> None:
+        """La via de retirada tiene que ABRIR un correo escrito, no una pantalla en blanco."""
+        functions = "\n".join(
+            extract_js_function(name)
+            for name in (
+                "normalizeLanguage", "persistentUrl", "profileDefaultLanguage",
+                "setUrlLanguage", "profileStubUrl", "profileRemovalMailto",
+            )
+        )
+        node_program = "\n".join([
+            'var TELEMETRY_DISABLED=false;',
+            'var LANG="es";',
+            'var URL_LANGUAGE="es";',
+            'var SAVED_LANGUAGE=null;',
+            'var APP_URL="https://eltonylfgi-blip.github.io/fanrank/";',
+            'var REMOVAL_EMAIL="eltonylfgi@gmail.com";',
+            'var sections=[{slug:"orslok",default_language:"es"}];',
+            'var location={origin:"https://eltonylfgi-blip.github.io",pathname:"/fanrank/",'
+            'search:"?s=orslok",href:"https://eltonylfgi-blip.github.io/fanrank/?s=orslok"};',
+            'var T={es:{claim_remove_subject:function(n){return "FanRank - retirad el perfil de " + n;},'
+            'claim_remove_body:function(n,u){return "Soy " + n + ". Perfil: " + u;}}};',
+            'function tx(key){var v=T[LANG][key];'
+            'return typeof v === "function" ? v.apply(null,Array.prototype.slice.call(arguments,1)) : v;}',
+            functions,
+            'console.log(profileRemovalMailto("Orslok","orslok"));',
+        ])
+        result = subprocess.run(
+            ["node", "-e", node_program], cwd=ROOT, capture_output=True,
+            text=True, encoding="utf-8", check=False, timeout=10,
+        )
+        self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+        mailto = result.stdout.strip()
+        self.assertTrue(mailto.startswith("mailto:eltonylfgi@gmail.com?"), mailto)
+        query = urllib.parse.parse_qs(mailto.split("?", 1)[1])
+        self.assertIn("Orslok", query["subject"][0])
+        self.assertIn("Orslok", query["body"][0])
+        # El cuerpo lleva el PERFIL concreto: quien lo recibe sabe que retirar.
+        self.assertIn("https://eltonylfgi-blip.github.io/fanrank/p/orslok/", query["body"][0])
+
+    def test_app_indexability_hangs_on_the_notice_not_on_the_claim(self) -> None:
+        """EL ACOPLE INVERTIDO en la app: el robots es CONSECUENCIA del aviso pintado."""
+        self.assertIn("function setRobotsNoindex(noindex)", HTML)
+        self.assertIn(
+            'meta.setAttribute("content",noindex ? "noindex,follow" : ROBOTS_INDEXABLE);', HTML
+        )
+        self.assertIn("function profileDisclosureOk()", HTML)
+        self.assertIn("setRobotsNoindex(!profileDisclosureOk());", HTML)
+        # Reclamar YA NO decide si sales en Google (Tony 17-jul: "mejor q salgamos en google").
+        self.assertNotIn("setRobotsNoindex(!isClaimedProfile(secMeta));", HTML)
+        self.assertIn('return !!(meta && meta.verification_status === "verified");', HTML)
+        # La puerta mira el aviso REAL: visible, con texto y con mailto de verdad.
+        self.assertIn('var note = byId("claim-disclaimer");', HTML)
+        self.assertIn('var link = byId("claim-remove");', HTML)
+        self.assertIn('removal.indexOf("mailto:") === 0', HTML)
+        self.assertIn('return !!(node && !node.closest(".hidden"));', HTML)
+        # El aviso se pinta ANTES de decidir el robots (si no, mediria el DOM vacio).
+        self.assertRegex(
+            HTML,
+            r"applyClaimNotice\(\);\n(?:\s*//[^\n]*\n)*\s*setRobotsNoindex\(!profileDisclosureOk\(\)\);",
+        )
+        # Se VOLTEA el meta que ya existe. Dos metas robots en conflicto solo
+        # funcionan porque Google aplica la mas restrictiva: no dependemos de eso.
+        self.assertEqual(1, HTML.count('<meta name="robots"'), "un solo meta robots estatico")
+        self.assertIn('document.head.querySelector(\'meta[name="robots"]\')', HTML)
+        self.assertNotIn('meta.id = "robots-meta"', HTML)
+
+    def test_third_party_ip_notice_is_wired_for_supercell_games(self) -> None:
+        self.assertIn('id="ip-notice"', HTML)
+        self.assertIn('"brawl-stars":"supercell"', HTML)
+        self.assertIn(
+            'IP_NOTICE_URLS = {supercell:"https://supercell.com/en/fan-content-policy/"};', HTML
+        )
+        self.assertIn(
+            'ip_notice_supercell:"This material is unofficial and is not endorsed by Supercell.',
+            HTML,
+        )
+        self.assertIn(
+            'ip_notice_supercell:"Este material no es oficial y no está respaldado por Supercell.',
+            HTML,
+        )
+        self.assertIn("function applyIpNotice()", HTML)
+
+    def test_profile_stub_generator_hangs_indexability_on_the_notice(self) -> None:
+        generator = PROFILE_STUB_GENERATOR.read_text(encoding="utf-8")
+        for marker in (
+            "fr_sections_stats?select=slug,name,default_language,verification_status",
+            "def is_claimed(profile: dict) -> bool:",
+            'return str(profile.get("verification_status") or "") == "verified"',
+            'REMOVAL_EMAIL = "eltonylfgi@gmail.com"',
+            "def removal_mailto(raw_name: str, slug: str) -> str:",
+            "def legal_block(profile: dict) -> str:",
+            "def page_is_indexable(legal: str) -> bool:",
+            "return NON_AFFILIATION_MARK in legal and REMOVAL_MARK in legal",
+            'NOINDEX_META = \'\\n  <meta name="robots" content="noindex,follow">\'',
+            "robots_meta = \"\" if page_is_indexable(legal_html) else NOINDEX_META",
+            '"brawl-stars": "supercell"',
+        ):
+            self.assertIn(marker, generator)
+        # El robots NO puede volver a colgar del flag de reclamado.
+        self.assertNotIn('robots_meta = "" if claimed else', generator)
+        result = subprocess.run(
+            [sys.executable, str(PROFILE_STUB_GENERATOR), "--selftest"],
+            cwd=ROOT, capture_output=True, text=True, check=False, timeout=30,
+        )
+        self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+        self.assertIn("SELFTEST: OK", result.stdout)
+
+    def test_top_page_generator_hangs_indexability_on_the_notice(self) -> None:
+        generator = TOP_PAGES_GENERATOR.read_text(encoding="utf-8")
+        for marker in (
+            "fr_sections_stats?select=slug,name,default_language,verification_status",
+            "def is_claimed(section):",
+            'REMOVAL_EMAIL = "eltonylfgi@gmail.com"',
+            "def legal_block(section):",
+            "def page_is_indexable(legal):",
+            "return NON_AFFILIATION_MARK in legal and REMOVAL_MARK in legal",
+            'robots = "" if page_is_indexable(legal) else NOINDEX_META',
+            "if page_is_indexable(legal_block(section)):",
+            '"brawl-stars": "supercell"',
+        ):
+            self.assertIn(marker, generator)
+        self.assertNotIn('robots = "" if claimed else', generator)
+        self.assertNotIn("if is_claimed(section):\n            urls.append", generator)
+        result = subprocess.run(
+            [sys.executable, str(TOP_PAGES_GENERATOR), "--selftest"],
+            cwd=ROOT, capture_output=True, text=True, check=False, timeout=30,
+        )
+        self.assertEqual(0, result.returncode, result.stderr or result.stdout)
+        self.assertIn("SELFTEST: OK", result.stdout)
+
+    def _published_profile_pages(self) -> list[Path]:
+        return sorted(PROFILE_STUB_ROOT.glob("*/index.html")) + sorted(TOP_ROOT.glob("*/index.html"))
+
+    def test_no_indexable_page_can_ever_lack_the_notice(self) -> None:
+        """EL CANDADO (Tony 17-jul): si una pagina puede ir a Google, LLEVA aviso.
+
+        Es el test que caza al que manana anada un perfil nuevo y se olvide del aviso:
+        no le exige acordarse de poner noindex, le exige el AVISO para poder indexar.
+        """
+        pages = self._published_profile_pages()
+        self.assertGreaterEqual(len(pages), 10)
+        indexables = 0
+        for page in pages:
+            with self.subTest(page=str(page.relative_to(ROOT))):
+                raw = page.read_text(encoding="utf-8")
+                if self.NOINDEX_META in raw:
+                    continue  # fuera de Google: el aviso es indiferente
+                indexables += 1
+                self.assertIn(
+                    self.NON_AFFILIATION_MARK, raw,
+                    "pagina INDEXABLE sin aviso de no-afiliacion: prohibido",
+                )
+                self.assertTrue(
+                    self._removal_path(raw),
+                    "pagina INDEXABLE sin via de retirada de 1 tap: prohibido",
+                )
+        # Y que el test no pase por vacio: tiene que haber paginas indexables de verdad.
+        self.assertGreaterEqual(indexables, 10, "nadie volvio a Google: revisa el noindex")
+
+    def test_every_real_unclaimed_profile_page_is_back_on_google_with_its_notice(self) -> None:
+        for slug in self.REAL_UNCLAIMED:
+            for root in (PROFILE_STUB_ROOT, TOP_ROOT):
+                page = root / slug / "index.html"
+                if not page.exists():
+                    continue
+                with self.subTest(page=str(page.relative_to(ROOT))):
+                    raw = page.read_text(encoding="utf-8")
+                    # Vuelve a Google...
+                    self.assertNotIn(self.NOINDEX_META, raw)
+                    # ...pero jamas sin el aviso ni la via de retirada.
+                    self.assertIn(self.UNCLAIMED_MARK, raw)
+                    self.assertIn(self.NON_AFFILIATION_MARK, raw)
+                    self.assertIn("Pide que lo quitemos", raw)
+                    self.assertIn("mailto:eltonylfgi", raw)
+
+    def test_supercell_pages_carry_the_fan_content_notice(self) -> None:
+        for root in (PROFILE_STUB_ROOT, TOP_ROOT):
+            page = root / "brawl-stars" / "index.html"
+            if not page.exists():
+                continue
+            with self.subTest(page=str(page.relative_to(ROOT))):
+                raw = page.read_text(encoding="utf-8")
+                self.assertIn("no est&aacute; respaldado por Supercell", raw)
+                self.assertIn("supercell.com/en/fan-content-policy", raw)
+
+    def test_sitemaps_only_advertise_pages_that_carry_the_notice(self) -> None:
+        """Anunciar a Google == poder ir a Google == llevar el aviso. Misma puerta."""
+        top_raw = (TOP_ROOT / "sitemap-top.xml").read_text(encoding="utf-8")
+        for slug in re.findall(r"/top/([a-z0-9-]+)/</loc>", top_raw):
+            with self.subTest(sitemap="sitemap-top.xml", slug=slug):
+                raw = (TOP_ROOT / slug / "index.html").read_text(encoding="utf-8")
+                self.assertNotIn(self.NOINDEX_META, raw)
+                self.assertIn(self.NON_AFFILIATION_MARK, raw)
+                self.assertTrue(self._removal_path(raw))
+        root_raw = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
+        for slug in re.findall(r"\?s=([a-z0-9-]+)</loc>", root_raw):
+            with self.subTest(sitemap="sitemap.xml", slug=slug):
+                stub = PROFILE_STUB_ROOT / slug / "index.html"
+                self.assertTrue(stub.exists(), f"sitemap anuncia {slug} sin stub publicado")
+                raw = stub.read_text(encoding="utf-8")
+                self.assertNotIn(self.NOINDEX_META, raw)
+                self.assertIn(self.NON_AFFILIATION_MARK, raw)
+                self.assertTrue(self._removal_path(raw))
+
+    def test_the_profiles_are_advertised_to_google_again(self) -> None:
+        """Tony 17-jul: "mejor q salgamso en google". Si no estan en el sitemap, no salen."""
+        root_raw = (ROOT / "sitemap.xml").read_text(encoding="utf-8")
+        for slug in self.REAL_UNCLAIMED:
+            with self.subTest(sitemap="sitemap.xml", slug=slug):
+                self.assertIn(f"?s={slug}</loc>", root_raw)
+        top_raw = (TOP_ROOT / "sitemap-top.xml").read_text(encoding="utf-8")
+        for slug in sorted(p.name for p in TOP_ROOT.iterdir() if p.is_dir()):
+            with self.subTest(sitemap="sitemap-top.xml", slug=slug):
+                self.assertIn(f"/top/{slug}/</loc>", top_raw)
+
+
+class ZeroSupportTests(unittest.TestCase):
+    """Matar el cero: 0 corazones NO se gritan (un tablon de ceros parece muerto),
+    pero jamas se inventan votos ni se infla nada (FR-INV-005)."""
+
+    def test_an_idea_without_support_asks_for_the_first_one(self) -> None:
+        self.assertIn("function needsFirstVote(item)", HTML)
+        self.assertIn("return Number(item && item.web_votes || 0) === 0;", HTML)
+        self.assertEqual(2, HTML.count("be_first:"), "CTA en EN y ES")
+        self.assertEqual(2, HTML.count("be_first_long:"), "CTA en EN y ES")
+        self.assertIn('be_first_long:"Sé el primero en apoyarla"', HTML)
+        self.assertIn('be_first_long:"Be the first to back it"', HTML)
+
+    def test_the_zero_is_never_painted(self) -> None:
+        # Ficha de idea: con 0 corazones no se pinta el contador.
+        self.assertIn(
+            '(firstVote ? "" : \'<span class="vote-count">\' + Number(item.web_votes||0) + \'</span>\')',
+            HTML,
+        )
+        self.assertIn('esc(voted ? tx("voted") : firstVote ? tx("be_first") : tx("vote"))', HTML)
+        # Chip de origen: sin apoyo en la fuente no hay chip que diga "0".
+        self.assertIn('(Number(item.origin_upvotes||0) > 0 ? \'<span class="chip"', HTML)
+        # Home e ideas similares.
+        self.assertIn('? (needsFirstVote(item) ? tx("be_first_long") : tx("global_fan_signal"', HTML)
+        self.assertIn(
+            'esc(needsFirstVote(item) ? tx("be_first_long") : Number(item.web_votes || 0) + " " + tx("similar_votes"))',
+            HTML,
+        )
+
+    def test_killing_the_zero_never_invents_support(self) -> None:
+        body = extract_js_function("needsFirstVote")
+        for forbidden in ("Math.random", "Math.max", "+ 1", "|| 1"):
+            self.assertNotIn(forbidden, body)
+        # El ranking sigue leyendo el numero REAL, no el CTA.
+        self.assertIn("Math.min(Number(item.web_votes || 0) * 2,20)", extract_js_function("rankScore"))
+        for name in ("rankScore", "sortedIdeas"):
+            self.assertNotIn("needsFirstVote", extract_js_function(name))
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--live", action="store_true", help="also check the live Supabase boundary")
     args, remaining = parser.parse_known_args()
-    selected = [StaticAppTests, V18UsabilityTests, V19EngagementTests]
+    selected = [
+        StaticAppTests,
+        V18UsabilityTests,
+        V19EngagementTests,
+        UnclaimedProfileSafetyTests,
+        ZeroSupportTests,
+    ]
     if args.live:
         selected.append(LiveBoundaryTests)
     suite = unittest.TestSuite()

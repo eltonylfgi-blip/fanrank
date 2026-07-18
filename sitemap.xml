@@ -1,79 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- FR-INV-010 (Tony 17-jul-2026): aqui solo entra lo que PUEDE ir a Google, y a Google
+       solo puede ir lo que LLEVA PUESTO el aviso de no-afiliacion + la via de retirada.
+       Reclamar el perfil ya NO decide esto: decide el aviso. Lo verifica
+       tests/test_fanrank.py::test_sitemaps_only_advertise_pages_that_carry_the_notice. -->
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=brawl-stars</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=orslok</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=rubius</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=ibai</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=roblox</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=discord</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=x-twitter</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=chatgpt</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=claude</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=cuaderno-madre</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
   <url>
     <loc>https://eltonylfgi-blip.github.io/fanrank/?s=fanrank</loc>
-    <lastmod>2026-07-16</lastmod>
-  </url>
-  <url>
-    <loc>https://eltonylfgi-blip.github.io/fanrank/?s=minecraft</loc>
-    <lastmod>2026-07-16</lastmod>
-  </url>
-  <url>
-    <loc>https://eltonylfgi-blip.github.io/fanrank/?s=fortnite</loc>
-    <lastmod>2026-07-16</lastmod>
-  </url>
-  <url>
-    <loc>https://eltonylfgi-blip.github.io/fanrank/?s=youtube</loc>
-    <lastmod>2026-07-16</lastmod>
-  </url>
-  <url>
-    <loc>https://eltonylfgi-blip.github.io/fanrank/?s=tiktok</loc>
-    <lastmod>2026-07-16</lastmod>
-  </url>
-  <url>
-    <loc>https://eltonylfgi-blip.github.io/fanrank/?s=instagram</loc>
-    <lastmod>2026-07-16</lastmod>
-  </url>
-  <url>
-    <loc>https://eltonylfgi-blip.github.io/fanrank/?s=spotify</loc>
-    <lastmod>2026-07-16</lastmod>
-  </url>
-  <url>
-    <loc>https://eltonylfgi-blip.github.io/fanrank/?s=twitch</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
   </url>
 </urlset>
