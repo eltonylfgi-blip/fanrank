@@ -235,7 +235,7 @@ class StaticAppTests(unittest.TestCase):
             "product telemetry": 'postRow("fr_claims"',
             "event sink": 'fr_events',
             "bilingual UI": "var T = {",
-            "owner studio bundle": 'owner-studio.js?v=9',
+            "owner studio bundle": 'owner-studio.js?v=10',
             "Pro pilot": 'id="pro-form"',
         }
         missing = [name for name, marker in markers.items() if marker not in HTML]

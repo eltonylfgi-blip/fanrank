@@ -11,7 +11,7 @@
       select_zone:"Seleccionar zona",zone_banner:"Haz clic en la zona de FanRank que quieres comentar.",cancel:"Cancelar",close:"Cerrar",
       feedback_title:"Feedback de una zona",feedback_intro:"La captura es opcional y siempre queda privada.",zone:"Zona",priority:"Prioridad",
       normal:"Normal",high:"Alta",low:"Baja",message:"Qué quieres cambiar *",screenshot:"Captura opcional",screenshot_help:"Adjunta JPG, PNG o WebP; también puedes pegar una captura en el texto.",
-      send_feedback:"Guardar feedback",feedback_ok:"Feedback guardado en la cola privada.",file_ready:"Captura preparada",done:"Marcar hecho",done_ok:"Marcado como hecho.",
+      send_feedback:"Guardar feedback",feedback_ok:"Feedback guardado: Codex lo recibirá por la cola privada.",file_ready:"Captura preparada",done:"Marcar hecho",done_ok:"Marcado como hecho.",
       request_title:"Nuevo perfil para investigar",request_intro:"FanRank lo guarda; la imagen se buscará después en una fuente oficial o con licencia.",
       name:"Nombre *",kind:"Tipo",notes:"Notas o contexto",creator:"Creador",company:"Empresa",game:"Videojuego",social:"Red social",ai:"IA",project:"Proyecto",
       request_send:"Guardar perfil",request_ok:"Perfil añadido a la cola de investigación.",
@@ -34,7 +34,7 @@
       select_zone:"Select area",zone_banner:"Click the FanRank area you want to comment on.",cancel:"Cancel",close:"Close",
       feedback_title:"Area feedback",feedback_intro:"The screenshot is optional and always stays private.",zone:"Area",priority:"Priority",
       normal:"Normal",high:"High",low:"Low",message:"What should change? *",screenshot:"Optional screenshot",screenshot_help:"Attach JPG, PNG or WebP; you can also paste an image into the text field.",
-      send_feedback:"Save feedback",feedback_ok:"Feedback saved to the private queue.",file_ready:"Screenshot ready",done:"Mark done",done_ok:"Marked as done.",
+      send_feedback:"Save feedback",feedback_ok:"Feedback saved: Codex will receive it through the private queue.",file_ready:"Screenshot ready",done:"Mark done",done_ok:"Marked as done.",
       request_title:"New profile to research",request_intro:"FanRank saves it; its image will later come from an official or licensed source.",
       name:"Name *",kind:"Type",notes:"Notes or context",creator:"Creator",company:"Company",game:"Video game",social:"Social platform",ai:"AI",project:"Project",
       request_send:"Save profile",request_ok:"Profile added to the research queue.",
@@ -66,7 +66,9 @@
   function zoneName(value){var zones=s("zones") || {};return zones[value] || String(value || "").replace(/_/g," ");}
   function formatDate(value){try{return new Intl.DateTimeFormat(window.LANG === "es" ? "es-ES" : "en",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));}catch(error){return "";}}
   function isProfileManager(){return !!(window.membership && window.membership.status === "active" && (window.membership.role === "owner" || window.membership.role === "admin" || window.membership.role === "contributor"));}
+  function isProfileFeedbackManager(){return !!(window.membership && window.membership.status === "active" && (window.membership.role === "owner" || window.membership.role === "admin"));}
   function canPromote(){return !!(window.session && (state.admin || isProfileManager()));}
+  function canSubmitFeedback(){return !!(window.session && (state.admin || (window.SECTION && window.secMeta && window.secMeta.verification_status === "verified" && isProfileFeedbackManager())));}
 
   function injectInterface(){
     var top=el("account-btn") && el("account-btn").parentElement;
@@ -167,8 +169,8 @@
     if(el("owner-studio-btn")){el("owner-studio-btn").classList.toggle("hidden",!state.admin);}
     var toolbar=el("owner-toolbar");
     if(toolbar){
-      toolbar.classList.toggle("hidden",!(state.admin || canPromote()));
-      el("owner-feedback-profile").classList.toggle("hidden",!state.admin);
+      toolbar.classList.toggle("hidden",!(state.admin || canPromote() || canSubmitFeedback()));
+      el("owner-feedback-profile").classList.toggle("hidden",!canSubmitFeedback());
       el("owner-photo-open").classList.toggle("hidden",!state.admin);
       el("owner-promote-profile").classList.toggle("hidden",!canPromote() || !window.SECTION);
     }
@@ -198,8 +200,8 @@
   }
   function updateInterfaceShallow(){
     var toolbar=el("owner-toolbar");if(!toolbar){return;}
-    toolbar.classList.toggle("hidden",!(state.admin || canPromote()));
-    el("owner-feedback-profile").classList.toggle("hidden",!state.admin);
+    toolbar.classList.toggle("hidden",!(state.admin || canPromote() || canSubmitFeedback()));
+    el("owner-feedback-profile").classList.toggle("hidden",!canSubmitFeedback());
     el("owner-photo-open").classList.toggle("hidden",!state.admin);
     el("owner-promote-profile").classList.toggle("hidden",!canPromote() || !window.SECTION);
   }
@@ -234,7 +236,7 @@
   }
 
   function openFeedback(zone){
-    if(!state.admin){return;}
+    if(!canSubmitFeedback()){return;}
     var value=zone || (window.SECTION ? "profile_ideas" : "home_directory");
     el("owner-feedback-zone").value=value;
     el("owner-feedback-zone").dataset.zone=value;
@@ -270,12 +272,20 @@
     for(var i=0;i<items.length;i+=1){if(items[i].type.indexOf("image/")===0){var file=items[i].getAsFile();if(file){setScreenshot(file);}break;}}
   }
   async function submitFeedback(event){
-    event.preventDefault();if(!state.admin || !window.session){return;}
+    event.preventDefault();if(!canSubmitFeedback() || !window.session){return;}
     var zone=el("owner-feedback-zone").dataset.zone || el("owner-feedback-zone").value;
     var message=el("owner-feedback-message").value.trim();
     if(!zone || message.length<3){setFormStatus("owner-feedback-status",s("required"),"err");return;}
     setButtonBusy("owner-feedback-send",true);setFormStatus("owner-feedback-status","","");
     try{
+      if(window.SECTION && !state.admin){
+        var creatorForm=new FormData();
+        creatorForm.append("section",window.SECTION);creatorForm.append("page_path",(location.pathname+location.search).slice(0,500));
+        creatorForm.append("zone",zone);creatorForm.append("priority",el("owner-feedback-priority").value);creatorForm.append("message",message);
+        if(state.screenshot){creatorForm.append("screenshot",state.screenshot,state.screenshot.name || "capture");}
+        var creatorResponse=await fetch(window.SB_URL+"/functions/v1/fanrank-creator-feedback",{method:"POST",headers:{"apikey":window.SB_KEY,"Authorization":"Bearer "+window.session.access_token},body:creatorForm});
+        if(!creatorResponse.ok){var creatorError=await creatorResponse.json().catch(function(){return {};});throw new Error(creatorError.error || "CREATOR_FEEDBACK_FAILED");}
+      }else{
       var screenshotPath=null;
       if(state.screenshot){
         if(!validImage(state.screenshot,8388608)){throw new Error("bad image");}
@@ -283,7 +293,8 @@
         var upload=await window.authClient.storage.from("fanrank-owner-feedback").upload(screenshotPath,state.screenshot,{contentType:state.screenshot.type,upsert:false});
         if(upload.error){throw upload.error;}
       }
-      await window.postRow("fr_owner_feedback",{user_id:window.session.user.id,page_path:(location.pathname+location.search).slice(0,500),zone:zone,priority:el("owner-feedback-priority").value,message:message,screenshot_path:screenshotPath});
+      await window.postRow("fr_owner_feedback",{user_id:window.session.user.id,section:window.SECTION || null,page_path:(location.pathname+location.search).slice(0,500),zone:zone,priority:el("owner-feedback-priority").value,message:message,screenshot_path:screenshotPath});
+      }
       if(window.sendEvent){window.sendEvent("owner_feedback",{section:window.SECTION || null,value:zone});}
       setFormStatus("owner-feedback-status",s("feedback_ok"),"ok");el("owner-feedback-message").value="";el("owner-feedback-file").value="";setScreenshot(null);
     }catch(error){setFormStatus("owner-feedback-status",s("generic_error"),"err");}
@@ -351,6 +362,7 @@
 
   window.FanRankOwnerStudio={
     canPromote:canPromote,
+    canSubmitFeedback:canSubmitFeedback,
     openPromotion:openPromotion,
     refreshAccess:refreshAccess,
     renderProfileEnhancements:renderProfileEnhancements,
