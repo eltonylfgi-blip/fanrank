@@ -36,8 +36,8 @@ SECTIONS_PATH = (
 # solo del lado seguro, en vez de irse a Google desnudo.
 NOINDEX_META = '\n  <meta name="robots" content="noindex,follow">'
 NON_AFFILIATION_MARK = "no est&aacute; afiliado, patrocinado ni respaldado"
-REMOVAL_MARK = "mailto:"
-REMOVAL_EMAIL = "eltonylfgi@gmail.com"
+REMOVAL_ISSUES_URL = "https://github.com/eltonylfgi-blip/fanrank/issues/new"
+REMOVAL_MARK = REMOVAL_ISSUES_URL
 # Avisos de propiedad intelectual de terceros (obligatorios para su contenido de fans).
 IP_NOTICES = {
     "brawl-stars": "supercell",
@@ -61,15 +61,16 @@ def is_claimed(profile: dict) -> bool:
     return str(profile.get("verification_status") or "") == "verified"
 
 
-def removal_mailto(raw_name: str, slug: str) -> str:
+def removal_issue_url(raw_name: str, slug: str) -> str:
     subject = f"FanRank - retirad el perfil de {raw_name}"
     body = (
         f"Hola:\n\nSoy {raw_name}, o su representante autorizado, y pido que se retire "
-        f"este perfil de FanRank.\n\nPerfil: {PUBLIC_APP_URL}p/{slug}/\n\nMi nombre: \n"
-        "Mi relacion o cargo: \n\n(Lo retiramos sin pedir nada a cambio.)\n"
+        f"este perfil de FanRank.\n\nPerfil: {PUBLIC_APP_URL}p/{slug}/\n\n"
+        "Enlace de prueba publica: \n\n(Lo retiramos sin pedir nada a cambio. "
+        "No incluyas datos privados en esta solicitud publica.)\n"
     )
-    query = urllib.parse.urlencode({"subject": subject, "body": body})
-    return html.escape(f"mailto:{REMOVAL_EMAIL}?{query}", quote=True)
+    query = urllib.parse.urlencode({"title": subject, "body": body})
+    return html.escape(f"{REMOVAL_ISSUES_URL}?{query}", quote=True)
 
 
 def legal_block(profile: dict) -> str:
@@ -93,7 +94,7 @@ def legal_block(profile: dict) -> str:
     Las ideas las escriben y las votan sus fans a partir de informaci&oacute;n
     p&uacute;blica; no son declaraciones de {name}.</p>'''
     block = head + f'''
-    <p><a href="{removal_mailto(raw_name, slug)}">&iquest;Eres {name} o su representante? Pide que lo quitemos</a></p>'''
+    <p><a href="{removal_issue_url(raw_name, slug)}" target="_blank" rel="noopener noreferrer">&iquest;Eres {name} o su representante? Pide que lo quitemos</a></p>'''
     ip_holder = IP_NOTICES.get(slug)
     if ip_holder:
         block += f'''
@@ -235,12 +236,12 @@ def selftest() -> int:
     page = render_stub(libre, ideas)
     # NO reclamado pero CON aviso => vuelve a Google (Tony 17-jul: "mejor q salgamos en google").
     ok &= "Perfil no reclamado" in page and NON_AFFILIATION_MARK in page
-    ok &= "mailto:eltonylfgi@gmail.com" in page and "Pide que lo quitemos" in page
+    ok &= REMOVAL_ISSUES_URL in page and "Pide que lo quitemos" in page
     ok &= "noindex" not in page
     # Reclamar solo cambia el TITULAR de la frase: aviso y via de retirada SIGUEN.
     claimed = render_stub(dict(libre, verification_status="verified"), ideas)
     ok &= "Perfil no reclamado" not in claimed
-    ok &= NON_AFFILIATION_MARK in claimed and "mailto:eltonylfgi@gmail.com" in claimed
+    ok &= NON_AFFILIATION_MARK in claimed and REMOVAL_ISSUES_URL in claimed
     ok &= "noindex" not in claimed
     # Aviso de IP de terceros donde toca (Supercell), y sigue siendo indexable.
     supercell = render_stub({"slug": "brawl-stars", "name": "Brawl Stars"}, ideas)

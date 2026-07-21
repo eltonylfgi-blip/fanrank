@@ -1167,7 +1167,7 @@
     <!-- FR-INV-010 (Tony 17-jul): el aviso NO vive dentro de la claim-bar. La claim-bar se
          esconde cuando el perfil se reclama; el aviso y la via de retirada NO se esconden
          JAMAS: son lo que hace indexable la pagina (ver profileDisclosureOk). -->
-    <div class="profile-legal" id="profile-legal"><span class="claim-disclaimer" id="claim-disclaimer"></span><a class="claim-remove" id="claim-remove" href="mailto:eltonylfgi@gmail.com"></a></div>
+    <div class="profile-legal" id="profile-legal"><span class="claim-disclaimer" id="claim-disclaimer"></span><a class="claim-remove" id="claim-remove" href="https://github.com/eltonylfgi-blip/fanrank/issues/new" target="_blank" rel="noopener noreferrer"></a></div>
     <p class="ip-notice hidden" id="ip-notice"></p>
     <section class="profile-topics hidden" id="profile-topics" aria-labelledby="profile-topics-title">
       <div class="profile-topics-head">
@@ -1744,8 +1744,8 @@ var sections = [];
 var allIdeas = [];
 var ideas = [];
 var secMeta = null;
-/* FR-INV-010: via de retirada real + avisos de propiedad intelectual de terceros. */
-var REMOVAL_EMAIL = "eltonylfgi@gmail.com";
+/* FR-INV-010: via de retirada real sin publicar datos personales + avisos de terceros. */
+var REMOVAL_ISSUES_URL = "https://github.com/eltonylfgi-blip/fanrank/issues/new";
 var IP_NOTICES = {"brawl-stars":"supercell","clash-royale":"supercell","clash-of-clans":"supercell",
   "squad-busters":"supercell","hay-day":"supercell","boom-beach":"supercell"};
 var IP_NOTICE_URLS = {supercell:"https://supercell.com/en/fan-content-policy/"};
@@ -1969,7 +1969,7 @@ var T = {
     claim_remove_link:"Are you them or their representative? Ask us to remove it",
     claim_remove_subject:function(name){return "FanRank - please remove the profile of " + name;},
     claim_remove_body:function(name,url){
-      return "Hello,\n\nI am " + name + ", or their authorised representative, and I ask you to remove this FanRank profile.\n\nProfile: " + url + "\n\nMy name: \nMy role / relationship: \n\n(We remove it without asking for anything in return. Reply to this email and we will confirm.)\n";
+      return "Hello,\n\nI am " + name + ", or their authorised representative, and I ask you to remove this FanRank profile.\n\nProfile: " + url + "\n\nPublic proof link: \n\n(We remove it without asking for anything in return. Do not include private data in this public request.)\n";
     },
     claim_open:"Claim profile",
     ip_notice_supercell:"This material is unofficial and is not endorsed by Supercell. For more information see Supercell's Fan Content Policy:",
@@ -2493,7 +2493,7 @@ var T = {
     claim_remove_link:"¿Eres tú o su representante? Pide que lo quitemos",
     claim_remove_subject:function(name){return "FanRank - retirad el perfil de " + name;},
     claim_remove_body:function(name,url){
-      return "Hola:\n\nSoy " + name + ", o su representante autorizado, y pido que se retire este perfil de FanRank.\n\nPerfil: " + url + "\n\nMi nombre: \nMi relación o cargo: \n\n(Lo retiramos sin pedir nada a cambio. Responde a este correo y te confirmamos.)\n";
+      return "Hola:\n\nSoy " + name + ", o su representante autorizado, y pido que se retire este perfil de FanRank.\n\nPerfil: " + url + "\n\nEnlace de prueba pública: \n\n(Lo retiramos sin pedir nada a cambio. No incluyas datos privados en esta solicitud pública.)\n";
     },
     claim_open:"Reclamar perfil",
     ip_notice_supercell:"Este material no es oficial y no está respaldado por Supercell. Para más información, consulta la Política de Contenido de Fans de Supercell:",
@@ -3818,18 +3818,19 @@ function ideaUrl(item,language){
 function isClaimedProfile(meta){
   return !!(meta && meta.verification_status === "verified");
 }
-function profileRemovalMailto(name,slug){
+function profileRemovalUrl(name,slug){
   var url = slug ? profileStubUrl(slug,LANG,null) : APP_URL;
-  return "mailto:" + REMOVAL_EMAIL +
-    "?subject=" + encodeURIComponent(tx("claim_remove_subject",name)) +
-    "&body=" + encodeURIComponent(tx("claim_remove_body",name,url));
+  var destination = new URL(REMOVAL_ISSUES_URL);
+  destination.searchParams.set("title",tx("claim_remove_subject",name));
+  destination.searchParams.set("body",tx("claim_remove_body",name,url));
+  return destination.toString();
 }
 function applyClaimNotice(){
   var named = secMeta && secMeta.name ? secMeta.name : null;
   byId("claim-disclaimer").textContent = named ? tx("claim_disclaimer_named",named) : tx("claim_disclaimer");
   var link = byId("claim-remove");
   link.textContent = tx("claim_remove_link");
-  link.href = profileRemovalMailto(named || tx("claim_bar_title"),SECTION);
+  link.href = profileRemovalUrl(named || tx("claim_bar_title"),SECTION);
   applyIpNotice();
 }
 function applyIpNotice(){
@@ -3850,9 +3851,12 @@ function profileDisclosureOk(){
   var note = byId("claim-disclaimer");
   var link = byId("claim-remove");
   var removal = link ? (link.getAttribute("href") || "") : "";
+  var removalUrl = null;
+  try{removalUrl = new URL(removal,location.href);}catch(error){}
   return nodeIsVisible(note) && (note.textContent || "").trim().length > 0 &&
     nodeIsVisible(link) && (link.textContent || "").trim().length > 0 &&
-    removal.indexOf("mailto:") === 0;
+    !!removalUrl && removalUrl.protocol === "https:" && removalUrl.hostname === "github.com" &&
+    removalUrl.pathname === "/eltonylfgi-blip/fanrank/issues/new";
 }
 var ROBOTS_INDEXABLE = "index, follow, max-image-preview:large";
 function setRobotsNoindex(noindex){

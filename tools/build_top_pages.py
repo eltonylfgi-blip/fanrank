@@ -42,8 +42,8 @@ SECTIONS_PATH = ("fr_sections_stats?select=slug,name,default_language,verificati
 # cae solo del lado seguro, en vez de irse a Google desnudo.
 NOINDEX_META = '\n  <meta name="robots" content="noindex,follow">'
 NON_AFFILIATION_MARK = "no est&aacute; afiliado, patrocinado ni respaldado"
-REMOVAL_MARK = "mailto:"
-REMOVAL_EMAIL = "eltonylfgi@gmail.com"
+REMOVAL_ISSUES_URL = "https://github.com/eltonylfgi-blip/fanrank/issues/new"
+REMOVAL_MARK = REMOVAL_ISSUES_URL
 IP_NOTICES = {"brawl-stars": "supercell", "clash-royale": "supercell",
               "clash-of-clans": "supercell", "squad-busters": "supercell",
               "hay-day": "supercell", "boom-beach": "supercell"}
@@ -58,13 +58,14 @@ def is_claimed(section):
     return str(section.get("verification_status") or "") == "verified"
 
 
-def removal_mailto(name, slug):
+def removal_issue_url(name, slug):
     body = (f"Hola:\n\nSoy {name}, o su representante autorizado, y pido que se retire este "
-            f"perfil de FanRank.\n\nPerfil: {PUBLIC_APP_URL}top/{slug}/\n\nMi nombre: \n"
-            "Mi relacion o cargo: \n\n(Lo retiramos sin pedir nada a cambio.)\n")
-    query = urllib.parse.urlencode({"subject": f"FanRank - retirad el perfil de {name}",
+            f"perfil de FanRank.\n\nPerfil: {PUBLIC_APP_URL}top/{slug}/\n\n"
+            "Enlace de prueba publica: \n\n(Lo retiramos sin pedir nada a cambio. "
+            "No incluyas datos privados en esta solicitud publica.)\n")
+    query = urllib.parse.urlencode({"title": f"FanRank - retirad el perfil de {name}",
                                     "body": body})
-    return html.escape(f"mailto:{REMOVAL_EMAIL}?{query}", quote=True)
+    return html.escape(f"{REMOVAL_ISSUES_URL}?{query}", quote=True)
 
 
 def legal_block(section):
@@ -86,8 +87,9 @@ def legal_block(section):
                 f'{NON_AFFILIATION_MARK} por {name}. Las ideas las escriben y las votan '
                 f'sus fans a partir de informaci&oacute;n p&uacute;blica; no son '
                 f'declaraciones de {name}.</p>')
-    block = (head + f'<p><a href="{removal_mailto(name, slug)}">&iquest;Eres {name} o '
-             f'su representante? Pide que lo quitemos</a></p>')
+    block = (head + f'<p><a href="{removal_issue_url(name, slug)}" target="_blank" '
+             f'rel="noopener noreferrer">&iquest;Eres {name} o su representante? '
+             f'Pide que lo quitemos</a></p>')
     holder = IP_NOTICES.get(slug)
     if holder:
         block += f"<p>{IP_NOTICE_TEXT[holder]}</p>"
@@ -289,7 +291,7 @@ def selftest():
     ok &= "Las 12 ideas" in page and 'lang="es"' in page
     # FR-INV-010 (Tony 17-jul): 'grande' NO esta reclamado pero LLEVA el aviso puesto
     # => vuelve a Google y al sitemap. Salir en Google no depende de reclamar.
-    ok &= "Perfil no reclamado" in page and NON_AFFILIATION_MARK in page and "mailto:" in page
+    ok &= "Perfil no reclamado" in page and NON_AFFILIATION_MARK in page and REMOVAL_ISSUES_URL in page
     ok &= "noindex" not in page
     ok &= (out / "sitemap-top.xml").read_text(encoding="utf-8").count("<loc>") == 1
     # Reclamar solo cambia el TITULAR de la frase: aviso y via de retirada SIGUEN.
@@ -299,7 +301,7 @@ def selftest():
     build_all(claimed_data, out2, today="2026-07-16")
     claimed_page = (out2 / "grande" / "index.html").read_text(encoding="utf-8")
     ok &= "Perfil no reclamado" not in claimed_page
-    ok &= NON_AFFILIATION_MARK in claimed_page and "mailto:" in claimed_page
+    ok &= NON_AFFILIATION_MARK in claimed_page and REMOVAL_ISSUES_URL in claimed_page
     ok &= "noindex" not in claimed_page
     ok &= (out2 / "sitemap-top.xml").read_text(encoding="utf-8").count("<loc>") == 1
     # EL ACOPLE INVERTIDO, probado: si la pagina se queda SIN aviso, cae SOLA a noindex

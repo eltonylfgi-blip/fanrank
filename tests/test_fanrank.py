@@ -1759,9 +1759,11 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
     # es la marca universal, no la de "no reclamado".
     NON_AFFILIATION_MARK = "no est&aacute; afiliado, patrocinado ni respaldado"
     NOINDEX_META = '<meta name="robots" content="noindex,follow">'
+    REMOVAL_ISSUES_URL = "https://github.com/eltonylfgi-blip/fanrank/issues/new"
+    EMAIL_LITERAL = re.compile(r"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}", re.IGNORECASE)
 
     def _removal_path(self, raw: str) -> bool:
-        return "mailto:eltonylfgi%40gmail.com" in raw or "mailto:eltonylfgi@gmail.com" in raw
+        return self.REMOVAL_ISSUES_URL in raw
 
     def test_app_profile_shows_a_visible_non_affiliation_notice(self) -> None:
         self.assertIn('id="claim-disclaimer"', HTML)
@@ -1809,11 +1811,9 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
 
     def test_app_profile_offers_a_real_prefilled_removal_path(self) -> None:
         self.assertIn('<a class="claim-remove" id="claim-remove"', HTML)
-        self.assertIn('var REMOVAL_EMAIL = "eltonylfgi@gmail.com";', HTML)
-        self.assertIn('"mailto:" + REMOVAL_EMAIL +', HTML)
-        # PAN-INV-001: cero friccion. El correo va con asunto Y cuerpo ya escritos.
-        self.assertIn('"?subject=" + encodeURIComponent(tx("claim_remove_subject",name))', HTML)
-        self.assertIn('"&body=" + encodeURIComponent(tx("claim_remove_body",name,url))', HTML)
+        self.assertIn(f'var REMOVAL_ISSUES_URL = "{self.REMOVAL_ISSUES_URL}";', HTML)
+        self.assertIn('destination.searchParams.set("title",tx("claim_remove_subject",name))', HTML)
+        self.assertIn('destination.searchParams.set("body",tx("claim_remove_body",name,url))', HTML)
         self.assertEqual(2, HTML.count("claim_remove_link:"), "enlace en EN y ES")
         self.assertEqual(2, HTML.count("claim_remove_subject:"))
         self.assertEqual(2, HTML.count("claim_remove_body:"))
@@ -1823,13 +1823,13 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
         )
         self.assertRegex(HTML, r"[.]claim-remove\{[^}]*min-height:44px")
 
-    def test_removal_mailto_really_builds_a_prefilled_email(self) -> None:
-        """La via de retirada tiene que ABRIR un correo escrito, no una pantalla en blanco."""
+    def test_removal_link_builds_a_prefilled_public_request_without_personal_email(self) -> None:
+        """La via abre una solicitud escrita sin publicar una direccion personal."""
         functions = "\n".join(
             extract_js_function(name)
             for name in (
                 "normalizeLanguage", "persistentUrl", "profileDefaultLanguage",
-                "setUrlLanguage", "profileStubUrl", "profileRemovalMailto",
+                "setUrlLanguage", "profileStubUrl", "profileRemovalUrl",
             )
         )
         node_program = "\n".join([
@@ -1838,7 +1838,7 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
             'var URL_LANGUAGE="es";',
             'var SAVED_LANGUAGE=null;',
             'var APP_URL="https://eltonylfgi-blip.github.io/fanrank/";',
-            'var REMOVAL_EMAIL="eltonylfgi@gmail.com";',
+            f'var REMOVAL_ISSUES_URL="{self.REMOVAL_ISSUES_URL}";',
             'var sections=[{slug:"orslok",default_language:"es"}];',
             'var location={origin:"https://eltonylfgi-blip.github.io",pathname:"/fanrank/",'
             'search:"?s=orslok",href:"https://eltonylfgi-blip.github.io/fanrank/?s=orslok"};',
@@ -1847,18 +1847,21 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
             'function tx(key){var v=T[LANG][key];'
             'return typeof v === "function" ? v.apply(null,Array.prototype.slice.call(arguments,1)) : v;}',
             functions,
-            'console.log(profileRemovalMailto("Orslok","orslok"));',
+            'console.log(profileRemovalUrl("Orslok","orslok"));',
         ])
         result = subprocess.run(
             ["node", "-e", node_program], cwd=ROOT, capture_output=True,
             text=True, encoding="utf-8", check=False, timeout=10,
         )
         self.assertEqual(0, result.returncode, result.stderr or result.stdout)
-        mailto = result.stdout.strip()
-        self.assertTrue(mailto.startswith("mailto:eltonylfgi@gmail.com?"), mailto)
-        query = urllib.parse.parse_qs(mailto.split("?", 1)[1])
-        self.assertIn("Orslok", query["subject"][0])
+        removal = result.stdout.strip()
+        parsed = urllib.parse.urlsplit(removal)
+        self.assertEqual(("https", "github.com", "/eltonylfgi-blip/fanrank/issues/new"),
+                         (parsed.scheme, parsed.netloc, parsed.path))
+        query = urllib.parse.parse_qs(parsed.query)
+        self.assertIn("Orslok", query["title"][0])
         self.assertIn("Orslok", query["body"][0])
+        self.assertIsNone(self.EMAIL_LITERAL.search(removal))
         # El cuerpo lleva el PERFIL concreto: quien lo recibe sabe que retirar.
         self.assertIn("https://eltonylfgi-blip.github.io/fanrank/p/orslok/", query["body"][0])
 
@@ -1873,10 +1876,10 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
         # Reclamar YA NO decide si sales en Google (Tony 17-jul: "mejor q salgamos en google").
         self.assertNotIn("setRobotsNoindex(!isClaimedProfile(secMeta));", HTML)
         self.assertIn('return !!(meta && meta.verification_status === "verified");', HTML)
-        # La puerta mira el aviso REAL: visible, con texto y con mailto de verdad.
+        # La puerta mira el aviso REAL: visible, con texto y con el destino exacto.
         self.assertIn('var note = byId("claim-disclaimer");', HTML)
         self.assertIn('var link = byId("claim-remove");', HTML)
-        self.assertIn('removal.indexOf("mailto:") === 0', HTML)
+        self.assertIn('removalUrl.pathname === "/eltonylfgi-blip/fanrank/issues/new"', HTML)
         self.assertIn('return !!(node && !node.closest(".hidden"));', HTML)
         # El aviso se pinta ANTES de decidir el robots (si no, mediria el DOM vacio).
         self.assertRegex(
@@ -1911,8 +1914,8 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
             "fr_sections_stats?select=slug,name,default_language,verification_status",
             "def is_claimed(profile: dict) -> bool:",
             'return str(profile.get("verification_status") or "") == "verified"',
-            'REMOVAL_EMAIL = "eltonylfgi@gmail.com"',
-            "def removal_mailto(raw_name: str, slug: str) -> str:",
+            f'REMOVAL_ISSUES_URL = "{self.REMOVAL_ISSUES_URL}"',
+            "def removal_issue_url(raw_name: str, slug: str) -> str:",
             "def legal_block(profile: dict) -> str:",
             "def page_is_indexable(legal: str) -> bool:",
             "return NON_AFFILIATION_MARK in legal and REMOVAL_MARK in legal",
@@ -1935,7 +1938,8 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
         for marker in (
             "fr_sections_stats?select=slug,name,default_language,verification_status",
             "def is_claimed(section):",
-            'REMOVAL_EMAIL = "eltonylfgi@gmail.com"',
+            f'REMOVAL_ISSUES_URL = "{self.REMOVAL_ISSUES_URL}"',
+            "def removal_issue_url(name, slug):",
             "def legal_block(section):",
             "def page_is_indexable(legal):",
             "return NON_AFFILIATION_MARK in legal and REMOVAL_MARK in legal",
@@ -1996,7 +2000,17 @@ class UnclaimedProfileSafetyTests(unittest.TestCase):
                     self.assertIn(self.UNCLAIMED_MARK, raw)
                     self.assertIn(self.NON_AFFILIATION_MARK, raw)
                     self.assertIn("Pide que lo quitemos", raw)
-                    self.assertIn("mailto:eltonylfgi", raw)
+                    self.assertIn(self.REMOVAL_ISSUES_URL, raw)
+
+    def test_public_html_never_embeds_a_personal_email_address(self) -> None:
+        pages = [INDEX, *self._published_profile_pages()]
+        for page in pages:
+            with self.subTest(page=str(page.relative_to(ROOT))):
+                raw = page.read_text(encoding="utf-8")
+                self.assertIsNone(
+                    self.EMAIL_LITERAL.search(raw),
+                    "una pagina publica incrusta una direccion personal",
+                )
 
     def test_supercell_pages_carry_the_fan_content_notice(self) -> None:
         for root in (PROFILE_STUB_ROOT, TOP_ROOT):
