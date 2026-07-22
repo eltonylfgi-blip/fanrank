@@ -1462,7 +1462,7 @@
         <summary id="auth-password-toggle"></summary>
         <div class="field" style="margin-top:10px">
           <label id="auth-password-label" for="auth-password"></label>
-          <input id="auth-password" type="password" minlength="8" maxlength="200" autocomplete="current-password">
+          <input id="auth-password" type="password" maxlength="200" autocomplete="current-password" required>
           <span class="helper" id="auth-password-help"></span>
         </div>
         <div class="form-actions">
@@ -5486,7 +5486,7 @@ byId("auth-form").addEventListener("submit",async function(event){
   event.preventDefault();
   var email = byId("auth-email").value.trim();
   var password = byId("auth-password").value;
-  if(!email || !byId("auth-email").checkValidity() || password.length < 8){
+  if(!email || !byId("auth-email").checkValidity() || !password){
     setStatus("auth-status",tx("required_error"),"err");
     if(!email || !byId("auth-email").checkValidity()){byId("auth-email").focus();}
     else{byId("auth-password").focus();}

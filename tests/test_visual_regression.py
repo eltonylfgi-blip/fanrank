@@ -650,6 +650,51 @@ class FanRankVisualRegressionTests(unittest.TestCase):
         self.assertTrue(page.locator("#ideas-list .idea-card.compact .idea-more").first.evaluate("details => details.open"))
         context.close()
 
+    def test_existing_short_password_reaches_supabase_instead_of_client_block(self) -> None:
+        context = self.browser.new_context(
+            viewport={"width": 375, "height": 812}, locale="es-ES"
+        )
+        page = context.new_page()
+        page_errors: list[str] = []
+        page.on("pageerror", lambda error: page_errors.append(str(error)))
+        page.goto(
+            self.base_url + "?lang=es&qa=1&local=auth-existing-password",
+            wait_until="domcontentloaded",
+        )
+        page.evaluate(
+            """
+            () => {
+              window.__authCalls = [];
+              window.authClient = {auth:{signInWithPassword: async payload => {
+                window.__authCalls.push(payload);
+                return {data:{session:{user:{id:'browser-regression'}}},error:null};
+              }}};
+              openAuth('account');
+              document.querySelector('#auth-password-panel').open = true;
+            }
+            """
+        )
+        page.locator("#auth-email").fill("legacy@example.com")
+        page.locator("#auth-password").fill("1234567")
+        page.locator("#auth-send").click()
+        page.wait_for_function("window.__authCalls.length === 1")
+        result = page.evaluate(
+            """
+            () => ({
+              call: window.__authCalls[0],
+              dialogOpen: document.querySelector('#auth-dialog').open,
+              status: document.querySelector('#auth-status').textContent.trim()
+            })
+            """
+        )
+        self.assertEqual([], page_errors)
+        self.assertEqual(
+            {"email": "legacy@example.com", "password": "1234567"}, result["call"]
+        )
+        self.assertFalse(result["dialogOpen"])
+        self.assertNotEqual("Completa el campo obligatorio.", result["status"])
+        context.close()
+
     def test_reduced_motion_disables_brand_animation(self) -> None:
         context = self.browser.new_context(
             viewport={"width": 375, "height": 812},
