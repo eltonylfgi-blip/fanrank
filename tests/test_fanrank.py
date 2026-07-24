@@ -1206,6 +1206,9 @@ class StaticAppTests(unittest.TestCase):
         markers = [
             'search_label:"Find who or what you want to suggest something to"',
             'search_label:"Busca a qui\u00e9n o qu\u00e9 quieres sugerirle"',
+            'home_suggest:"Choose who to improve"',
+            'home_suggest:"Elige a quién mejorar"',
+            'aria-describedby="home-suggest-note"',
             'kind_labels:{creator:"Content creator"',
             'kind_labels:{creator:"Creador de contenido"',
             'influencer:"Influencer"',
